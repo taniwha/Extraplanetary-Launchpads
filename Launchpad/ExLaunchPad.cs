@@ -19,6 +19,7 @@ public class ExLaunchPad : PartModule
     {
         static public Rect windowpos;
         static public bool init = true;
+        static public bool linklfosliders = true;
         static public bool showvab = true;
         static public bool showsph = false;
         static public bool canbuildcraft = false;
@@ -103,7 +104,8 @@ public class ExLaunchPad : PartModule
         GUILayout.BeginVertical();
 
         GUILayout.BeginHorizontal("box");
-
+        GUILayout.FlexibleSpace();
+        // VAB / SPH selection
         if (GUILayout.Toggle(UIStatus.showvab, "VAB", GUILayout.MinWidth(80)))
         {
             UIStatus.showvab = true;
@@ -116,10 +118,8 @@ public class ExLaunchPad : PartModule
             UIStatus.showsph = true;
             UIStatus.ct = crafttype.SPH;
         }
-
+        GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-
-        
 
         string strpath = HighLogic.CurrentGame.Title.Split(new string[] { " (Sandbox)" }, StringSplitOptions.None).First();
 
@@ -136,39 +136,115 @@ public class ExLaunchPad : PartModule
             // Resource requirements
             GUILayout.Label("Resources required to build:", labSty, GUILayout.Width(500));
 
-            UIStatus.resscroll = GUILayout.BeginScrollView(UIStatus.resscroll, GUILayout.Width(500), GUILayout.Height(200));
+            // Link LFO toggle
+            UIStatus.linklfosliders = GUILayout.Toggle(UIStatus.linklfosliders, "Link LFO sliders");
+
+            UIStatus.resscroll = GUILayout.BeginScrollView(UIStatus.resscroll, GUILayout.Width(500), GUILayout.Height(300));
 
             GUILayout.BeginHorizontal();
 			
-            GUILayout.Label("Resource", labSty, GUILayout.Width(200));
-            GUILayout.Label("Fill Percentage", labSty, GUILayout.Width(100));
-            GUILayout.Label("Required", labSty, GUILayout.Width(80));
-            GUILayout.Label("Available", labSty, GUILayout.Width(80));
+            // Headings
+            GUILayout.Label("Resource", labSty, GUILayout.Width(120));
+            GUILayout.Label("Fill Percentage", labSty, GUILayout.Width(208));
+            GUILayout.Label("Required", labSty, GUILayout.Width(60));
+            GUILayout.Label("Available", labSty, GUILayout.Width(60));
             GUILayout.EndHorizontal();
 
             UIStatus.canbuildcraft = true;      // default to can build - if something is stopping us from building, we will set to false later
 
+            // LFO = 55% oxidizer
+
             // Cycle through required resources
             foreach (KeyValuePair<string, float> pair in UIStatus.requiredresources)
             {
-                List<PartResource> res = GetConnectedResources(this.part, pair.Key);
-                double tot = 0;
-                foreach (PartResource pr in res)
+                string resname = pair.Key;
+                // If in link LFO sliders mode, rename Oxidizer to LFO (Oxidizer) and LiquidFuel to LFO (LiquidFuel)
+                if (resname == "SurplusLiquidFuel")
                 {
-                    tot += pr.amount;
+                    // Do not show SurplusLiquidFuel line if not being used
+                    if (pair.Value == 0f)
+                    {
+                        continue;
+                    }
+                    resname = "LiquidFuel";
+                }
+
+                // ToDo: If you request an unknown resource type, does this crash the UI?
+                List<PartResource> connectedresources = GetConnectedResources(this.part, resname);
+
+                if (resname == "Oxidizer")
+                {
+                    resname = "LFO (Oxidizer)";
+                }
+                if (resname == "LiquidFuel" && pair.Key != "SurplusLiquidFuel" && UIStatus.requiredresources.ContainsKey("Oxidizer"))
+                {
+                    resname = "LFO (LiquidFuel)";
                 }
 
                 GUILayout.BeginHorizontal();
 
-                GUILayout.Box(pair.Key, whiSty, GUILayout.Width(200));
+                // Resource name
+                GUILayout.Box(resname, whiSty, GUILayout.Width(120), GUILayout.Height(40));
                 
+                // Add resource to Dictionary if it does not exist
 				if (!UIStatus.resourcesliders.ContainsKey(pair.Key)) {
                    UIStatus.resourcesliders.Add(pair.Key, 1);
                 }
-                UIStatus.resourcesliders[pair.Key] = GUILayout.HorizontalSlider(UIStatus.resourcesliders[pair.Key], 0, 1, GUILayout.Width(100));
-                
+
+                GUIStyle tmpSty = new GUIStyle(GUI.skin.label);
+                tmpSty.alignment = TextAnchor.MiddleCenter;
+                tmpSty.margin = new RectOffset(0, 0, 0, 0);
+
+                // Fill amount
+                GUILayout.BeginVertical();
+                {
+                    if (pair.Key == "RocketParts")
+                    {
+                        // Partial Fill for RocketParts not allowed - Instead of creating a slider, hard-wire slider position to 100%
+                        UIStatus.resourcesliders[pair.Key] = 1;
+                        GUILayout.Box("Must be 100%", GUILayout.Width(208), GUILayout.Height(40));
+                    }
+                    else
+                    {
+                        // limit slider to 0.5% increments
+                        float tmp = (float)Math.Round(GUILayout.HorizontalSlider(UIStatus.resourcesliders[pair.Key], 0.0F, 1.0F, GUILayout.Width(200), GUILayout.Height(20)), 3);
+                        tmp = (Mathf.Floor(tmp * 200)) / 200;
+
+                        // Are we in link LFO mode?
+                        if (UIStatus.linklfosliders)
+                        {
+
+                            if (pair.Key == "Oxidizer")
+                            {
+                                UIStatus.resourcesliders["LiquidFuel"] = tmp;
+                            }
+                            else if (pair.Key == "LiquidFuel")
+                            {
+                                UIStatus.resourcesliders["Oxidizer"] = tmp;
+                            }
+                        }
+                        // Assign slider value to variable
+                        UIStatus.resourcesliders[pair.Key] = tmp;
+                        GUILayout.Box((tmp * 100).ToString() + "%", tmpSty, GUILayout.Width(200), GUILayout.Height(20));
+                    }
+                }
+                GUILayout.EndVertical();
+
+
+                // Calculate if we have enough resources to build
+                double tot = 0;
+                foreach (PartResource pr in connectedresources)
+                {
+                    tot += pr.amount;
+                }
+
+                // If LFO LiquidFuel exists and we are on LiquidFuel (Non-LFO), then subtract the amount used by LFO(LiquidFuel) from the available amount
+
+                if (pair.Key == "SurplusLiquidFuel")
+                {
+                    tot -= UIStatus.requiredresources["LiquidFuel"] * UIStatus.resourcesliders["LiquidFuel"];
+                }
 				GUIStyle avail = new GUIStyle();
-                //if (tot < pair.Value)
                 if (tot < pair.Value*UIStatus.resourcesliders[pair.Key])
                 {
                     avail = redSty;
@@ -178,8 +254,15 @@ public class ExLaunchPad : PartModule
                 {
                     avail = grnSty;
                 }
-                GUILayout.Box((pair.Value*UIStatus.resourcesliders[pair.Key]).ToString(), avail, GUILayout.Width(80));
-                GUILayout.Box(tot.ToString(), whiSty, GUILayout.Width(80));
+
+                // Required
+                GUILayout.Box((Math.Round(pair.Value * UIStatus.resourcesliders[pair.Key],2)).ToString(), avail, GUILayout.Width(60), GUILayout.Height(40));
+                // Available
+                GUILayout.Box(((int)tot).ToString(), whiSty, GUILayout.Width(60), GUILayout.Height(40));
+
+                // Flexi space to make sure any unused space is at the right-hand edge
+                GUILayout.FlexibleSpace();
+
                 GUILayout.EndHorizontal();
             }
 
@@ -195,6 +278,7 @@ public class ExLaunchPad : PartModule
                     FlightState state = new FlightState();
                     ShipConstruct nship = ShipConstruction.LoadShip(UIStatus.craftfile);
                     ShipConstruction.PutShipToGround(nship, this.part.transform);
+                    // is this line causing bug #11 ?
                     ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, state);
                     Staging.beginFlight();
                     nship.parts[0].vessel.ResumeStaging();
@@ -204,17 +288,49 @@ public class ExLaunchPad : PartModule
                     // use resources
                     foreach (KeyValuePair<string, float> pair in UIStatus.requiredresources)
                     {
-                        this.part.RequestResource(pair.Key, pair.Value);
-						double tot = pair.Value;
+                        // If resource is "SurplusLiquidFuel", rename to "LiquidFuel"
+                        string res = pair.Key;
+                        if (pair.Key == "SurplusLiquidFuel")
+                        {
+                             res = "LiquidFuel";
+                        }
+
+                        // Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
+                        double tot = pair.Value * UIStatus.resourcesliders[pair.Key];
+                        // Remove the resource from the vessel doing the building
+                        this.part.RequestResource(res, tot);
+
+                        // If doing a partial fill, remove unfilled amount from the spawned ship
+                        // ToDo: Only subtract LiquidFuel from a part when it does not also have Oxidizer in it - try to leave fuel tanks in a sane state!
+                        double ptot = pair.Value - tot;
+                        foreach (Part p in nship.parts)
+                        {
+                            if (ptot > 0)
+                            {
+                                ptot -= p.RequestResource(res, ptot);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        /*
 						foreach (Part p in nship.parts) {
-							if (tot>pair.Value*UIStatus.resourcesliders[pair.Key]) {
-								tot -= p.RequestResource(pair.Key, tot-pair.Value);
+							if (tot>pair.Value*UIStatus.resourcesliders[res]) {
+								tot -= p.RequestResource(res, tot-pair.Value);
 							} else {
 								break;
 							}
 						}
+                        */
                     }
-					
+
+                    // Reset the UI
+                    UIStatus.craftselected = false;
+                    UIStatus.requiredresources = null;
+                    UIStatus.resourcesliders = null;
+
+                    // Close the UI
                     RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //close the GUI
                 }
             }
@@ -303,6 +419,11 @@ public class ExLaunchPad : PartModule
 			p = PartLoader.getPartInfoByName(node.GetValue("part").Remove(node.GetValue("part").LastIndexOf("_"))).partPrefab;
 			mass = mass + p.mass;
 			foreach (PartResource r in p.Resources) {
+                // Ignore intake Air
+                if (r.resourceName == "IntakeAir")
+                {
+                    continue;
+                }
 				float val;
 				if (resources.TryGetValue(r.resourceName, out val))
 				{
@@ -315,6 +436,26 @@ public class ExLaunchPad : PartModule
 			}
 		}
         resources.Add("RocketParts", mass);
+
+        // If Solid Fuel is used, convert to RocketParts
+        if (resources.ContainsKey("SolidFuel"))
+        {
+            resources["RocketParts"] += resources["SolidFuel"];
+            resources.Remove("SolidFuel");
+        }
+
+        // If there is surplus LiquidFuel (ie some LFO tanks plus some LF only tanks - eg a SpacePlane) then split "Surplus" LF off into a seperate field
+        if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel"))
+        {
+            float tmp = resources["LiquidFuel"] - ((resources["Oxidizer"] / 55) * 45);
+            resources.Add("SurplusLiquidFuel", tmp);
+            resources["LiquidFuel"] -= tmp;
+        }
+        else
+        {
+            resources.Add("SurplusLiquidFuel", 0f);
+        }
+
         return resources;
     }
 

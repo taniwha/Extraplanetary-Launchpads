@@ -412,13 +412,13 @@ public class ExLaunchPad : PartModule
 	public override void OnFixedUpdate()
     {
         //base.OnAwake();
-		if ((this.vessel.situation==Vessel.Situations.LANDED) || 
+		if (((this.vessel.situation==Vessel.Situations.LANDED) || 
 			(this.vessel.situation==Vessel.Situations.PRELAUNCH) || 
-			(this.vessel.situation==Vessel.Situations.SPLASHED)){
+			(this.vessel.situation==Vessel.Situations.SPLASHED)) && (this.vessel==FlightGlobals.ActiveVessel)){
 	        RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI));//start the GUI
 		} else {
 			RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI));
-			}
+		}
     }
 
     // Gets connected resources to a part. Note fuel lines are NOT reversible! Add flow going TO the constructing part!

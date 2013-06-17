@@ -335,6 +335,21 @@ public class ExLaunchPad : PartModule
 						}
                         */
                     }
+					
+					//Remove the kerbals who get spawned with the ship
+					foreach (Part p in nship.parts)
+					{
+						if (p.CrewCapacity>0) {
+							print ("Part has crew");
+							foreach (ProtoCrewMember m in p.protoModuleCrew)
+							{	
+								print("Removing crewmember:");
+								print (m.name);
+								p.RemoveCrewmember(m);
+								m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
+							}
+						}
+					}
 
                     // Reset the UI
                     UIStatus.craftselected = false;
@@ -393,10 +408,17 @@ public class ExLaunchPad : PartModule
         UIStatus.windowpos = GUILayout.Window(1, UIStatus.windowpos, WindowGUI, "Extraplanetary Launchpads", GUILayout.Width(600));
     }
 
-    public override void OnAwake()
+    //public override void OnAwake()
+	public override void OnFixedUpdate()
     {
-        base.OnAwake();
-        RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI));//start the GUI
+        //base.OnAwake();
+		if ((this.vessel.situation==Vessel.Situations.LANDED) || 
+			(this.vessel.situation==Vessel.Situations.PRELAUNCH) || 
+			(this.vessel.situation==Vessel.Situations.SPLASHED)){
+	        RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI));//start the GUI
+		} else {
+			RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI));
+			}
     }
 
     // Gets connected resources to a part. Note fuel lines are NOT reversible! Add flow going TO the constructing part!

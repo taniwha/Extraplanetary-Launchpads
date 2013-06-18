@@ -417,17 +417,18 @@ public class ExLaunchPad : PartModule
         // Doing it in OnLoad instead breaks the "Show on Startup" function
         LoadConfigFile();
 
-        if (uis.showbuilduionload)
-        {
-			if (((this.vessel.situation==Vessel.Situations.LANDED) || 
-			(this.vessel.situation==Vessel.Situations.PRELAUNCH) || 
-			(this.vessel.situation==Vessel.Situations.SPLASHED)) && (this.vessel==FlightGlobals.ActiveVessel)){
+		if (((this.vessel.situation==Vessel.Situations.LANDED) || 
+		(this.vessel.situation==Vessel.Situations.PRELAUNCH) || 
+		(this.vessel.situation==Vessel.Situations.SPLASHED)) && (this.vessel==FlightGlobals.ActiveVessel)){
+	        if (uis.showbuilduionload)
+	        {
 		        ShowBuildMenu();
-			} else {
-				HideBuildMenu();
-			}
+			} //else {
+				//HideBuildMenu();
+			//}
+		} else {
+			HideBuildMenu();
 		}
-
     }
 
     // Fired each Tick?

@@ -419,8 +419,14 @@ public class ExLaunchPad : PartModule
 
         if (uis.showbuilduionload)
         {
-            ShowBuildMenu();
-        }
+			if (((this.vessel.situation==Vessel.Situations.LANDED) || 
+			(this.vessel.situation==Vessel.Situations.PRELAUNCH) || 
+			(this.vessel.situation==Vessel.Situations.SPLASHED)) && (this.vessel==FlightGlobals.ActiveVessel)){
+		        ShowBuildMenu();
+			} else {
+				HideBuildMenu();
+			}
+		}
 
     }
 

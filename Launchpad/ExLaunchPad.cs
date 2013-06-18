@@ -345,6 +345,7 @@ public class ExLaunchPad : PartModule
 
                     // Close the UI
                     HideBuildMenu();
+					uis.builduiactive = false;
                 }
             }
             else

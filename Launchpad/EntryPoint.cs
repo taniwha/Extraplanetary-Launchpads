@@ -26,7 +26,7 @@ public class BaseList {
 
 public class RoverCruiseControlAttacher : UnityEngine.MonoBehaviour {
 	
-	private List<Vessel> bases;
+	//private List<Vessel> bases;
 	private int state = 0;
 	private BaseList list;
 	

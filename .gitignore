@@ -1,3 +1,5 @@
 .DS_Store
-*.dll
 *.dll.mdb
+*.userprefs
+*.suo
+*.zip

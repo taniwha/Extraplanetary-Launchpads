@@ -18,7 +18,8 @@ public class ExLaunchPad : PartModule
     public class UIStatus
     {
         public Rect windowpos;
-        public bool builduiactive = false;
+        public bool builduiactive = false;  // Whether the build menu is open or closed
+        public bool builduivisible = true;  // Whether the build menu is allowed to be shown
         public bool showbuilduionload = false;
         public bool init = true;
         public bool linklfosliders = true;
@@ -38,7 +39,7 @@ public class ExLaunchPad : PartModule
 
     private UIStatus uis = new UIStatus();
 
-	//private List<Vessel> bases;
+    //private List<Vessel> bases;
 
     // =====================================================================================================================================================
     // UI Functions
@@ -131,7 +132,7 @@ public class ExLaunchPad : PartModule
             uis.resscroll = GUILayout.BeginScrollView(uis.resscroll, GUILayout.Width(600), GUILayout.Height(300));
 
             GUILayout.BeginHorizontal();
-			
+
             // Headings
             GUILayout.Label("Resource", labSty, GUILayout.Width(120));
             GUILayout.Label("Fill Percentage", labSty, GUILayout.Width(300));
@@ -175,10 +176,11 @@ public class ExLaunchPad : PartModule
 
                 // Resource name
                 GUILayout.Box(reslabel, whiSty, GUILayout.Width(120), GUILayout.Height(40));
-                
+
                 // Add resource to Dictionary if it does not exist
-				if (!uis.resourcesliders.ContainsKey(pair.Key)) {
-                   uis.resourcesliders.Add(pair.Key, 1);
+                if (!uis.resourcesliders.ContainsKey(pair.Key))
+                {
+                    uis.resourcesliders.Add(pair.Key, 1);
                 }
 
                 GUIStyle tmpSty = new GUIStyle(GUI.skin.label);
@@ -242,8 +244,8 @@ public class ExLaunchPad : PartModule
                 {
                     tot -= uis.requiredresources["LiquidFuel"] * uis.resourcesliders["LiquidFuel"];
                 }
-				GUIStyle avail = new GUIStyle();
-                if (tot < pair.Value*uis.resourcesliders[pair.Key])
+                GUIStyle avail = new GUIStyle();
+                if (tot < pair.Value * uis.resourcesliders[pair.Key])
                 {
                     avail = redSty;
                     uis.canbuildcraft = false; // prevent building
@@ -254,7 +256,7 @@ public class ExLaunchPad : PartModule
                 }
 
                 // Required
-                GUILayout.Box((Math.Round(pair.Value * uis.resourcesliders[pair.Key],2)).ToString(), avail, GUILayout.Width(60), GUILayout.Height(40));
+                GUILayout.Box((Math.Round(pair.Value * uis.resourcesliders[pair.Key], 2)).ToString(), avail, GUILayout.Width(60), GUILayout.Height(40));
                 // Available
                 GUILayout.Box(((int)tot).ToString(), whiSty, GUILayout.Width(60), GUILayout.Height(40));
 
@@ -269,7 +271,7 @@ public class ExLaunchPad : PartModule
             // Build button
             if (uis.canbuildcraft)
             {
-                if(GUILayout.Button("Build", mySty, GUILayout.ExpandWidth(true)))
+                if (GUILayout.Button("Build", mySty, GUILayout.ExpandWidth(true)))
                 {
 
                     // build craft
@@ -282,7 +284,7 @@ public class ExLaunchPad : PartModule
                     nship.parts[0].vessel.ResumeStaging();
                     Staging.GenerateStagingSequence(nship.parts[0].localRoot);
                     Staging.RecalculateVesselStaging(nship.parts[0].vessel);
-					
+
                     // use resources
                     foreach (KeyValuePair<string, float> pair in uis.requiredresources)
                     {
@@ -290,7 +292,7 @@ public class ExLaunchPad : PartModule
                         string res = pair.Key;
                         if (pair.Key == "JetFuel")
                         {
-                             res = "LiquidFuel";
+                            res = "LiquidFuel";
                         }
 
                         // Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
@@ -322,21 +324,22 @@ public class ExLaunchPad : PartModule
 						}
                         */
                     }
-					
-					//Remove the kerbals who get spawned with the ship
-					foreach (Part p in nship.parts)
-					{
-						if (p.CrewCapacity>0) {
-							print ("Part has crew");
-							foreach (ProtoCrewMember m in p.protoModuleCrew)
-							{	
-								print("Removing crewmember:");
-								print (m.name);
-								p.RemoveCrewmember(m);
-								m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
-							}
-						}
-					}
+
+                    //Remove the kerbals who get spawned with the ship
+                    foreach (Part p in nship.parts)
+                    {
+                        if (p.CrewCapacity > 0)
+                        {
+                            print("Part has crew");
+                            foreach (ProtoCrewMember m in p.protoModuleCrew)
+                            {
+                                print("Removing crewmember:");
+                                print(m.name);
+                                p.RemoveCrewmember(m);
+                                m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
+                            }
+                        }
+                    }
 
                     // Reset the UI
                     uis.craftselected = false;
@@ -344,8 +347,7 @@ public class ExLaunchPad : PartModule
                     uis.resourcesliders = null;
 
                     // Close the UI
-                    HideBuildMenu();
-					uis.builduiactive = false;
+                    DisableBuildMenu();
                 }
             }
             else
@@ -363,7 +365,7 @@ public class ExLaunchPad : PartModule
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("Close"))
         {
-            HideBuildMenu();
+            DisableBuildMenu();
         }
 
         uis.showbuilduionload = GUILayout.Toggle(uis.showbuilduionload, "Show on StartUp");
@@ -403,43 +405,86 @@ public class ExLaunchPad : PartModule
 
     // =====================================================================================================================================================
     // Event Hooks
+    // See http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html for some help on what fires when
 
+    // Called each time the GUI is painted
     private void drawGUI()
     {
         GUI.skin = HighLogic.Skin;
         uis.windowpos = GUILayout.Window(1, uis.windowpos, WindowGUI, "Extraplanetary Launchpads", GUILayout.Width(600));
     }
 
-    //public override void OnAwake()
-	public override void OnFixedUpdate()
+    // Called ONCE at start
+    private void Start()
     {
-        base.OnAwake();
-        // ToDo: why do I need to load the config file here?
-        // Doing it in OnLoad instead breaks the "Show on Startup" function
-        LoadConfigFile();
-
-		if (((this.vessel.situation==Vessel.Situations.LANDED) || 
-		(this.vessel.situation==Vessel.Situations.PRELAUNCH) || 
-		(this.vessel.situation==Vessel.Situations.SPLASHED)) && (this.vessel==FlightGlobals.ActiveVessel)){
-	        if (uis.showbuilduionload)
-	        {
-		        ShowBuildMenu();
-			} //else {
-				//HideBuildMenu();
-			//}
-		} else {
-			HideBuildMenu();
-		}
+        // If "Show GUI on StartUp" ticked, show the GUI
+        if (uis.showbuilduionload)
+        {
+            EnableBuildMenu();
+        }
     }
 
-    // Fired each Tick?
+
+    // Fired maybe multiple times a frame, maybe once every n frames
+    public override void OnFixedUpdate()
+    {
+        // ToDo: Should not be checking this every frame - once per craft switch
+        // OnVesselChange may be ideal but I cannot seem to get it to fire
+        // Landed / Flying check should probably be with this code, but moved it elsewhere while this is firing so often
+
+        // Does the UI want to be visible?
+        if (uis.builduiactive)
+        {
+            // Decide if the build menu is allowed to be visible
+            if (this.vessel == FlightGlobals.ActiveVessel)
+            {
+                // Yes - check if it is currently not visible
+                if (!uis.builduivisible)
+                {
+                    // Going from invisible to visible
+                    uis.builduivisible = true;
+                    RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI)); //start the GUI
+                }
+            }
+            else
+            {
+                // No - check if it is currently visible
+                if (uis.builduivisible)
+                {
+                    // Going from visible to invisible
+                    uis.builduivisible = false;
+                    RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //stop the GUI
+                }
+            }
+        }
+    }
+
+    /*
+    // Called when you change vessel
+    // ToDo: Cannot seem to get this code to fire...
+    private void OnVesselChange()
+    {
+        if (this.vessel == FlightGlobals.ActiveVessel)
+        {
+            ShowBuildMenu();
+        }
+        else
+        {
+            //HideBuildMenu();
+        }
+    }
+    */
+
+    // Fired ONCE per frame
     public override void OnUpdate()
     {
+        // Update state of context buttons depending on state of UI
+        // ToDo: Move to something fired when the GUI is updated?
         Events["ShowBuildMenu"].active = !uis.builduiactive;
         Events["HideBuildMenu"].active = uis.builduiactive;
     }
 
-    // When is this fired?
+    // Fired multiple times per frame in response to GUI events
     private void OnGUI()
     {
         if (uis.showcraftbrowser)
@@ -460,6 +505,7 @@ public class ExLaunchPad : PartModule
     }
     */
 
+    // Fired when KSP saves
     public override void OnSave(ConfigNode node)
     {
         PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
@@ -468,10 +514,11 @@ public class ExLaunchPad : PartModule
         config.save();
     }
 
-    
+
+    // Fired when KSP loads
     public override void OnLoad(ConfigNode node)
     {
-        //LoadConfigFile();
+        LoadConfigFile();
     }
 
     private void LoadConfigFile()
@@ -486,29 +533,35 @@ public class ExLaunchPad : PartModule
     // Flight UI and Action Group Hooks
 
     [KSPEvent(guiActive = true, guiName = "Show Build Menu", active = true)]
-    public void ShowBuildMenu()
+    public void EnableBuildMenu()
     {
-        RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI));//start the GUI
-        uis.builduiactive = true;
+        // Only allow enabling the menu if we are in a suitable place
+        if (((this.vessel.situation == Vessel.Situations.LANDED) ||
+                (this.vessel.situation == Vessel.Situations.PRELAUNCH) ||
+                (this.vessel.situation == Vessel.Situations.SPLASHED)))
+        {
+            RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI)); //start the GUI
+            uis.builduiactive = true;
+        }
     }
 
     [KSPEvent(guiActive = true, guiName = "Hide Build Menu", active = false)]
-    public void HideBuildMenu()
+    public void DisableBuildMenu()
     {
-        RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //close the GUI
+        RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //stop the GUI
         uis.builduiactive = false;
     }
 
     [KSPAction("Show Build Menu")]
-    public void ShowBuildMenuAction(KSPActionParam param)
+    public void EnableBuildMenuAction(KSPActionParam param)
     {
-        ShowBuildMenu();
+        EnableBuildMenu();
     }
 
     [KSPAction("Hide Build Menu")]
-    public void HideBuildMenuAction(KSPActionParam param)
+    public void DisableBuildMenuAction(KSPActionParam param)
     {
-        HideBuildMenu();
+        DisableBuildMenu();
     }
 
     [KSPAction("Toggle Build Menu")]
@@ -516,11 +569,11 @@ public class ExLaunchPad : PartModule
     {
         if (uis.builduiactive)
         {
-            HideBuildMenu();
+            DisableBuildMenu();
         }
         else
         {
-            ShowBuildMenu();
+            EnableBuildMenu();
         }
     }
 
@@ -541,27 +594,29 @@ public class ExLaunchPad : PartModule
         float mass = 0;
         Dictionary<string, float> resources = new Dictionary<string, float>();
 
-        foreach (ConfigNode node in nodes) {
-			print (node.name);
-			p = PartLoader.getPartInfoByName(node.GetValue("part").Remove(node.GetValue("part").LastIndexOf("_"))).partPrefab;
-			mass = mass + p.mass;
-			foreach (PartResource r in p.Resources) {
+        foreach (ConfigNode node in nodes)
+        {
+            print(node.name);
+            p = PartLoader.getPartInfoByName(node.GetValue("part").Remove(node.GetValue("part").LastIndexOf("_"))).partPrefab;
+            mass = mass + p.mass;
+            foreach (PartResource r in p.Resources)
+            {
                 // Ignore intake Air
                 if (r.resourceName == "IntakeAir")
                 {
                     continue;
                 }
-				float val;
-				if (resources.TryGetValue(r.resourceName, out val))
-				{
-					resources[r.resourceName] = val+(float)r.amount;
-				}
+                float val;
+                if (resources.TryGetValue(r.resourceName, out val))
+                {
+                    resources[r.resourceName] = val + (float)r.amount;
+                }
                 else
                 {
-					resources.Add(r.resourceName, (float)r.amount);
-				}
-			}
-		}
+                    resources.Add(r.resourceName, (float)r.amount);
+                }
+            }
+        }
         resources.Add("RocketParts", mass);
 
         // If Solid Fuel is used, convert to RocketParts
@@ -616,5 +671,4 @@ public class ExLaunchPad : PartModule
     */
 
 }
-
 

@@ -672,3 +672,25 @@ public class ExLaunchPad : PartModule
 
 }
 
+public class Recycler : PartModule
+{
+	[KSPEvent(guiActive = true, guiName = "Recycle Debris", active = true)]
+    public void RemoveDebris()
+	{
+		float conversionEfficiency = 0.8f;
+		List<Vessel> tempList = new List<Vessel>(); //temp list to hold debris vessels
+ 
+        foreach (Vessel v in FlightGlobals.Vessels)
+        {
+            if (v.vesselType == VesselType.Debris) tempList.Add(v);
+        }
+		foreach (Vessel v in tempList) {
+			// If vessel is less than 50m away, delete and convert it to rocketparts at conversionEfficiency% efficiency
+			if (Vector3d.Distance(v.GetWorldPos3D(), this.vessel.GetWorldPos3D())<50) {
+				print(v.name);
+				this.part.RequestResource("RocketParts", -v.GetTotalMass()*conversionEfficiency);
+				v.Die();
+			}
+		}
+	}
+}

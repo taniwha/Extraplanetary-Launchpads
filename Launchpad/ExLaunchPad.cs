@@ -275,11 +275,10 @@ public class ExLaunchPad : PartModule
                 {
 
                     // build craft
-                    FlightState state = new FlightState();
                     ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
                     ShipConstruction.PutShipToGround(nship, this.part.transform);
                     // is this line causing bug #11 ?
-                    ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, state);
+                    ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, HighLogic.CurrentGame, null);
                     Staging.beginFlight();
                     nship.parts[0].vessel.ResumeStaging();
                     Staging.GenerateStagingSequence(nship.parts[0].localRoot);

@@ -275,7 +275,6 @@ public class ExLaunchPad : PartModule
                 {
 
                     // build craft
-                    FlightState state = new FlightState();
                     ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
                     ShipConstruction.PutShipToGround(nship, this.part.transform);
                     // is this line causing bug #11 ?

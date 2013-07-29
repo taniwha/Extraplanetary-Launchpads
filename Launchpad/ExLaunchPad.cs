@@ -621,7 +621,7 @@ public class ExLaunchPad : PartModule
         // If Solid Fuel is used, convert to RocketParts
         if (resources.ContainsKey("SolidFuel"))
         {
-            resources["RocketParts"] += resources["SolidFuel"];
+            resources["RocketParts"] += resources["SolidFuel"]*0.0075f;
             resources.Remove("SolidFuel");
         }
 

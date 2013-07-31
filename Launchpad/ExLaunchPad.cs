@@ -37,6 +37,9 @@ public class ExLaunchPad : PartModule
         public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
     }
 
+	[KSPField(isPersistant = false)]
+	public float SpawnHeightOffset;	// amount of pad between origin and open space
+
     private UIStatus uis = new UIStatus();
 
     //private List<Vessel> bases;
@@ -276,7 +279,9 @@ public class ExLaunchPad : PartModule
 
                     // build craft
                     ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-                    ShipConstruction.PutShipToGround(nship, this.part.transform);
+					Transform t = this.part.transform;
+					t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
+                    ShipConstruction.PutShipToGround(nship, t);
                     // is this line causing bug #11 ?
                     ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, HighLogic.CurrentGame, null);
                     Staging.beginFlight();

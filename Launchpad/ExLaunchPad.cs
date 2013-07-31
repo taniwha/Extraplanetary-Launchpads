@@ -13,6 +13,11 @@ using KSP.IO;
 /// </summary>
 public class ExLaunchPad : PartModule
 {
+	
+	[KSPField]
+	public bool debug = false;
+    
+	
     public enum crafttype { SPH, VAB };
 
     public class UIStatus
@@ -147,7 +152,7 @@ public class ExLaunchPad : PartModule
             // Cycle through required resources
             foreach (KeyValuePair<string, float> pair in uis.requiredresources)
             {
-                string resname = pair.Key;  // Holds REAL resource name. May neet to translate from "JetFuel" back to "LiquidFuel"
+                string resname = pair.Key;  // Holds REAL resource name. May need to translate from "JetFuel" back to "LiquidFuel"
                 string reslabel = resname;   // Resource name for DISPLAY purposes only. Internally the app uses pair.Key
                 if (reslabel == "JetFuel")
                 {
@@ -248,7 +253,7 @@ public class ExLaunchPad : PartModule
                 if (tot < pair.Value * uis.resourcesliders[pair.Key])
                 {
                     avail = redSty;
-                    uis.canbuildcraft = false; // prevent building
+                    uis.canbuildcraft = (false || debug); // prevent building unless debug mode is on
                 }
                 else
                 {
@@ -325,7 +330,7 @@ public class ExLaunchPad : PartModule
                     }
 
                     //Remove the kerbals who get spawned with the ship
-                    foreach (Part p in nship.parts)
+                    /*foreach (Part p in nship.parts)
                     {
                         if (p.CrewCapacity > 0)
                         {
@@ -338,7 +343,7 @@ public class ExLaunchPad : PartModule
                                 m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
                             }
                         }
-                    }
+                    }*/
 
                     // Reset the UI
                     uis.craftselected = false;
@@ -664,10 +669,7 @@ public class ExLaunchPad : PartModule
         nship.parts[0].localRoot.explode();
     }
 
-    /*
-	[KSPField]
-	public bool debug = false;
-    */
+    
 
 }
 
@@ -693,3 +695,41 @@ public class Recycler : PartModule
 		}
 	}
 }
+/*
+ * //TODO : make this work
+[KSPAddon(KSPAddon.Startup.EditorAny, false)]
+public class LaunchSiteSelector : MonoBehaviour
+{
+    void Start()
+    {
+        // Generate a list of your currently deployed vessels with the launchpad and name them for a dictionary. E.g. "LaunchPad_LpID", "LaunchPad 01 : Mun [Lat/Long]"
+    }
+
+    void OnGUI()
+    {
+        // Make pretty GUI with a button that does the following: 
+        //EditorLogic.fetch.launchSiteName = SelectedLaunchSiteGameObjectName
+        EditorLogic.fetch.launchSiteName = "Dubig";
+    }
+}
+
+[KSPAddon(KSPAddon.Startup.Flight, false)]
+public class LaunchSite : MonoBehaviour
+{
+	void Awake()
+	{
+		//GameObject gm = new GameObject(LaunchSiteID + "_spawn");
+		GameObject gm = new GameObject("Dubig" + "_spawn");
+		//gm.transform.position = vesselWorldTransformSpawningPoint.position;
+		//gm.transform.rotation= vesselWorldTransformSpawningPoint.rotation;
+		
+		foreach (Vessel v in FlightGlobals.Vessels)
+        {
+            if (v.name == "Dubig") {
+				gm.transform.position = v.GetTransform().position;
+				gm.transform.rotation = v.GetTransform().rotation;
+			}
+        }
+		gm.SetActive(true);
+	}
+}*/

@@ -356,7 +356,7 @@ public class ExLaunchPad : PartModule
                     uis.resourcesliders = null;
 
                     // Close the UI
-                    DisableBuildMenu();
+                    HideBuildMenu();
                 }
             }
             else
@@ -374,7 +374,7 @@ public class ExLaunchPad : PartModule
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("Close"))
         {
-            DisableBuildMenu();
+            HideBuildMenu();
         }
 
         uis.showbuilduionload = GUILayout.Toggle(uis.showbuilduionload, "Show on StartUp");
@@ -429,7 +429,7 @@ public class ExLaunchPad : PartModule
         // If "Show GUI on StartUp" ticked, show the GUI
         if (uis.showbuilduionload)
         {
-            EnableBuildMenu();
+            ShowBuildMenu();
         }
     }
 
@@ -479,7 +479,7 @@ public class ExLaunchPad : PartModule
         }
         else
         {
-            //HideBuildMenu();
+            HideBuildMenu();
         }
     }
     */
@@ -542,7 +542,7 @@ public class ExLaunchPad : PartModule
     // Flight UI and Action Group Hooks
 
     [KSPEvent(guiActive = true, guiName = "Show Build Menu", active = true)]
-    public void EnableBuildMenu()
+    public void ShowBuildMenu()
     {
         // Only allow enabling the menu if we are in a suitable place
         if (((this.vessel.situation == Vessel.Situations.LANDED) ||
@@ -555,7 +555,7 @@ public class ExLaunchPad : PartModule
     }
 
     [KSPEvent(guiActive = true, guiName = "Hide Build Menu", active = false)]
-    public void DisableBuildMenu()
+    public void HideBuildMenu()
     {
         RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //stop the GUI
         uis.builduiactive = false;
@@ -564,13 +564,13 @@ public class ExLaunchPad : PartModule
     [KSPAction("Show Build Menu")]
     public void EnableBuildMenuAction(KSPActionParam param)
     {
-        EnableBuildMenu();
+        ShowBuildMenu();
     }
 
     [KSPAction("Hide Build Menu")]
     public void DisableBuildMenuAction(KSPActionParam param)
     {
-        DisableBuildMenu();
+        HideBuildMenu();
     }
 
     [KSPAction("Toggle Build Menu")]
@@ -578,11 +578,11 @@ public class ExLaunchPad : PartModule
     {
         if (uis.builduiactive)
         {
-            DisableBuildMenu();
+            HideBuildMenu();
         }
         else
         {
-            EnableBuildMenu();
+            ShowBuildMenu();
         }
     }
 

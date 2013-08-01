@@ -5,3 +5,7 @@
 *.userprefs
 *.suo
 *.zip
+*.sln
+*.swp
+build
+obj

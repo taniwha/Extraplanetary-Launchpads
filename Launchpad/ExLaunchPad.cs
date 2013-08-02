@@ -71,33 +71,35 @@ public class ExLaunchPad : PartModule
 
         EditorLogic editor = EditorLogic.fetch;
         if (editor) return;
-
+		
+		if (!uis.builduiactive) return;
+		
         GUIStyle mySty = new GUIStyle(GUI.skin.button);
         mySty.normal.textColor = mySty.focused.textColor = Color.white;
         mySty.hover.textColor = mySty.active.textColor = Color.yellow;
         mySty.onNormal.textColor = mySty.onFocused.textColor = mySty.onHover.textColor = mySty.onActive.textColor = Color.green;
         mySty.padding = new RectOffset(8, 8, 8, 8);
-
+		
         GUIStyle redSty = new GUIStyle(GUI.skin.box);
         redSty.padding = new RectOffset(8, 8, 8, 8);
         redSty.normal.textColor = redSty.focused.textColor = Color.red;
-
+		
         GUIStyle yelSty = new GUIStyle(GUI.skin.box);
         yelSty.padding = new RectOffset(8, 8, 8, 8);
         yelSty.normal.textColor = yelSty.focused.textColor = Color.yellow;
-
+		
         GUIStyle grnSty = new GUIStyle(GUI.skin.box);
         grnSty.padding = new RectOffset(8, 8, 8, 8);
         grnSty.normal.textColor = grnSty.focused.textColor = Color.green;
-
+		
         GUIStyle whiSty = new GUIStyle(GUI.skin.box);
         whiSty.padding = new RectOffset(8, 8, 8, 8);
         whiSty.normal.textColor = whiSty.focused.textColor = Color.white;
-
+		
         GUIStyle labSty = new GUIStyle(GUI.skin.label);
         labSty.normal.textColor = labSty.focused.textColor = Color.white;
         labSty.alignment = TextAnchor.MiddleCenter;
-
+		
         GUILayout.BeginVertical();
 
         GUILayout.BeginHorizontal("box");
@@ -125,7 +127,7 @@ public class ExLaunchPad : PartModule
             uis.craftlist = new CraftBrowser(new Rect(Screen.width / 2, 100, 350, 500), uis.ct.ToString(), strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
             uis.showcraftbrowser = true;
         }
-
+		
         if (uis.craftselected)
         {
             GUILayout.Box("Selected Craft:  " + uis.craftnode.GetValue("ship"), whiSty);
@@ -181,10 +183,9 @@ public class ExLaunchPad : PartModule
                 }
 
                 GUILayout.BeginHorizontal();
-
+				
                 // Resource name
                 GUILayout.Box(reslabel, whiSty, GUILayout.Width(120), GUILayout.Height(40));
-
                 // Add resource to Dictionary if it does not exist
                 if (!uis.resourcesliders.ContainsKey(pair.Key))
                 {
@@ -194,10 +195,8 @@ public class ExLaunchPad : PartModule
                 GUIStyle tmpSty = new GUIStyle(GUI.skin.label);
                 tmpSty.alignment = TextAnchor.MiddleCenter;
                 tmpSty.margin = new RectOffset(0, 0, 0, 0);
-
                 GUIStyle sliSty = new GUIStyle(GUI.skin.horizontalSlider);
                 sliSty.margin = new RectOffset(0, 0, 0, 0);
-
                 // Fill amount
                 GUILayout.BeginVertical();
                 {
@@ -278,7 +277,7 @@ public class ExLaunchPad : PartModule
 
             // Build button
             if (uis.canbuildcraft)
-            {
+			{ 
                 if (GUILayout.Button("Build", mySty, GUILayout.ExpandWidth(true)))
                 {
                     // build craft
@@ -353,7 +352,7 @@ public class ExLaunchPad : PartModule
                     // Reset the UI
                     uis.craftselected = false;
                     uis.requiredresources = null;
-                    uis.resourcesliders = null;
+                    uis.resourcesliders = new Dictionary<string, float>();;
 
                     // Close the UI
                     HideBuildMenu();

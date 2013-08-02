@@ -281,14 +281,14 @@ public class ExLaunchPad : PartModule
             {
                 if (GUILayout.Button("Build", mySty, GUILayout.ExpandWidth(true)))
                 {
-
                     // build craft
                     ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
 					Transform t = this.part.transform;
 					t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
                     ShipConstruction.PutShipToGround(nship, t);
                     // is this line causing bug #11 ?
-                    ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, HighLogic.CurrentGame, null);
+                    //ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, HighLogic.CurrentGame, null);
+					ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, HighLogic.CurrentGame, new VesselCrewManifest());
                     Staging.beginFlight();
                     nship.parts[0].vessel.ResumeStaging();
                     Staging.GenerateStagingSequence(nship.parts[0].localRoot);
@@ -303,7 +303,8 @@ public class ExLaunchPad : PartModule
                         {
                             res = "LiquidFuel";
                         }
-
+						
+						
                         // Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
                         double tot = pair.Value * uis.resourcesliders[pair.Key];
                         // Remove the resource from the vessel doing the building
@@ -349,7 +350,6 @@ public class ExLaunchPad : PartModule
                             }
                         }
                     }*/
-
                     // Reset the UI
                     uis.craftselected = false;
                     uis.requiredresources = null;

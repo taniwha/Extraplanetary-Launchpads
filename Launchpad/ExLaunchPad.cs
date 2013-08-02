@@ -43,7 +43,7 @@ public class ExLaunchPad : PartModule
     }
 
 	[KSPField(isPersistant = false)]
-	public float SpawnHeightOffset;	// amount of pad between origin and open space
+	public float SpawnHeightOffset = 1.0f;	// amount of pad between origin and open space
 
     private UIStatus uis = new UIStatus();
 
@@ -282,16 +282,16 @@ public class ExLaunchPad : PartModule
                 {
                     // build craft
                     ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-					Transform t = this.part.transform;
-					t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
+                    Transform t = this.part.transform;
+                    t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
+                    Vessel ov = FlightGlobals.ActiveVessel;
+                    ShipConstruction.CreateBackup(nship);
                     ShipConstruction.PutShipToGround(nship, t);
-                    // is this line causing bug #11 ?
-                    //ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, HighLogic.CurrentGame, null);
-					ShipConstruction.AssembleForLaunch(nship, "External Launchpad", HighLogic.CurrentGame.flagURL, HighLogic.CurrentGame, new VesselCrewManifest());
+                    Transform nt = t;
+                    ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
+                    nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
+                    FlightGlobals.ActiveVessel.transform.position = nt.position;
                     Staging.beginFlight();
-                    nship.parts[0].vessel.ResumeStaging();
-                    Staging.GenerateStagingSequence(nship.parts[0].localRoot);
-                    Staging.RecalculateVesselStaging(nship.parts[0].vessel);
 
                     // use resources
                     foreach (KeyValuePair<string, float> pair in uis.requiredresources)

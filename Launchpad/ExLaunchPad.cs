@@ -282,12 +282,8 @@ public class ExLaunchPad : PartModule
                 {
                     // build craft
                     ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-<<<<<<< HEAD
 					
 					Transform t = this.part.transform;
-=======
-                    Transform t = this.part.transform;
->>>>>>> 7b1419caa61cf5c455c43964aee58c255ae81d5b
                     t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
                     Vessel ov = FlightGlobals.ActiveVessel;
                     ShipConstruction.CreateBackup(nship);
@@ -296,10 +292,7 @@ public class ExLaunchPad : PartModule
                     ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
                     nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
                     FlightGlobals.ActiveVessel.transform.position = nt.position;
-<<<<<<< HEAD
                     
-=======
->>>>>>> 7b1419caa61cf5c455c43964aee58c255ae81d5b
                     Staging.beginFlight();
 
                     // use resources

@@ -627,7 +627,9 @@ public class ExLaunchPad : PartModule
                 }
             }
         }
-        resources.Add("RocketParts", mass);
+		PartResourceDefinition rpdef;
+		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+        resources.Add("RocketParts", mass / rpdef.density);
 
         // If Solid Fuel is used, convert to RocketParts
         if (resources.ContainsKey("SolidFuel"))

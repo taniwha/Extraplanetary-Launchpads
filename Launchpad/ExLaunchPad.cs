@@ -100,6 +100,7 @@ public class ExLaunchPad : PartModule
 	{
 		// build craft
 		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
+		UseResources(nship);
 
 		Transform t = this.part.transform;
 		t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
@@ -112,8 +113,6 @@ public class ExLaunchPad : PartModule
 		FlightGlobals.ActiveVessel.transform.position = nt.position;
 
 		Staging.beginFlight();
-
-		UseResources(nship);
 	}
 
     private void WindowGUI(int windowID)

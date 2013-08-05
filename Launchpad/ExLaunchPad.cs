@@ -52,23 +52,8 @@ public class ExLaunchPad : PartModule
     // =====================================================================================================================================================
     // UI Functions
 
-	private void BuildAndLaunchCraft()
+	private void UseResources(ShipConstruct nship)
 	{
-		// build craft
-		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-
-		Transform t = this.part.transform;
-		t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
-		Vessel ov = FlightGlobals.ActiveVessel;
-		ShipConstruction.CreateBackup(nship);
-		ShipConstruction.PutShipToGround(nship, t);
-		Transform nt = t;
-		ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
-		nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
-		FlightGlobals.ActiveVessel.transform.position = nt.position;
-
-		Staging.beginFlight();
-
 		// use resources
 		foreach (KeyValuePair<string, float> pair in uis.requiredresources)
 		{
@@ -109,6 +94,26 @@ public class ExLaunchPad : PartModule
 			}
 			*/
 		}
+	}
+
+	private void BuildAndLaunchCraft()
+	{
+		// build craft
+		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
+
+		Transform t = this.part.transform;
+		t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
+		Vessel ov = FlightGlobals.ActiveVessel;
+		ShipConstruction.CreateBackup(nship);
+		ShipConstruction.PutShipToGround(nship, t);
+		Transform nt = t;
+		ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
+		nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
+		FlightGlobals.ActiveVessel.transform.position = nt.position;
+
+		Staging.beginFlight();
+
+		UseResources(nship);
 
 		//Remove the kerbals who get spawned with the ship
 		/*foreach (Part p in nship.parts)

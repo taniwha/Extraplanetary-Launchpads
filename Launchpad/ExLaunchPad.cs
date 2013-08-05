@@ -105,10 +105,16 @@ public class ExLaunchPad : PartModule
 		Transform t = this.part.transform;
 		t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
 		Vessel ov = FlightGlobals.ActiveVessel;
+		string landedAt = "External Launchpad";
+		string flag = FlightDriver.newShipFlagURL;
+		Game state = FlightDriver.FlightStateCache;
+		VesselCrewManifest crew = new VesselCrewManifest ();
+
 		ShipConstruction.CreateBackup(nship);
 		ShipConstruction.PutShipToGround(nship, t);
+		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
+
 		Transform nt = t;
-		ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
 		nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
 		FlightGlobals.ActiveVessel.transform.position = nt.position;
 

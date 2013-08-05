@@ -52,6 +52,81 @@ public class ExLaunchPad : PartModule
     // =====================================================================================================================================================
     // UI Functions
 
+	private void BuildAndLaunchCraft()
+	{
+		// build craft
+		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
+
+		Transform t = this.part.transform;
+		t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
+		Vessel ov = FlightGlobals.ActiveVessel;
+		ShipConstruction.CreateBackup(nship);
+		ShipConstruction.PutShipToGround(nship, t);
+		Transform nt = t;
+		ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
+		nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
+		FlightGlobals.ActiveVessel.transform.position = nt.position;
+
+		Staging.beginFlight();
+
+		// use resources
+		foreach (KeyValuePair<string, float> pair in uis.requiredresources)
+		{
+			// If resource is "JetFuel", rename to "LiquidFuel"
+			string res = pair.Key;
+			if (pair.Key == "JetFuel")
+			{
+				res = "LiquidFuel";
+			}
+
+
+			// Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
+			double tot = pair.Value * uis.resourcesliders[pair.Key];
+			// Remove the resource from the vessel doing the building
+			this.part.RequestResource(res, tot);
+
+			// If doing a partial fill, remove unfilled amount from the spawned ship
+			// ToDo: Only subtract LiquidFuel from a part when it does not also have Oxidizer in it - try to leave fuel tanks in a sane state!
+			double ptot = pair.Value - tot;
+			foreach (Part p in nship.parts)
+			{
+				if (ptot > 0)
+				{
+					ptot -= p.RequestResource(res, ptot);
+				}
+				else
+				{
+					break;
+				}
+			}
+			/*
+			foreach (Part p in nship.parts) {
+				if (tot>pair.Value*uis.resourcesliders[res]) {
+					tot -= p.RequestResource(res, tot-pair.Value);
+				} else {
+					break;
+				}
+			}
+			*/
+		}
+
+		//Remove the kerbals who get spawned with the ship
+		/*foreach (Part p in nship.parts)
+		{
+			if (p.CrewCapacity > 0)
+			{
+				print("Part has crew");
+				foreach (ProtoCrewMember m in p.protoModuleCrew)
+				{
+					print("Removing crewmember:");
+					print(m.name);
+					p.RemoveCrewmember(m);
+					m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
+				}
+			}
+		}*/
+	}
+
     private void WindowGUI(int windowID)
     {
         /*
@@ -280,77 +355,7 @@ public class ExLaunchPad : PartModule
 			{ 
                 if (GUILayout.Button("Build", mySty, GUILayout.ExpandWidth(true)))
                 {
-                    // build craft
-                    ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-					
-					Transform t = this.part.transform;
-                    t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
-                    Vessel ov = FlightGlobals.ActiveVessel;
-                    ShipConstruction.CreateBackup(nship);
-                    ShipConstruction.PutShipToGround(nship, t);
-                    Transform nt = t;
-                    ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
-                    nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
-                    FlightGlobals.ActiveVessel.transform.position = nt.position;
-                    
-                    Staging.beginFlight();
-
-                    // use resources
-                    foreach (KeyValuePair<string, float> pair in uis.requiredresources)
-                    {
-                        // If resource is "JetFuel", rename to "LiquidFuel"
-                        string res = pair.Key;
-                        if (pair.Key == "JetFuel")
-                        {
-                            res = "LiquidFuel";
-                        }
-						
-						
-                        // Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
-                        double tot = pair.Value * uis.resourcesliders[pair.Key];
-                        // Remove the resource from the vessel doing the building
-                        this.part.RequestResource(res, tot);
-
-                        // If doing a partial fill, remove unfilled amount from the spawned ship
-                        // ToDo: Only subtract LiquidFuel from a part when it does not also have Oxidizer in it - try to leave fuel tanks in a sane state!
-                        double ptot = pair.Value - tot;
-                        foreach (Part p in nship.parts)
-                        {
-                            if (ptot > 0)
-                            {
-                                ptot -= p.RequestResource(res, ptot);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        /*
-						foreach (Part p in nship.parts) {
-							if (tot>pair.Value*uis.resourcesliders[res]) {
-								tot -= p.RequestResource(res, tot-pair.Value);
-							} else {
-								break;
-							}
-						}
-                        */
-                    }
-
-                    //Remove the kerbals who get spawned with the ship
-                    /*foreach (Part p in nship.parts)
-                    {
-                        if (p.CrewCapacity > 0)
-                        {
-                            print("Part has crew");
-                            foreach (ProtoCrewMember m in p.protoModuleCrew)
-                            {
-                                print("Removing crewmember:");
-                                print(m.name);
-                                p.RemoveCrewmember(m);
-                                m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
-                            }
-                        }
-                    }*/
+					BuildAndLaunchCraft();
                     // Reset the UI
                     uis.craftselected = false;
                     uis.requiredresources = null;

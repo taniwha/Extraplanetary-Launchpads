@@ -114,22 +114,6 @@ public class ExLaunchPad : PartModule
 		Staging.beginFlight();
 
 		UseResources(nship);
-
-		//Remove the kerbals who get spawned with the ship
-		/*foreach (Part p in nship.parts)
-		{
-			if (p.CrewCapacity > 0)
-			{
-				print("Part has crew");
-				foreach (ProtoCrewMember m in p.protoModuleCrew)
-				{
-					print("Removing crewmember:");
-					print(m.name);
-					p.RemoveCrewmember(m);
-					m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
-				}
-			}
-		}*/
 	}
 
     private void WindowGUI(int windowID)

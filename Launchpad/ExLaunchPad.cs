@@ -102,20 +102,23 @@ public class ExLaunchPad : PartModule
 		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
 		UseResources(nship);
 
+		Vector3 offset = Vector3.up * SpawnHeightOffset;
 		Transform t = this.part.transform;
-		t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
+
 		string landedAt = "External Launchpad";
 		string flag = FlightDriver.newShipFlagURL;
 		Game state = FlightDriver.FlightStateCache;
 		VesselCrewManifest crew = new VesselCrewManifest ();
 
-		ShipConstruction.CreateBackup(nship);
-		ShipConstruction.PutShipToGround(nship, t);
+		GameObject launchPos = new GameObject ();
+		launchPos.transform.position = t.position;
+		launchPos.transform.position += t.TransformDirection(offset);
+		launchPos.transform.rotation = t.rotation;
+		ShipConstruction.PutShipToGround(nship, launchPos.transform);
+		Destroy(launchPos);
+
 		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
 
-		Transform nt = t;
-		nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
-		FlightGlobals.ActiveVessel.transform.position = nt.position;
 
 		Staging.beginFlight();
 	}

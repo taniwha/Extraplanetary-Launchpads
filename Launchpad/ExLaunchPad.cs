@@ -119,6 +119,8 @@ public class ExLaunchPad : PartModule
 
 		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
 
+		Vessel vessel = FlightGlobals.ActiveVessel;
+		vessel.Landed = false;
 
 		Staging.beginFlight();
 	}

@@ -104,7 +104,6 @@ public class ExLaunchPad : PartModule
 
 		Transform t = this.part.transform;
 		t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
-		Vessel ov = FlightGlobals.ActiveVessel;
 		string landedAt = "External Launchpad";
 		string flag = FlightDriver.newShipFlagURL;
 		Game state = FlightDriver.FlightStateCache;

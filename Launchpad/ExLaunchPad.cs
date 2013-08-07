@@ -33,6 +33,7 @@ public class ExLaunchPad : PartModule
         public bool canbuildcraft = false;
         public crafttype ct = crafttype.VAB;
         public string craftfile = null;
+        public string flagname = null;
         public CraftBrowser craftlist = null;
         public bool showcraftbrowser = false;
         public ConfigNode craftnode = null;
@@ -106,7 +107,7 @@ public class ExLaunchPad : PartModule
 		Transform t = this.part.transform;
 
 		string landedAt = "External Launchpad";
-		string flag = FlightDriver.newShipFlagURL;
+		string flag = uis.flagname;
 		Game state = FlightDriver.FlightStateCache;
 		VesselCrewManifest crew = new VesselCrewManifest ();
 
@@ -399,6 +400,7 @@ public class ExLaunchPad : PartModule
     {
         uis.showcraftbrowser = false;
         uis.craftfile = filename;
+        uis.flagname = flagname;
         uis.craftnode = ConfigNode.Load(filename);
         ConfigNode[] nodes = uis.craftnode.GetNodes("PART");
 

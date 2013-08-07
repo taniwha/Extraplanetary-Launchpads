@@ -41,6 +41,9 @@ public class ExLaunchPad : PartModule
         public Vector2 resscroll;
         public Dictionary<string, float> requiredresources = null;
         public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
+
+		public float timer;
+		public Vessel vessel;
     }
 
 	[KSPField(isPersistant = false)]
@@ -97,6 +100,20 @@ public class ExLaunchPad : PartModule
 		}
 	}
 
+	private void FixCraftLock()
+	{
+		// Many thanks to Snjo (firespitter)
+		uis.vessel.situation = Vessel.Situations.PRELAUNCH;
+		uis.vessel.state = Vessel.State.ACTIVE;
+		uis.vessel.Landed = true;
+		uis.vessel.Splashed = false;
+		uis.vessel.GoOnRails();
+		uis.vessel.rigidbody.WakeUp();
+		uis.vessel.ResumeStaging();
+		uis.vessel.landedAt = "External Launchpad";
+		InputLockManager.ClearControlLocks();
+	}
+
 	private void BuildAndLaunchCraft()
 	{
 		// build craft
@@ -124,6 +141,9 @@ public class ExLaunchPad : PartModule
 		vessel.Landed = false;
 
 		Staging.beginFlight();
+
+		uis.timer = 3.0f;
+		uis.vessel = vessel;
 	}
 
     private void WindowGUI(int windowID)
@@ -489,6 +509,19 @@ public class ExLaunchPad : PartModule
         }
     }
     */
+
+	public void Update()
+	{
+		if (uis.vessel && uis.timer >= 0)
+		{
+			uis.timer -= Time.deltaTime;
+			if (uis.timer <= 0)
+			{
+				FixCraftLock();
+				uis.vessel = null;
+			}
+		}
+	}
 
     // Fired ONCE per frame
     public override void OnUpdate()

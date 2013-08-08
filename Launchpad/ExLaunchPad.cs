@@ -66,9 +66,15 @@ public class ExLaunchPad : PartModule
 			if (pair.Key == "JetFuel")
 			{
 				res = "LiquidFuel";
+				if (pair.Value == 0)
+					continue;
 			}
 
-
+			if (!uis.resourcesliders.ContainsKey(pair.Key))
+			{
+				Debug.Log(String.Format("[EL] missing slider {0}", pair.Key));
+				continue;
+			}
 			// Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
 			double tot = pair.Value * uis.resourcesliders[pair.Key];
 			// Remove the resource from the vessel doing the building
@@ -88,15 +94,6 @@ public class ExLaunchPad : PartModule
 					break;
 				}
 			}
-			/*
-			foreach (Part p in nship.parts) {
-				if (tot>pair.Value*uis.resourcesliders[res]) {
-					tot -= p.RequestResource(res, tot-pair.Value);
-				} else {
-					break;
-				}
-			}
-			*/
 		}
 	}
 
@@ -132,6 +129,7 @@ public class ExLaunchPad : PartModule
 		launchPos.transform.position = t.position;
 		launchPos.transform.position += t.TransformDirection(offset);
 		launchPos.transform.rotation = t.rotation;
+		ShipConstruction.CreateBackup(nship);
 		ShipConstruction.PutShipToGround(nship, launchPos.transform);
 		Destroy(launchPos);
 
@@ -425,8 +423,8 @@ public class ExLaunchPad : PartModule
         ConfigNode[] nodes = uis.craftnode.GetNodes("PART");
 
         // Get list of resources required to build vessel
-        uis.requiredresources = getBuildCost(nodes);
-        uis.craftselected = true;
+        if ((uis.requiredresources = getBuildCost(nodes)) != null)
+			uis.craftselected = true;
     }
 
     // called when the user clicks cancel in the craft browser
@@ -641,11 +639,19 @@ public class ExLaunchPad : PartModule
         Part p;
         float mass = 0;
         Dictionary<string, float> resources = new Dictionary<string, float>();
+        List<string> missing_parts = new List<string>();
 
         foreach (ConfigNode node in nodes)
         {
-            print(node.name);
-            p = PartLoader.getPartInfoByName(node.GetValue("part").Remove(node.GetValue("part").LastIndexOf("_"))).partPrefab;
+            string part_name = node.GetValue("part");
+            part_name = part_name.Remove(part_name.LastIndexOf("_"));
+            AvailablePart ap = PartLoader.getPartInfoByName(part_name);
+            if (ap == null) {
+                if (!missing_parts.Contains(part_name))
+                    missing_parts.Add(part_name);
+                continue;
+            }
+            p = ap.partPrefab;
             mass = mass + p.mass;
             foreach (PartResource r in p.Resources)
             {
@@ -665,6 +671,17 @@ public class ExLaunchPad : PartModule
                 }
             }
         }
+		if (missing_parts.Count > 0) {
+			string text = "";
+			List<string>.Enumerator mp = missing_parts.GetEnumerator();
+			while (mp.MoveNext())
+				text += mp.Current + "\n";
+			int ind = uis.craftfile.LastIndexOf("/") + 1;
+			string craft = uis.craftfile.Substring (ind);
+			craft = craft.Remove (craft.LastIndexOf("."));
+			PopupDialog.SpawnPopupDialog("Sorry", "Can't build " + craft + " due to the following missing parts\n\n" + text, "OK", false, HighLogic.Skin);
+			return null;
+		}
 		PartResourceDefinition rpdef;
 		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
         resources.Add("RocketParts", mass / rpdef.density);

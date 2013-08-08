@@ -94,15 +94,6 @@ public class ExLaunchPad : PartModule
 					break;
 				}
 			}
-			/*
-			foreach (Part p in nship.parts) {
-				if (tot>pair.Value*uis.resourcesliders[res]) {
-					tot -= p.RequestResource(res, tot-pair.Value);
-				} else {
-					break;
-				}
-			}
-			*/
 		}
 	}
 

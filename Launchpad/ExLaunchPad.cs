@@ -103,7 +103,7 @@ public class ExLaunchPad : PartModule
 	private void FixCraftLock()
 	{
 		// Many thanks to Snjo (firespitter)
-		uis.vessel.situation = Vessel.Situations.PRELAUNCH;
+		uis.vessel.situation = Vessel.Situations.LANDED;
 		uis.vessel.state = Vessel.State.ACTIVE;
 		uis.vessel.Landed = true;
 		uis.vessel.Splashed = false;

@@ -129,6 +129,7 @@ public class ExLaunchPad : PartModule
 		launchPos.transform.position = t.position;
 		launchPos.transform.position += t.TransformDirection(offset);
 		launchPos.transform.rotation = t.rotation;
+		ShipConstruction.CreateBackup(nship);
 		ShipConstruction.PutShipToGround(nship, launchPos.transform);
 		Destroy(launchPos);
 

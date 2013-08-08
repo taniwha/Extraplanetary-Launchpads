@@ -33,6 +33,7 @@ public class ExLaunchPad : PartModule
         public bool canbuildcraft = false;
         public crafttype ct = crafttype.VAB;
         public string craftfile = null;
+        public string flagname = null;
         public CraftBrowser craftlist = null;
         public bool showcraftbrowser = false;
         public ConfigNode craftnode = null;
@@ -40,6 +41,9 @@ public class ExLaunchPad : PartModule
         public Vector2 resscroll;
         public Dictionary<string, float> requiredresources = null;
         public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
+
+		public float timer;
+		public Vessel vessel;
     }
 
 	[KSPField(isPersistant = false)]
@@ -51,6 +55,96 @@ public class ExLaunchPad : PartModule
 
     // =====================================================================================================================================================
     // UI Functions
+
+	private void UseResources(ShipConstruct nship)
+	{
+		// use resources
+		foreach (KeyValuePair<string, float> pair in uis.requiredresources)
+		{
+			// If resource is "JetFuel", rename to "LiquidFuel"
+			string res = pair.Key;
+			if (pair.Key == "JetFuel")
+			{
+				res = "LiquidFuel";
+			}
+
+
+			// Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
+			double tot = pair.Value * uis.resourcesliders[pair.Key];
+			// Remove the resource from the vessel doing the building
+			this.part.RequestResource(res, tot);
+
+			// If doing a partial fill, remove unfilled amount from the spawned ship
+			// ToDo: Only subtract LiquidFuel from a part when it does not also have Oxidizer in it - try to leave fuel tanks in a sane state!
+			double ptot = pair.Value - tot;
+			foreach (Part p in nship.parts)
+			{
+				if (ptot > 0)
+				{
+					ptot -= p.RequestResource(res, ptot);
+				}
+				else
+				{
+					break;
+				}
+			}
+			/*
+			foreach (Part p in nship.parts) {
+				if (tot>pair.Value*uis.resourcesliders[res]) {
+					tot -= p.RequestResource(res, tot-pair.Value);
+				} else {
+					break;
+				}
+			}
+			*/
+		}
+	}
+
+	private void FixCraftLock()
+	{
+		// Many thanks to Snjo (firespitter)
+		uis.vessel.situation = Vessel.Situations.LANDED;
+		uis.vessel.state = Vessel.State.ACTIVE;
+		uis.vessel.Landed = true;
+		uis.vessel.Splashed = false;
+		uis.vessel.GoOnRails();
+		uis.vessel.rigidbody.WakeUp();
+		uis.vessel.ResumeStaging();
+		uis.vessel.landedAt = "External Launchpad";
+		InputLockManager.ClearControlLocks();
+	}
+
+	private void BuildAndLaunchCraft()
+	{
+		// build craft
+		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
+		UseResources(nship);
+
+		Vector3 offset = Vector3.up * SpawnHeightOffset;
+		Transform t = this.part.transform;
+
+		string landedAt = "External Launchpad";
+		string flag = uis.flagname;
+		Game state = FlightDriver.FlightStateCache;
+		VesselCrewManifest crew = new VesselCrewManifest ();
+
+		GameObject launchPos = new GameObject ();
+		launchPos.transform.position = t.position;
+		launchPos.transform.position += t.TransformDirection(offset);
+		launchPos.transform.rotation = t.rotation;
+		ShipConstruction.PutShipToGround(nship, launchPos.transform);
+		Destroy(launchPos);
+
+		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
+
+		Vessel vessel = FlightGlobals.ActiveVessel;
+		vessel.Landed = false;
+
+		Staging.beginFlight();
+
+		uis.timer = 3.0f;
+		uis.vessel = vessel;
+	}
 
     private void WindowGUI(int windowID)
     {
@@ -280,77 +374,7 @@ public class ExLaunchPad : PartModule
 			{ 
                 if (GUILayout.Button("Build", mySty, GUILayout.ExpandWidth(true)))
                 {
-                    // build craft
-                    ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-					
-					Transform t = this.part.transform;
-                    t.position += t.TransformDirection(Vector3.up) * SpawnHeightOffset;
-                    Vessel ov = FlightGlobals.ActiveVessel;
-                    ShipConstruction.CreateBackup(nship);
-                    ShipConstruction.PutShipToGround(nship, t);
-                    Transform nt = t;
-                    ShipConstruction.AssembleForLaunch(nship, "External Launchpad", FlightDriver.newShipFlagURL, FlightDriver.FlightStateCache, new VesselCrewManifest());
-                    nt.position += nt.TransformDirection(Vector3.up) * SpawnHeightOffset;
-                    FlightGlobals.ActiveVessel.transform.position = nt.position;
-                    
-                    Staging.beginFlight();
-
-                    // use resources
-                    foreach (KeyValuePair<string, float> pair in uis.requiredresources)
-                    {
-                        // If resource is "JetFuel", rename to "LiquidFuel"
-                        string res = pair.Key;
-                        if (pair.Key == "JetFuel")
-                        {
-                            res = "LiquidFuel";
-                        }
-						
-						
-                        // Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
-                        double tot = pair.Value * uis.resourcesliders[pair.Key];
-                        // Remove the resource from the vessel doing the building
-                        this.part.RequestResource(res, tot);
-
-                        // If doing a partial fill, remove unfilled amount from the spawned ship
-                        // ToDo: Only subtract LiquidFuel from a part when it does not also have Oxidizer in it - try to leave fuel tanks in a sane state!
-                        double ptot = pair.Value - tot;
-                        foreach (Part p in nship.parts)
-                        {
-                            if (ptot > 0)
-                            {
-                                ptot -= p.RequestResource(res, ptot);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        /*
-						foreach (Part p in nship.parts) {
-							if (tot>pair.Value*uis.resourcesliders[res]) {
-								tot -= p.RequestResource(res, tot-pair.Value);
-							} else {
-								break;
-							}
-						}
-                        */
-                    }
-
-                    //Remove the kerbals who get spawned with the ship
-                    /*foreach (Part p in nship.parts)
-                    {
-                        if (p.CrewCapacity > 0)
-                        {
-                            print("Part has crew");
-                            foreach (ProtoCrewMember m in p.protoModuleCrew)
-                            {
-                                print("Removing crewmember:");
-                                print(m.name);
-                                p.RemoveCrewmember(m);
-                                m.rosterStatus = ProtoCrewMember.RosterStatus.AVAILABLE;
-                            }
-                        }
-                    }*/
+					BuildAndLaunchCraft();
                     // Reset the UI
                     uis.craftselected = false;
                     uis.requiredresources = null;
@@ -396,6 +420,7 @@ public class ExLaunchPad : PartModule
     {
         uis.showcraftbrowser = false;
         uis.craftfile = filename;
+        uis.flagname = flagname;
         uis.craftnode = ConfigNode.Load(filename);
         ConfigNode[] nodes = uis.craftnode.GetNodes("PART");
 
@@ -484,6 +509,19 @@ public class ExLaunchPad : PartModule
         }
     }
     */
+
+	public void Update()
+	{
+		if (uis.vessel && uis.timer >= 0)
+		{
+			uis.timer -= Time.deltaTime;
+			if (uis.timer <= 0)
+			{
+				FixCraftLock();
+				uis.vessel = null;
+			}
+		}
+	}
 
     // Fired ONCE per frame
     public override void OnUpdate()

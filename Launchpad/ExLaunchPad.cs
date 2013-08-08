@@ -66,9 +66,15 @@ public class ExLaunchPad : PartModule
 			if (pair.Key == "JetFuel")
 			{
 				res = "LiquidFuel";
+				if (pair.Value == 0)
+					continue;
 			}
 
-
+			if (!uis.resourcesliders.ContainsKey(pair.Key))
+			{
+				Debug.Log(String.Format("[EL] missing slider {0}", pair.Key));
+				continue;
+			}
 			// Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
 			double tot = pair.Value * uis.resourcesliders[pair.Key];
 			// Remove the resource from the vessel doing the building

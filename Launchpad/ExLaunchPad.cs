@@ -69,6 +69,9 @@ public class ExLaunchPad : PartModule
 		// Solid Fuel is always full capacity, so put it all back
 		craftResources.TransferResource("SolidFuel", craftResources.ResourceCapacity("SolidFuel"));
 
+		// remove rocket parts required for the hull and solid fuel
+		padResources.TransferResource("RocketParts", -uis.minRocketParts);
+
 		// use resources
 		foreach (KeyValuePair<string, double> pair in uis.requiredresources)
 		{
@@ -87,6 +90,12 @@ public class ExLaunchPad : PartModule
 			}
 			// Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
 			double tot = pair.Value * uis.resourcesliders[pair.Key];
+			if (pair.Key == "RocketParts") {
+				// don't transfer rocket parts required for hull and solid fuel.
+				tot -= uis.minRocketParts;
+				if (tot < 0.0)
+					tot = 0.0;
+			}
 			// Transfer the resource from the vessel doing the building to the vessel being built
 			padResources.TransferResource(res, -tot);
 			craftResources.TransferResource(res, tot);

@@ -634,12 +634,23 @@ public class ExLaunchPad : PartModule
 		return resources;
 	}
 
+	private void MissingPopup(Dictionary<string, bool> missing_parts)
+	{
+		string text = "";
+		foreach (string mp in missing_parts.Keys)
+			text += mp + "\n";
+		int ind = uis.craftfile.LastIndexOf("/") + 1;
+		string craft = uis.craftfile.Substring (ind);
+		craft = craft.Remove (craft.LastIndexOf("."));
+		PopupDialog.SpawnPopupDialog("Sorry", "Can't build " + craft + " due to the following missing parts\n\n" + text, "OK", false, HighLogic.Skin);
+	}
+
 	public Dictionary<string, float> getBuildCost(ConfigNode[] nodes)
 	{
 		Part p;
 		float mass = 0;
 		Dictionary<string, float> resources = new Dictionary<string, float>();
-		List<string> missing_parts = new List<string>();
+		Dictionary<string, bool> missing_parts = new Dictionary<string, bool>();
 
 		foreach (ConfigNode node in nodes)
 		{
@@ -647,8 +658,7 @@ public class ExLaunchPad : PartModule
 			part_name = part_name.Remove(part_name.LastIndexOf("_"));
 			AvailablePart ap = PartLoader.getPartInfoByName(part_name);
 			if (ap == null) {
-				if (!missing_parts.Contains(part_name))
-					missing_parts.Add(part_name);
+				missing_parts[part_name] = true;
 				continue;
 			}
 			p = ap.partPrefab;
@@ -672,14 +682,7 @@ public class ExLaunchPad : PartModule
 			}
 		}
 		if (missing_parts.Count > 0) {
-			string text = "";
-			List<string>.Enumerator mp = missing_parts.GetEnumerator();
-			while (mp.MoveNext())
-				text += mp.Current + "\n";
-			int ind = uis.craftfile.LastIndexOf("/") + 1;
-			string craft = uis.craftfile.Substring (ind);
-			craft = craft.Remove (craft.LastIndexOf("."));
-			PopupDialog.SpawnPopupDialog("Sorry", "Can't build " + craft + " due to the following missing parts\n\n" + text, "OK", false, HighLogic.Skin);
+			MissingPopup(missing_parts);
 			return null;
 		}
 		PartResourceDefinition rpdef;

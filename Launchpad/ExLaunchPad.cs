@@ -337,18 +337,14 @@ public class ExLaunchPad : PartModule
 
 				// If LFO LiquidFuel exists and we are on LiquidFuel (Non-LFO), then subtract the amount used by LFO(LiquidFuel) from the available amount
 
-				if (pair.Key == "JetFuel")
-				{
+				if (pair.Key == "JetFuel") {
 					tot -= uis.requiredresources["LiquidFuel"] * uis.resourcesliders["LiquidFuel"];
 				}
 				GUIStyle avail = new GUIStyle();
-				if (tot < pair.Value * uis.resourcesliders[pair.Key])
-				{
+				if (tot < pair.Value * uis.resourcesliders[pair.Key]) {
 					avail = redSty;
 					uis.canbuildcraft = (false || debug); // prevent building unless debug mode is on
-				}
-				else
-				{
+				} else {
 					avail = grnSty;
 				}
 

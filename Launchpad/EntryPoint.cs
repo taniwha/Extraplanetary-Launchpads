@@ -33,11 +33,11 @@ public class RoverCruiseControlAttacher : UnityEngine.MonoBehaviour {
 	public void Update() {
 		/*if (HighLogic.LoadedSceneIsEditor) {
 			print ("Fetching vessel list!!!!!");
-            bases = FlightGlobals.Vessels;
+			bases = FlightGlobals.Vessels;
 			print ("Got here");
-            foreach (Vessel v in bases) {
-                print (v.name);
-            }
+			foreach (Vessel v in bases) {
+				print (v.name);
+			}
 		}*/
 		if (HighLogic.LoadedSceneIsFlight && FlightGlobals.fetch != null)
 		{
@@ -48,11 +48,11 @@ public class RoverCruiseControlAttacher : UnityEngine.MonoBehaviour {
 				
 				print ("Writing");
 				byte[] ListToSave = KSP.IO.IOUtils.SerializeToBinary(list);
-                int HowManyToSave = ListToSave.Length;
-                KSP.IO.BinaryWriter Writer = KSP.IO.BinaryWriter.CreateForType<RoverCruiseControlAttacher>("Bases.dat");
-                Writer.Write(HowManyToSave);
-                Writer.Write(ListToSave);
-                Writer.Close();
+				int HowManyToSave = ListToSave.Length;
+				KSP.IO.BinaryWriter Writer = KSP.IO.BinaryWriter.CreateForType<RoverCruiseControlAttacher>("Bases.dat");
+				Writer.Write(HowManyToSave);
+				Writer.Write(ListToSave);
+				Writer.Close();
 				print ("Written!");
 			}
 		}
@@ -60,11 +60,11 @@ public class RoverCruiseControlAttacher : UnityEngine.MonoBehaviour {
 		{
 			print ("loading");
 			/*KSP.IO.BinaryReader Loader = KSP.IO.BinaryReader.CreateForType<RoverCruiseControlAttacher>("Bases.dat");
-            int HowManyToLoad = Loader.ReadInt32();
-            byte[] ListToLoad = new byte[HowManyToLoad];
-            Loader.Read(ListToLoad, 0, HowManyToLoad);
-            Loader.Close();
-            object ObjectToLoad = KSP.IO.IOUtils.DeserializeFromBinary(ListToLoad);
+			int HowManyToLoad = Loader.ReadInt32();
+			byte[] ListToLoad = new byte[HowManyToLoad];
+			Loader.Read(ListToLoad, 0, HowManyToLoad);
+			Loader.Close();
+			object ObjectToLoad = KSP.IO.IOUtils.DeserializeFromBinary(ListToLoad);
 			list = (BaseList)ObjectToLoad;
 			print (list.bases[0].ToString());
 			int id = list.bases[0];

@@ -23,12 +23,11 @@ namespace ExLP {
 	}
 
 	public class VesselResources {
-		public Vessel vessel;
 		public Dictionary<string, ResourceInfo> resources;
 
 		public VesselResources(Vessel vessel)
 		{
-			this.vessel = vessel;
+			resources = new Dictionary<string, ResourceInfo>();
 			foreach (Part part in vessel.parts) {
 				foreach (PartResource resource in part.Resources) {
 					ResourceInfo resourceInfo;

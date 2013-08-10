@@ -348,6 +348,8 @@ public class ExLaunchPad : PartModule
 
 				if (pair.Key == "JetFuel") {
 					tot -= uis.requiredresources["LiquidFuel"] * uis.resourcesliders["LiquidFuel"];
+					if (tot < 0.0)
+						tot = 0.0;
 				}
 				GUIStyle avail = new GUIStyle();
 				if (tot < pair.Value * uis.resourcesliders[pair.Key]) {

@@ -698,6 +698,11 @@ public class ExLaunchPad : PartModule
 		if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel")) {
 			// The LiquidFuel:Oxidizer ratio is 9:11. Try to minimize rounding effects.
 			jetFuel = (11 * resources["LiquidFuel"] - 9 * resources["Oxidizer"]) / 11;
+			if (jetFuel < 0.01)	{
+				// Forget it. not getting far on that. Any discrepency this
+				// small will be due to precision losses.
+				jetFuel = 0.0;
+			}
 		}
 		resources["JetFuel"] = jetFuel;
 		resources["LiquidFuel"] -= jetFuel;

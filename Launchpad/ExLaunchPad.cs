@@ -7,6 +7,7 @@ using UnityEngine;
 
 using KSP.IO;
 
+using ExLP;		// until everything is properly namespaced?
 
 /// <summary>
 /// TODO
@@ -39,12 +40,16 @@ public class ExLaunchPad : PartModule
 		public ConfigNode craftnode = null;
 		public bool craftselected = false;
 		public Vector2 resscroll;
-		public Dictionary<string, float> requiredresources = null;
+		public Dictionary<string, double> requiredresources = null;
+		public double minRocketParts = 0.0;
 		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
 		public float timer;
 		public Vessel vessel;
 	}
+
+	int padPartsCount;					// the number of parts in the pad vessel (for docking detection)
+	VesselResources padResources;		// resources available to the pad
 
 	[KSPField(isPersistant = false)]
 	public float SpawnHeightOffset = 1.0f;	// amount of pad between origin and open space
@@ -56,10 +61,19 @@ public class ExLaunchPad : PartModule
 	// =====================================================================================================================================================
 	// UI Functions
 
-	private void UseResources(ShipConstruct nship)
+	private void UseResources(Vessel craft)
 	{
+		VesselResources craftResources = new VesselResources(craft);
+		craftResources.RemoveAllResources();
+
+		// Solid Fuel is always full capacity, so put it all back
+		craftResources.TransferResource("SolidFuel", craftResources.ResourceCapacity("SolidFuel"));
+
+		// remove rocket parts required for the hull and solid fuel
+		padResources.TransferResource("RocketParts", -uis.minRocketParts);
+
 		// use resources
-		foreach (KeyValuePair<string, float> pair in uis.requiredresources)
+		foreach (KeyValuePair<string, double> pair in uis.requiredresources)
 		{
 			// If resource is "JetFuel", rename to "LiquidFuel"
 			string res = pair.Key;
@@ -69,7 +83,6 @@ public class ExLaunchPad : PartModule
 				if (pair.Value == 0)
 					continue;
 			}
-
 			if (!uis.resourcesliders.ContainsKey(pair.Key))
 			{
 				Debug.Log(String.Format("[EL] missing slider {0}", pair.Key));
@@ -77,23 +90,15 @@ public class ExLaunchPad : PartModule
 			}
 			// Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
 			double tot = pair.Value * uis.resourcesliders[pair.Key];
-			// Remove the resource from the vessel doing the building
-			this.part.RequestResource(res, tot);
-
-			// If doing a partial fill, remove unfilled amount from the spawned ship
-			// ToDo: Only subtract LiquidFuel from a part when it does not also have Oxidizer in it - try to leave fuel tanks in a sane state!
-			double ptot = pair.Value - tot;
-			foreach (Part p in nship.parts)
-			{
-				if (ptot > 0)
-				{
-					ptot -= p.RequestResource(res, ptot);
-				}
-				else
-				{
-					break;
-				}
+			if (pair.Key == "RocketParts") {
+				// don't transfer rocket parts required for hull and solid fuel.
+				tot -= uis.minRocketParts;
+				if (tot < 0.0)
+					tot = 0.0;
 			}
+			// Transfer the resource from the vessel doing the building to the vessel being built
+			padResources.TransferResource(res, -tot);
+			craftResources.TransferResource(res, tot);
 		}
 	}
 
@@ -115,7 +120,6 @@ public class ExLaunchPad : PartModule
 	{
 		// build craft
 		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-		UseResources(nship);
 
 		Vector3 offset = Vector3.up * SpawnHeightOffset;
 		Transform t = this.part.transform;
@@ -137,6 +141,9 @@ public class ExLaunchPad : PartModule
 
 		Vessel vessel = FlightGlobals.ActiveVessel;
 		vessel.Landed = false;
+
+		if (!debug)
+			UseResources(vessel);
 
 		Staging.beginFlight();
 
@@ -165,6 +172,15 @@ public class ExLaunchPad : PartModule
 		if (editor) return;
 
 		if (!uis.builduiactive) return;
+
+		if (padResources != null && padPartsCount != vessel.Parts.Count) {
+			// something docked or undocked, so rebuild the pad's resouces info
+			padResources = null;
+		}
+		if (padResources == null) {
+			padPartsCount = vessel.Parts.Count;
+			padResources = new VesselResources(vessel);
+		}
 
 		GUIStyle mySty = new GUIStyle(GUI.skin.button);
 		mySty.normal.textColor = mySty.focused.textColor = Color.white;
@@ -247,7 +263,7 @@ public class ExLaunchPad : PartModule
 			// LFO = 55% oxidizer
 
 			// Cycle through required resources
-			foreach (KeyValuePair<string, float> pair in uis.requiredresources)
+			foreach (KeyValuePair<string, double> pair in uis.requiredresources)
 			{
 				string resname = pair.Key;	// Holds REAL resource name. May need to translate from "JetFuel" back to "LiquidFuel"
 				string reslabel = resname;	 // Resource name for DISPLAY purposes only. Internally the app uses pair.Key
@@ -262,8 +278,6 @@ public class ExLaunchPad : PartModule
 					resname = "LiquidFuel";
 				}
 
-				// ToDo: If you request an unknown resource type, does this crash the UI?
-				List<PartResource> connectedresources = GetConnectedResources(this.part, resname);
 				// If in link LFO sliders mode, rename Oxidizer to LFO (Oxidizer) and LiquidFuel to LFO (LiquidFuel)
 				if (reslabel == "Oxidizer")
 				{
@@ -291,66 +305,55 @@ public class ExLaunchPad : PartModule
 				sliSty.margin = new RectOffset(0, 0, 0, 0);
 				// Fill amount
 				GUILayout.BeginVertical();
-				{
-					if (pair.Key == "RocketParts")
-					{
-						// Partial Fill for RocketParts not allowed - Instead of creating a slider, hard-wire slider position to 100%
-						uis.resourcesliders[pair.Key] = 1;
-						GUILayout.FlexibleSpace();
-						GUILayout.Box("Must be 100%", GUILayout.Width(300), GUILayout.Height(20));
-						GUILayout.FlexibleSpace();
+				do {
+					float minFrac = 0.0f;
 
-					}
-					else
-					{
-						GUILayout.FlexibleSpace();
-						// limit slider to 0.5% increments
-						float tmp = (float)Math.Round(GUILayout.HorizontalSlider(uis.resourcesliders[pair.Key], 0.0F, 1.0F, sliSty, new GUIStyle(GUI.skin.horizontalSliderThumb), GUILayout.Width(300), GUILayout.Height(20)), 3);
-						tmp = (Mathf.Floor(tmp * 200)) / 200;
-
-						// Are we in link LFO mode?
-						if (uis.linklfosliders)
-						{
-
-							if (pair.Key == "Oxidizer")
-							{
-								uis.resourcesliders["LiquidFuel"] = tmp;
-							}
-							else if (pair.Key == "LiquidFuel")
-							{
-								uis.resourcesliders["Oxidizer"] = tmp;
-							}
+					if (pair.Key == "RocketParts") {
+						if (uis.requiredresources["RocketParts"] <= uis.minRocketParts) {
+							// Partial Fill for RocketParts not allowed - Instead of creating a slider, hard-wire slider position to 100%
+							uis.resourcesliders[pair.Key] = 1;
+							GUILayout.FlexibleSpace();
+							GUILayout.Box("Must be 100%", GUILayout.Width(300), GUILayout.Height(20));
+							GUILayout.FlexibleSpace();
+							break;
 						}
-						// Assign slider value to variable
-						uis.resourcesliders[pair.Key] = tmp;
-						GUILayout.Box((tmp * 100).ToString() + "%", tmpSty, GUILayout.Width(300), GUILayout.Height(20));
-						GUILayout.FlexibleSpace();
+						// However, the craft might have RocketParts storage, which may be partially filled. 
+						minFrac = (float) (uis.minRocketParts / uis.requiredresources["RocketParts"]);
 					}
-				}
+					GUILayout.FlexibleSpace();
+					// limit slider to 0.5% increments
+					float tmp = (float)Math.Round(GUILayout.HorizontalSlider(uis.resourcesliders[pair.Key], minFrac, 1.0F, sliSty, new GUIStyle(GUI.skin.horizontalSliderThumb), GUILayout.Width(300), GUILayout.Height(20)), 3);
+					tmp = (Mathf.Floor(tmp * 200)) / 200;
+
+					// Are we in link LFO mode?
+					if (uis.linklfosliders) {
+						if (pair.Key == "Oxidizer") {
+							uis.resourcesliders["LiquidFuel"] = tmp;
+						} else if (pair.Key == "LiquidFuel") {
+							uis.resourcesliders["Oxidizer"] = tmp;
+						}
+					}
+					// Assign slider value to variable
+					uis.resourcesliders[pair.Key] = tmp;
+					GUILayout.Box((tmp * 100).ToString() + "%", tmpSty, GUILayout.Width(300), GUILayout.Height(20));
+					GUILayout.FlexibleSpace();
+				} while (false);
 				GUILayout.EndVertical();
 
 
 				// Calculate if we have enough resources to build
-				double tot = 0;
-				foreach (PartResource pr in connectedresources)
-				{
-					tot += pr.amount;
-				}
+				double tot = padResources.ResourceAmount(resname);
 
 				// If LFO LiquidFuel exists and we are on LiquidFuel (Non-LFO), then subtract the amount used by LFO(LiquidFuel) from the available amount
 
-				if (pair.Key == "JetFuel")
-				{
+				if (pair.Key == "JetFuel") {
 					tot -= uis.requiredresources["LiquidFuel"] * uis.resourcesliders["LiquidFuel"];
 				}
 				GUIStyle avail = new GUIStyle();
-				if (tot < pair.Value * uis.resourcesliders[pair.Key])
-				{
+				if (tot < pair.Value * uis.resourcesliders[pair.Key]) {
 					avail = redSty;
 					uis.canbuildcraft = (false || debug); // prevent building unless debug mode is on
-				}
-				else
-				{
+				} else {
 					avail = grnSty;
 				}
 
@@ -626,88 +629,76 @@ public class ExLaunchPad : PartModule
 	// =====================================================================================================================================================
 	// Build Helper Functions
 
-	// Gets connected resources to a part. Note fuel lines are NOT reversible! Add flow going TO the constructing part!
-	private static List<PartResource> GetConnectedResources(Part part, String resourceName)
+	private void MissingPopup(Dictionary<string, bool> missing_parts)
 	{
-		var resources = new List<PartResource>();
-		part.GetConnectedResources(PartResourceLibrary.Instance.GetDefinition(resourceName).id, resources);
-		return resources;
+		string text = "";
+		foreach (string mp in missing_parts.Keys)
+			text += mp + "\n";
+		int ind = uis.craftfile.LastIndexOf("/") + 1;
+		string craft = uis.craftfile.Substring (ind);
+		craft = craft.Remove (craft.LastIndexOf("."));
+		PopupDialog.SpawnPopupDialog("Sorry", "Can't build " + craft + " due to the following missing parts\n\n" + text, "OK", false, HighLogic.Skin);
 	}
 
-	public Dictionary<string, float> getBuildCost(ConfigNode[] nodes)
+	public Dictionary<string, double> getBuildCost(ConfigNode[] nodes)
 	{
-		Part p;
-		float mass = 0;
-		Dictionary<string, float> resources = new Dictionary<string, float>();
-		List<string> missing_parts = new List<string>();
+		float mass = 0.0f;
+		Dictionary<string, double> resources = new Dictionary<string, double>();
+		Dictionary<string, bool> missing_parts = new Dictionary<string, bool>();
 
-		foreach (ConfigNode node in nodes)
-		{
+		resources["RocketParts"] = 0.0;	// Ensure there is a RocketParts entry.
+
+		foreach (ConfigNode node in nodes) {
 			string part_name = node.GetValue("part");
 			part_name = part_name.Remove(part_name.LastIndexOf("_"));
 			AvailablePart ap = PartLoader.getPartInfoByName(part_name);
 			if (ap == null) {
-				if (!missing_parts.Contains(part_name))
-					missing_parts.Add(part_name);
+				missing_parts[part_name] = true;
 				continue;
 			}
-			p = ap.partPrefab;
-			mass = mass + p.mass;
-			foreach (PartResource r in p.Resources)
-			{
-				// Ignore intake Air
-				if (r.resourceName == "IntakeAir")
-				{
+			Part p = ap.partPrefab;
+			mass += p.mass;
+			foreach (PartResource r in p.Resources) {
+				if (r.resourceName == "IntakeAir") {
+					// Ignore intake Air
 					continue;
 				}
-				float val;
-				if (resources.TryGetValue(r.resourceName, out val))
-				{
-					resources[r.resourceName] = val + (float)r.amount;
+
+				if (!resources.ContainsKey(r.resourceName)) {
+					resources[r.resourceName] = 0.0;
 				}
-				else
-				{
-					resources.Add(r.resourceName, (float)r.amount);
-				}
+				resources[r.resourceName] += r.maxAmount;
 			}
 		}
 		if (missing_parts.Count > 0) {
-			string text = "";
-			List<string>.Enumerator mp = missing_parts.GetEnumerator();
-			while (mp.MoveNext())
-				text += mp.Current + "\n";
-			int ind = uis.craftfile.LastIndexOf("/") + 1;
-			string craft = uis.craftfile.Substring (ind);
-			craft = craft.Remove (craft.LastIndexOf("."));
-			PopupDialog.SpawnPopupDialog("Sorry", "Can't build " + craft + " due to the following missing parts\n\n" + text, "OK", false, HighLogic.Skin);
+			MissingPopup(missing_parts);
 			return null;
 		}
 		PartResourceDefinition rpdef;
 		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
-		resources.Add("RocketParts", mass / rpdef.density);
+		uis.minRocketParts = mass / rpdef.density;
+		resources["RocketParts"] += uis.minRocketParts;
 
 
 		// If Solid Fuel is used, convert to RocketParts
-		if (resources.ContainsKey("SolidFuel"))
-		{
+		if (resources.ContainsKey("SolidFuel")) {
 			PartResourceDefinition sfdef;
 			sfdef = PartResourceLibrary.Instance.GetDefinition("SolidFuel");
-			float sfmass = resources["SolidFuel"] * sfdef.density;
-			resources["RocketParts"] += sfmass / rpdef.density;
+			double sfmass = resources["SolidFuel"] * sfdef.density;
+			double sfparts = sfmass / rpdef.density;
+			resources["RocketParts"] += sfparts;
+			uis.minRocketParts += sfparts;
 			resources.Remove("SolidFuel");
 		}
 
 		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split the Surplus LF off as "JetFuel"
-		if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel"))
-		{
-			float tmp = resources["LiquidFuel"] - ((resources["Oxidizer"] / 55) * 45);
-			resources.Add("JetFuel", tmp);
-			resources["LiquidFuel"] -= tmp;
+		double jetFuel = 0.0;
+		if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel")) {
+			// The LiquidFuel:Oxidizer ratio is 9:11. Try to minimize rounding effects.
+			jetFuel = (11 * resources["LiquidFuel"] - 9 * resources["Oxidizer"]) / 11;
 		}
-		else
-		{
-			resources.Add("JetFuel", 0f);
-		}
+		resources["JetFuel"] = jetFuel;
+		resources["LiquidFuel"] -= jetFuel;
 
 		return resources;
 	}

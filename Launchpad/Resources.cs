@@ -94,7 +94,7 @@ namespace ExLP {
 				double adjust = amount;
 				if (adjust < 0  && -adjust > res.amount) {
 					// Ensure the resource amount never goes negative
-					adjust = res.amount;
+					adjust = -res.amount;
 				} else if (adjust > 0
 						   && adjust > (res.maxAmount - res.amount)) {
 					// ensure the resource amount never excees the maximum

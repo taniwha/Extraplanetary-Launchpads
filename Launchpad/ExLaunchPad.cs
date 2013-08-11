@@ -694,9 +694,6 @@ public class ExLaunchPad : PartModule
 		this.part.RequestResource("MonoPropellant", -availableMonoPropellant);
 		nship.parts[0].localRoot.explode();
 	}
-
-
-
 }
 
 public class Recycler : PartModule
@@ -706,6 +703,10 @@ public class Recycler : PartModule
 	{
 		float conversionEfficiency = 0.8f;
 		List<Vessel> tempList = new List<Vessel>(); //temp list to hold debris vessels
+		VesselResources recycler = new VesselResources(vessel);
+		PartResourceDefinition rpdef;
+		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+		double amount, remain;
 
 		foreach (Vessel v in FlightGlobals.Vessels) {
 			if (v.vesselType == VesselType.Debris) tempList.Add(v);
@@ -713,8 +714,18 @@ public class Recycler : PartModule
 		foreach (Vessel v in tempList) {
 			// If vessel is less than 50m away, delete and convert it to rocketparts at conversionEfficiency% efficiency
 			if (Vector3d.Distance(v.GetWorldPos3D(), this.vessel.GetWorldPos3D())<50) {
-				print(v.name);
-				this.part.RequestResource("RocketParts", -v.GetTotalMass()*conversionEfficiency);
+				VesselResources scrap = new VesselResources(v);
+				foreach (string resource in scrap.resources.Keys) {
+					amount = scrap.ResourceAmount (resource);
+					scrap.TransferResource(resource, -amount);
+					// anything left over just evaporates
+					remain = recycler.TransferResource(resource, amount);
+					Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", v.name, resource, amount, amount - remain, remain));
+				}
+				float mass = v.GetTotalMass();
+				amount = mass * conversionEfficiency / rpdef.density;
+				remain = recycler.TransferResource("RocketParts", amount);
+				Debug.Log(String.Format("[EL] {0}: hull rocket parts {1} taken {2} reclaimed {3} lost", v.name, amount, amount - remain, remain));
 				v.Die();
 			}
 		}

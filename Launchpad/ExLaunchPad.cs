@@ -254,8 +254,8 @@ public class ExLaunchPad : PartModule
 			// Headings
 			GUILayout.Label("Resource", labSty, GUILayout.Width(120));
 			GUILayout.Label("Fill Percentage", labSty, GUILayout.Width(300));
-			GUILayout.Label("Required", labSty, GUILayout.Width(60));
-			GUILayout.Label("Available", labSty, GUILayout.Width(60));
+			GUILayout.Label("Required", labSty, GUILayout.Width(75));
+			GUILayout.Label("Available", labSty, GUILayout.Width(75));
 			GUILayout.EndHorizontal();
 
 			uis.canbuildcraft = true;	   // default to can build - if something is stopping us from building, we will set to false later
@@ -348,6 +348,8 @@ public class ExLaunchPad : PartModule
 
 				if (pair.Key == "JetFuel") {
 					tot -= uis.requiredresources["LiquidFuel"] * uis.resourcesliders["LiquidFuel"];
+					if (tot < 0.0)
+						tot = 0.0;
 				}
 				GUIStyle avail = new GUIStyle();
 				if (tot < pair.Value * uis.resourcesliders[pair.Key]) {
@@ -358,9 +360,9 @@ public class ExLaunchPad : PartModule
 				}
 
 				// Required
-				GUILayout.Box((Math.Round(pair.Value * uis.resourcesliders[pair.Key], 2)).ToString(), avail, GUILayout.Width(60), GUILayout.Height(40));
+				GUILayout.Box((Math.Round(pair.Value * uis.resourcesliders[pair.Key], 2)).ToString(), avail, GUILayout.Width(75), GUILayout.Height(40));
 				// Available
-				GUILayout.Box(((int)tot).ToString(), whiSty, GUILayout.Width(60), GUILayout.Height(40));
+				GUILayout.Box(((int)tot).ToString(), whiSty, GUILayout.Width(75), GUILayout.Height(40));
 
 				// Flexi space to make sure any unused space is at the right-hand edge
 				GUILayout.FlexibleSpace();
@@ -696,6 +698,11 @@ public class ExLaunchPad : PartModule
 		if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel")) {
 			// The LiquidFuel:Oxidizer ratio is 9:11. Try to minimize rounding effects.
 			jetFuel = (11 * resources["LiquidFuel"] - 9 * resources["Oxidizer"]) / 11;
+			if (jetFuel < 0.01)	{
+				// Forget it. not getting far on that. Any discrepency this
+				// small will be due to precision losses.
+				jetFuel = 0.0;
+			}
 		}
 		resources["JetFuel"] = jetFuel;
 		resources["LiquidFuel"] -= jetFuel;

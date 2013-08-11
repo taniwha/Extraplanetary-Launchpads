@@ -716,10 +716,13 @@ public class Recycler : PartModule
 			if (Vector3d.Distance(v.GetWorldPos3D(), this.vessel.GetWorldPos3D())<50) {
 				VesselResources scrap = new VesselResources(v);
 				foreach (string resource in scrap.resources.Keys) {
-					amount = scrap.ResourceAmount (resource);
+					remain = amount = scrap.ResourceAmount (resource);
+					// Pul out solid fuel, but lose it.
 					scrap.TransferResource(resource, -amount);
-					// anything left over just evaporates
-					remain = recycler.TransferResource(resource, amount);
+					if (resource != "SolidFuel") {
+						// anything left over just evaporates
+						remain = recycler.TransferResource(resource, amount);
+					}
 					Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", v.name, resource, amount, amount - remain, remain));
 				}
 				float mass = v.GetTotalMass();

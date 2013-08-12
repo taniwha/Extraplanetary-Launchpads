@@ -655,8 +655,8 @@ public class ExLaunchPad : PartModule
 		}
 
 		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split the Surplus LF off as "JetFuel"
-		double jetFuel = 0.0;
 		if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel")) {
+			double jetFuel = 0.0;
 			// The LiquidFuel:Oxidizer ratio is 9:11. Try to minimize rounding effects.
 			jetFuel = (11 * resources["LiquidFuel"] - 9 * resources["Oxidizer"]) / 11;
 			if (jetFuel < 0.01)	{
@@ -664,9 +664,9 @@ public class ExLaunchPad : PartModule
 				// small will be due to precision losses.
 				jetFuel = 0.0;
 			}
+			resources["LiquidFuel"] -= jetFuel;
+			resources["JetFuel"] = jetFuel;
 		}
-		resources["JetFuel"] = jetFuel;
-		resources["LiquidFuel"] -= jetFuel;
 
 		return resources;
 	}

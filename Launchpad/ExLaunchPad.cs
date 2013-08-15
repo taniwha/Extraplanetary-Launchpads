@@ -686,30 +686,6 @@ public class ExLaunchPad : PartModule
 
 		return resources;
 	}
-
-	// =====================================================================================================================================================
-	// Unused
-
-	/*
-	 * A simple test to see if other DLLs can call funcs
-	 * to use - add reference to this dll in other project and then use this code:
-	 *
-	 ExLaunchPad exl = new ExLaunchPad();
-			string tmp = exl.evilCTest();
-	*/
-	public string evilCTest()
-	{
-		return "Hello!";
-	}
-
-	private void destroyShip(ShipConstruct nship, float availableRocketParts, float availableLiquidFuel, float availableOxidizer, float availableMonoPropellant)
-	{
-		this.part.RequestResource("RocketParts", -availableRocketParts);
-		this.part.RequestResource("LiquidFuel", -availableLiquidFuel);
-		this.part.RequestResource("Oxidizer", -availableOxidizer);
-		this.part.RequestResource("MonoPropellant", -availableMonoPropellant);
-		nship.parts[0].localRoot.explode();
-	}
 }
 
 public class Recycler : PartModule

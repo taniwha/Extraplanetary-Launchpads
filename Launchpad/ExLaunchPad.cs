@@ -21,6 +21,59 @@ public class ExLaunchPad : PartModule
 
 	public enum crafttype { SPH, VAB };
 
+	public class Styles {
+		public static GUIStyle normal;
+		public static GUIStyle red;
+		public static GUIStyle yellow;
+		public static GUIStyle green;
+		public static GUIStyle white;
+		public static GUIStyle label;
+		public static GUIStyle slider;
+		public static GUIStyle sliderText;
+
+		private static bool initialized;
+
+		public static void Init()
+		{
+			if (initialized)
+				return;
+			initialized = true;
+
+			normal = new GUIStyle(GUI.skin.button);
+			normal.normal.textColor = normal.focused.textColor = Color.white;
+			normal.hover.textColor = normal.active.textColor = Color.yellow;
+			normal.onNormal.textColor = normal.onFocused.textColor = normal.onHover.textColor = normal.onActive.textColor = Color.green;
+			normal.padding = new RectOffset(8, 8, 8, 8);
+
+			red = new GUIStyle(GUI.skin.box);
+			red.padding = new RectOffset(8, 8, 8, 8);
+			red.normal.textColor = red.focused.textColor = Color.red;
+
+			yellow = new GUIStyle(GUI.skin.box);
+			yellow.padding = new RectOffset(8, 8, 8, 8);
+			yellow.normal.textColor = yellow.focused.textColor = Color.yellow;
+
+			green = new GUIStyle(GUI.skin.box);
+			green.padding = new RectOffset(8, 8, 8, 8);
+			green.normal.textColor = green.focused.textColor = Color.green;
+
+			white = new GUIStyle(GUI.skin.box);
+			white.padding = new RectOffset(8, 8, 8, 8);
+			white.normal.textColor = white.focused.textColor = Color.white;
+
+			label = new GUIStyle(GUI.skin.label);
+			label.normal.textColor = label.focused.textColor = Color.white;
+			label.alignment = TextAnchor.MiddleCenter;
+
+			slider = new GUIStyle(GUI.skin.horizontalSlider);
+			slider.margin = new RectOffset(0, 0, 0, 0);
+
+			sliderText = new GUIStyle(GUI.skin.label);
+			sliderText.alignment = TextAnchor.MiddleCenter;
+			sliderText.margin = new RectOffset(0, 0, 0, 0);
+		}
+	}
+
 	public class UIStatus
 	{
 		public Rect windowpos;
@@ -150,6 +203,7 @@ public class ExLaunchPad : PartModule
 
 	private void WindowGUI(int windowID)
 	{
+		Styles.Init();
 		/*
 		 * ToDo:
 		 * can extend FileBrowser class to see currently highlighted file?
@@ -179,32 +233,6 @@ public class ExLaunchPad : PartModule
 			padResources = new VesselResources(vessel);
 		}
 
-		GUIStyle mySty = new GUIStyle(GUI.skin.button);
-		mySty.normal.textColor = mySty.focused.textColor = Color.white;
-		mySty.hover.textColor = mySty.active.textColor = Color.yellow;
-		mySty.onNormal.textColor = mySty.onFocused.textColor = mySty.onHover.textColor = mySty.onActive.textColor = Color.green;
-		mySty.padding = new RectOffset(8, 8, 8, 8);
-
-		GUIStyle redSty = new GUIStyle(GUI.skin.box);
-		redSty.padding = new RectOffset(8, 8, 8, 8);
-		redSty.normal.textColor = redSty.focused.textColor = Color.red;
-
-		GUIStyle yelSty = new GUIStyle(GUI.skin.box);
-		yelSty.padding = new RectOffset(8, 8, 8, 8);
-		yelSty.normal.textColor = yelSty.focused.textColor = Color.yellow;
-
-		GUIStyle grnSty = new GUIStyle(GUI.skin.box);
-		grnSty.padding = new RectOffset(8, 8, 8, 8);
-		grnSty.normal.textColor = grnSty.focused.textColor = Color.green;
-
-		GUIStyle whiSty = new GUIStyle(GUI.skin.box);
-		whiSty.padding = new RectOffset(8, 8, 8, 8);
-		whiSty.normal.textColor = whiSty.focused.textColor = Color.white;
-
-		GUIStyle labSty = new GUIStyle(GUI.skin.label);
-		labSty.normal.textColor = labSty.focused.textColor = Color.white;
-		labSty.alignment = TextAnchor.MiddleCenter;
-
 		GUILayout.BeginVertical();
 
 		GUILayout.BeginHorizontal("box");
@@ -225,17 +253,17 @@ public class ExLaunchPad : PartModule
 
 		string strpath = HighLogic.CurrentGame.Title.Split(new string[] { " (Sandbox)" }, StringSplitOptions.None).First();
 
-		if (GUILayout.Button("Select Craft", mySty, GUILayout.ExpandWidth(true))) {
+		if (GUILayout.Button("Select Craft", Styles.normal, GUILayout.ExpandWidth(true))) {
 			//GUILayout.Button is "true" when clicked
 			uis.craftlist = new CraftBrowser(new Rect(Screen.width / 2, 100, 350, 500), uis.ct.ToString(), strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
 			uis.showcraftbrowser = true;
 		}
 
 		if (uis.craftselected) {
-			GUILayout.Box("Selected Craft:	" + uis.craftnode.GetValue("ship"), whiSty);
+			GUILayout.Box("Selected Craft:	" + uis.craftnode.GetValue("ship"), Styles.white);
 
 			// Resource requirements
-			GUILayout.Label("Resources required to build:", labSty, GUILayout.Width(600));
+			GUILayout.Label("Resources required to build:", Styles.label, GUILayout.Width(600));
 
 			// Link LFO toggle
 
@@ -246,10 +274,10 @@ public class ExLaunchPad : PartModule
 			GUILayout.BeginHorizontal();
 
 			// Headings
-			GUILayout.Label("Resource", labSty, GUILayout.Width(120));
-			GUILayout.Label("Fill Percentage", labSty, GUILayout.Width(300));
-			GUILayout.Label("Required", labSty, GUILayout.Width(75));
-			GUILayout.Label("Available", labSty, GUILayout.Width(75));
+			GUILayout.Label("Resource", Styles.label, GUILayout.Width(120));
+			GUILayout.Label("Fill Percentage", Styles.label, GUILayout.Width(300));
+			GUILayout.Label("Required", Styles.label, GUILayout.Width(75));
+			GUILayout.Label("Available", Styles.label, GUILayout.Width(75));
 			GUILayout.EndHorizontal();
 
 			uis.canbuildcraft = true;	   // default to can build - if something is stopping us from building, we will set to false later
@@ -280,16 +308,11 @@ public class ExLaunchPad : PartModule
 				GUILayout.BeginHorizontal();
 
 				// Resource name
-				GUILayout.Box(reslabel, whiSty, GUILayout.Width(120), GUILayout.Height(40));
+				GUILayout.Box(reslabel, Styles.white, GUILayout.Width(120), GUILayout.Height(40));
 				if (!uis.resourcesliders.ContainsKey(pair.Key)) {
 					uis.resourcesliders.Add(pair.Key, 1);
 				}
 
-				GUIStyle tmpSty = new GUIStyle(GUI.skin.label);
-				tmpSty.alignment = TextAnchor.MiddleCenter;
-				tmpSty.margin = new RectOffset(0, 0, 0, 0);
-				GUIStyle sliSty = new GUIStyle(GUI.skin.horizontalSlider);
-				sliSty.margin = new RectOffset(0, 0, 0, 0);
 				// Fill amount
 				GUILayout.BeginVertical();
 				do {
@@ -309,7 +332,7 @@ public class ExLaunchPad : PartModule
 					}
 					GUILayout.FlexibleSpace();
 					// limit slider to 0.5% increments
-					float tmp = (float)Math.Round(GUILayout.HorizontalSlider(uis.resourcesliders[pair.Key], minFrac, 1.0F, sliSty, new GUIStyle(GUI.skin.horizontalSliderThumb), GUILayout.Width(300), GUILayout.Height(20)), 3);
+					float tmp = (float)Math.Round(GUILayout.HorizontalSlider(uis.resourcesliders[pair.Key], minFrac, 1.0F, Styles.slider, GUI.skin.horizontalSliderThumb, GUILayout.Width(300), GUILayout.Height(20)), 3);
 					tmp = (Mathf.Floor(tmp * 200)) / 200;
 
 					// Are we in link LFO mode?
@@ -322,7 +345,7 @@ public class ExLaunchPad : PartModule
 					}
 					// Assign slider value to variable
 					uis.resourcesliders[pair.Key] = tmp;
-					GUILayout.Box((tmp * 100).ToString() + "%", tmpSty, GUILayout.Width(300), GUILayout.Height(20));
+					GUILayout.Box((tmp * 100).ToString() + "%", Styles.sliderText, GUILayout.Width(300), GUILayout.Height(20));
 					GUILayout.FlexibleSpace();
 				} while (false);
 				GUILayout.EndVertical();
@@ -340,16 +363,16 @@ public class ExLaunchPad : PartModule
 				}
 				GUIStyle avail = new GUIStyle();
 				if (tot < pair.Value * uis.resourcesliders[pair.Key]) {
-					avail = redSty;
+					avail = Styles.red;
 					uis.canbuildcraft = (false || debug); // prevent building unless debug mode is on
 				} else {
-					avail = grnSty;
+					avail = Styles.green;
 				}
 
 				// Required
 				GUILayout.Box((Math.Round(pair.Value * uis.resourcesliders[pair.Key], 2)).ToString(), avail, GUILayout.Width(75), GUILayout.Height(40));
 				// Available
-				GUILayout.Box(((int)tot).ToString(), whiSty, GUILayout.Width(75), GUILayout.Height(40));
+				GUILayout.Box(((int)tot).ToString(), Styles.white, GUILayout.Width(75), GUILayout.Height(40));
 
 				// Flexi space to make sure any unused space is at the right-hand edge
 				GUILayout.FlexibleSpace();
@@ -361,7 +384,7 @@ public class ExLaunchPad : PartModule
 
 			// Build button
 			if (uis.canbuildcraft) {
-				if (GUILayout.Button("Build", mySty, GUILayout.ExpandWidth(true))) {
+				if (GUILayout.Button("Build", Styles.normal, GUILayout.ExpandWidth(true))) {
 					BuildAndLaunchCraft();
 					// Reset the UI
 					uis.craftselected = false;
@@ -372,10 +395,10 @@ public class ExLaunchPad : PartModule
 					HideBuildMenu();
 				}
 			} else {
-				GUILayout.Box("You do not have the resources to build this craft", redSty);
+				GUILayout.Box("You do not have the resources to build this craft", Styles.red);
 			}
 		} else {
-			GUILayout.Box("You must select a craft before you can build", redSty);
+			GUILayout.Box("You must select a craft before you can build", Styles.red);
 		}
 		GUILayout.EndVertical();
 

@@ -84,10 +84,12 @@ namespace ExLP {
 		// across parts: they are filled/emptied on a first-come-first-served
 		// basis.
 		// If the vessel has no such resource no action is taken.
-		public void TransferResource(string resource, double amount)
+		// Returns the amount of resource not transfered (0 = all has been
+		// transfered).
+		public double TransferResource(string resource, double amount)
 		{
 			if (!resources.ContainsKey(resource))
-				return;
+				return amount;
 			ResourceInfo resourceInfo = resources[resource];
 			foreach (ResourcePartMap partInfo in resourceInfo.parts) {
 				PartResource res = partInfo.resource;
@@ -103,6 +105,7 @@ namespace ExLP {
 				partInfo.resource.amount += adjust;
 				amount -= adjust;
 			}
+			return amount;
 		}
 	}
 }

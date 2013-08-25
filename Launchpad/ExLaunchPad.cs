@@ -18,6 +18,8 @@ public class ExLaunchPad : PartModule
 	[KSPField]
 	public bool debug = false;
 
+	//public static bool kethane_present = CheckForKethane();
+	public static bool kethane_present;
 
 	public enum crafttype { SPH, VAB };
 
@@ -111,6 +113,15 @@ public class ExLaunchPad : PartModule
 
 	//private List<Vessel> bases;
 
+	private static bool CheckForKethane()
+	{
+		if (AssemblyLoader.loadedAssemblies.Any(a => a.assembly.GetName().Name == "MMI_Kethane")) {
+			Debug.Log("[EL] Kethane found");
+			return true;
+		}
+		Debug.Log("[EL] Kethane not found");
+		return false;
+	}
 	// =====================================================================================================================================================
 	// UI Functions
 
@@ -186,7 +197,7 @@ public class ExLaunchPad : PartModule
 		Vessel vessel = FlightGlobals.ActiveVessel;
 		vessel.Landed = false;
 
-		if (!debug)
+		if (kethane_present && !debug)
 			UseResources(vessel);
 
 		Staging.beginFlight();
@@ -223,7 +234,9 @@ public class ExLaunchPad : PartModule
 		GUIStyle requiredStyle = Styles.green;
 		if (available < required) {
 			requiredStyle = Styles.red;
-			uis.canbuildcraft = (false || debug); // prevent building unless debug mode is on
+			// prevent building unless debug mode is on, or kethane is not
+			// installed (kethane is required for resource production)
+			uis.canbuildcraft = (!kethane_present || debug);
 		}
 		// Required and Available
 		GUILayout.Box((Math.Round(required, 2)).ToString(), requiredStyle, GUILayout.Width(75), GUILayout.Height(40));
@@ -552,6 +565,7 @@ public class ExLaunchPad : PartModule
 	// Fired when KSP loads
 	public override void OnLoad(ConfigNode node)
 	{
+		kethane_present = CheckForKethane();
 		LoadConfigFile();
 	}
 

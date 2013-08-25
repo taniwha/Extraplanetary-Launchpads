@@ -40,7 +40,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ExLaunchPad.cs" />
-    <Compile Include="EntryPoint.cs" />
     <Compile Include="Resources.cs" />
   </ItemGroup>
   <ItemGroup>

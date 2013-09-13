@@ -162,7 +162,7 @@ public class ExLaunchPad : PartModule
 		// Many thanks to Snjo (firespitter)
 		uis.vessel.situation = Vessel.Situations.LANDED;
 		uis.vessel.state = Vessel.State.ACTIVE;
-		uis.vessel.Landed = true;
+		uis.vessel.Landed = false;
 		uis.vessel.Splashed = false;
 		uis.vessel.GoOnRails();
 		uis.vessel.rigidbody.WakeUp();

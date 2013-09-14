@@ -704,16 +704,16 @@ public class ExLaunchPad : PartModule
 
 public class Recycler : PartModule
 {
+	double busyTime;
+	bool recyclerActive;
+	[KSPField] public float RecycleRate = 1.0f;
+	[KSPField (guiName = "State", guiActive = true)] public string status;
+
 	[KSPEvent(guiActive = true, guiName = "Recycle Debris", active = true)]
 	public void RemoveDebris()
 	{
-		float ConversionEfficiency = 0.8f;
 		float Range = 50f;
 		List<Vessel> debrisList = new List<Vessel>(); //list of debris vessels
-		VesselResources recycler = new VesselResources(vessel);
-		PartResourceDefinition rpdef;
-		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
-		double amount, remain;
 		Vector3d recyclerPos = this.transform.position;
 
 		foreach (Vessel v in FlightGlobals.Vessels) {
@@ -721,25 +721,112 @@ public class Recycler : PartModule
 		}
 		foreach (Vessel v in debrisList) {
 			// If vessel is within range, delete and convert it to rocketparts
-			// at ConversionEfficiency% efficiency
 			if (Vector3d.Distance(v.GetWorldPos3D(), recyclerPos) < Range) {
-				VesselResources scrap = new VesselResources(v);
-				foreach (string resource in scrap.resources.Keys) {
-					remain = amount = scrap.ResourceAmount (resource);
-					// Pull out solid fuel, but lose it.
-					scrap.TransferResource(resource, -amount);
-					if (resource != "SolidFuel") {
-						// anything left over just evaporates
-						remain = recycler.TransferResource(resource, amount);
-					}
-					Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", v.name, resource, amount, amount - remain, remain));
-				}
-				float mass = v.GetTotalMass();
-				amount = mass * ConversionEfficiency / rpdef.density;
-				remain = recycler.TransferResource("RocketParts", amount);
-				Debug.Log(String.Format("[EL] {0}: hull rocket parts {1} taken {2} reclaimed {3} lost", v.name, amount, amount - remain, remain));
-				v.Die();
+				RecycleVessel(v);
 			}
+		}
+	}
+
+	public void OnTriggerStay(Collider col)
+	{
+		if (!recyclerActive
+			|| Planetarium.GetUniversalTime() <= busyTime
+			|| !col.CompareTag("Untagged")
+			|| col.gameObject.name == "MapOverlay collider")	// kethane
+			return;
+		Part p = col.attachedRigidbody.GetComponent<Part>();
+		Debug.Log(String.Format("[EL] {0}", p));
+		if (p != null && p.vessel != null) {
+			float mass;
+			if (p.vessel.isEVA) {
+				mass = RecycleKerbal(p.vessel);
+			} else {
+				mass = RecycleVessel(p.vessel);
+			}
+			busyTime = Planetarium.GetUniversalTime() + mass / RecycleRate;
+		}
+	}
+
+	public float RecycleKerbal(Vessel v)
+	{
+		if (!v.isEVA)
+			return 0;
+		VesselResources recycler = new VesselResources(vessel);
+		double remain;
+
+		// idea and numbers taken from Kethane
+		if (v.GetVesselCrew()[0].isBadass) {
+			v.rootPart.explosionPotential = 10000;
+		}
+		FlightGlobals.ForceSetActiveVessel(this.vessel);
+		float mass = v.rootPart.mass;
+		v.rootPart.explode();
+
+		remain = recycler.TransferResource("Kethane", 150);
+		Debug.Log(String.Format("[EL] {0}-Kethane: {1} taken {2} reclaimed, {3} lost", v.name, 150, 150 - remain, remain));
+
+		remain = recycler.TransferResource("Metal", 1);
+		Debug.Log(String.Format("[EL] {0}-Metal: {1} taken {2} reclaimed, {3} lost", v.name, 1, 1 - remain, remain));
+		return mass;
+	}
+
+	public float RecycleVessel(Vessel v)
+	{
+		float ConversionEfficiency = 0.8f;
+		double amount, remain;
+		VesselResources recycler = new VesselResources(vessel);
+		VesselResources scrap = new VesselResources(v);
+		PartResourceDefinition rpdef;
+		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+
+		foreach (string resource in scrap.resources.Keys) {
+			remain = amount = scrap.ResourceAmount (resource);
+			// Pull out solid fuel, but lose it.
+			scrap.TransferResource(resource, -amount);
+			if (resource != "SolidFuel") {
+				// anything left over just evaporates
+				remain = recycler.TransferResource(resource, amount);
+			}
+			Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", v.name, resource, amount, amount - remain, remain));
+		}
+		float mass = v.GetTotalMass();
+		amount = mass * ConversionEfficiency / rpdef.density;
+		remain = recycler.TransferResource("RocketParts", amount);
+		Debug.Log(String.Format("[EL] {0}: hull rocket parts {1} taken {2} reclaimed {3} lost", v.name, amount, amount - remain, remain));
+		v.Die();
+		return mass;
+	}
+
+	[KSPEvent(guiActive = true, guiName = "Activate Recycler", active = true)]
+	public void Activate()
+	{
+		recyclerActive = true;
+		Events["Activate"].active = false;
+		Events["Deactivate"].active = true;
+	}
+
+	[KSPEvent(guiActive = true, guiName = "Deactivate Recycler",
+	 active = false)]
+	public void Deactivate()
+	{
+		recyclerActive = false;
+		Events["Activate"].active = true;
+		Events["Deactivate"].active = false;
+	}
+
+	public override void OnLoad(ConfigNode node)
+	{
+		Deactivate();
+	}
+
+	public override void OnUpdate()
+	{
+		if (Planetarium.GetUniversalTime() <= busyTime) {
+			status = "Busy";
+		} else if (recyclerActive) {
+			status = "Active";
+		} else {
+			status = "Inactive";
 		}
 	}
 }

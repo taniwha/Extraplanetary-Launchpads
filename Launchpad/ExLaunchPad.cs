@@ -707,23 +707,26 @@ public class Recycler : PartModule
 	[KSPEvent(guiActive = true, guiName = "Recycle Debris", active = true)]
 	public void RemoveDebris()
 	{
-		float conversionEfficiency = 0.8f;
-		List<Vessel> tempList = new List<Vessel>(); //temp list to hold debris vessels
+		float ConversionEfficiency = 0.8f;
+		float Range = 50f;
+		List<Vessel> debrisList = new List<Vessel>(); //list of debris vessels
 		VesselResources recycler = new VesselResources(vessel);
 		PartResourceDefinition rpdef;
 		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
 		double amount, remain;
+		Vector3d recyclerPos = this.transform.position;
 
 		foreach (Vessel v in FlightGlobals.Vessels) {
-			if (v.vesselType == VesselType.Debris) tempList.Add(v);
+			if (v.vesselType == VesselType.Debris) debrisList.Add(v);
 		}
-		foreach (Vessel v in tempList) {
-			// If vessel is less than 50m away, delete and convert it to rocketparts at conversionEfficiency% efficiency
-			if (Vector3d.Distance(v.GetWorldPos3D(), this.vessel.GetWorldPos3D())<50) {
+		foreach (Vessel v in debrisList) {
+			// If vessel is within range, delete and convert it to rocketparts
+			// at ConversionEfficiency% efficiency
+			if (Vector3d.Distance(v.GetWorldPos3D(), recyclerPos) < Range) {
 				VesselResources scrap = new VesselResources(v);
 				foreach (string resource in scrap.resources.Keys) {
 					remain = amount = scrap.ResourceAmount (resource);
-					// Pul out solid fuel, but lose it.
+					// Pull out solid fuel, but lose it.
 					scrap.TransferResource(resource, -amount);
 					if (resource != "SolidFuel") {
 						// anything left over just evaporates
@@ -732,7 +735,7 @@ public class Recycler : PartModule
 					Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", v.name, resource, amount, amount - remain, remain));
 				}
 				float mass = v.GetTotalMass();
-				amount = mass * conversionEfficiency / rpdef.density;
+				amount = mass * ConversionEfficiency / rpdef.density;
 				remain = recycler.TransferResource("RocketParts", amount);
 				Debug.Log(String.Format("[EL] {0}: hull rocket parts {1} taken {2} reclaimed {3} lost", v.name, amount, amount - remain, remain));
 				v.Die();

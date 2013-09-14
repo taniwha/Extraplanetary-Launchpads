@@ -709,24 +709,6 @@ public class Recycler : PartModule
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField (guiName = "State", guiActive = true)] public string status;
 
-	[KSPEvent(guiActive = true, guiName = "Recycle Debris", active = true)]
-	public void RemoveDebris()
-	{
-		float Range = 50f;
-		List<Vessel> debrisList = new List<Vessel>(); //list of debris vessels
-		Vector3d recyclerPos = this.transform.position;
-
-		foreach (Vessel v in FlightGlobals.Vessels) {
-			if (v.vesselType == VesselType.Debris) debrisList.Add(v);
-		}
-		foreach (Vessel v in debrisList) {
-			// If vessel is within range, delete and convert it to rocketparts
-			if (Vector3d.Distance(v.GetWorldPos3D(), recyclerPos) < Range) {
-				RecycleVessel(v);
-			}
-		}
-	}
-
 	public void OnTriggerStay(Collider col)
 	{
 		if (!recyclerActive

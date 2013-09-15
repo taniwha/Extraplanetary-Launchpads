@@ -718,7 +718,7 @@ public class Recycler : PartModule
 			return;
 		Part p = col.attachedRigidbody.GetComponent<Part>();
 		Debug.Log(String.Format("[EL] {0}", p));
-		if (p != null && p.vessel != null) {
+		if (p != null && p.vessel != null && p.vessel != vessel) {
 			float mass;
 			if (p.vessel.isEVA) {
 				mass = RecycleKerbal(p.vessel);

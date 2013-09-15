@@ -7,7 +7,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-using ExLP;		// until everything is properly namespaced?
+namespace ExLP {
 
 /// <summary>
 /// TODO
@@ -811,4 +811,6 @@ public class Recycler : PartModule
 			status = "Inactive";
 		}
 	}
+}
+
 }

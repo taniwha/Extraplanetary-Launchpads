@@ -7,7 +7,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-using ExLP;		// until everything is properly namespaced?
+namespace ExLP {
 
 /// <summary>
 /// TODO
@@ -18,6 +18,8 @@ public class ExLaunchPad : PartModule
 	[KSPField]
 	public bool debug = false;
 
+	//public static bool kethane_present = CheckForKethane();
+	public static bool kethane_present;
 
 	public enum crafttype { SPH, VAB };
 
@@ -111,16 +113,25 @@ public class ExLaunchPad : PartModule
 
 	//private List<Vessel> bases;
 
+	private static bool CheckForKethane()
+	{
+		if (AssemblyLoader.loadedAssemblies.Any(a => a.assembly.GetName().Name == "MMI_Kethane")) {
+			Debug.Log("[EL] Kethane found");
+			return true;
+		}
+		Debug.Log("[EL] Kethane not found");
+		return false;
+	}
 	// =====================================================================================================================================================
 	// UI Functions
 
 	private void UseResources(Vessel craft)
 	{
 		VesselResources craftResources = new VesselResources(craft);
-		craftResources.RemoveAllResources();
 
-		// Solid Fuel is always full capacity, so put it all back
-		craftResources.TransferResource("SolidFuel", craftResources.ResourceCapacity("SolidFuel"));
+		// Remove all resources that we might later fill (hull resources will not be touched)
+		HashSet<string> resources_to_remove = new HashSet<string>(uis.requiredresources.Keys);
+		craftResources.RemoveAllResources(resources_to_remove);
 
 		// remove rocket parts required for the hull and solid fuel
 		padResources.TransferResource("RocketParts", -uis.hullRocketParts);
@@ -151,7 +162,7 @@ public class ExLaunchPad : PartModule
 		// Many thanks to Snjo (firespitter)
 		uis.vessel.situation = Vessel.Situations.LANDED;
 		uis.vessel.state = Vessel.State.ACTIVE;
-		uis.vessel.Landed = true;
+		uis.vessel.Landed = false;
 		uis.vessel.Splashed = false;
 		uis.vessel.GoOnRails();
 		uis.vessel.rigidbody.WakeUp();
@@ -186,7 +197,7 @@ public class ExLaunchPad : PartModule
 		Vessel vessel = FlightGlobals.ActiveVessel;
 		vessel.Landed = false;
 
-		if (!debug)
+		if (kethane_present && !debug)
 			UseResources(vessel);
 
 		Staging.beginFlight();
@@ -223,7 +234,9 @@ public class ExLaunchPad : PartModule
 		GUIStyle requiredStyle = Styles.green;
 		if (available < required) {
 			requiredStyle = Styles.red;
-			uis.canbuildcraft = (false || debug); // prevent building unless debug mode is on
+			// prevent building unless debug mode is on, or kethane is not
+			// installed (kethane is required for resource production)
+			uis.canbuildcraft = (!kethane_present || debug);
 		}
 		// Required and Available
 		GUILayout.Box((Math.Round(required, 2)).ToString(), requiredStyle, GUILayout.Width(75), GUILayout.Height(40));
@@ -552,6 +565,7 @@ public class ExLaunchPad : PartModule
 	// Fired when KSP loads
 	public override void OnLoad(ConfigNode node)
 	{
+		kethane_present = CheckForKethane();
 		LoadConfigFile();
 	}
 
@@ -625,6 +639,7 @@ public class ExLaunchPad : PartModule
 	{
 		float mass = 0.0f;
 		Dictionary<string, double> resources = new Dictionary<string, double>();
+		Dictionary<string, double> hull_resources = new Dictionary<string, double>();
 		Dictionary<string, bool> missing_parts = new Dictionary<string, bool>();
 
 		foreach (ConfigNode node in nodes) {
@@ -638,15 +653,24 @@ public class ExLaunchPad : PartModule
 			Part p = ap.partPrefab;
 			mass += p.mass;
 			foreach (PartResource r in p.Resources) {
-				if (r.resourceName == "IntakeAir") {
+				if (r.resourceName == "IntakeAir" || r.resourceName == "KIntakeAir") {
 					// Ignore intake Air
 					continue;
 				}
 
-				if (!resources.ContainsKey(r.resourceName)) {
-					resources[r.resourceName] = 0.0;
+				Dictionary<string, double> res_dict = resources;
+
+				PartResourceDefinition res_def;
+				res_def = PartResourceLibrary.Instance.GetDefinition(r.resourceName);
+				if (res_def.resourceTransferMode == ResourceTransferMode.NONE
+					|| res_def.resourceFlowMode == ResourceFlowMode.NO_FLOW) {
+					res_dict = hull_resources;
 				}
-				resources[r.resourceName] += r.maxAmount;
+
+				if (!res_dict.ContainsKey(r.resourceName)) {
+					res_dict[r.resourceName] = 0.0;
+				}
+				res_dict[r.resourceName] += r.maxAmount;
 			}
 		}
 		if (missing_parts.Count > 0) {
@@ -656,18 +680,17 @@ public class ExLaunchPad : PartModule
 
 		// RocketParts for the hull is a separate entity to RocketParts in
 		// storage containers
-		PartResourceDefinition rpdef;
-		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
-		uis.hullRocketParts = mass / rpdef.density;
+		PartResourceDefinition rp_def;
+		rp_def = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+		uis.hullRocketParts = mass / rp_def.density;
 
-		// If Solid Fuel is used, convert to RocketParts
-		if (resources.ContainsKey("SolidFuel")) {
-			PartResourceDefinition sfdef;
-			sfdef = PartResourceLibrary.Instance.GetDefinition("SolidFuel");
-			double sfmass = resources["SolidFuel"] * sfdef.density;
-			double sfparts = sfmass / rpdef.density;
-			uis.hullRocketParts += sfparts;
-			resources.Remove("SolidFuel");
+		// If non pumpable resources are used, convert to RocketParts
+		foreach (KeyValuePair<string, double> pair in hull_resources) {
+			PartResourceDefinition res_def;
+			res_def = PartResourceLibrary.Instance.GetDefinition(pair.Key);
+			double hull_mass = pair.Value * res_def.density;
+			double hull_parts = hull_mass / rp_def.density;
+			uis.hullRocketParts += hull_parts;
 		}
 
 		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split the Surplus LF off as "JetFuel"
@@ -690,76 +713,128 @@ public class ExLaunchPad : PartModule
 
 public class Recycler : PartModule
 {
-	[KSPEvent(guiActive = true, guiName = "Recycle Debris", active = true)]
-	public void RemoveDebris()
+	double busyTime;
+	bool recyclerActive;
+	[KSPField] public float RecycleRate = 1.0f;
+	[KSPField (guiName = "State", guiActive = true)] public string status;
+
+	public void OnTriggerStay(Collider col)
 	{
-		float conversionEfficiency = 0.8f;
-		List<Vessel> tempList = new List<Vessel>(); //temp list to hold debris vessels
+		if (!recyclerActive
+			|| Planetarium.GetUniversalTime() <= busyTime
+			|| !col.CompareTag("Untagged")
+			|| col.gameObject.name == "MapOverlay collider")	// kethane
+			return;
+		Part p = col.attachedRigidbody.GetComponent<Part>();
+		Debug.Log(String.Format("[EL] {0}", p));
+		if (p != null && p.vessel != null && p.vessel != vessel) {
+			float mass;
+			if (p.vessel.isEVA) {
+				mass = RecycleKerbal(p.vessel);
+			} else {
+				mass = RecycleVessel(p.vessel);
+			}
+			busyTime = Planetarium.GetUniversalTime() + mass / RecycleRate;
+		}
+	}
+
+	private float ReclaimResource(string resource, double amount,
+								  string vessel_name, string name=null)
+	{
+		PartResourceDefinition res_def;
+		res_def = PartResourceLibrary.Instance.GetDefinition(resource);
 		VesselResources recycler = new VesselResources(vessel);
-		PartResourceDefinition rpdef;
-		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
-		double amount, remain;
 
-		foreach (Vessel v in FlightGlobals.Vessels) {
-			if (v.vesselType == VesselType.Debris) tempList.Add(v);
+		if (res_def == null) {
+			return 0;
 		}
-		foreach (Vessel v in tempList) {
-			// If vessel is less than 50m away, delete and convert it to rocketparts at conversionEfficiency% efficiency
-			if (Vector3d.Distance(v.GetWorldPos3D(), this.vessel.GetWorldPos3D())<50) {
-				VesselResources scrap = new VesselResources(v);
-				foreach (string resource in scrap.resources.Keys) {
-					remain = amount = scrap.ResourceAmount (resource);
-					// Pul out solid fuel, but lose it.
-					scrap.TransferResource(resource, -amount);
-					if (resource != "SolidFuel") {
-						// anything left over just evaporates
-						remain = recycler.TransferResource(resource, amount);
-					}
-					Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", v.name, resource, amount, amount - remain, remain));
-				}
-				float mass = v.GetTotalMass();
-				amount = mass * conversionEfficiency / rpdef.density;
-				remain = recycler.TransferResource("RocketParts", amount);
-				Debug.Log(String.Format("[EL] {0}: hull rocket parts {1} taken {2} reclaimed {3} lost", v.name, amount, amount - remain, remain));
-				v.Die();
-			}
+
+		if (name == null) {
+			name = resource;
+		}
+		double remain = amount;
+		// any resources that can't be pumped or don't flow just "evaporate"
+		// FIXME: should this be a little smarter and convert certain such
+		// resources into rocket parts?
+		if (res_def.resourceTransferMode != ResourceTransferMode.NONE
+			&& res_def.resourceFlowMode != ResourceFlowMode.NO_FLOW) {
+			remain = recycler.TransferResource(resource, amount);
+		}
+		Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", vessel_name, name, amount, amount - remain, remain));
+		return (float) (amount * res_def.density);
+	}
+
+	public float RecycleKerbal(Vessel v)
+	{
+		if (!v.isEVA)
+			return 0;
+
+		// idea and numbers taken from Kethane
+		if (v.GetVesselCrew()[0].isBadass) {
+			v.rootPart.explosionPotential = 10000;
+		}
+		FlightGlobals.ForceSetActiveVessel(this.vessel);
+		v.rootPart.explode();
+
+		float mass = 0;
+		mass += ReclaimResource("Kethane", 150, v.name);
+		mass += ReclaimResource("Metal", 1, v.name);
+		return mass;
+	}
+
+	public float RecycleVessel(Vessel v)
+	{
+		float ConversionEfficiency = 0.8f;
+		double amount;
+		VesselResources scrap = new VesselResources(v);
+
+		PartResourceDefinition rp_def;
+		rp_def = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+
+		float mass = 0;
+		foreach (string resource in scrap.resources.Keys) {
+			amount = scrap.ResourceAmount (resource);
+			mass += ReclaimResource(resource, amount, v.name);
+		}
+		float hull_mass = v.GetTotalMass();
+		amount = hull_mass * ConversionEfficiency / rp_def.density;
+		mass += ReclaimResource("RocketParts", amount, v.name, "hull");
+		v.Die();
+		return mass;
+	}
+
+	[KSPEvent(guiActive = true, guiName = "Activate Recycler", active = true)]
+	public void Activate()
+	{
+		recyclerActive = true;
+		Events["Activate"].active = false;
+		Events["Deactivate"].active = true;
+	}
+
+	[KSPEvent(guiActive = true, guiName = "Deactivate Recycler",
+	 active = false)]
+	public void Deactivate()
+	{
+		recyclerActive = false;
+		Events["Activate"].active = true;
+		Events["Deactivate"].active = false;
+	}
+
+	public override void OnLoad(ConfigNode node)
+	{
+		Deactivate();
+	}
+
+	public override void OnUpdate()
+	{
+		if (Planetarium.GetUniversalTime() <= busyTime) {
+			status = "Busy";
+		} else if (recyclerActive) {
+			status = "Active";
+		} else {
+			status = "Inactive";
 		}
 	}
 }
-/*
- * //TODO : make this work
-[KSPAddon(KSPAddon.Startup.EditorAny, false)]
-public class LaunchSiteSelector : MonoBehaviour
-{
-	void Start()
-	{
-		// Generate a list of your currently deployed vessels with the launchpad and name them for a dictionary. E.g. "LaunchPad_LpID", "LaunchPad 01 : Mun [Lat/Long]"
-	}
 
-	void OnGUI()
-	{
-		// Make pretty GUI with a button that does the following:
-		//EditorLogic.fetch.launchSiteName = SelectedLaunchSiteGameObjectName
-		EditorLogic.fetch.launchSiteName = "Dubig";
-	}
 }
-
-[KSPAddon(KSPAddon.Startup.Flight, false)]
-public class LaunchSite : MonoBehaviour
-{
-	void Awake()
-	{
-		//GameObject gm = new GameObject(LaunchSiteID + "_spawn");
-		GameObject gm = new GameObject("Dubig" + "_spawn");
-		//gm.transform.position = vesselWorldTransformSpawningPoint.position;
-		//gm.transform.rotation= vesselWorldTransformSpawningPoint.rotation;
-
-		foreach (Vessel v in FlightGlobals.Vessels) {
-			if (v.name == "Dubig") {
-				gm.transform.position = v.GetTransform().position;
-				gm.transform.rotation = v.GetTransform().rotation;
-			}
-		}
-		gm.SetActive(true);
-	}
-}*/

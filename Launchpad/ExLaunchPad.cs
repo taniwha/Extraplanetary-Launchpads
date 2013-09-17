@@ -729,52 +729,67 @@ public class Recycler : PartModule
 		}
 	}
 
+	private float ReclaimResource(string resource, double amount,
+								  string vessel_name, string name=null)
+	{
+		PartResourceDefinition res_def;
+		res_def = PartResourceLibrary.Instance.GetDefinition(resource);
+		VesselResources recycler = new VesselResources(vessel);
+
+		if (res_def == null) {
+			return 0;
+		}
+
+		if (name == null) {
+			name = resource;
+		}
+		double remain = amount;
+		// any resources that can't be pumped or don't flow just "evaporate"
+		// FIXME: should this be a little smarter and convert certain such
+		// resources into rocket parts?
+		if (res_def.resourceTransferMode != ResourceTransferMode.NONE
+			&& res_def.resourceFlowMode != ResourceFlowMode.NO_FLOW) {
+			remain = recycler.TransferResource(resource, amount);
+		}
+		Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", vessel_name, name, amount, amount - remain, remain));
+		return (float) (amount * res_def.density);
+	}
+
 	public float RecycleKerbal(Vessel v)
 	{
 		if (!v.isEVA)
 			return 0;
-		VesselResources recycler = new VesselResources(vessel);
-		double remain;
 
 		// idea and numbers taken from Kethane
 		if (v.GetVesselCrew()[0].isBadass) {
 			v.rootPart.explosionPotential = 10000;
 		}
 		FlightGlobals.ForceSetActiveVessel(this.vessel);
-		float mass = v.rootPart.mass;
 		v.rootPart.explode();
 
-		remain = recycler.TransferResource("Kethane", 150);
-		Debug.Log(String.Format("[EL] {0}-Kethane: {1} taken {2} reclaimed, {3} lost", v.name, 150, 150 - remain, remain));
-
-		remain = recycler.TransferResource("Metal", 1);
-		Debug.Log(String.Format("[EL] {0}-Metal: {1} taken {2} reclaimed, {3} lost", v.name, 1, 1 - remain, remain));
+		float mass = 0;
+		mass += ReclaimResource("Kethane", 150, v.name);
+		mass += ReclaimResource("Metal", 1, v.name);
 		return mass;
 	}
 
 	public float RecycleVessel(Vessel v)
 	{
 		float ConversionEfficiency = 0.8f;
-		double amount, remain;
-		VesselResources recycler = new VesselResources(vessel);
+		double amount;
 		VesselResources scrap = new VesselResources(v);
-		PartResourceDefinition rpdef;
-		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
 
+		PartResourceDefinition rp_def;
+		rp_def = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+
+		float mass = 0;
 		foreach (string resource in scrap.resources.Keys) {
-			remain = amount = scrap.ResourceAmount (resource);
-			// Pull out solid fuel, but lose it.
-			scrap.TransferResource(resource, -amount);
-			if (resource != "SolidFuel") {
-				// anything left over just evaporates
-				remain = recycler.TransferResource(resource, amount);
-			}
-			Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", v.name, resource, amount, amount - remain, remain));
+			amount = scrap.ResourceAmount (resource);
+			mass += ReclaimResource(resource, amount, v.name);
 		}
-		float mass = v.GetTotalMass();
-		amount = mass * ConversionEfficiency / rpdef.density;
-		remain = recycler.TransferResource("RocketParts", amount);
-		Debug.Log(String.Format("[EL] {0}: hull rocket parts {1} taken {2} reclaimed {3} lost", v.name, amount, amount - remain, remain));
+		float hull_mass = v.GetTotalMass();
+		amount = hull_mass * ConversionEfficiency / rp_def.density;
+		mass += ReclaimResource("RocketParts", amount, v.name, "hull");
 		v.Die();
 		return mass;
 	}

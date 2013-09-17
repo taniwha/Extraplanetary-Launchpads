@@ -128,10 +128,10 @@ public class ExLaunchPad : PartModule
 	private void UseResources(Vessel craft)
 	{
 		VesselResources craftResources = new VesselResources(craft);
-		craftResources.RemoveAllResources();
 
-		// Solid Fuel is always full capacity, so put it all back
-		craftResources.TransferResource("SolidFuel", craftResources.ResourceCapacity("SolidFuel"));
+		// Remove all resources that we might later fill (hull resources will not be touched)
+		HashSet<string> resources_to_remove = new HashSet<string>(uis.requiredresources.Keys);
+		craftResources.RemoveAllResources(resources_to_remove);
 
 		// remove rocket parts required for the hull and solid fuel
 		padResources.TransferResource("RocketParts", -uis.hullRocketParts);
@@ -639,6 +639,7 @@ public class ExLaunchPad : PartModule
 	{
 		float mass = 0.0f;
 		Dictionary<string, double> resources = new Dictionary<string, double>();
+		Dictionary<string, double> hull_resources = new Dictionary<string, double>();
 		Dictionary<string, bool> missing_parts = new Dictionary<string, bool>();
 
 		foreach (ConfigNode node in nodes) {
@@ -652,15 +653,24 @@ public class ExLaunchPad : PartModule
 			Part p = ap.partPrefab;
 			mass += p.mass;
 			foreach (PartResource r in p.Resources) {
-				if (r.resourceName == "IntakeAir") {
+				if (r.resourceName == "IntakeAir" || r.resourceName == "KIntakeAir") {
 					// Ignore intake Air
 					continue;
 				}
 
-				if (!resources.ContainsKey(r.resourceName)) {
-					resources[r.resourceName] = 0.0;
+				Dictionary<string, double> res_dict = resources;
+
+				PartResourceDefinition res_def;
+				res_def = PartResourceLibrary.Instance.GetDefinition(r.resourceName);
+				if (res_def.resourceTransferMode == ResourceTransferMode.NONE
+					|| res_def.resourceFlowMode == ResourceFlowMode.NO_FLOW) {
+					res_dict = hull_resources;
 				}
-				resources[r.resourceName] += r.maxAmount;
+
+				if (!res_dict.ContainsKey(r.resourceName)) {
+					res_dict[r.resourceName] = 0.0;
+				}
+				res_dict[r.resourceName] += r.maxAmount;
 			}
 		}
 		if (missing_parts.Count > 0) {
@@ -670,18 +680,17 @@ public class ExLaunchPad : PartModule
 
 		// RocketParts for the hull is a separate entity to RocketParts in
 		// storage containers
-		PartResourceDefinition rpdef;
-		rpdef = PartResourceLibrary.Instance.GetDefinition("RocketParts");
-		uis.hullRocketParts = mass / rpdef.density;
+		PartResourceDefinition rp_def;
+		rp_def = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+		uis.hullRocketParts = mass / rp_def.density;
 
-		// If Solid Fuel is used, convert to RocketParts
-		if (resources.ContainsKey("SolidFuel")) {
-			PartResourceDefinition sfdef;
-			sfdef = PartResourceLibrary.Instance.GetDefinition("SolidFuel");
-			double sfmass = resources["SolidFuel"] * sfdef.density;
-			double sfparts = sfmass / rpdef.density;
-			uis.hullRocketParts += sfparts;
-			resources.Remove("SolidFuel");
+		// If non pumpable resources are used, convert to RocketParts
+		foreach (KeyValuePair<string, double> pair in hull_resources) {
+			PartResourceDefinition res_def;
+			res_def = PartResourceLibrary.Instance.GetDefinition(pair.Key);
+			double hull_mass = pair.Value * res_def.density;
+			double hull_parts = hull_mass / rp_def.density;
+			uis.hullRocketParts += hull_parts;
 		}
 
 		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split the Surplus LF off as "JetFuel"

@@ -42,9 +42,14 @@ namespace ExLP {
 		}
 
 		// Completely empty the vessel of any and all resources.
-		public void RemoveAllResources()
+		public void RemoveAllResources(HashSet<string> resources_to_remove = null)
 		{
-			foreach (ResourceInfo resourceInfo in resources.Values) {
+			foreach (KeyValuePair<string, ResourceInfo> pair in resources) {
+				string resource = pair.Key;
+				if (resources_to_remove != null && !resources_to_remove.Contains(resource)) {
+					continue;
+				}
+				ResourceInfo resourceInfo = pair.Value;
 				foreach (ResourcePartMap partInfo in resourceInfo.parts) {
 					partInfo.resource.amount = 0.0;
 				}

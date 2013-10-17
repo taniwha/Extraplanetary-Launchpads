@@ -194,7 +194,7 @@ public class ExLaunchPad : PartModule
 
 		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
 
-		Vessel vessel = FlightGlobals.ActiveVessel;
+		Vessel vessel = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
 		vessel.Landed = false;
 
 		if (kethane_present && !debug)
@@ -300,7 +300,7 @@ public class ExLaunchPad : PartModule
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
 
-		string strpath = HighLogic.CurrentGame.Title.Split(new string[] { " (Sandbox)" }, StringSplitOptions.None).First();
+		string strpath = HighLogic.SaveFolder;
 
 		if (GUILayout.Button("Select Craft", Styles.normal, GUILayout.ExpandWidth(true))) {
 			//GUILayout.Button is "true" when clicked

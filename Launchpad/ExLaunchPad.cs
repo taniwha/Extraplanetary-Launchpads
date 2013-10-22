@@ -9,9 +9,6 @@ using KSP.IO;
 
 namespace ExLP {
 
-/// <summary>
-/// TODO
-/// </summary>
 public class ExLaunchPad : PartModule
 {
 
@@ -100,7 +97,7 @@ public class ExLaunchPad : PartModule
 		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
 		public float timer;
-		public Vessel vessel;
+		public Vessel launchee;
 	}
 
 	int padPartsCount;					// the number of parts in the pad vessel (for docking detection)
@@ -160,14 +157,14 @@ public class ExLaunchPad : PartModule
 	private void FixCraftLock()
 	{
 		// Many thanks to Snjo (firespitter)
-		uis.vessel.situation = Vessel.Situations.LANDED;
-		uis.vessel.state = Vessel.State.ACTIVE;
-		uis.vessel.Landed = false;
-		uis.vessel.Splashed = false;
-		uis.vessel.GoOnRails();
-		uis.vessel.rigidbody.WakeUp();
-		uis.vessel.ResumeStaging();
-		uis.vessel.landedAt = "External Launchpad";
+		uis.launchee.situation = Vessel.Situations.LANDED;
+		uis.launchee.state = Vessel.State.ACTIVE;
+		uis.launchee.Landed = false;
+		uis.launchee.Splashed = false;
+		uis.launchee.GoOnRails();
+		uis.launchee.rigidbody.WakeUp();
+		uis.launchee.ResumeStaging();
+		uis.launchee.landedAt = "External Launchpad";
 		InputLockManager.ClearControlLocks();
 	}
 
@@ -194,16 +191,16 @@ public class ExLaunchPad : PartModule
 
 		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
 
-		Vessel vessel = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
-		vessel.Landed = false;
+		Vessel vsl = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
+		vsl.Landed = false;
 
 		if (kethane_present && !debug)
-			UseResources(vessel);
+			UseResources(vsl);
 
 		Staging.beginFlight();
 
 		uis.timer = 3.0f;
-		uis.vessel = vessel;
+		uis.launchee = vsl;
 	}
 
 	private float ResourceLine(string label, string resourceName, float fraction, double minAmount, double maxAmount, double available)
@@ -515,11 +512,11 @@ public class ExLaunchPad : PartModule
 
 	public void Update()
 	{
-		if (uis.vessel && uis.timer >= 0) {
+		if (uis.launchee && uis.timer >= 0) {
 			uis.timer -= Time.deltaTime;
 			if (uis.timer <= 0) {
 				FixCraftLock();
-				uis.vessel = null;
+				uis.launchee = null;
 			}
 		}
 	}

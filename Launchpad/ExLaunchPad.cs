@@ -98,6 +98,7 @@ public class ExLaunchPad : PartModule
 
 		public float timer;
 		public Vessel launchee;
+		public Orbit currentorbit;
 	}
 
 	int padPartsCount;					// the number of parts in the pad vessel (for docking detection)
@@ -161,6 +162,7 @@ public class ExLaunchPad : PartModule
 		uis.launchee.state = Vessel.State.ACTIVE;
 		uis.launchee.Landed = false;
 		uis.launchee.Splashed = false;
+
 		uis.launchee.GoOnRails();
 		uis.launchee.rigidbody.WakeUp();
 		uis.launchee.ResumeStaging();
@@ -456,7 +458,7 @@ public class ExLaunchPad : PartModule
 	private void drawGUI()
 	{
 		GUI.skin = HighLogic.Skin;
-		uis.windowpos = GUILayout.Window(1, uis.windowpos, WindowGUI, "Extraplanetary Launchpads", GUILayout.Width(600));
+		uis.windowpos = GUILayout.Window(1, uis.windowpos, WindowGUI, "Extraplanetary Launchpad: " + vessel.situation.ToString(), GUILayout.Width(600));
 	}
 
 	// Called ONCE at start
@@ -467,48 +469,6 @@ public class ExLaunchPad : PartModule
 			ShowBuildMenu();
 		}
 	}
-
-
-	// Fired maybe multiple times a frame, maybe once every n frames
-	public override void OnFixedUpdate()
-	{
-		// ToDo: Should not be checking this every frame - once per craft switch
-		// OnVesselChange may be ideal but I cannot seem to get it to fire
-		// Landed / Flying check should probably be with this code, but moved it elsewhere while this is firing so often
-
-		// Does the UI want to be visible?
-		if (uis.builduiactive) {
-			// Decide if the build menu is allowed to be visible
-			if (this.vessel == FlightGlobals.ActiveVessel) {
-				// Yes - check if it is currently not visible
-				if (!uis.builduivisible) {
-					// Going from invisible to visible
-					uis.builduivisible = true;
-					RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI)); //start the GUI
-				}
-			} else {
-				// No - check if it is currently visible
-				if (uis.builduivisible) {
-					// Going from visible to invisible
-					uis.builduivisible = false;
-					RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //stop the GUI
-				}
-			}
-		}
-	}
-
-	/*
-	// Called when you change vessel
-	// ToDo: Cannot seem to get this code to fire...
-	private void OnVesselChange()
-	{
-		if (this.vessel == FlightGlobals.ActiveVessel) {
-			ShowBuildMenu();
-		} else {
-			HideBuildMenu();
-		}
-	}
-	*/
 
 	public void Update()
 	{
@@ -521,33 +481,13 @@ public class ExLaunchPad : PartModule
 		}
 	}
 
-	// Fired ONCE per frame
-	public override void OnUpdate()
-	{
-		// Update state of context buttons depending on state of UI
-		// ToDo: Move to something fired when the GUI is updated?
-		Events["ShowBuildMenu"].active = !uis.builduiactive;
-		Events["HideBuildMenu"].active = uis.builduiactive;
-	}
-
-	// Fired multiple times per frame in response to GUI events
 	private void OnGUI()
 	{
+		drawGUI();
 		if (uis.showcraftbrowser) {
 			uis.craftlist.OnGUI();
 		}
 	}
-
-	/*
-	// ToDo: What Does this Do?
-	private void OnLoad()
-	{
-		bases = FlightGlobals.fetch.vessels;
-		foreach (Vessel v in bases) {
-			print(v.name);
-		}
-	}
-	*/
 
 	// Fired when KSP saves
 	public override void OnSave(ConfigNode node)
@@ -564,6 +504,22 @@ public class ExLaunchPad : PartModule
 	{
 		kethane_present = CheckForKethane();
 		LoadConfigFile();
+
+		enabled = false;
+		GameEvents.onHideUI.Add(onHideUI);
+		GameEvents.onShowUI.Add(onShowUI);
+
+		GameEvents.onVesselSituationChange.Add(onVesselSituationChange);
+		GameEvents.onVesselChange.Add(onVesselChange);
+	}
+
+	void OnDestroy()
+	{
+		GameEvents.onHideUI.Remove(onHideUI);
+		GameEvents.onShowUI.Remove(onShowUI);
+
+		GameEvents.onVesselSituationChange.Remove(onVesselSituationChange);
+		GameEvents.onVesselChange.Remove(onVesselChange);
 	}
 
 	private void LoadConfigFile()
@@ -580,20 +536,15 @@ public class ExLaunchPad : PartModule
 	[KSPEvent(guiActive = true, guiName = "Show Build Menu", active = true)]
 	public void ShowBuildMenu()
 	{
-		// Only allow enabling the menu if we are in a suitable place
-		if (((this.vessel.situation == Vessel.Situations.LANDED) ||
-				(this.vessel.situation == Vessel.Situations.PRELAUNCH) ||
-				(this.vessel.situation == Vessel.Situations.SPLASHED))) {
-			RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI)); //start the GUI
-			uis.builduiactive = true;
-		}
+		ShowHideBuildMenu(true);
+		enabled = uis.builduiactive;
 	}
 
 	[KSPEvent(guiActive = true, guiName = "Hide Build Menu", active = false)]
 	public void HideBuildMenu()
 	{
-		RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //stop the GUI
-		uis.builduiactive = false;
+		ShowHideBuildMenu(false);
+		enabled = uis.builduiactive;
 	}
 
 	[KSPAction("Show Build Menu")]
@@ -705,6 +656,49 @@ public class ExLaunchPad : PartModule
 		}
 
 		return resources;
+	}
+
+	private void ShowHideBuildMenu(bool show)
+	{
+		uis.builduiactive = show;
+		Events["ShowBuildMenu"].active = !uis.builduiactive;
+		Events["HideBuildMenu"].active = uis.builduiactive;
+	}
+
+	private void onVesselSituationChange(GameEvents.HostedFromToAction<Vessel, Vessel.Situations> vs)
+	{
+		if (vs.host != vessel)
+			return;
+		if (vs.to == Vessel.Situations.LANDED
+			|| vs.to == Vessel.Situations.ORBITING
+			|| vs.to == Vessel.Situations.PRELAUNCH
+			|| vs.to == Vessel.Situations.SPLASHED) {
+			ShowHideBuildMenu(uis.builduiactive);
+			enabled = uis.builduiactive;
+		} else {
+			Events["ShowBuildMenu"].active = false;
+			Events["HideBuildMenu"].active = false;
+			uis.builduiactive = false;
+		}
+	}
+
+	void onVesselChange(Vessel v)
+	{
+		if (v == vessel) {
+			enabled = uis.builduiactive;
+		} else {
+			enabled = false;
+		}
+	}
+
+	void onHideUI()
+	{
+		enabled = false;
+	}
+
+	void onShowUI()
+	{
+		enabled = uis.builduiactive;
 	}
 }
 

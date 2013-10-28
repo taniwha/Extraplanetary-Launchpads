@@ -454,14 +454,6 @@ public class ExLaunchPad : PartModule
 	// Event Hooks
 	// See http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html for some help on what fires when
 
-	// Called each time the GUI is painted
-	private void drawGUI()
-	{
-		GUI.skin = HighLogic.Skin;
-		uis.windowpos = GUILayout.Window(1, uis.windowpos, WindowGUI, "Extraplanetary Launchpad: " + vessel.situation.ToString(), GUILayout.Width(600));
-	}
-
-	// Called ONCE at start
 	private void Start()
 	{
 		// If "Show GUI on StartUp" ticked, show the GUI
@@ -483,13 +475,13 @@ public class ExLaunchPad : PartModule
 
 	private void OnGUI()
 	{
-		drawGUI();
+		GUI.skin = HighLogic.Skin;
+		uis.windowpos = GUILayout.Window(1, uis.windowpos, WindowGUI, "Extraplanetary Launchpad: " + vessel.situation.ToString(), GUILayout.Width(600));
 		if (uis.showcraftbrowser) {
 			uis.craftlist.OnGUI();
 		}
 	}
 
-	// Fired when KSP saves
 	public override void OnSave(ConfigNode node)
 	{
 		PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
@@ -498,8 +490,6 @@ public class ExLaunchPad : PartModule
 		config.save();
 	}
 
-
-	// Fired when KSP loads
 	public override void OnLoad(ConfigNode node)
 	{
 		kethane_present = CheckForKethane();
@@ -641,7 +631,7 @@ public class ExLaunchPad : PartModule
 			uis.hullRocketParts += hull_parts;
 		}
 
-		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split the Surplus LF off as "JetFuel"
+		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split off the Surplus LF as "JetFuel"
 		if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel")) {
 			double jetFuel = 0.0;
 			// The LiquidFuel:Oxidizer ratio is 9:11. Try to minimize rounding effects.
@@ -679,6 +669,7 @@ public class ExLaunchPad : PartModule
 			Events["ShowBuildMenu"].active = false;
 			Events["HideBuildMenu"].active = false;
 			uis.builduiactive = false;
+			enabled = uis.builduiactive;
 		}
 	}
 

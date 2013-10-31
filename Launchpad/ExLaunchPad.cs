@@ -99,6 +99,7 @@ public class ExLaunchPad : PartModule
 		public float timer;
 		public Vessel launchee;
 		public Orbit currentorbit;
+		public DockedVesselInfo vesselInfo;
 	}
 
 	int padPartsCount;					// the number of parts in the pad vessel (for docking detection)
@@ -106,6 +107,9 @@ public class ExLaunchPad : PartModule
 
 	[KSPField(isPersistant = false)]
 	public float SpawnHeightOffset = 1.0f;	// amount of pad between origin and open space
+
+	[KSPField(isPersistant = false)]
+	public string SpawnTransform;
 
 	private UIStatus uis = new UIStatus();
 
@@ -170,39 +174,95 @@ public class ExLaunchPad : PartModule
 		InputLockManager.ClearControlLocks();
 	}
 
+	private void HackStruts(Vessel vsl)
+	{
+		int numParts = vessel.parts.Count;
+
+		foreach (Part p in vsl.parts.OfType<StrutConnector>()) {
+			if (p.customPartData == "")
+				continue;
+			Debug.Log(String.Format("[EL] before {0}", p.customPartData));
+			string[] Params = p.customPartData.Split(';');
+			for (int i = 0; i < Params.Length; i++) {
+				string[] keyval = Params[i].Split(':');
+				string Key = keyval[0].Trim();
+				string Value = keyval[1].Trim();
+				if (Key == "tgt") {
+					string[] pnameval = Value.Split('_');
+					string pname = pnameval[0];
+					int val = int.Parse(pnameval[1]);
+					if (val != -1) {
+						val += numParts;
+					}
+					Params[i] = "tgt: " + pname + "_" + val.ToString();
+					break;
+				}
+			}
+			p.customPartData = String.Join("; ", Params);
+			Debug.Log(String.Format("[EL] after {0}", p.customPartData));
+		}
+	}
+
 	private void BuildAndLaunchCraft()
 	{
 		// build craft
 		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
 
-		Vector3 offset = Vector3.up * SpawnHeightOffset;
-		Transform t = this.part.transform;
+		Transform launchTransform;
+
+		if (SpawnTransform != "") {
+			Transform model = part.transform.FindChild ("model");
+			launchTransform = model.FindChild (SpawnTransform);
+			Debug.Log(String.Format("[EL] launchTransform {0} {1}", launchTransform, SpawnTransform));
+		} else {
+			Vector3 offset = Vector3.up * SpawnHeightOffset;
+			Transform t = this.part.transform;
+			GameObject launchPos = new GameObject ();
+			launchPos.transform.position = t.position;
+			launchPos.transform.position += t.TransformDirection(offset);
+			launchPos.transform.rotation = t.rotation;
+			launchTransform = launchPos.transform;
+			Destroy(launchPos);
+			Debug.Log(String.Format("[EL] launchPos {0}", launchTransform));
+		}
 
 		string landedAt = "External Launchpad";
 		string flag = uis.flagname;
 		Game state = FlightDriver.FlightStateCache;
 		VesselCrewManifest crew = new VesselCrewManifest ();
 
-		GameObject launchPos = new GameObject ();
-		launchPos.transform.position = t.position;
-		launchPos.transform.position += t.TransformDirection(offset);
-		launchPos.transform.rotation = t.rotation;
 		ShipConstruction.CreateBackup(nship);
-		ShipConstruction.PutShipToGround(nship, launchPos.transform);
-		Destroy(launchPos);
+		ShipConstruction.PutShipToGround(nship, launchTransform);
 
 		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
 
 		Vessel vsl = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
+		FlightGlobals.ForceSetActiveVessel(vsl);
 		vsl.Landed = false;
 
 		if (kethane_present && !debug)
 			UseResources(vsl);
 
-		Staging.beginFlight();
+		if (vessel.situation == Vessel.Situations.ORBITING) {
+			HackStruts(vsl);
+			uis.vesselInfo = new DockedVesselInfo();
+			uis.vesselInfo.name = vsl.vesselName;
+			uis.vesselInfo.vesselType = vsl.vesselType;
+			uis.vesselInfo.rootPartUId = vsl.rootPart.flightID;
+			vsl.rootPart.Couple(part);
 
-		uis.timer = 3.0f;
-		uis.launchee = vsl;
+			Events["Release"].active = true;
+			Events["ShowBuildMenu"].active = false;
+			Events["HideBuildMenu"].active = false;
+			enabled = uis.builduiactive = false;
+
+			FlightGlobals.ForceSetActiveVessel (vessel);
+		} else {
+			uis.timer = 3.0f;
+			uis.launchee = vsl;
+		}
+
+		Staging.beginFlight();
 	}
 
 	private float ResourceLine(string label, string resourceName, float fraction, double minAmount, double maxAmount, double available)
@@ -484,14 +544,26 @@ public class ExLaunchPad : PartModule
 
 	public override void OnSave(ConfigNode node)
 	{
+		if (uis.vesselInfo != null) {
+			uis.vesselInfo.Save(node.AddNode("DockedVesselInfo"));
+		}
+
 		PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
 		config.SetValue("Window Position", uis.windowpos);
 		config.SetValue("Show Build Menu on StartUp", uis.showbuilduionload);
 		config.save();
 	}
 
+	private void dumpxform(Transform t, string n = "")
+	{
+		Debug.Log(String.Format("[EL] {0}", n + t.name));
+		foreach (Transform c in t)
+			dumpxform(c, n + t.name + ".");
+	}
+
 	public override void OnLoad(ConfigNode node)
 	{
+		dumpxform(part.transform);
 		kethane_present = CheckForKethane();
 		LoadConfigFile();
 
@@ -501,6 +573,11 @@ public class ExLaunchPad : PartModule
 
 		GameEvents.onVesselSituationChange.Add(onVesselSituationChange);
 		GameEvents.onVesselChange.Add(onVesselChange);
+
+		if (node.HasNode("DockedVesselInfo")) {
+			uis.vesselInfo = new DockedVesselInfo();
+			uis.vesselInfo.Load(node.GetNode("DockedVesselInfo"));
+		}
 	}
 
 	void OnDestroy()
@@ -535,6 +612,15 @@ public class ExLaunchPad : PartModule
 	{
 		ShowHideBuildMenu(false);
 		enabled = uis.builduiactive;
+	}
+
+	[KSPEvent(guiActive = true, guiName = "Release", active = false)]
+	public void Release()
+	{
+		vessel[uis.vesselInfo.rootPartUId].Undock(uis.vesselInfo);
+		uis.vesselInfo = null;
+		Events["Release"].active = false;
+		ShowHideBuildMenu(false);
 	}
 
 	[KSPAction("Show Build Menu")]
@@ -659,15 +745,17 @@ public class ExLaunchPad : PartModule
 	{
 		if (vs.host != vessel)
 			return;
-		if (vs.to == Vessel.Situations.LANDED
-			|| vs.to == Vessel.Situations.ORBITING
-			|| vs.to == Vessel.Situations.PRELAUNCH
-			|| vs.to == Vessel.Situations.SPLASHED) {
+		if (uis.vesselInfo == null
+			&& (vs.to == Vessel.Situations.LANDED
+				|| vs.to == Vessel.Situations.ORBITING
+				|| vs.to == Vessel.Situations.PRELAUNCH
+				|| vs.to == Vessel.Situations.SPLASHED)) {
 			ShowHideBuildMenu(uis.builduiactive);
 			enabled = uis.builduiactive;
 		} else {
 			Events["ShowBuildMenu"].active = false;
 			Events["HideBuildMenu"].active = false;
+			Events["Release"].active = uis.vesselInfo != null;
 			uis.builduiactive = false;
 			enabled = uis.builduiactive;
 		}

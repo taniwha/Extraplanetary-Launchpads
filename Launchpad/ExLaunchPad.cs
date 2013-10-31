@@ -174,32 +174,40 @@ public class ExLaunchPad : PartModule
 		InputLockManager.ClearControlLocks();
 	}
 
+	private void HackStrutCData(Part p, int numParts)
+	{
+		Debug.Log(String.Format("[EL] before {0}", p.customPartData));
+		string[] Params = p.customPartData.Split(';');
+		for (int i = 0; i < Params.Length; i++) {
+			string[] keyval = Params[i].Split(':');
+			string Key = keyval[0].Trim();
+			string Value = keyval[1].Trim();
+			if (Key == "tgt") {
+				string[] pnameval = Value.Split('_');
+				string pname = pnameval[0];
+				int val = int.Parse(pnameval[1]);
+				if (val != -1) {
+					val += numParts;
+				}
+				Params[i] = "tgt: " + pname + "_" + val.ToString();
+				break;
+			}
+		}
+		p.customPartData = String.Join("; ", Params);
+		Debug.Log(String.Format("[EL] after {0}", p.customPartData));
+	}
+
 	private void HackStruts(Vessel vsl)
 	{
 		int numParts = vessel.parts.Count;
 
-		foreach (Part p in vsl.parts.OfType<StrutConnector>()) {
-			if (p.customPartData == "")
-				continue;
-			Debug.Log(String.Format("[EL] before {0}", p.customPartData));
-			string[] Params = p.customPartData.Split(';');
-			for (int i = 0; i < Params.Length; i++) {
-				string[] keyval = Params[i].Split(':');
-				string Key = keyval[0].Trim();
-				string Value = keyval[1].Trim();
-				if (Key == "tgt") {
-					string[] pnameval = Value.Split('_');
-					string pname = pnameval[0];
-					int val = int.Parse(pnameval[1]);
-					if (val != -1) {
-						val += numParts;
-					}
-					Params[i] = "tgt: " + pname + "_" + val.ToString();
-					break;
-				}
-			}
-			p.customPartData = String.Join("; ", Params);
-			Debug.Log(String.Format("[EL] after {0}", p.customPartData));
+		var struts = vsl.parts.OfType<StrutConnector>().Where(p => p.customPartData != "");
+		foreach (Part part in struts) {
+			HackStrutCData(part, numParts);
+		}
+		var fuelLines = vsl.parts.OfType<FuelLine>().Where(p => p.customPartData != "");
+		foreach (Part part in fuelLines) {
+			HackStrutCData(part, numParts);
 		}
 	}
 

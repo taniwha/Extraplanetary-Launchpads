@@ -79,7 +79,6 @@ public class ExLaunchPad : PartModule
 		public bool builduiactive = false;	// Whether the build menu is open or closed
 		public bool builduivisible = true;	// Whether the build menu is allowed to be shown
 		public bool showbuilduionload = false;
-		public bool init = true;
 		public bool linklfosliders = true;
 		public bool showvab = true;
 		public bool showsph = false;
@@ -98,7 +97,6 @@ public class ExLaunchPad : PartModule
 
 		public float timer;
 		public Vessel launchee;
-		public Orbit currentorbit;
 		public DockedVesselInfo vesselInfo;
 	}
 
@@ -327,13 +325,7 @@ public class ExLaunchPad : PartModule
 		 * KSPUtil.ApplicationRootPath - gets KSPO root
 		 * expose m_files and m_selectedFile?
 		 * fileBrowser = new FileBrowser(new Rect(Screen.width / 2, 100, 350, 500), title, callback, true);
-		 *
-		 * Style declarations messy - how do I dupe them easily?
 		 */
-		if (uis.init)
-		{
-			uis.init = false;
-		}
 
 		EditorLogic editor = EditorLogic.fetch;
 		if (editor) return;

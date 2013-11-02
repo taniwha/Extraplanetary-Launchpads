@@ -18,7 +18,7 @@ public class ExLaunchPad : PartModule
 	//public static bool kethane_present = CheckForKethane();
 	public static bool kethane_present;
 
-	public enum crafttype { SPH, VAB };
+	public enum crafttype { SPH, VAB, SUB };
 
 	public class Styles {
 		public static GUIStyle normal;
@@ -80,8 +80,6 @@ public class ExLaunchPad : PartModule
 		public bool builduivisible = true;	// Whether the build menu is allowed to be shown
 		public bool showbuilduionload = false;
 		public bool linklfosliders = true;
-		public bool showvab = true;
-		public bool showsph = false;
 		public bool canbuildcraft = false;
 		public crafttype ct = crafttype.VAB;
 		public string craftfile = null;
@@ -369,15 +367,14 @@ public class ExLaunchPad : PartModule
 		GUILayout.BeginHorizontal("box");
 		GUILayout.FlexibleSpace();
 		// VAB / SPH selection
-		if (GUILayout.Toggle(uis.showvab, "VAB", GUILayout.Width(80))) {
-			uis.showvab = true;
-			uis.showsph = false;
+		if (GUILayout.Toggle(uis.ct == crafttype.VAB, "VAB", GUILayout.Width(80))) {
 			uis.ct = crafttype.VAB;
 		}
-		if (GUILayout.Toggle(uis.showsph, "SPH")) {
-			uis.showvab = false;
-			uis.showsph = true;
+		if (GUILayout.Toggle(uis.ct == crafttype.SPH, "SPH", GUILayout.Width(80))) {
 			uis.ct = crafttype.SPH;
+		}
+		if (GUILayout.Toggle(uis.ct == crafttype.SUB, "SubAss", GUILayout.Width(160))) {
+			uis.ct = crafttype.SUB;
 		}
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
@@ -385,9 +382,14 @@ public class ExLaunchPad : PartModule
 		string strpath = HighLogic.SaveFolder;
 
 		if (GUILayout.Button("Select Craft", Styles.normal, GUILayout.ExpandWidth(true))) {
+			string [] dir = new string[] {"SPH", "VAB", "../Subassemblies"};
+			bool stock = HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels;
+			if (uis.ct == crafttype.SUB)
+				HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = false;
 			//GUILayout.Button is "true" when clicked
-			uis.craftlist = new CraftBrowser(new Rect(Screen.width / 2, 100, 350, 500), uis.ct.ToString(), strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
+			uis.craftlist = new CraftBrowser(new Rect(Screen.width / 2, 100, 350, 500), dir[(int)uis.ct], strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
 			uis.showcraftbrowser = true;
+			HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = stock;
 		}
 
 		if (uis.craftselected) {

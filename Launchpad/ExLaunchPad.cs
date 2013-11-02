@@ -240,9 +240,8 @@ public class ExLaunchPad : PartModule
 		Transform launchTransform;
 
 		if (SpawnTransform != "") {
-			Transform model = part.transform.FindChild ("model");
-			launchTransform = model.FindChild (SpawnTransform);
-			Debug.Log(String.Format("[EL] launchTransform {0} {1}", launchTransform, SpawnTransform));
+			launchTransform = part.FindModelTransform (SpawnTransform);
+			Debug.Log(String.Format("[EL] launchTransform:{0}:{1}", launchTransform, SpawnTransform));
 		} else {
 			Vector3 offset = Vector3.up * SpawnHeightOffset;
 			Transform t = this.part.transform;

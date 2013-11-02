@@ -259,6 +259,8 @@ public class ExLaunchPad : PartModule
 		// build craft
 		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
 
+		Vector3 offset = nship.Parts[0].transform.localPosition;
+		nship.Parts[0].transform.Translate(-offset);
 		string landedAt = "External Launchpad";
 		string flag = uis.flagname;
 		Game state = FlightDriver.FlightStateCache;

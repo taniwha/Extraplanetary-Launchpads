@@ -13,7 +13,7 @@ public class ExLaunchPad : PartModule
 {
 
 	[KSPField]
-	public bool debug = false;
+	public bool DebugPad = false;
 
 	//public static bool kethane_present = CheckForKethane();
 	public static bool kethane_present;
@@ -275,7 +275,7 @@ public class ExLaunchPad : PartModule
 		FlightGlobals.ForceSetActiveVessel(vsl);
 		vsl.Landed = false;
 
-		if (kethane_present && !debug)
+		if (kethane_present && !DebugPad)
 			UseResources(vsl);
 
 		if (vessel.situation == Vessel.Situations.ORBITING) {
@@ -324,7 +324,7 @@ public class ExLaunchPad : PartModule
 			requiredStyle = Styles.red;
 			// prevent building unless debug mode is on, or kethane is not
 			// installed (kethane is required for resource production)
-			uis.canbuildcraft = (!kethane_present || debug);
+			uis.canbuildcraft = (!kethane_present || DebugPad);
 		}
 		// Required and Available
 		GUILayout.Box((Math.Round(required, 2)).ToString(), requiredStyle, GUILayout.Width(75), GUILayout.Height(40));

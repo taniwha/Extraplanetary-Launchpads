@@ -548,7 +548,7 @@ public class ExLaunchPad : PartModule
 		}
 	}
 
-	public void Update()
+	public override void OnUpdate()
 	{
 		if (uis.launchee && uis.timer >= 0) {
 			uis.timer -= Time.deltaTime;

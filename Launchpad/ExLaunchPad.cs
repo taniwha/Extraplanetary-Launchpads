@@ -9,19 +9,16 @@ using KSP.IO;
 
 namespace ExLP {
 
-/// <summary>
-/// TODO
-/// </summary>
 public class ExLaunchPad : PartModule
 {
 
 	[KSPField]
-	public bool debug = false;
+	public bool DebugPad = false;
 
 	//public static bool kethane_present = CheckForKethane();
 	public static bool kethane_present;
 
-	public enum crafttype { SPH, VAB };
+	public enum crafttype { SPH, VAB, SUB };
 
 	public class Styles {
 		public static GUIStyle normal;
@@ -82,10 +79,7 @@ public class ExLaunchPad : PartModule
 		public bool builduiactive = false;	// Whether the build menu is open or closed
 		public bool builduivisible = true;	// Whether the build menu is allowed to be shown
 		public bool showbuilduionload = false;
-		public bool init = true;
 		public bool linklfosliders = true;
-		public bool showvab = true;
-		public bool showsph = false;
 		public bool canbuildcraft = false;
 		public crafttype ct = crafttype.VAB;
 		public string craftfile = null;
@@ -100,14 +94,18 @@ public class ExLaunchPad : PartModule
 		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
 		public float timer;
-		public Vessel vessel;
+		public Vessel launchee;
+		public DockedVesselInfo vesselInfo;
 	}
 
 	int padPartsCount;					// the number of parts in the pad vessel (for docking detection)
 	VesselResources padResources;		// resources available to the pad
 
 	[KSPField(isPersistant = false)]
-	public float SpawnHeightOffset = 1.0f;	// amount of pad between origin and open space
+	public float SpawnHeightOffset = 0.0f;	// amount of pad between origin and open space
+
+	[KSPField(isPersistant = false)]
+	public string SpawnTransform;
 
 	private UIStatus uis = new UIStatus();
 
@@ -121,6 +119,31 @@ public class ExLaunchPad : PartModule
 		}
 		Debug.Log("[EL] Kethane not found");
 		return false;
+	}
+
+	private void UpdateGUIState()
+	{
+		bool can_build = false;
+		bool can_release = false;
+		var situation = Vessel.Situations.LANDED;
+
+		if (vessel) {
+			situation = vessel.situation;
+		}
+		if (uis.vesselInfo == null
+			&& (situation == Vessel.Situations.LANDED
+				|| situation == Vessel.Situations.ORBITING
+				|| situation == Vessel.Situations.PRELAUNCH
+				|| situation == Vessel.Situations.SPLASHED)) {
+			can_build = true;
+		}
+		if (uis.vesselInfo != null) {
+			can_release = true;
+		}
+		enabled = can_build && uis.builduiactive && uis.builduivisible;
+		Events["ShowBuildMenu"].active = can_build && !uis.builduiactive;
+		Events["HideBuildMenu"].active = can_build && uis.builduiactive;
+		Events["ReleaseVessel"].active = can_release;
 	}
 	// =====================================================================================================================================================
 	// UI Functions
@@ -160,15 +183,75 @@ public class ExLaunchPad : PartModule
 	private void FixCraftLock()
 	{
 		// Many thanks to Snjo (firespitter)
-		uis.vessel.situation = Vessel.Situations.LANDED;
-		uis.vessel.state = Vessel.State.ACTIVE;
-		uis.vessel.Landed = false;
-		uis.vessel.Splashed = false;
-		uis.vessel.GoOnRails();
-		uis.vessel.rigidbody.WakeUp();
-		uis.vessel.ResumeStaging();
-		uis.vessel.landedAt = "External Launchpad";
+		uis.launchee.situation = Vessel.Situations.LANDED;
+		uis.launchee.state = Vessel.State.ACTIVE;
+		uis.launchee.Landed = false;
+		uis.launchee.Splashed = false;
+
+		uis.launchee.GoOnRails();
+		uis.launchee.rigidbody.WakeUp();
+		uis.launchee.ResumeStaging();
+		uis.launchee.landedAt = "External Launchpad";
 		InputLockManager.ClearControlLocks();
+	}
+
+	private void HackStrutCData(Part p, int numParts)
+	{
+		Debug.Log(String.Format("[EL] before {0}", p.customPartData));
+		string[] Params = p.customPartData.Split(';');
+		for (int i = 0; i < Params.Length; i++) {
+			string[] keyval = Params[i].Split(':');
+			string Key = keyval[0].Trim();
+			string Value = keyval[1].Trim();
+			if (Key == "tgt") {
+				string[] pnameval = Value.Split('_');
+				string pname = pnameval[0];
+				int val = int.Parse(pnameval[1]);
+				if (val != -1) {
+					val += numParts;
+				}
+				Params[i] = "tgt: " + pname + "_" + val.ToString();
+				break;
+			}
+		}
+		p.customPartData = String.Join("; ", Params);
+		Debug.Log(String.Format("[EL] after {0}", p.customPartData));
+	}
+
+	private void HackStruts(Vessel vsl)
+	{
+		int numParts = vessel.parts.Count;
+
+		var struts = vsl.parts.OfType<StrutConnector>().Where(p => p.customPartData != "");
+		foreach (Part part in struts) {
+			HackStrutCData(part, numParts);
+		}
+		var fuelLines = vsl.parts.OfType<FuelLine>().Where(p => p.customPartData != "");
+		foreach (Part part in fuelLines) {
+			HackStrutCData(part, numParts);
+		}
+	}
+
+	private Transform GetLanchTransform()
+	{
+
+		Transform launchTransform;
+
+		if (SpawnTransform != "") {
+			launchTransform = part.FindModelTransform (SpawnTransform);
+			Debug.Log(String.Format("[EL] launchTransform:{0}:{1}", launchTransform, SpawnTransform));
+		} else {
+			Vector3 offset = Vector3.up * SpawnHeightOffset;
+			Transform t = this.part.transform;
+			GameObject launchPos = new GameObject ();
+			launchPos.transform.position = t.position;
+			launchPos.transform.position += t.TransformDirection(offset);
+			launchPos.transform.rotation = t.rotation;
+			launchTransform = launchPos.transform;
+			Destroy(launchPos);
+			Debug.Log(String.Format("[EL] launchPos {0}", launchTransform));
+		}
+		return launchTransform;
 	}
 
 	private void BuildAndLaunchCraft()
@@ -176,34 +259,39 @@ public class ExLaunchPad : PartModule
 		// build craft
 		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
 
-		Vector3 offset = Vector3.up * SpawnHeightOffset;
-		Transform t = this.part.transform;
-
+		Vector3 offset = nship.Parts[0].transform.localPosition;
+		nship.Parts[0].transform.Translate(-offset);
 		string landedAt = "External Launchpad";
 		string flag = uis.flagname;
 		Game state = FlightDriver.FlightStateCache;
 		VesselCrewManifest crew = new VesselCrewManifest ();
 
-		GameObject launchPos = new GameObject ();
-		launchPos.transform.position = t.position;
-		launchPos.transform.position += t.TransformDirection(offset);
-		launchPos.transform.rotation = t.rotation;
 		ShipConstruction.CreateBackup(nship);
-		ShipConstruction.PutShipToGround(nship, launchPos.transform);
-		Destroy(launchPos);
+		ShipConstruction.PutShipToGround(nship, GetLanchTransform());
 
 		ShipConstruction.AssembleForLaunch(nship, landedAt, flag, state, crew);
 
-		Vessel vessel = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
-		vessel.Landed = false;
+		Vessel vsl = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
+		FlightGlobals.ForceSetActiveVessel(vsl);
+		vsl.Landed = false;
 
-		if (kethane_present && !debug)
-			UseResources(vessel);
+		if (kethane_present && !DebugPad)
+			UseResources(vsl);
+
+		if (vessel.situation == Vessel.Situations.ORBITING) {
+			HackStruts(vsl);
+			uis.vesselInfo = new DockedVesselInfo();
+			uis.vesselInfo.name = vsl.vesselName;
+			uis.vesselInfo.vesselType = vsl.vesselType;
+			uis.vesselInfo.rootPartUId = vsl.rootPart.flightID;
+			vsl.rootPart.Couple(part);
+			FlightGlobals.ForceSetActiveVessel (vessel);
+		} else {
+			uis.timer = 3.0f;
+			uis.launchee = vsl;
+		}
 
 		Staging.beginFlight();
-
-		uis.timer = 3.0f;
-		uis.vessel = vessel;
 	}
 
 	private float ResourceLine(string label, string resourceName, float fraction, double minAmount, double maxAmount, double available)
@@ -236,7 +324,7 @@ public class ExLaunchPad : PartModule
 			requiredStyle = Styles.red;
 			// prevent building unless debug mode is on, or kethane is not
 			// installed (kethane is required for resource production)
-			uis.canbuildcraft = (!kethane_present || debug);
+			uis.canbuildcraft = (!kethane_present || DebugPad);
 		}
 		// Required and Available
 		GUILayout.Box((Math.Round(required, 2)).ToString(), requiredStyle, GUILayout.Width(75), GUILayout.Height(40));
@@ -260,13 +348,7 @@ public class ExLaunchPad : PartModule
 		 * KSPUtil.ApplicationRootPath - gets KSPO root
 		 * expose m_files and m_selectedFile?
 		 * fileBrowser = new FileBrowser(new Rect(Screen.width / 2, 100, 350, 500), title, callback, true);
-		 *
-		 * Style declarations messy - how do I dupe them easily?
 		 */
-		if (uis.init)
-		{
-			uis.init = false;
-		}
 
 		EditorLogic editor = EditorLogic.fetch;
 		if (editor) return;
@@ -287,15 +369,14 @@ public class ExLaunchPad : PartModule
 		GUILayout.BeginHorizontal("box");
 		GUILayout.FlexibleSpace();
 		// VAB / SPH selection
-		if (GUILayout.Toggle(uis.showvab, "VAB", GUILayout.Width(80))) {
-			uis.showvab = true;
-			uis.showsph = false;
+		if (GUILayout.Toggle(uis.ct == crafttype.VAB, "VAB", GUILayout.Width(80))) {
 			uis.ct = crafttype.VAB;
 		}
-		if (GUILayout.Toggle(uis.showsph, "SPH")) {
-			uis.showvab = false;
-			uis.showsph = true;
+		if (GUILayout.Toggle(uis.ct == crafttype.SPH, "SPH", GUILayout.Width(80))) {
 			uis.ct = crafttype.SPH;
+		}
+		if (GUILayout.Toggle(uis.ct == crafttype.SUB, "SubAss", GUILayout.Width(160))) {
+			uis.ct = crafttype.SUB;
 		}
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
@@ -303,9 +384,14 @@ public class ExLaunchPad : PartModule
 		string strpath = HighLogic.SaveFolder;
 
 		if (GUILayout.Button("Select Craft", Styles.normal, GUILayout.ExpandWidth(true))) {
+			string [] dir = new string[] {"SPH", "VAB", "../Subassemblies"};
+			bool stock = HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels;
+			if (uis.ct == crafttype.SUB)
+				HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = false;
 			//GUILayout.Button is "true" when clicked
-			uis.craftlist = new CraftBrowser(new Rect(Screen.width / 2, 100, 350, 500), uis.ct.ToString(), strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
+			uis.craftlist = new CraftBrowser(new Rect(Screen.width / 2, 100, 350, 500), dir[(int)uis.ct], strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
 			uis.showcraftbrowser = true;
+			HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = stock;
 		}
 
 		if (uis.craftselected) {
@@ -398,9 +484,8 @@ public class ExLaunchPad : PartModule
 					uis.craftselected = false;
 					uis.requiredresources = null;
 					uis.resourcesliders = new Dictionary<string, float>();;
-
-					// Close the UI
-					HideBuildMenu();
+					uis.builduiactive = false;
+					UpdateGUIState();
 				}
 			} else {
 				GUILayout.Box("You do not have the resources to build this craft", Styles.red);
@@ -455,14 +540,6 @@ public class ExLaunchPad : PartModule
 	// Event Hooks
 	// See http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html for some help on what fires when
 
-	// Called each time the GUI is painted
-	private void drawGUI()
-	{
-		GUI.skin = HighLogic.Skin;
-		uis.windowpos = GUILayout.Window(1, uis.windowpos, WindowGUI, "Extraplanetary Launchpads", GUILayout.Width(600));
-	}
-
-	// Called ONCE at start
 	private void Start()
 	{
 		// If "Show GUI on StartUp" ticked, show the GUI
@@ -471,102 +548,72 @@ public class ExLaunchPad : PartModule
 		}
 	}
 
-
-	// Fired maybe multiple times a frame, maybe once every n frames
-	public override void OnFixedUpdate()
+	public override void OnUpdate()
 	{
-		// ToDo: Should not be checking this every frame - once per craft switch
-		// OnVesselChange may be ideal but I cannot seem to get it to fire
-		// Landed / Flying check should probably be with this code, but moved it elsewhere while this is firing so often
-
-		// Does the UI want to be visible?
-		if (uis.builduiactive) {
-			// Decide if the build menu is allowed to be visible
-			if (this.vessel == FlightGlobals.ActiveVessel) {
-				// Yes - check if it is currently not visible
-				if (!uis.builduivisible) {
-					// Going from invisible to visible
-					uis.builduivisible = true;
-					RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI)); //start the GUI
-				}
-			} else {
-				// No - check if it is currently visible
-				if (uis.builduivisible) {
-					// Going from visible to invisible
-					uis.builduivisible = false;
-					RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //stop the GUI
-				}
-			}
-		}
-	}
-
-	/*
-	// Called when you change vessel
-	// ToDo: Cannot seem to get this code to fire...
-	private void OnVesselChange()
-	{
-		if (this.vessel == FlightGlobals.ActiveVessel) {
-			ShowBuildMenu();
-		} else {
-			HideBuildMenu();
-		}
-	}
-	*/
-
-	public void Update()
-	{
-		if (uis.vessel && uis.timer >= 0) {
+		if (uis.launchee && uis.timer >= 0) {
 			uis.timer -= Time.deltaTime;
 			if (uis.timer <= 0) {
 				FixCraftLock();
-				uis.vessel = null;
+				uis.launchee = null;
 			}
 		}
 	}
 
-	// Fired ONCE per frame
-	public override void OnUpdate()
-	{
-		// Update state of context buttons depending on state of UI
-		// ToDo: Move to something fired when the GUI is updated?
-		Events["ShowBuildMenu"].active = !uis.builduiactive;
-		Events["HideBuildMenu"].active = uis.builduiactive;
-	}
-
-	// Fired multiple times per frame in response to GUI events
 	private void OnGUI()
 	{
+		GUI.skin = HighLogic.Skin;
+		uis.windowpos = GUILayout.Window(1, uis.windowpos, WindowGUI, "Extraplanetary Launchpad: " + vessel.situation.ToString(), GUILayout.Width(600));
 		if (uis.showcraftbrowser) {
 			uis.craftlist.OnGUI();
 		}
 	}
 
-	/*
-	// ToDo: What Does this Do?
-	private void OnLoad()
-	{
-		bases = FlightGlobals.fetch.vessels;
-		foreach (Vessel v in bases) {
-			print(v.name);
-		}
-	}
-	*/
-
-	// Fired when KSP saves
 	public override void OnSave(ConfigNode node)
 	{
+		if (uis.vesselInfo != null) {
+			uis.vesselInfo.Save(node.AddNode("DockedVesselInfo"));
+		}
+
 		PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
 		config.SetValue("Window Position", uis.windowpos);
 		config.SetValue("Show Build Menu on StartUp", uis.showbuilduionload);
 		config.save();
 	}
 
+	private void dumpxform(Transform t, string n = "")
+	{
+		Debug.Log(String.Format("[EL] {0}", n + t.name));
+		foreach (Transform c in t)
+			dumpxform(c, n + t.name + ".");
+	}
 
-	// Fired when KSP loads
 	public override void OnLoad(ConfigNode node)
 	{
+		dumpxform(part.transform);
 		kethane_present = CheckForKethane();
 		LoadConfigFile();
+
+		enabled = false;
+		GameEvents.onHideUI.Add(onHideUI);
+		GameEvents.onShowUI.Add(onShowUI);
+
+		GameEvents.onVesselSituationChange.Add(onVesselSituationChange);
+		GameEvents.onVesselChange.Add(onVesselChange);
+
+		if (node.HasNode("DockedVesselInfo")) {
+			uis.vesselInfo = new DockedVesselInfo();
+			uis.vesselInfo.Load(node.GetNode("DockedVesselInfo"));
+		}
+		UpdateGUIState();
+	}
+
+	void OnDestroy()
+	{
+		GameEvents.onHideUI.Remove(onHideUI);
+		GameEvents.onShowUI.Remove(onShowUI);
+
+		GameEvents.onVesselSituationChange.Remove(onVesselSituationChange);
+		GameEvents.onVesselChange.Remove(onVesselChange);
 	}
 
 	private void LoadConfigFile()
@@ -583,20 +630,23 @@ public class ExLaunchPad : PartModule
 	[KSPEvent(guiActive = true, guiName = "Show Build Menu", active = true)]
 	public void ShowBuildMenu()
 	{
-		// Only allow enabling the menu if we are in a suitable place
-		if (((this.vessel.situation == Vessel.Situations.LANDED) ||
-				(this.vessel.situation == Vessel.Situations.PRELAUNCH) ||
-				(this.vessel.situation == Vessel.Situations.SPLASHED))) {
-			RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI)); //start the GUI
-			uis.builduiactive = true;
-		}
+		uis.builduiactive = true;
+		UpdateGUIState();
 	}
 
 	[KSPEvent(guiActive = true, guiName = "Hide Build Menu", active = false)]
 	public void HideBuildMenu()
 	{
-		RenderingManager.RemoveFromPostDrawQueue(3, new Callback(drawGUI)); //stop the GUI
 		uis.builduiactive = false;
+		UpdateGUIState();
+	}
+
+	[KSPEvent(guiActive = true, guiName = "Release", active = false)]
+	public void ReleaseVessel()
+	{
+		vessel[uis.vesselInfo.rootPartUId].Undock(uis.vesselInfo);
+		uis.vesselInfo = null;
+		UpdateGUIState ();
 	}
 
 	[KSPAction("Show Build Menu")]
@@ -618,6 +668,14 @@ public class ExLaunchPad : PartModule
 			HideBuildMenu();
 		} else {
 			ShowBuildMenu();
+		}
+	}
+
+	[KSPAction("Release Vessel")]
+	public void ReleaseVesselAction(KSPActionParam param)
+	{
+		if (uis.vesselInfo != null) {
+			ReleaseVessel();
 		}
 	}
 
@@ -693,7 +751,7 @@ public class ExLaunchPad : PartModule
 			uis.hullRocketParts += hull_parts;
 		}
 
-		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split the Surplus LF off as "JetFuel"
+		// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split off the Surplus LF as "JetFuel"
 		if (resources.ContainsKey("Oxidizer") && resources.ContainsKey("LiquidFuel")) {
 			double jetFuel = 0.0;
 			// The LiquidFuel:Oxidizer ratio is 9:11. Try to minimize rounding effects.
@@ -709,131 +767,30 @@ public class ExLaunchPad : PartModule
 
 		return resources;
 	}
-}
 
-public class Recycler : PartModule
-{
-	double busyTime;
-	bool recyclerActive;
-	[KSPField] public float RecycleRate = 1.0f;
-	[KSPField (guiName = "State", guiActive = true)] public string status;
-
-	public void OnTriggerStay(Collider col)
+	private void onVesselSituationChange(GameEvents.HostedFromToAction<Vessel, Vessel.Situations> vs)
 	{
-		if (!recyclerActive
-			|| Planetarium.GetUniversalTime() <= busyTime
-			|| !col.CompareTag("Untagged")
-			|| col.gameObject.name == "MapOverlay collider")	// kethane
+		if (vs.host != vessel)
 			return;
-		Part p = col.attachedRigidbody.GetComponent<Part>();
-		Debug.Log(String.Format("[EL] {0}", p));
-		if (p != null && p.vessel != null && p.vessel != vessel) {
-			float mass;
-			if (p.vessel.isEVA) {
-				mass = RecycleKerbal(p.vessel);
-			} else {
-				mass = RecycleVessel(p.vessel);
-			}
-			busyTime = Planetarium.GetUniversalTime() + mass / RecycleRate;
-		}
+		UpdateGUIState ();
 	}
 
-	private float ReclaimResource(string resource, double amount,
-								  string vessel_name, string name=null)
+	void onVesselChange(Vessel v)
 	{
-		PartResourceDefinition res_def;
-		res_def = PartResourceLibrary.Instance.GetDefinition(resource);
-		VesselResources recycler = new VesselResources(vessel);
-
-		if (res_def == null) {
-			return 0;
-		}
-
-		if (name == null) {
-			name = resource;
-		}
-		double remain = amount;
-		// any resources that can't be pumped or don't flow just "evaporate"
-		// FIXME: should this be a little smarter and convert certain such
-		// resources into rocket parts?
-		if (res_def.resourceTransferMode != ResourceTransferMode.NONE
-			&& res_def.resourceFlowMode != ResourceFlowMode.NO_FLOW) {
-			remain = recycler.TransferResource(resource, amount);
-		}
-		Debug.Log(String.Format("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", vessel_name, name, amount, amount - remain, remain));
-		return (float) (amount * res_def.density);
+		uis.builduivisible = (v == vessel);
+		UpdateGUIState();
 	}
 
-	public float RecycleKerbal(Vessel v)
+	void onHideUI()
 	{
-		if (!v.isEVA)
-			return 0;
-
-		// idea and numbers taken from Kethane
-		if (v.GetVesselCrew()[0].isBadass) {
-			v.rootPart.explosionPotential = 10000;
-		}
-		FlightGlobals.ForceSetActiveVessel(this.vessel);
-		v.rootPart.explode();
-
-		float mass = 0;
-		mass += ReclaimResource("Kethane", 150, v.name);
-		mass += ReclaimResource("Metal", 1, v.name);
-		return mass;
+		uis.builduivisible = false;
+		UpdateGUIState();
 	}
 
-	public float RecycleVessel(Vessel v)
+	void onShowUI()
 	{
-		float ConversionEfficiency = 0.8f;
-		double amount;
-		VesselResources scrap = new VesselResources(v);
-
-		PartResourceDefinition rp_def;
-		rp_def = PartResourceLibrary.Instance.GetDefinition("RocketParts");
-
-		float mass = 0;
-		foreach (string resource in scrap.resources.Keys) {
-			amount = scrap.ResourceAmount (resource);
-			mass += ReclaimResource(resource, amount, v.name);
-		}
-		float hull_mass = v.GetTotalMass();
-		amount = hull_mass * ConversionEfficiency / rp_def.density;
-		mass += ReclaimResource("RocketParts", amount, v.name, "hull");
-		v.Die();
-		return mass;
-	}
-
-	[KSPEvent(guiActive = true, guiName = "Activate Recycler", active = true)]
-	public void Activate()
-	{
-		recyclerActive = true;
-		Events["Activate"].active = false;
-		Events["Deactivate"].active = true;
-	}
-
-	[KSPEvent(guiActive = true, guiName = "Deactivate Recycler",
-	 active = false)]
-	public void Deactivate()
-	{
-		recyclerActive = false;
-		Events["Activate"].active = true;
-		Events["Deactivate"].active = false;
-	}
-
-	public override void OnLoad(ConfigNode node)
-	{
-		Deactivate();
-	}
-
-	public override void OnUpdate()
-	{
-		if (Planetarium.GetUniversalTime() <= busyTime) {
-			status = "Busy";
-		} else if (recyclerActive) {
-			status = "Active";
-		} else {
-			status = "Inactive";
-		}
+		uis.builduivisible = true;
+		UpdateGUIState();
 	}
 }
 

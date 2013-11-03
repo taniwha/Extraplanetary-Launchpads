@@ -102,7 +102,7 @@ public class ExLaunchPad : PartModule
 	VesselResources padResources;		// resources available to the pad
 
 	[KSPField(isPersistant = false)]
-	public float SpawnHeightOffset = 1.0f;	// amount of pad between origin and open space
+	public float SpawnHeightOffset = 0.0f;	// amount of pad between origin and open space
 
 	[KSPField(isPersistant = false)]
 	public string SpawnTransform;

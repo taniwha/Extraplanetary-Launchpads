@@ -285,6 +285,12 @@ public class ExLaunchPad : PartModule
 			uis.vesselInfo.vesselType = vsl.vesselType;
 			uis.vesselInfo.rootPartUId = vsl.rootPart.flightID;
 			vsl.rootPart.Couple(part);
+			// For some reason a second attachJoint gets created by KSP later
+			// on, so delete the one created by the above call to Couple.
+			if (vsl.rootPart.attachJoint != null) {
+				GameObject.Destroy(vsl.rootPart.attachJoint);
+				vsl.rootPart.attachJoint = null;
+			}
 			FlightGlobals.ForceSetActiveVessel (vessel);
 		} else {
 			uis.timer = 3.0f;

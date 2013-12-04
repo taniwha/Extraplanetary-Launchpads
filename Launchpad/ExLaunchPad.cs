@@ -132,7 +132,7 @@ public class ExLaunchPad : PartModule
 			target = null;
 			Transform xform = gameObject.transform;
 			RaycastHit hitInfo;
-			Vector3 castPos = xform.position;
+			Vector3 castPos = xform.TransformPoint(pos);
 			Vector3 castDir = xform.TransformDirection(dir);
 			if (Physics.Raycast (castPos, castDir, out hitInfo, maxLength)) {
 				GameObject hit = hitInfo.collider.gameObject;

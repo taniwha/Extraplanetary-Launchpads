@@ -54,6 +54,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>cp "$(TargetPath)" "\home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins";</PostBuildEvent>
+    <PostBuildEvent>
+		mkdir -p \home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins
+		cp "$(TargetPath)" "\home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins"
+	</PostBuildEvent>
   </PropertyGroup>
 </Project>

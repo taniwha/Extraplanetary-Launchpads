@@ -310,7 +310,7 @@ public class ExLaunchPad : PartModule
 	{
 		// build craft
 		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
-		HackStruts(nship, uis.ct == crafttype.SUB);
+		HackStruts(nship, uis.ct != crafttype.SUB);
 
 		Vector3 offset = nship.Parts[0].transform.localPosition;
 		nship.Parts[0].transform.Translate(-offset);

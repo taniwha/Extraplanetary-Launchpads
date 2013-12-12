@@ -14,6 +14,11 @@ public class Recycler : PartModule
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField (guiName = "State", guiActive = true)] public string status;
 
+	public override string GetInfo()
+	{
+		return "Recycler:\n" + String.Format("rate: {0}t/s", RecycleRate);
+	}
+
 	public void OnTriggerStay(Collider col)
 	{
 		if (!recyclerActive

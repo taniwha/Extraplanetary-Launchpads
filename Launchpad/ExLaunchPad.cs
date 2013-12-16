@@ -82,12 +82,10 @@ public class ExLaunchPad : PartModule
 		public bool linklfosliders = true;
 		public bool canbuildcraft = false;
 		public crafttype ct = crafttype.VAB;
-		public string craftfile = null;
 		public string flagname = null;
 		public CraftBrowser craftlist = null;
 		public bool showcraftbrowser = false;
-		public ConfigNode craftnode = null;
-		public bool craftselected = false;
+		public ConfigNode craftConfig = null;
 		public Vector2 resscroll;
 		public Dictionary<string, double> requiredresources = null;
 		public double hullRocketParts = 0.0;
@@ -309,7 +307,8 @@ public class ExLaunchPad : PartModule
 	private void BuildAndLaunchCraft()
 	{
 		// build craft
-		ShipConstruct nship = ShipConstruction.LoadShip(uis.craftfile);
+		ShipConstruct nship = new ShipConstruct();
+		nship.LoadShip(uis.craftConfig);
 		HackStruts(nship, uis.ct != crafttype.SUB);
 
 		Vector3 offset = nship.Parts[0].transform.localPosition;
@@ -452,8 +451,8 @@ public class ExLaunchPad : PartModule
 			HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = stock;
 		}
 
-		if (uis.craftselected) {
-			GUILayout.Box("Selected Craft:	" + uis.craftnode.GetValue("ship"), Styles.white);
+		if (uis.craftConfig != null) {
+			GUILayout.Box("Selected Craft:	" + uis.craftConfig.GetValue("ship"), Styles.white);
 
 			// Resource requirements
 			GUILayout.Label("Resources required to build:", Styles.label, GUILayout.Width(600));
@@ -539,7 +538,7 @@ public class ExLaunchPad : PartModule
 				if (GUILayout.Button("Build", Styles.normal, GUILayout.ExpandWidth(true))) {
 					BuildAndLaunchCraft();
 					// Reset the UI
-					uis.craftselected = false;
+					uis.craftConfig = null;
 					uis.requiredresources = null;
 					uis.resourcesliders = new Dictionary<string, float>();;
 					uis.builduiactive = false;
@@ -575,14 +574,12 @@ public class ExLaunchPad : PartModule
 	private void craftSelectComplete(string filename, string flagname)
 	{
 		uis.showcraftbrowser = false;
-		uis.craftfile = filename;
 		uis.flagname = flagname;
-		uis.craftnode = ConfigNode.Load(filename);
-		ConfigNode[] nodes = uis.craftnode.GetNodes("PART");
+		ConfigNode craft = ConfigNode.Load(filename);
 
 		// Get list of resources required to build vessel
-		if ((uis.requiredresources = getBuildCost(nodes)) != null)
-			uis.craftselected = true;
+		if ((uis.requiredresources = getBuildCost(craft)) != null)
+			uis.craftConfig = craft;
 	}
 
 	// called when the user clicks cancel in the craft browser
@@ -591,7 +588,7 @@ public class ExLaunchPad : PartModule
 		uis.showcraftbrowser = false;
 
 		uis.requiredresources = null;
-		uis.craftselected = false;
+		uis.craftConfig = null;
 	}
 
 	// =====================================================================================================================================================
@@ -740,33 +737,19 @@ public class ExLaunchPad : PartModule
 	// =====================================================================================================================================================
 	// Build Helper Functions
 
-	private void MissingPopup(Dictionary<string, bool> missing_parts)
-	{
-		string text = "";
-		foreach (string mp in missing_parts.Keys)
-			text += mp + "\n";
-		int ind = uis.craftfile.LastIndexOf("/") + 1;
-		string craft = uis.craftfile.Substring (ind);
-		craft = craft.Remove (craft.LastIndexOf("."));
-		PopupDialog.SpawnPopupDialog("Sorry", "Can't build " + craft + " due to the following missing parts\n\n" + text, "OK", false, HighLogic.Skin);
-	}
-
-	public Dictionary<string, double> getBuildCost(ConfigNode[] nodes)
+	public Dictionary<string, double> getBuildCost(ConfigNode craft)
 	{
 		float mass = 0.0f;
 		Dictionary<string, double> resources = new Dictionary<string, double>();
 		Dictionary<string, double> hull_resources = new Dictionary<string, double>();
-		Dictionary<string, bool> missing_parts = new Dictionary<string, bool>();
 
-		foreach (ConfigNode node in nodes) {
-			string part_name = node.GetValue("part");
-			part_name = part_name.Remove(part_name.LastIndexOf("_"));
-			AvailablePart ap = PartLoader.getPartInfoByName(part_name);
-			if (ap == null) {
-				missing_parts[part_name] = true;
-				continue;
-			}
-			Part p = ap.partPrefab;
+		ShipConstruct ship = new ShipConstruct();
+		ship.LoadShip(craft);
+		GameObject ro = ship.parts[0].localRoot.gameObject;
+		Vessel dummy = ro.AddComponent<Vessel>();
+		dummy.Initialize(true);
+
+		foreach (Part p in ship.parts) {
 			mass += p.mass;
 			foreach (PartResource r in p.Resources) {
 				if (r.resourceName == "IntakeAir" || r.resourceName == "KIntakeAir") {
@@ -789,10 +772,7 @@ public class ExLaunchPad : PartModule
 				res_dict[r.resourceName] += r.maxAmount;
 			}
 		}
-		if (missing_parts.Count > 0) {
-			MissingPopup(missing_parts);
-			return null;
-		}
+		dummy.Die();
 
 		// RocketParts for the hull is a separate entity to RocketParts in
 		// storage containers

@@ -91,8 +91,8 @@ public class ExLaunchPad : PartModule
 		public double hullRocketParts = 0.0;
 		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
-		public float timer;
-		public Vessel launchee;
+		public double releaseTime;
+		public bool autoRelease;
 		public DockedVesselInfo vesselInfo;
 	}
 
@@ -179,7 +179,8 @@ public class ExLaunchPad : PartModule
 				|| situation == Vessel.Situations.SPLASHED)) {
 			can_build = true;
 		}
-		if (uis.vesselInfo != null) {
+		if (uis.vesselInfo != null
+			&& Planetarium.GetUniversalTime() >= uis.releaseTime) {
 			can_release = true;
 		}
 		enabled = can_build && uis.builduiactive && uis.builduivisible;
@@ -220,21 +221,6 @@ public class ExLaunchPad : PartModule
 			padResources.TransferResource(res, -tot);
 			craftResources.TransferResource(res, tot);
 		}
-	}
-
-	private void FixCraftLock()
-	{
-		// Many thanks to Snjo (firespitter)
-		uis.launchee.situation = Vessel.Situations.LANDED;
-		uis.launchee.state = Vessel.State.ACTIVE;
-		uis.launchee.Landed = false;
-		uis.launchee.Splashed = false;
-
-		uis.launchee.GoOnRails();
-		uis.launchee.rigidbody.WakeUp();
-		uis.launchee.ResumeStaging();
-		uis.launchee.landedAt = "External Launchpad";
-		InputLockManager.ClearControlLocks();
 	}
 
 	private void HackStrutCData(ShipConstruct ship, Part p, int numParts)
@@ -330,22 +316,23 @@ public class ExLaunchPad : PartModule
 		if (kethane_present && !DebugPad)
 			UseResources(vsl);
 
-		if (vessel.situation == Vessel.Situations.ORBITING) {
-			uis.vesselInfo = new DockedVesselInfo();
-			uis.vesselInfo.name = vsl.vesselName;
-			uis.vesselInfo.vesselType = vsl.vesselType;
-			uis.vesselInfo.rootPartUId = vsl.rootPart.flightID;
-			vsl.rootPart.Couple(part);
-			// For some reason a second attachJoint gets created by KSP later
-			// on, so delete the one created by the above call to Couple.
-			if (vsl.rootPart.attachJoint != null) {
-				GameObject.Destroy(vsl.rootPart.attachJoint);
-				vsl.rootPart.attachJoint = null;
-			}
-			FlightGlobals.ForceSetActiveVessel (vessel);
-		} else {
-			uis.timer = 3.0f;
-			uis.launchee = vsl;
+		uis.vesselInfo = new DockedVesselInfo();
+		uis.vesselInfo.name = vsl.vesselName;
+		uis.vesselInfo.vesselType = vsl.vesselType;
+		uis.vesselInfo.rootPartUId = vsl.rootPart.flightID;
+		vsl.rootPart.Couple(part);
+		// For some reason a second attachJoint gets created by KSP later
+		// on, so delete the one created by the above call to Couple.
+		if (vsl.rootPart.attachJoint != null) {
+			GameObject.Destroy(vsl.rootPart.attachJoint);
+			vsl.rootPart.attachJoint = null;
+		}
+		uis.releaseTime = Planetarium.GetUniversalTime() + 5.0;
+		uis.autoRelease = false;
+
+		FlightGlobals.ForceSetActiveVessel (vessel);
+		if (vessel.situation != Vessel.Situations.ORBITING) {
+			uis.autoRelease = true;
 		}
 
 		Staging.beginFlight();
@@ -603,13 +590,20 @@ public class ExLaunchPad : PartModule
 		}
 	}
 
-	public override void OnUpdate()
+	public override void OnFixedUpdate()
 	{
-		if (uis.launchee && uis.timer >= 0) {
-			uis.timer -= Time.deltaTime;
-			if (uis.timer <= 0) {
-				FixCraftLock();
-				uis.launchee = null;
+		if (false) {
+			Debug.Log(String.Format("[EL] OnFixedUpdate: {0} {1} {2}",
+									uis.vesselInfo != null,
+									Planetarium.GetUniversalTime(),
+									uis.releaseTime));
+		}
+		if (uis.vesselInfo != null) {
+			if (Planetarium.GetUniversalTime() >= uis.releaseTime) {
+				if (uis.autoRelease) {
+					ReleaseVessel();
+				}
+				UpdateGUIState ();
 			}
 		}
 	}
@@ -729,7 +723,8 @@ public class ExLaunchPad : PartModule
 	[KSPAction("Release Vessel")]
 	public void ReleaseVesselAction(KSPActionParam param)
 	{
-		if (uis.vesselInfo != null) {
+		if (uis.vesselInfo != null
+			&& Planetarium.GetUniversalTime() >= uis.releaseTime) {
 			ReleaseVessel();
 		}
 	}

@@ -592,12 +592,6 @@ public class ExLaunchPad : PartModule
 
 	public override void OnFixedUpdate()
 	{
-		if (false) {
-			Debug.Log(String.Format("[EL] OnFixedUpdate: {0} {1} {2}",
-									uis.vesselInfo != null,
-									Planetarium.GetUniversalTime(),
-									uis.releaseTime));
-		}
 		if (uis.vesselInfo != null) {
 			if (Planetarium.GetUniversalTime() >= uis.releaseTime) {
 				if (uis.autoRelease) {

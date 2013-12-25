@@ -7,7 +7,7 @@ using KSP.IO;
 
 namespace ExLP {
 
-public class Recycler : PartModule
+public class ExRecycler : PartModule
 {
 	double busyTime;
 	bool recyclerActive;

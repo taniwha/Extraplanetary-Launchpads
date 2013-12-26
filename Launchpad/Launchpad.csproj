@@ -42,6 +42,7 @@
     <Compile Include="ExLaunchPad.cs" />
     <Compile Include="Recycler.cs" />
     <Compile Include="Resources.cs" />
+    <Compile Include="Workshop.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

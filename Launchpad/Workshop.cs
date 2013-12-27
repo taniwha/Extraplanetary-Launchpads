@@ -34,8 +34,6 @@ public class ExWorkshop : PartModule
 		} else {
 			contribution = 1 - 2 * s * c * c;
 		}
-		Debug.Log(String.Format("[EL] contribution: {0} {1} {2} {3}",
-								kerbal.crewMemberName, s, c, contribution));
 		return contribution;
 	}
 
@@ -50,22 +48,19 @@ public class ExWorkshop : PartModule
 
 	void onCrewBoard(GameEvents.FromToAction<Part,Part> ft)
 	{
-		//var kerbal = ft.from.protoModuleCrew[0];
 		Part p = ft.to;
 
 		if (p != part)
 			return;
-
-		var kerbal = p.protoModuleCrew.Last().KerbalRef;
-		Debug.Log(String.Format("[EL] board: {0} {1}", kerbal, p));
 		DetermineProductivity();
 	}
 
 	void onCrewEVA(GameEvents.FromToAction<Part,Part> ft)
 	{
-		var kerbal = ft.to.protoModuleCrew[0];
 		Part p = ft.from;
-		Debug.Log(String.Format("[EL] eva: {0} {1}", p, kerbal));
+
+		if (p != part)
+			return;
 		DetermineProductivity();
 	}
 
@@ -89,6 +84,7 @@ public class ExWorkshop : PartModule
 			|| state == PartModule.StartState.Editor)
 			return;
 		DetermineProductivity();
+		part.force_activate();
 	}
 
 	public override void OnFixedUpdate()

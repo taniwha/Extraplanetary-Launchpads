@@ -91,7 +91,7 @@ public class ExLaunchPad : PartModule
 		public double hullRocketParts = 0.0;
 		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
-		public double releaseTime;
+		public PartResource KerbalMinutes;
 		public bool autoRelease;
 		public DockedVesselInfo vesselInfo;
 	}
@@ -179,8 +179,7 @@ public class ExLaunchPad : PartModule
 				|| situation == Vessel.Situations.SPLASHED)) {
 			can_build = true;
 		}
-		if (uis.vesselInfo != null
-			&& Planetarium.GetUniversalTime() >= uis.releaseTime) {
+		if (uis.vesselInfo != null && CheckKerbalMinutes()) {
 			can_release = true;
 		}
 		enabled = can_build && uis.builduiactive && uis.builduivisible;
@@ -221,6 +220,38 @@ public class ExLaunchPad : PartModule
 			padResources.TransferResource(res, -tot);
 			craftResources.TransferResource(res, tot);
 		}
+	}
+
+	private void SetKerbalMinutes()
+	{
+		PartResourceDefinition rp_def;
+		rp_def = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+		double mass = uis.hullRocketParts * rp_def.density;
+		double kerbalMinutes = mass * 5 * 60; // 5 kh/t
+		ConfigNode khNode = new ConfigNode("RESOURCE");
+		khNode.AddValue("name", "KerbalMinutes");
+		khNode.AddValue("amount", 0);
+		khNode.AddValue("maxAmount", kerbalMinutes);
+		uis.KerbalMinutes = part.AddResource(khNode);
+	}
+
+	private void ClearKerbalMinutes()
+	{
+		if (uis.KerbalMinutes != null) {
+			uis.KerbalMinutes.amount = 0;
+			uis.KerbalMinutes.maxAmount = 0;
+		}
+	}
+
+	private bool CheckKerbalMinutes()
+	{
+		if (uis.KerbalMinutes == null) {
+			return true;
+		}
+		if (uis.KerbalMinutes.maxAmount - uis.KerbalMinutes.amount < 0.01) {
+			return true;
+		}
+		return false;
 	}
 
 	private void HackStrutCData(ShipConstruct ship, Part p, int numParts)
@@ -327,7 +358,7 @@ public class ExLaunchPad : PartModule
 			GameObject.Destroy(vsl.rootPart.attachJoint);
 			vsl.rootPart.attachJoint = null;
 		}
-		uis.releaseTime = Planetarium.GetUniversalTime() + 5.0;
+		SetKerbalMinutes();
 		uis.autoRelease = false;
 
 		FlightGlobals.ForceSetActiveVessel (vessel);
@@ -592,8 +623,9 @@ public class ExLaunchPad : PartModule
 
 	public override void OnFixedUpdate()
 	{
-		if (uis.vesselInfo != null) {
-			if (Planetarium.GetUniversalTime() >= uis.releaseTime) {
+		if (uis.vesselInfo != null && !vessel.packed) {
+			if (CheckKerbalMinutes()) {
+				ClearKerbalMinutes();
 				if (uis.autoRelease) {
 					ReleaseVessel();
 				}
@@ -648,6 +680,11 @@ public class ExLaunchPad : PartModule
 			uis.vesselInfo.Load(node.GetNode("DockedVesselInfo"));
 		}
 		UpdateGUIState();
+	}
+
+	public override void OnStart(PartModule.StartState state)
+	{
+		part.force_activate();
 	}
 
 	void OnDestroy()
@@ -717,8 +754,7 @@ public class ExLaunchPad : PartModule
 	[KSPAction("Release Vessel")]
 	public void ReleaseVesselAction(KSPActionParam param)
 	{
-		if (uis.vesselInfo != null
-			&& Planetarium.GetUniversalTime() >= uis.releaseTime) {
+		if (uis.vesselInfo != null && CheckKerbalMinutes()) {
 			ReleaseVessel();
 		}
 	}

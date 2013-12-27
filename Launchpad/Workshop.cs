@@ -94,7 +94,7 @@ public class ExWorkshop : PartModule
 	public override void OnFixedUpdate()
 	{
 		double work = Productivity * TimeWarp.fixedDeltaTime / 60;
-		part.RequestResource("KerbalHours", -work);
+		part.RequestResource("KerbalMinutes", -work);
 	}
 }
 

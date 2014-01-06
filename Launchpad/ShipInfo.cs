@@ -4,24 +4,66 @@ using System.Linq;
 using UnityEngine;
 
 namespace ExLP {
+	class ExShipInfoEventCatcher : PartModule
+	{
+		public ExShipInfo shipinfo;
+
+		[KSPEvent(guiActive=false, active = true)]
+		void OnResourcesModified(BaseEventData data)
+		{
+			Part part = data.Get<Part> ("part");
+			Debug.Log(String.Format("[EL GUI] res modify: {0}", part));
+			shipinfo.resources.RemovePart (part);
+			shipinfo.resources.AddPart (part);
+		}
+		[KSPEvent(guiActive=false, active = true)]
+		void OnMassModified(BaseEventData data)
+		{
+			Part part = data.Get<Part> ("part");
+			float oldmass = data.Get<float> ("oldmass");
+			Debug.Log(String.Format("[EL GUI] mass modify: {0} {1} {2}", part, oldmass, part.mass));
+			shipinfo.mass -= oldmass;
+			shipinfo.mass += part.mass;
+		}
+	}
+
 	[KSPAddon(KSPAddon.Startup.EditorAny, false)]
 	public class ExShipInfo : MonoBehaviour
 	{
-		VesselResources resources;
-		double mass;
+
+		public VesselResources resources;
+		public double mass;
 		double rpDensity;
 		static Rect winpos;
 
 		void addPart(Part part)
 		{
+			Debug.Log(String.Format("[EL GUI] attach: {0}", part));
 			resources.AddPart(part);
 			mass += part.mass;
+
+			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)part.AddModule ("ExShipInfoEventCatcher");
+			ec.shipinfo = this;
 		}
 
 		void removePart(Part part)
 		{
+			Debug.Log(String.Format("[EL GUI] remove: {0}", part));
 			resources.RemovePart(part);
 			mass -= part.mass;
+
+			ExShipInfoEventCatcher ec = part.GetComponent<ExShipInfoEventCatcher> ();
+			part.RemoveModule (ec);
+		}
+
+		void addRootPart (Part root)
+		{
+			Debug.Log(String.Format("[EL GUI] root: {0}", root));
+			resources = new VesselResources(root);
+			mass = root.mass;
+
+			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)root.AddModule ("ExShipInfoEventCatcher");
+			ec.shipinfo = this;
 		}
 
 		void onRootPart(GameEvents.FromToAction<ControlTypes, ControlTypes>h)
@@ -31,9 +73,12 @@ namespace ExLP {
 			if (ship.parts.Count > 0) {
 				if (resources == null) {
 					Part root = ship.parts[0];
-					Debug.Log(String.Format("[EL GUI] root: {0}", root));
-					resources = new VesselResources(root);
-					mass = root.mass;
+					addRootPart (root);
+					foreach (Part p in root.GetComponentsInChildren<Part>()) {
+						if (p != root) {
+							addPart(p);
+						}
+					}
 					enabled = true;
 				}
 			} else {
@@ -46,17 +91,18 @@ namespace ExLP {
 		void onPartAttach(GameEvents.HostTargetAction<Part,Part> host_target)
 		{
 			Part part = host_target.host;
-			Debug.Log(String.Format("[EL GUI] attach: {0}", part));
-			if (resources != null) {
-				foreach (Part p in part.GetComponentsInChildren<Part>()) {
-					addPart(p);
-				}
+			Part parent = host_target.target;
+			if (resources == null) {
+				addRootPart (parent);
+				enabled = true;
+			}
+			foreach (Part p in part.GetComponentsInChildren<Part>()) {
+				addPart(p);
 			}
 		}
 		void onPartRemove(GameEvents.HostTargetAction<Part,Part> host_target)
 		{
 			Part part = host_target.target;
-			Debug.Log(String.Format("[EL GUI] remove: {0}", part));
 			if (resources != null) {
 				foreach (Part p in part.GetComponentsInChildren<Part>()) {
 					removePart(p);
@@ -96,11 +142,46 @@ namespace ExLP {
 		void InfoWindow(int windowID)
 		{
 			GUILayout.BeginVertical ();
-			GUILayout.BeginHorizontal();
-			double parts = mass / rpDensity;
-			GUILayout.Label("Dry mass: " + Math.Round(mass,4) + "t (" + Math.Round(parts,4) + "u)");
+			GUILayout.BeginHorizontal ();
+			double dmass = Math.Round (mass, 4);
+			double parts = Math.Round (mass / rpDensity, 4);
+			GUILayout.Label ("Dry mass: " + dmass + "t (" + parts + "u)");
 			GUILayout.EndHorizontal ();
+			var reslist = resources.resources.Keys.ToList ();
+			reslist.Sort ();
+			double rpmass = 0;
+			double resource_mass = 0;
+			double total_mass = mass;
+			foreach (string res in reslist) {
+				double amount = resources.ResourceAmount (res);
+				PartResourceDefinition res_def;
+				res_def = PartResourceLibrary.Instance.GetDefinition (res);
+				double resmass = amount * res_def.density;
+
+				if (res_def.resourceTransferMode == ResourceTransferMode.NONE
+					|| res_def.resourceFlowMode == ResourceFlowMode.NO_FLOW) {
+					rpmass += resmass;
+				} else {
+					resource_mass += resmass;
+				}
+				total_mass += resmass;
+
+				double damount = Math.Round (amount, 4);
+				double dresmass = Math.Round (resmass, 4);
+				GUILayout.BeginHorizontal();
+				GUILayout.Label (res + ": " + damount + "u (" + dresmass + "t)");
+				GUILayout.EndHorizontal();
+			}
+			dmass = Math.Round (rpmass, 4);
+			parts = Math.Round (rpmass / rpDensity, 4);
+			GUILayout.Label ("Extra Hull mass: " + dmass + "t (" + parts + "u)");
+			dmass = Math.Round (resource_mass, 4);
+			parts = Math.Round (resource_mass / rpDensity, 4);
+			GUILayout.Label ("Resources mass: " + dmass + "t (" + parts + "u)");
+			dmass = Math.Round (total_mass, 4);
+			GUILayout.Label ("Total mass: " + dmass + "t");
 			GUILayout.EndVertical ();
+			GUI.DragWindow ();
 		}
 	}
 }

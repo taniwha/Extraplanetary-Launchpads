@@ -25,19 +25,49 @@ namespace ExLP {
 	public class VesselResources {
 		public Dictionary<string, ResourceInfo> resources;
 
+		public void AddPart(Part part)
+		{
+			foreach (PartResource resource in part.Resources) {
+				ResourceInfo resourceInfo;
+				if (!resources.ContainsKey(resource.resourceName)) {
+					resourceInfo = new ResourceInfo();
+					resources[resource.resourceName] = resourceInfo;
+				}
+				resourceInfo = resources[resource.resourceName];
+				resourceInfo.parts.Add(new ResourcePartMap(resource, part));
+			}
+		}
+
+		public void RemovePart(Part part)
+		{
+			foreach (PartResource resource in part.Resources) {
+				if (resources.ContainsKey(resource.resourceName)) {
+					ResourceInfo resourceInfo;
+					resourceInfo = resources[resource.resourceName];
+					foreach (var pm in resourceInfo.parts) {
+						if (pm.part == part) {
+							resourceInfo.parts.Remove(pm);
+							break;
+						}
+					}
+					if (resourceInfo.parts.Count == 0) {
+						resources.Remove(resource.resourceName);
+					}
+				}
+			}
+		}
+
+		public VesselResources(Part rootPart)
+		{
+			resources = new Dictionary<string, ResourceInfo>();
+			AddPart(rootPart);
+		}
+
 		public VesselResources(Vessel vessel)
 		{
 			resources = new Dictionary<string, ResourceInfo>();
 			foreach (Part part in vessel.parts) {
-				foreach (PartResource resource in part.Resources) {
-					ResourceInfo resourceInfo;
-					if (!resources.ContainsKey(resource.resourceName)) {
-						resourceInfo = new ResourceInfo();
-						resources[resource.resourceName] = resourceInfo;
-					}
-					resourceInfo = resources[resource.resourceName];
-					resourceInfo.parts.Add(new ResourcePartMap(resource, part));
-				}
+				AddPart(part);
 			}
 		}
 

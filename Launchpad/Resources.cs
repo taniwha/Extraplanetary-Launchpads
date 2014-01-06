@@ -40,20 +40,22 @@ namespace ExLP {
 
 		public void RemovePart(Part part)
 		{
-			foreach (PartResource resource in part.Resources) {
-				if (resources.ContainsKey(resource.resourceName)) {
-					ResourceInfo resourceInfo;
-					resourceInfo = resources[resource.resourceName];
-					foreach (var pm in resourceInfo.parts) {
-						if (pm.part == part) {
-							resourceInfo.parts.Remove(pm);
-							break;
-						}
-					}
-					if (resourceInfo.parts.Count == 0) {
-						resources.Remove(resource.resourceName);
+			var remove_list = new List<string> ();
+			foreach (var resinfo in resources) {
+				string resource = resinfo.Key;
+				ResourceInfo resourceInfo = resinfo.Value;
+				foreach (var pm in resourceInfo.parts) {
+					if (pm.part == part) {
+						resourceInfo.parts.Remove (pm);
+						break;
 					}
 				}
+				if (resourceInfo.parts.Count == 0) {
+					remove_list.Add (resource);
+				}
+			}
+			foreach (string resource in remove_list) {
+				resources.Remove (resource);
 			}
 		}
 

@@ -37,9 +37,18 @@ namespace ExLP {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ExShipInfo : MonoBehaviour
 	{
+		static ExShipInfo instance;
+		static Rect winpos;
+		static bool showGUI = true;
 
 		public BuildCost buildCost;
 		Vector2 scrollPosR, scrollPosO;
+
+		public static void ToggleGUI ()
+		{
+			showGUI = !showGUI;
+			instance.enabled = showGUI && (instance.buildCost != null);
+		}
 
 		void addPart (Part part)
 		{
@@ -82,7 +91,7 @@ namespace ExLP {
 							addPart (p);
 						}
 					}
-					enabled = true;
+					enabled = showGUI;
 				}
 			} else {
 				Debug.Log (String.Format ("[EL GUI] new"));
@@ -96,7 +105,7 @@ namespace ExLP {
 			Part parent = host_target.target;
 			if (buildCost == null) {
 				addRootPart (parent);
-				enabled = true;
+				enabled = showGUI;
 			}
 			foreach (Part p in part.GetComponentsInChildren<Part>()) {
 				addPart (p);
@@ -113,6 +122,8 @@ namespace ExLP {
 		}
 		void Awake ()
 		{
+			instance = this;
+
 			GameEvents.onInputLocksModified.Add (onRootPart);
 			GameEvents.onPartAttach.Add (onPartAttach);
 			GameEvents.onPartRemove.Add (onPartRemove);

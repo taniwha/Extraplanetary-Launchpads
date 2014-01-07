@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D892E1FC-EC40-4DCA-9FE8-48E7688FD02A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LaunchpadToolbarTrampoline</RootNamespace>
+    <AssemblyName>LaunchpadToolbarTrampoline</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <ProjectReference Include="Launchpad.csproj">
+      <Project>{80164A54-FEBD-4777-95A7-FFAB8885DBBD}</Project>
+      <Name>Kethane</Name>
+    </ProjectReference>
+    <Reference Include="Toolbar">
+      <HintPath>\home\bill\ksp\KSP_linux\GameData\000_Toolbar\Toolbar.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>\home\bill\ksp\KSP_linux\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>\home\bill\ksp\KSP_linux\KSP_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfoToolbarTrampoline.cs" />
+    <Compile Include="ToolbarTrampoline.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+		mkdir -p \home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins
+		cp "$(TargetPath)" "\home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins"
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

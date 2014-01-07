@@ -39,8 +39,7 @@ namespace ExLP {
 	{
 
 		public BuildCost buildCost;
-		double rpDensity;
-		static Rect winpos;
+		Vector2 scrollPosR, scrollPosO;
 
 		void addPart (Part part)
 		{
@@ -118,10 +117,6 @@ namespace ExLP {
 			GameEvents.onPartAttach.Add (onPartAttach);
 			GameEvents.onPartRemove.Add (onPartRemove);
 
-			PartResourceDefinition rp_def;
-			rp_def = PartResourceLibrary.Instance.GetDefinition ("RocketParts");
-			rpDensity = rp_def.density;
-
 			enabled = false;
 		}
 		void OnDestroy ()
@@ -142,53 +137,58 @@ namespace ExLP {
 									  "Build Resources",
 									  GUILayout.MinWidth (200));
 		}
-		void InfoWindow (int windowID)
+
+		private void MassLabel (string title, double mass)
 		{
-			GUILayout.BeginVertical ();
+			mass = Math.Round (mass, 4);
 			GUILayout.BeginHorizontal ();
-			double dmass = Math.Round (buildCost.mass, 4);
-			double parts = Math.Round (buildCost.mass / rpDensity, 4);
-			GUILayout.Label ("Dry mass:");
+			GUILayout.Label (title + ":");
 			GUILayout.FlexibleSpace ();
-			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
+			GUILayout.Label (String.Format ("{0}t", mass));
 			GUILayout.EndHorizontal ();
-			var cost = buildCost.cost;
-			cost.optional.Sort();
-			double resource_mass = 0;
-			foreach (var res in cost.optional) {
+		}
+
+		private Vector2 ResourcePanel (string title,
+									   List<BuildCost.BuildResource> resources,
+									   Vector2 scrollPos)
+		{
+			GUILayout.Label (title + ":");
+			GUILayout.BeginVertical(GUILayout.Height(100));
+			scrollPos = GUILayout.BeginScrollView(scrollPos);
+			foreach (var res in resources) {
 				double damount = Math.Round (res.amount, 4);
 				double dresmass = Math.Round (res.mass, 4);
-				resource_mass += res.mass;
 				GUILayout.BeginHorizontal ();
 				GUILayout.Label (String.Format ("{0}:", res.name));
 				GUILayout.FlexibleSpace ();
 				GUILayout.Label (String.Format ("{0}u ({1}t)", damount, dresmass));
 				GUILayout.EndHorizontal ();
 			}
+			GUILayout.EndScrollView();
+			GUILayout.EndVertical();
+			return scrollPos;
+		}
 
+		void InfoWindow (int windowID)
+		{
+			var cost = buildCost.cost;
+			double resource_mass = 0;
+			foreach (var res in cost.optional) {
+				resource_mass += res.mass;
+			}
+
+			GUILayout.BeginVertical ();
+
+			MassLabel ("Dry mass", buildCost.mass);
+			MassLabel ("Resource mass", resource_mass);
 			//FIXME this assumes only RocketParts
 			var req = cost.required[0];
-			dmass = Math.Round (req.mass, 4);
-			parts = Math.Round (req.amount, 4);
-			GUILayout.BeginHorizontal ();
-			GUILayout.Label ("Required RocketParts:");
-			GUILayout.FlexibleSpace ();
-			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
-			GUILayout.EndHorizontal ();
+			MassLabel ("Total mass", req.mass + resource_mass);
 
-			dmass = Math.Round (resource_mass, 4);
-			GUILayout.BeginHorizontal ();
-			GUILayout.Label ("Resources mass:");
-			GUILayout.FlexibleSpace ();
-			GUILayout.Label (String.Format ("{0}t", dmass));
-			GUILayout.EndHorizontal ();
-
-			dmass = Math.Round (req.mass + resource_mass, 4);
-			GUILayout.BeginHorizontal ();
-			GUILayout.Label ("Total mass:");
-			GUILayout.FlexibleSpace ();
-			GUILayout.Label (String.Format ("{0}t", dmass));
-			GUILayout.EndHorizontal ();
+			cost.optional.Sort();
+			GUILayout.Label (" ");
+			scrollPosR = ResourcePanel ("Required", cost.required, scrollPosR);
+			scrollPosO = ResourcePanel ("Optional", cost.optional, scrollPosO);
 
 			GUILayout.EndVertical ();
 			GUI.DragWindow ();

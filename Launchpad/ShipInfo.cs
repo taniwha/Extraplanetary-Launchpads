@@ -13,17 +13,18 @@ namespace ExLP {
 		{
 			Part part = data.Get<Part> ("part");
 			Debug.Log (String.Format ("[EL GUI] res modify: {0}", part));
-			shipinfo.resources.RemovePart (part);
-			shipinfo.resources.AddPart (part);
+			shipinfo.buildCost.removePartMassless (part);
+			shipinfo.buildCost.addPartMassless (part);
 		}
 		[KSPEvent (guiActive=false, active = true)]
 		void OnMassModified (BaseEventData data)
 		{
 			Part part = data.Get<Part> ("part");
 			float oldmass = data.Get<float> ("oldmass");
-			Debug.Log (String.Format ("[EL GUI] mass modify: {0} {1} {2}", part, oldmass, part.mass));
-			shipinfo.mass -= oldmass;
-			shipinfo.mass += part.mass;
+			Debug.Log (String.Format ("[EL GUI] mass modify: {0} {1} {2}",
+									  part, oldmass, part.mass));
+			shipinfo.buildCost.mass -= oldmass;
+			shipinfo.buildCost.mass += part.mass;
 		}
 
 		public override void OnSave (ConfigNode node)
@@ -37,16 +38,14 @@ namespace ExLP {
 	public class ExShipInfo : MonoBehaviour
 	{
 
-		public VesselResources resources;
-		public double mass;
+		public BuildCost buildCost;
 		double rpDensity;
 		static Rect winpos;
 
 		void addPart (Part part)
 		{
 			Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
-			resources.AddPart (part);
-			mass += part.mass;
+			buildCost.addPart (part);
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)part.AddModule ("ExShipInfoEventCatcher");
 			ec.shipinfo = this;
@@ -55,8 +54,7 @@ namespace ExLP {
 		void removePart (Part part)
 		{
 			Debug.Log (String.Format ("[EL GUI] remove: {0}", part));
-			resources.RemovePart (part);
-			mass -= part.mass;
+			buildCost.removePart (part);
 
 			ExShipInfoEventCatcher ec = part.GetComponent<ExShipInfoEventCatcher> ();
 			part.RemoveModule (ec);
@@ -65,8 +63,8 @@ namespace ExLP {
 		void addRootPart (Part root)
 		{
 			Debug.Log (String.Format ("[EL GUI] root: {0}", root));
-			resources = new VesselResources (root);
-			mass = root.mass;
+			buildCost = new BuildCost ();
+			buildCost.addPart (root);
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)root.AddModule ("ExShipInfoEventCatcher");
 			ec.shipinfo = this;
@@ -77,7 +75,7 @@ namespace ExLP {
 			var ship = EditorLogic.fetch.ship;
 
 			if (ship.parts.Count > 0) {
-				if (resources == null) {
+				if (buildCost == null) {
 					Part root = ship.parts[0];
 					addRootPart (root);
 					foreach (Part p in root.GetComponentsInChildren<Part>()) {
@@ -89,8 +87,7 @@ namespace ExLP {
 				}
 			} else {
 				Debug.Log (String.Format ("[EL GUI] new"));
-				resources = null;
-				mass = 0;
+				buildCost = null;
 				enabled = false;
 			}
 		}
@@ -98,7 +95,7 @@ namespace ExLP {
 		{
 			Part part = host_target.host;
 			Part parent = host_target.target;
-			if (resources == null) {
+			if (buildCost == null) {
 				addRootPart (parent);
 				enabled = true;
 			}
@@ -109,7 +106,7 @@ namespace ExLP {
 		void onPartRemove (GameEvents.HostTargetAction<Part,Part> host_target)
 		{
 			Part part = host_target.target;
-			if (resources != null) {
+			if (buildCost != null) {
 				foreach (Part p in part.GetComponentsInChildren<Part>()) {
 					removePart (p);
 				}
@@ -149,50 +146,30 @@ namespace ExLP {
 		{
 			GUILayout.BeginVertical ();
 			GUILayout.BeginHorizontal ();
-			double dmass = Math.Round (mass, 4);
-			double parts = Math.Round (mass / rpDensity, 4);
+			double dmass = Math.Round (buildCost.mass, 4);
+			double parts = Math.Round (buildCost.mass / rpDensity, 4);
 			GUILayout.Label ("Dry mass:");
 			GUILayout.FlexibleSpace ();
 			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
 			GUILayout.EndHorizontal ();
-			var reslist = resources.resources.Keys.ToList ();
-			reslist.Sort ();
-			double rpmass = 0;
+			var cost = buildCost.cost;
+			cost.optional.Sort();
 			double resource_mass = 0;
-			double total_mass = mass;
-			foreach (string res in reslist) {
-				double amount = resources.ResourceAmount (res);
-				PartResourceDefinition res_def;
-				res_def = PartResourceLibrary.Instance.GetDefinition (res);
-				double resmass = amount * res_def.density;
-
-				if (res_def.resourceTransferMode == ResourceTransferMode.NONE
-					|| res_def.resourceFlowMode == ResourceFlowMode.NO_FLOW) {
-					rpmass += resmass;
-				} else {
-					resource_mass += resmass;
-				}
-				total_mass += resmass;
-
-				double damount = Math.Round (amount, 4);
-				double dresmass = Math.Round (resmass, 4);
+			foreach (var res in cost.optional) {
+				double damount = Math.Round (res.amount, 4);
+				double dresmass = Math.Round (res.mass, 4);
+				resource_mass += res.mass;
 				GUILayout.BeginHorizontal ();
-				GUILayout.Label (String.Format ("{0}:", res));
+				GUILayout.Label (String.Format ("{0}:", res.name));
 				GUILayout.FlexibleSpace ();
 				GUILayout.Label (String.Format ("{0}u ({1}t)", damount, dresmass));
 				GUILayout.EndHorizontal ();
 			}
 
-			dmass = Math.Round (rpmass, 4);
-			parts = Math.Round (rpmass / rpDensity, 4);
-			GUILayout.BeginHorizontal ();
-			GUILayout.Label ("Extra Hull mass:");
-			GUILayout.FlexibleSpace ();
-			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
-			GUILayout.EndHorizontal ();
-
-			dmass = Math.Round (mass + rpmass, 4);
-			parts = Math.Round ((mass + rpmass) / rpDensity, 4);
+			//FIXME this assumes only RocketParts
+			var req = cost.required[0];
+			dmass = Math.Round (req.mass, 4);
+			parts = Math.Round (req.amount, 4);
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Required RocketParts:");
 			GUILayout.FlexibleSpace ();
@@ -206,7 +183,7 @@ namespace ExLP {
 			GUILayout.Label (String.Format ("{0}t", dmass));
 			GUILayout.EndHorizontal ();
 
-			dmass = Math.Round (total_mass, 4);
+			dmass = Math.Round (req.mass + resource_mass, 4);
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Total mass:");
 			GUILayout.FlexibleSpace ();

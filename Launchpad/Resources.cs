@@ -59,6 +59,11 @@ namespace ExLP {
 			}
 		}
 
+		public VesselResources ()
+		{
+			resources = new Dictionary<string, ResourceInfo>();
+		}
+
 		public VesselResources (Part rootPart)
 		{
 			resources = new Dictionary<string, ResourceInfo>();

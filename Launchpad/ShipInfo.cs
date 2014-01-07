@@ -132,7 +132,7 @@ namespace ExLP {
 			if (winpos.x == 0 && winpos.y == 0) {
 				winpos.x = Screen.width / 2;
 				winpos.y = Screen.height / 2;
-				winpos.width = 260;
+				winpos.width = 300;
 				winpos.height = 100;
 			}
 			winpos = GUILayout.Window(1324, winpos, InfoWindow,
@@ -145,7 +145,9 @@ namespace ExLP {
 			GUILayout.BeginHorizontal ();
 			double dmass = Math.Round (mass, 4);
 			double parts = Math.Round (mass / rpDensity, 4);
-			GUILayout.Label ("Dry mass: " + dmass + "t (" + parts + "u)");
+			GUILayout.Label ("Dry mass:");
+			GUILayout.FlexibleSpace();
+			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
 			GUILayout.EndHorizontal ();
 			var reslist = resources.resources.Keys.ToList ();
 			reslist.Sort ();
@@ -169,17 +171,42 @@ namespace ExLP {
 				double damount = Math.Round (amount, 4);
 				double dresmass = Math.Round (resmass, 4);
 				GUILayout.BeginHorizontal();
-				GUILayout.Label (res + ": " + damount + "u (" + dresmass + "t)");
+				GUILayout.Label (String.Format ("{0}:", res));
+				GUILayout.FlexibleSpace();
+				GUILayout.Label (String.Format ("{0}u ({1}t)", damount, dresmass));
 				GUILayout.EndHorizontal();
 			}
+
 			dmass = Math.Round (rpmass, 4);
 			parts = Math.Round (rpmass / rpDensity, 4);
-			GUILayout.Label ("Extra Hull mass: " + dmass + "t (" + parts + "u)");
+			GUILayout.BeginHorizontal();
+			GUILayout.Label ("Extra Hull mass:");
+			GUILayout.FlexibleSpace();
+			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
+			GUILayout.EndHorizontal();
+
+			dmass = Math.Round (mass + rpmass, 4);
+			parts = Math.Round ((mass + rpmass) / rpDensity, 4);
+			GUILayout.BeginHorizontal();
+			GUILayout.Label ("Required RocketParts:");
+			GUILayout.FlexibleSpace();
+			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
+			GUILayout.EndHorizontal();
+
 			dmass = Math.Round (resource_mass, 4);
-			parts = Math.Round (resource_mass / rpDensity, 4);
-			GUILayout.Label ("Resources mass: " + dmass + "t (" + parts + "u)");
+			GUILayout.BeginHorizontal();
+			GUILayout.Label ("Resources mass:");
+			GUILayout.FlexibleSpace();
+			GUILayout.Label (String.Format ("{0}t", dmass));
+			GUILayout.EndHorizontal();
+
 			dmass = Math.Round (total_mass, 4);
-			GUILayout.Label ("Total mass: " + dmass + "t");
+			GUILayout.BeginHorizontal();
+			GUILayout.Label ("Total mass:");
+			GUILayout.FlexibleSpace();
+			GUILayout.Label (String.Format ("{0}t", dmass));
+			GUILayout.EndHorizontal();
+
 			GUILayout.EndVertical ();
 			GUI.DragWindow ();
 		}

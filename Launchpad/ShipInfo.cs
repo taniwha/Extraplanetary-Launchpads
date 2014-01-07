@@ -8,26 +8,26 @@ namespace ExLP {
 	{
 		public ExShipInfo shipinfo;
 
-		[KSPEvent(guiActive=false, active = true)]
-		void OnResourcesModified(BaseEventData data)
+		[KSPEvent (guiActive=false, active = true)]
+		void OnResourcesModified (BaseEventData data)
 		{
 			Part part = data.Get<Part> ("part");
-			Debug.Log(String.Format("[EL GUI] res modify: {0}", part));
+			Debug.Log (String.Format ("[EL GUI] res modify: {0}", part));
 			shipinfo.resources.RemovePart (part);
 			shipinfo.resources.AddPart (part);
 		}
-		[KSPEvent(guiActive=false, active = true)]
-		void OnMassModified(BaseEventData data)
+		[KSPEvent (guiActive=false, active = true)]
+		void OnMassModified (BaseEventData data)
 		{
 			Part part = data.Get<Part> ("part");
 			float oldmass = data.Get<float> ("oldmass");
-			Debug.Log(String.Format("[EL GUI] mass modify: {0} {1} {2}", part, oldmass, part.mass));
+			Debug.Log (String.Format ("[EL GUI] mass modify: {0} {1} {2}", part, oldmass, part.mass));
 			shipinfo.mass -= oldmass;
 			shipinfo.mass += part.mass;
 		}
 	}
 
-	[KSPAddon(KSPAddon.Startup.EditorAny, false)]
+	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ExShipInfo : MonoBehaviour
 	{
 
@@ -36,20 +36,20 @@ namespace ExLP {
 		double rpDensity;
 		static Rect winpos;
 
-		void addPart(Part part)
+		void addPart (Part part)
 		{
-			Debug.Log(String.Format("[EL GUI] attach: {0}", part));
-			resources.AddPart(part);
+			Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
+			resources.AddPart (part);
 			mass += part.mass;
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)part.AddModule ("ExShipInfoEventCatcher");
 			ec.shipinfo = this;
 		}
 
-		void removePart(Part part)
+		void removePart (Part part)
 		{
-			Debug.Log(String.Format("[EL GUI] remove: {0}", part));
-			resources.RemovePart(part);
+			Debug.Log (String.Format ("[EL GUI] remove: {0}", part));
+			resources.RemovePart (part);
 			mass -= part.mass;
 
 			ExShipInfoEventCatcher ec = part.GetComponent<ExShipInfoEventCatcher> ();
@@ -58,15 +58,15 @@ namespace ExLP {
 
 		void addRootPart (Part root)
 		{
-			Debug.Log(String.Format("[EL GUI] root: {0}", root));
-			resources = new VesselResources(root);
+			Debug.Log (String.Format ("[EL GUI] root: {0}", root));
+			resources = new VesselResources (root);
 			mass = root.mass;
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)root.AddModule ("ExShipInfoEventCatcher");
 			ec.shipinfo = this;
 		}
 
-		void onRootPart(GameEvents.FromToAction<ControlTypes, ControlTypes>h)
+		void onRootPart (GameEvents.FromToAction<ControlTypes, ControlTypes>h)
 		{
 			var ship = EditorLogic.fetch.ship;
 
@@ -76,19 +76,19 @@ namespace ExLP {
 					addRootPart (root);
 					foreach (Part p in root.GetComponentsInChildren<Part>()) {
 						if (p != root) {
-							addPart(p);
+							addPart (p);
 						}
 					}
 					enabled = true;
 				}
 			} else {
-				Debug.Log(String.Format("[EL GUI] new"));
+				Debug.Log (String.Format ("[EL GUI] new"));
 				resources = null;
 				mass = 0;
 				enabled = false;
 			}
 		}
-		void onPartAttach(GameEvents.HostTargetAction<Part,Part> host_target)
+		void onPartAttach (GameEvents.HostTargetAction<Part,Part> host_target)
 		{
 			Part part = host_target.host;
 			Part parent = host_target.target;
@@ -97,37 +97,37 @@ namespace ExLP {
 				enabled = true;
 			}
 			foreach (Part p in part.GetComponentsInChildren<Part>()) {
-				addPart(p);
+				addPart (p);
 			}
 		}
-		void onPartRemove(GameEvents.HostTargetAction<Part,Part> host_target)
+		void onPartRemove (GameEvents.HostTargetAction<Part,Part> host_target)
 		{
 			Part part = host_target.target;
 			if (resources != null) {
 				foreach (Part p in part.GetComponentsInChildren<Part>()) {
-					removePart(p);
+					removePart (p);
 				}
 			}
 		}
-		void Awake()
+		void Awake ()
 		{
-			GameEvents.onInputLocksModified.Add(onRootPart);
-			GameEvents.onPartAttach.Add(onPartAttach);
-			GameEvents.onPartRemove.Add(onPartRemove);
+			GameEvents.onInputLocksModified.Add (onRootPart);
+			GameEvents.onPartAttach.Add (onPartAttach);
+			GameEvents.onPartRemove.Add (onPartRemove);
 
 			PartResourceDefinition rp_def;
-			rp_def = PartResourceLibrary.Instance.GetDefinition("RocketParts");
+			rp_def = PartResourceLibrary.Instance.GetDefinition ("RocketParts");
 			rpDensity = rp_def.density;
 
 			enabled = false;
 		}
-		void OnDestroy()
+		void OnDestroy ()
 		{
-			GameEvents.onInputLocksModified.Remove(onRootPart);
-			GameEvents.onPartAttach.Remove(onPartAttach);
-			GameEvents.onPartRemove.Remove(onPartRemove);
+			GameEvents.onInputLocksModified.Remove (onRootPart);
+			GameEvents.onPartAttach.Remove (onPartAttach);
+			GameEvents.onPartRemove.Remove (onPartRemove);
 		}
-		void OnGUI()
+		void OnGUI ()
 		{
 			if (winpos.x == 0 && winpos.y == 0) {
 				winpos.x = Screen.width / 2;
@@ -135,18 +135,18 @@ namespace ExLP {
 				winpos.width = 300;
 				winpos.height = 100;
 			}
-			winpos = GUILayout.Window(1324, winpos, InfoWindow,
+			winpos = GUILayout.Window (1324, winpos, InfoWindow,
 									  "Build Resources",
-									  GUILayout.MinWidth(200));
+									  GUILayout.MinWidth (200));
 		}
-		void InfoWindow(int windowID)
+		void InfoWindow (int windowID)
 		{
 			GUILayout.BeginVertical ();
 			GUILayout.BeginHorizontal ();
 			double dmass = Math.Round (mass, 4);
 			double parts = Math.Round (mass / rpDensity, 4);
 			GUILayout.Label ("Dry mass:");
-			GUILayout.FlexibleSpace();
+			GUILayout.FlexibleSpace ();
 			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
 			GUILayout.EndHorizontal ();
 			var reslist = resources.resources.Keys.ToList ();
@@ -170,42 +170,42 @@ namespace ExLP {
 
 				double damount = Math.Round (amount, 4);
 				double dresmass = Math.Round (resmass, 4);
-				GUILayout.BeginHorizontal();
+				GUILayout.BeginHorizontal ();
 				GUILayout.Label (String.Format ("{0}:", res));
-				GUILayout.FlexibleSpace();
+				GUILayout.FlexibleSpace ();
 				GUILayout.Label (String.Format ("{0}u ({1}t)", damount, dresmass));
-				GUILayout.EndHorizontal();
+				GUILayout.EndHorizontal ();
 			}
 
 			dmass = Math.Round (rpmass, 4);
 			parts = Math.Round (rpmass / rpDensity, 4);
-			GUILayout.BeginHorizontal();
+			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Extra Hull mass:");
-			GUILayout.FlexibleSpace();
+			GUILayout.FlexibleSpace ();
 			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
-			GUILayout.EndHorizontal();
+			GUILayout.EndHorizontal ();
 
 			dmass = Math.Round (mass + rpmass, 4);
 			parts = Math.Round ((mass + rpmass) / rpDensity, 4);
-			GUILayout.BeginHorizontal();
+			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Required RocketParts:");
-			GUILayout.FlexibleSpace();
+			GUILayout.FlexibleSpace ();
 			GUILayout.Label (String.Format ("{0}t ({1}u)", dmass, parts));
-			GUILayout.EndHorizontal();
+			GUILayout.EndHorizontal ();
 
 			dmass = Math.Round (resource_mass, 4);
-			GUILayout.BeginHorizontal();
+			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Resources mass:");
-			GUILayout.FlexibleSpace();
+			GUILayout.FlexibleSpace ();
 			GUILayout.Label (String.Format ("{0}t", dmass));
-			GUILayout.EndHorizontal();
+			GUILayout.EndHorizontal ();
 
 			dmass = Math.Round (total_mass, 4);
-			GUILayout.BeginHorizontal();
+			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Total mass:");
-			GUILayout.FlexibleSpace();
+			GUILayout.FlexibleSpace ();
 			GUILayout.Label (String.Format ("{0}t", dmass));
-			GUILayout.EndHorizontal();
+			GUILayout.EndHorizontal ();
 
 			GUILayout.EndVertical ();
 			GUI.DragWindow ();

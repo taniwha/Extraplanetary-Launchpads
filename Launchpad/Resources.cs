@@ -11,7 +11,7 @@ namespace ExLP {
 		public PartResource resource;
 		public Part part;
 
-		public ResourcePartMap(PartResource resource, Part part)
+		public ResourcePartMap (PartResource resource, Part part)
 		{
 			this.resource = resource;
 			this.part = part;
@@ -25,20 +25,20 @@ namespace ExLP {
 	public class VesselResources {
 		public Dictionary<string, ResourceInfo> resources;
 
-		public void AddPart(Part part)
+		public void AddPart (Part part)
 		{
 			foreach (PartResource resource in part.Resources) {
 				ResourceInfo resourceInfo;
-				if (!resources.ContainsKey(resource.resourceName)) {
-					resourceInfo = new ResourceInfo();
+				if (!resources.ContainsKey (resource.resourceName)) {
+					resourceInfo = new ResourceInfo ();
 					resources[resource.resourceName] = resourceInfo;
 				}
 				resourceInfo = resources[resource.resourceName];
-				resourceInfo.parts.Add(new ResourcePartMap(resource, part));
+				resourceInfo.parts.Add (new ResourcePartMap (resource, part));
 			}
 		}
 
-		public void RemovePart(Part part)
+		public void RemovePart (Part part)
 		{
 			var remove_list = new List<string> ();
 			foreach (var resinfo in resources) {
@@ -59,26 +59,26 @@ namespace ExLP {
 			}
 		}
 
-		public VesselResources(Part rootPart)
+		public VesselResources (Part rootPart)
 		{
 			resources = new Dictionary<string, ResourceInfo>();
-			AddPart(rootPart);
+			AddPart (rootPart);
 		}
 
-		public VesselResources(Vessel vessel)
+		public VesselResources (Vessel vessel)
 		{
 			resources = new Dictionary<string, ResourceInfo>();
 			foreach (Part part in vessel.parts) {
-				AddPart(part);
+				AddPart (part);
 			}
 		}
 
 		// Completely empty the vessel of any and all resources.
-		public void RemoveAllResources(HashSet<string> resources_to_remove = null)
+		public void RemoveAllResources (HashSet<string> resources_to_remove = null)
 		{
 			foreach (KeyValuePair<string, ResourceInfo> pair in resources) {
 				string resource = pair.Key;
-				if (resources_to_remove != null && !resources_to_remove.Contains(resource)) {
+				if (resources_to_remove != null && !resources_to_remove.Contains (resource)) {
 					continue;
 				}
 				ResourceInfo resourceInfo = pair.Value;
@@ -90,9 +90,9 @@ namespace ExLP {
 
 		// Return the vessel's total capacity for the resource.
 		// If the vessel has no such resource 0.0 is returned.
-		public double ResourceCapacity(string resource)
+		public double ResourceCapacity (string resource)
 		{
-			if (!resources.ContainsKey(resource))
+			if (!resources.ContainsKey (resource))
 				return 0.0;
 			ResourceInfo resourceInfo = resources[resource];
 			double capacity = 0.0;
@@ -104,9 +104,9 @@ namespace ExLP {
 
 		// Return the vessel's total available amount of the resource.
 		// If the vessel has no such resource 0.0 is returned.
-		public double ResourceAmount(string resource)
+		public double ResourceAmount (string resource)
 		{
-			if (!resources.ContainsKey(resource))
+			if (!resources.ContainsKey (resource))
 				return 0.0;
 			ResourceInfo resourceInfo = resources[resource];
 			double amount = 0.0;
@@ -123,9 +123,9 @@ namespace ExLP {
 		// If the vessel has no such resource no action is taken.
 		// Returns the amount of resource not transfered (0 = all has been
 		// transfered).
-		public double TransferResource(string resource, double amount)
+		public double TransferResource (string resource, double amount)
 		{
-			if (!resources.ContainsKey(resource))
+			if (!resources.ContainsKey (resource))
 				return amount;
 			ResourceInfo resourceInfo = resources[resource];
 			foreach (ResourcePartMap partInfo in resourceInfo.parts) {

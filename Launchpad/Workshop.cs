@@ -15,12 +15,12 @@ public class ExWorkshop : PartModule
 	[KSPField (guiName = "Productivity", guiActive = true)]
 	public float Productivity;
 
-	public override string GetInfo()
+	public override string GetInfo ()
 	{
 		return "Workshop";
 	}
 
-	private float KerbalContribution(Kerbal kerbal)
+	private float KerbalContribution (Kerbal kerbal)
 	{
 		float s = kerbal.stupidity;
 		float c = kerbal.courage;
@@ -37,60 +37,60 @@ public class ExWorkshop : PartModule
 		return contribution;
 	}
 
-	private void DetermineProductivity()
+	private void DetermineProductivity ()
 	{
 		float kh = 0;
 		foreach (var crew in part.protoModuleCrew) {
-			kh += KerbalContribution(crew.KerbalRef);
+			kh += KerbalContribution (crew.KerbalRef);
 		}
 		Productivity = kh * ProductivityFactor;
 	}
 
-	void onCrewBoard(GameEvents.FromToAction<Part,Part> ft)
+	void onCrewBoard (GameEvents.FromToAction<Part,Part> ft)
 	{
 		Part p = ft.to;
 
 		if (p != part)
 			return;
-		DetermineProductivity();
+		DetermineProductivity ();
 	}
 
-	void onCrewEVA(GameEvents.FromToAction<Part,Part> ft)
+	void onCrewEVA (GameEvents.FromToAction<Part,Part> ft)
 	{
 		Part p = ft.from;
 
 		if (p != part)
 			return;
-		DetermineProductivity();
+		DetermineProductivity ();
 	}
 
-	public override void OnLoad(ConfigNode node)
+	public override void OnLoad (ConfigNode node)
 	{
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
-			GameEvents.onCrewBoardVessel.Add(onCrewBoard);
-			GameEvents.onCrewOnEva.Add(onCrewEVA);
+			GameEvents.onCrewBoardVessel.Add (onCrewBoard);
+			GameEvents.onCrewOnEva.Add (onCrewEVA);
 		}
 	}
 
-	void OnDestroy()
+	void OnDestroy ()
 	{
-		GameEvents.onCrewBoardVessel.Remove(onCrewBoard);
-		GameEvents.onCrewOnEva.Remove(onCrewEVA);
+		GameEvents.onCrewBoardVessel.Remove (onCrewBoard);
+		GameEvents.onCrewOnEva.Remove (onCrewEVA);
 	}
 
-	public override void OnStart(PartModule.StartState state)
+	public override void OnStart (PartModule.StartState state)
 	{
 		if (state == PartModule.StartState.None
 			|| state == PartModule.StartState.Editor)
 			return;
-		DetermineProductivity();
-		part.force_activate();
+		DetermineProductivity ();
+		part.force_activate ();
 	}
 
-	public override void OnFixedUpdate()
+	public override void OnFixedUpdate ()
 	{
 		double work = Productivity * TimeWarp.fixedDeltaTime / 60;
-		part.RequestResource("KerbalMinutes", -work);
+		part.RequestResource ("KerbalMinutes", -work);
 	}
 }
 

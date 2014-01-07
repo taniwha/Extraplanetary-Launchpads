@@ -25,6 +25,12 @@ namespace ExLP {
 			shipinfo.mass -= oldmass;
 			shipinfo.mass += part.mass;
 		}
+
+		public override void OnSave (ConfigNode node)
+		{
+			node.ClearData ();
+			node.name = "IGNORE_THIS_NODE";
+		}
 	}
 
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]

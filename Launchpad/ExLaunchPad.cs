@@ -628,6 +628,12 @@ namespace ExLP {
 
 		public override void OnStart (PartModule.StartState state)
 		{
+			foreach (PartResource res in part.Resources) {
+				if (res.resourceName == "KerbalMinutes") {
+					KerbalMinutes = res;
+					break;
+				}
+			}
 			part.force_activate ();
 		}
 

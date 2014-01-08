@@ -164,8 +164,8 @@ namespace ExLP {
 									   Vector2 scrollPos)
 		{
 			GUILayout.Label (title + ":");
-			GUILayout.BeginVertical(GUILayout.Height(100));
-			scrollPos = GUILayout.BeginScrollView(scrollPos);
+			GUILayout.BeginVertical (GUILayout.Height (100));
+			scrollPos = GUILayout.BeginScrollView (scrollPos);
 			foreach (var res in resources) {
 				double damount = Math.Round (res.amount, 4);
 				double dresmass = Math.Round (res.mass, 4);
@@ -175,8 +175,8 @@ namespace ExLP {
 				GUILayout.Label (String.Format ("{0}u ({1}t)", damount, dresmass));
 				GUILayout.EndHorizontal ();
 			}
-			GUILayout.EndScrollView();
-			GUILayout.EndVertical();
+			GUILayout.EndScrollView ();
+			GUILayout.EndVertical ();
 			return scrollPos;
 		}
 
@@ -196,7 +196,7 @@ namespace ExLP {
 			var req = cost.required[0];
 			MassLabel ("Total mass", req.mass + resource_mass);
 
-			cost.optional.Sort();
+			cost.optional.Sort ();
 			GUILayout.Label (" ");
 			scrollPosR = ResourcePanel ("Required", cost.required, scrollPosR);
 			scrollPosO = ResourcePanel ("Optional", cost.optional, scrollPosO);

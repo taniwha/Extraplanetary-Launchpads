@@ -12,7 +12,7 @@ namespace ExLP {
 
 		public void Awake ()
 		{
-			ExEditorButton = ToolbarManager.Instance.add("ExtraplanetaryLaunchpads", "ExEditorButton");
+			ExEditorButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExEditorButton");
 			ExEditorButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ExEditorButton.ToolTip = "EL Build Resources Display";
 			ExEditorButton.OnClick += (e) => ExShipInfo.ToggleGUI ();

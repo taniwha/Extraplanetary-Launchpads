@@ -18,7 +18,7 @@ namespace ExLP {
 		//public static bool kethane_present = CheckForKethane ();
 		public static bool kethane_present;
 
-		public enum crafttype { SPH, VAB, SUB };
+		public enum CraftType { SPH, VAB, SUB };
 
 		public class Styles {
 			public static GUIStyle normal;
@@ -73,28 +73,25 @@ namespace ExLP {
 			}
 		}
 
-		public class UIStatus
-		{
-			public Rect windowpos;
-			public bool builduiactive = false;	// Whether the build menu is open or closed
-			public bool builduivisible = true;	// Whether the build menu is allowed to be shown
-			public bool showbuilduionload = false;
-			public bool linklfosliders = true;
-			public bool canbuildcraft = false;
-			public crafttype ct = crafttype.VAB;
-			public string flagname = null;
-			public CraftBrowser craftlist = null;
-			public bool showcraftbrowser = false;
-			public ConfigNode craftConfig = null;
-			public Vector2 resscroll;
-			public Dictionary<string, double> requiredresources = null;
-			public double hullRocketParts = 0.0;
-			public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
+		public Rect windowpos;
+		public bool builduiactive = false;	// Whether the build menu is open or closed
+		public bool builduivisible = true;	// Whether the build menu is allowed to be shown
+		public bool showbuilduionload = false;
+		public bool linklfosliders = true;
+		public bool canbuildcraft = false;
+		public CraftType craftType = CraftType.VAB;
+		public string flagname = null;
+		public CraftBrowser craftlist = null;
+		public bool showcraftbrowser = false;
+		public ConfigNode craftConfig = null;
+		public Vector2 resscroll;
+		public BuildCost.CostReport buildCost = null;
+		public double hullRocketParts = 0.0;
+		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
-			public PartResource KerbalMinutes;
-			public bool autoRelease;
-			public DockedVesselInfo vesselInfo;
-		}
+		public PartResource KerbalMinutes;
+		public bool autoRelease;
+		public DockedVesselInfo vesselInfo;
 
 		class Strut {
 			GameObject gameObject;
@@ -149,8 +146,6 @@ namespace ExLP {
 		[KSPField (isPersistant = false)]
 		public string SpawnTransform;
 
-		private UIStatus uis = new UIStatus ();
-
 		//private List<Vessel> bases;
 
 		private static bool CheckForKethane ()
@@ -172,19 +167,19 @@ namespace ExLP {
 			if (vessel) {
 				situation = vessel.situation;
 			}
-			if (uis.vesselInfo == null
+			if (vesselInfo == null
 				&& (situation == Vessel.Situations.LANDED
 					|| situation == Vessel.Situations.ORBITING
 					|| situation == Vessel.Situations.PRELAUNCH
 					|| situation == Vessel.Situations.SPLASHED)) {
 				can_build = true;
 			}
-			if (uis.vesselInfo != null && CheckKerbalMinutes ()) {
+			if (vesselInfo != null && CheckKerbalMinutes ()) {
 				can_release = true;
 			}
-			enabled = can_build && uis.builduiactive && uis.builduivisible;
-			Events["ShowBuildMenu"].active = can_build && !uis.builduiactive;
-			Events["HideBuildMenu"].active = can_build && uis.builduiactive;
+			enabled = can_build && builduiactive && builduivisible;
+			Events["ShowBuildMenu"].active = can_build && !builduiactive;
+			Events["HideBuildMenu"].active = can_build && builduiactive;
 			Events["ReleaseVessel"].active = can_release;
 		}
 		// =====================================================================================================================================================
@@ -194,46 +189,28 @@ namespace ExLP {
 		{
 			VesselResources craftResources = new VesselResources (craft);
 
-			// Remove all resources that we might later fill (hull resources will not be touched)
-			HashSet<string> resources_to_remove = new HashSet<string>(uis.requiredresources.Keys);
-			craftResources.RemoveAllResources (resources_to_remove);
-
-			// remove rocket parts required for the hull and solid fuel
-			padResources.TransferResource ("RocketParts", -uis.hullRocketParts);
-
-			// use resources
-			foreach (KeyValuePair<string, double> pair in uis.requiredresources) {
-				// If resource is "JetFuel", rename to "LiquidFuel"
-				string res = pair.Key;
-				if (pair.Key == "JetFuel") {
-					res = "LiquidFuel";
-					if (pair.Value == 0)
-						continue;
+			foreach (var br in buildCost.required) {
+				if (br.name == "KerbalMinutes") {
+					SetKerbalMinutes (br.amount);
+				} else {
+					padResources.TransferResource (br.name, -br.amount);
 				}
-				if (!uis.resourcesliders.ContainsKey (pair.Key)) {
-					Debug.Log (String.Format ("[EL] missing slider {0}", pair.Key));
-					continue;
-				}
-				// Calculate resource cost based on slider position - note use pair.Key NOT res! we need to use the position of the dedicated LF slider not the LF component of LFO slider
-				double tot = pair.Value * uis.resourcesliders[pair.Key];
-				// Transfer the resource from the vessel doing the building to the vessel being built
-				padResources.TransferResource (res, -tot);
-				craftResources.TransferResource (res, tot);
+			}
+			foreach (var br in buildCost.optional) {
+				double tot = br.amount * resourcesliders[br.name];
+				padResources.TransferResource (br.name, -tot);
+				craftResources.TransferResource (br.name, tot);
 			}
 		}
 
-		private void SetKerbalMinutes ()
+		private void SetKerbalMinutes (double kerbalMinutes)
 		{
-			PartResourceDefinition rp_def;
-			rp_def = PartResourceLibrary.Instance.GetDefinition ("RocketParts");
-			double mass = uis.hullRocketParts * rp_def.density;
-			double kerbalMinutes = mass * 5 * 60; // 5 kh/t
 			ConfigNode khNode = new ConfigNode ("RESOURCE");
 			khNode.AddValue ("name", "KerbalMinutes");
 			khNode.AddValue ("amount", 0);
 			khNode.AddValue ("maxAmount", kerbalMinutes);
-			if (uis.KerbalMinutes == null) {
-				uis.KerbalMinutes = part.AddResource (khNode);
+			if (KerbalMinutes == null) {
+				KerbalMinutes = part.AddResource (khNode);
 			} else {
 				part.SetResource (khNode);
 			}
@@ -241,18 +218,18 @@ namespace ExLP {
 
 		private void ClearKerbalMinutes ()
 		{
-			if (uis.KerbalMinutes != null) {
-				uis.KerbalMinutes.amount = 0;
-				uis.KerbalMinutes.maxAmount = 0;
+			if (KerbalMinutes != null) {
+				KerbalMinutes.amount = 0;
+				KerbalMinutes.maxAmount = 0;
 			}
 		}
 
 		private bool CheckKerbalMinutes ()
 		{
-			if (uis.KerbalMinutes == null) {
+			if (KerbalMinutes == null) {
 				return true;
 			}
-			if (uis.KerbalMinutes.maxAmount - uis.KerbalMinutes.amount < 0.01) {
+			if (KerbalMinutes.maxAmount - KerbalMinutes.amount < 0.01) {
 				return true;
 			}
 			return false;
@@ -329,13 +306,13 @@ namespace ExLP {
 		{
 			// build craft
 			ShipConstruct nship = new ShipConstruct ();
-			nship.LoadShip (uis.craftConfig);
-			HackStruts (nship, uis.ct != crafttype.SUB);
+			nship.LoadShip (craftConfig);
+			HackStruts (nship, craftType != CraftType.SUB);
 
 			Vector3 offset = nship.Parts[0].transform.localPosition;
 			nship.Parts[0].transform.Translate (-offset);
 			string landedAt = "External Launchpad";
-			string flag = uis.flagname;
+			string flag = flagname;
 			Game state = FlightDriver.FlightStateCache;
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
@@ -351,10 +328,10 @@ namespace ExLP {
 			if (kethane_present && !DebugPad)
 				UseResources (vsl);
 
-			uis.vesselInfo = new DockedVesselInfo ();
-			uis.vesselInfo.name = vsl.vesselName;
-			uis.vesselInfo.vesselType = vsl.vesselType;
-			uis.vesselInfo.rootPartUId = vsl.rootPart.flightID;
+			vesselInfo = new DockedVesselInfo ();
+			vesselInfo.name = vsl.vesselName;
+			vesselInfo.vesselType = vsl.vesselType;
+			vesselInfo.rootPartUId = vsl.rootPart.flightID;
 			vsl.rootPart.Couple (part);
 			// For some reason a second attachJoint gets created by KSP later
 			// on, so delete the one created by the above call to Couple.
@@ -362,12 +339,11 @@ namespace ExLP {
 				GameObject.Destroy (vsl.rootPart.attachJoint);
 				vsl.rootPart.attachJoint = null;
 			}
-			SetKerbalMinutes ();
-			uis.autoRelease = false;
+			autoRelease = false;
 
 			FlightGlobals.ForceSetActiveVessel (vessel);
 			if (vessel.situation != Vessel.Situations.ORBITING) {
-				uis.autoRelease = true;
+				autoRelease = true;
 			}
 
 			Staging.beginFlight ();
@@ -399,15 +375,19 @@ namespace ExLP {
 
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
-			if (available < required) {
+			if (available >= 0 && available < required) {
 				requiredStyle = Styles.red;
 				// prevent building unless debug mode is on, or kethane is not
 				// installed (kethane is required for resource production)
-				uis.canbuildcraft = (!kethane_present || DebugPad);
+				canbuildcraft = (!kethane_present || DebugPad);
 			}
 			// Required and Available
 			GUILayout.Box ((Math.Round (required, 2)).ToString (), requiredStyle, GUILayout.Width (75), GUILayout.Height (40));
-			GUILayout.Box ((Math.Round (available, 2)).ToString (), Styles.white, GUILayout.Width (75), GUILayout.Height (40));
+			if (available >= 0) {
+				GUILayout.Box ((Math.Round (available, 2)).ToString (), Styles.white, GUILayout.Width (75), GUILayout.Height (40));
+			} else {
+				GUILayout.Box ("N/A", Styles.white, GUILayout.Width (75), GUILayout.Height (40));
+			}
 
 			// Flexi space to make sure any unused space is at the right-hand edge
 			GUILayout.FlexibleSpace ();
@@ -432,7 +412,7 @@ namespace ExLP {
 			EditorLogic editor = EditorLogic.fetch;
 			if (editor) return;
 
-			if (!uis.builduiactive) return;
+			if (!builduiactive) return;
 
 			if (padResources != null && padPartsCount != vessel.Parts.Count) {
 				// something docked or undocked, so rebuild the pad's resouces info
@@ -448,14 +428,14 @@ namespace ExLP {
 			GUILayout.BeginHorizontal ("box");
 			GUILayout.FlexibleSpace ();
 			// VAB / SPH selection
-			if (GUILayout.Toggle (uis.ct == crafttype.VAB, "VAB", GUILayout.Width (80))) {
-				uis.ct = crafttype.VAB;
+			if (GUILayout.Toggle (craftType == CraftType.VAB, "VAB", GUILayout.Width (80))) {
+				craftType = CraftType.VAB;
 			}
-			if (GUILayout.Toggle (uis.ct == crafttype.SPH, "SPH", GUILayout.Width (80))) {
-				uis.ct = crafttype.SPH;
+			if (GUILayout.Toggle (craftType == CraftType.SPH, "SPH", GUILayout.Width (80))) {
+				craftType = CraftType.SPH;
 			}
-			if (GUILayout.Toggle (uis.ct == crafttype.SUB, "SubAss", GUILayout.Width (160))) {
-				uis.ct = crafttype.SUB;
+			if (GUILayout.Toggle (craftType == CraftType.SUB, "SubAss", GUILayout.Width (160))) {
+				craftType = CraftType.SUB;
 			}
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
@@ -465,25 +445,25 @@ namespace ExLP {
 			if (GUILayout.Button ("Select Craft", Styles.normal, GUILayout.ExpandWidth (true))) {
 				string [] dir = new string[] {"SPH", "VAB", "../Subassemblies"};
 				bool stock = HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels;
-				if (uis.ct == crafttype.SUB)
+				if (craftType == CraftType.SUB)
 					HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = false;
 				//GUILayout.Button is "true" when clicked
-				uis.craftlist = new CraftBrowser (new Rect (Screen.width / 2, 100, 350, 500), dir[(int)uis.ct], strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
-				uis.showcraftbrowser = true;
+				craftlist = new CraftBrowser (new Rect (Screen.width / 2, 100, 350, 500), dir[(int)craftType], strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
+				showcraftbrowser = true;
 				HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = stock;
 			}
 
-			if (uis.craftConfig != null) {
-				GUILayout.Box ("Selected Craft:	" + uis.craftConfig.GetValue ("ship"), Styles.white);
+			if (craftConfig != null && buildCost != null) {
+				GUILayout.Box ("Selected Craft:	" + craftConfig.GetValue ("ship"), Styles.white);
 
 				// Resource requirements
 				GUILayout.Label ("Resources required to build:", Styles.label, GUILayout.Width (600));
 
 				// Link LFO toggle
 
-				uis.linklfosliders = GUILayout.Toggle (uis.linklfosliders, "Link RocketFuel sliders for LiquidFuel and Oxidizer");
+				linklfosliders = GUILayout.Toggle (linklfosliders, "Link RocketFuel sliders for LiquidFuel and Oxidizer");
 
-				uis.resscroll = GUILayout.BeginScrollView (uis.resscroll, GUILayout.Width (600), GUILayout.Height (300));
+				resscroll = GUILayout.BeginScrollView (resscroll, GUILayout.Width (600), GUILayout.Height (300));
 
 				GUILayout.BeginHorizontal ();
 
@@ -494,76 +474,36 @@ namespace ExLP {
 				GUILayout.Label ("Available", Styles.label, GUILayout.Width (75));
 				GUILayout.EndHorizontal ();
 
-				uis.canbuildcraft = true;	   // default to can build - if something is stopping us from building, we will set to false later
+				canbuildcraft = true;	   // default to can build - if something is stopping us from building, we will set to false later
 
-				if (!uis.requiredresources.ContainsKey ("RocketParts")) {
-					// if the craft to be built has no rocket parts storage, then the amount to use is not adjustable
-					string resname = "RocketParts";
-					double available = padResources.ResourceAmount (resname);
-					ResourceLine (resname, resname, 1.0F, uis.hullRocketParts, uis.hullRocketParts, available);
+				foreach (var br in buildCost.required) {
+					double a = br.amount;
+					double available = -1;
+
+					if (br.name != "KerbalMinutes") {
+						available = padResources.ResourceAmount (br.name);
+					}
+					ResourceLine (br.name, br.name, 1.0f, a, a, available);
 				}
-
-				// Cycle through required resources
-				foreach (KeyValuePair<string, double> pair in uis.requiredresources) {
-					string resname = pair.Key;	// Holds REAL resource name. May need to translate from "JetFuel" back to "LiquidFuel"
-					string reslabel = resname;	 // Resource name for DISPLAY purposes only. Internally the app uses pair.Key
-					if (reslabel == "JetFuel") {
-						if (pair.Value == 0f) {
-							// Do not show JetFuel line if not being used
-							continue;
-						}
-						//resname = "JetFuel";
-						resname = "LiquidFuel";
+				foreach (var br in buildCost.optional) {
+					double available = padResources.ResourceAmount (br.name);
+					if (!resourcesliders.ContainsKey (br.name)) {
+						resourcesliders.Add (br.name, 1);
 					}
-					if (!uis.resourcesliders.ContainsKey (pair.Key)) {
-						uis.resourcesliders.Add (pair.Key, 1);
-					}
-
-					// If in link LFO sliders mode, rename Oxidizer to LFO (Oxidizer) and LiquidFuel to LFO (LiquidFuel)
-					if (reslabel == "Oxidizer") {
-						reslabel = "RocketFuel (Ox)";
-					}
-					if (reslabel == "LiquidFuel") {
-						reslabel = "RocketFuel (LF)";
-					}
-
-					double minAmount = 0.0;
-					double maxAmount = uis.requiredresources[resname];
-					if (resname == "RocketParts") {
-						minAmount += uis.hullRocketParts;
-						maxAmount += uis.hullRocketParts;
-					}
-
-					double available = padResources.ResourceAmount (resname);
-					// If LFO LiquidFuel exists and we are on LiquidFuel (Non-LFO), then subtract the amount used by LFO (LiquidFuel) from the available amount
-					if (pair.Key == "JetFuel") {
-						available -= uis.requiredresources["LiquidFuel"] * uis.resourcesliders["LiquidFuel"];
-						if (available < 0.0)
-							available = 0.0;
-					}
-
-					uis.resourcesliders[pair.Key] = ResourceLine (reslabel, pair.Key, uis.resourcesliders[pair.Key], minAmount, maxAmount, available);
-					if (uis.linklfosliders) {
-						float tmp = uis.resourcesliders[pair.Key];
-						if (pair.Key == "Oxidizer") {
-							uis.resourcesliders["LiquidFuel"] = tmp;
-						} else if (pair.Key == "LiquidFuel") {
-							uis.resourcesliders["Oxidizer"] = tmp;
-						}
-					}
+					resourcesliders[br.name] = ResourceLine (br.name, br.name, resourcesliders[br.name], 0, br.amount, available);
 				}
 
 				GUILayout.EndScrollView ();
 
 				// Build button
-				if (uis.canbuildcraft) {
+				if (canbuildcraft) {
 					if (GUILayout.Button ("Build", Styles.normal, GUILayout.ExpandWidth (true))) {
 						BuildAndLaunchCraft ();
 						// Reset the UI
-						uis.craftConfig = null;
-						uis.requiredresources = null;
-						uis.resourcesliders = new Dictionary<string, float>();;
-						uis.builduiactive = false;
+						craftConfig = null;
+						buildCost = null;
+						resourcesliders = new Dictionary<string, float>();;
+						builduiactive = false;
 						UpdateGUIState ();
 					}
 				} else {
@@ -580,7 +520,7 @@ namespace ExLP {
 				HideBuildMenu ();
 			}
 
-			uis.showbuilduionload = GUILayout.Toggle (uis.showbuilduionload, "Show on StartUp");
+			showbuilduionload = GUILayout.Toggle (showbuilduionload, "Show on StartUp");
 
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
@@ -595,22 +535,22 @@ namespace ExLP {
 		// called when the user selects a craft the craft browser
 		private void craftSelectComplete (string filename, string flagname)
 		{
-			uis.showcraftbrowser = false;
-			uis.flagname = flagname;
+			showcraftbrowser = false;
+			this.flagname = flagname;
 			ConfigNode craft = ConfigNode.Load (filename);
 
 			// Get list of resources required to build vessel
-			if ((uis.requiredresources = getBuildCost (craft)) != null)
-				uis.craftConfig = craft;
+			if ((buildCost = getBuildCost (craft)) != null)
+				craftConfig = craft;
 		}
 
 		// called when the user clicks cancel in the craft browser
 		private void craftSelectCancel ()
 		{
-			uis.showcraftbrowser = false;
+			showcraftbrowser = false;
 
-			uis.requiredresources = null;
-			uis.craftConfig = null;
+			buildCost = null;
+			craftConfig = null;
 		}
 
 		// =====================================================================================================================================================
@@ -620,17 +560,17 @@ namespace ExLP {
 		private void Start ()
 		{
 			// If "Show GUI on StartUp" ticked, show the GUI
-			if (uis.showbuilduionload) {
+			if (showbuilduionload) {
 				ShowBuildMenu ();
 			}
 		}
 
 		public override void OnFixedUpdate ()
 		{
-			if (uis.vesselInfo != null && !vessel.packed) {
+			if (vesselInfo != null && !vessel.packed) {
 				if (CheckKerbalMinutes ()) {
 					ClearKerbalMinutes ();
-					if (uis.autoRelease) {
+					if (autoRelease) {
 						ReleaseVessel ();
 					}
 					UpdateGUIState ();
@@ -641,21 +581,21 @@ namespace ExLP {
 		private void OnGUI ()
 		{
 			GUI.skin = HighLogic.Skin;
-			uis.windowpos = GUILayout.Window (1, uis.windowpos, WindowGUI, "Extraplanetary Launchpad: " + vessel.situation.ToString (), GUILayout.Width (600));
-			if (uis.showcraftbrowser) {
-				uis.craftlist.OnGUI ();
+			windowpos = GUILayout.Window (1, windowpos, WindowGUI, "Extraplanetary Launchpad: " + vessel.situation.ToString (), GUILayout.Width (600));
+			if (showcraftbrowser) {
+				craftlist.OnGUI ();
 			}
 		}
 
 		public override void OnSave (ConfigNode node)
 		{
-			if (uis.vesselInfo != null) {
-				uis.vesselInfo.Save (node.AddNode ("DockedVesselInfo"));
+			if (vesselInfo != null) {
+				vesselInfo.Save (node.AddNode ("DockedVesselInfo"));
 			}
 
 			PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
-			config.SetValue ("Window Position", uis.windowpos);
-			config.SetValue ("Show Build Menu on StartUp", uis.showbuilduionload);
+			config.SetValue ("Window Position", windowpos);
+			config.SetValue ("Show Build Menu on StartUp", showbuilduionload);
 			config.save ();
 		}
 
@@ -680,8 +620,8 @@ namespace ExLP {
 			GameEvents.onVesselChange.Add (onVesselChange);
 
 			if (node.HasNode ("DockedVesselInfo")) {
-				uis.vesselInfo = new DockedVesselInfo ();
-				uis.vesselInfo.Load (node.GetNode ("DockedVesselInfo"));
+				vesselInfo = new DockedVesselInfo ();
+				vesselInfo.Load (node.GetNode ("DockedVesselInfo"));
 			}
 			UpdateGUIState ();
 		}
@@ -704,8 +644,8 @@ namespace ExLP {
 		{
 			PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
 			config.load ();
-			uis.windowpos = config.GetValue<Rect>("Window Position");
-			uis.showbuilduionload = config.GetValue<bool>("Show Build Menu on StartUp");
+			windowpos = config.GetValue<Rect>("Window Position");
+			showbuilduionload = config.GetValue<bool>("Show Build Menu on StartUp");
 		}
 
 		// =====================================================================================================================================================
@@ -714,22 +654,22 @@ namespace ExLP {
 		[KSPEvent (guiActive = true, guiName = "Show Build Menu", active = true)]
 		public void ShowBuildMenu ()
 		{
-			uis.builduiactive = true;
+			builduiactive = true;
 			UpdateGUIState ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Hide Build Menu", active = false)]
 		public void HideBuildMenu ()
 		{
-			uis.builduiactive = false;
+			builduiactive = false;
 			UpdateGUIState ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Release", active = false)]
 		public void ReleaseVessel ()
 		{
-			vessel[uis.vesselInfo.rootPartUId].Undock (uis.vesselInfo);
-			uis.vesselInfo = null;
+			vessel[vesselInfo.rootPartUId].Undock (vesselInfo);
+			vesselInfo = null;
 			UpdateGUIState ();
 		}
 
@@ -748,7 +688,7 @@ namespace ExLP {
 		[KSPAction ("Toggle Build Menu")]
 		public void ToggleBuildMenuAction (KSPActionParam param)
 		{
-			if (uis.builduiactive) {
+			if (builduiactive) {
 				HideBuildMenu ();
 			} else {
 				ShowBuildMenu ();
@@ -758,7 +698,7 @@ namespace ExLP {
 		[KSPAction ("Release Vessel")]
 		public void ReleaseVesselAction (KSPActionParam param)
 		{
-			if (uis.vesselInfo != null && CheckKerbalMinutes ()) {
+			if (vesselInfo != null && CheckKerbalMinutes ()) {
 				ReleaseVessel ();
 			}
 		}
@@ -766,73 +706,22 @@ namespace ExLP {
 		// =====================================================================================================================================================
 		// Build Helper Functions
 
-		public Dictionary<string, double> getBuildCost (ConfigNode craft)
+		public BuildCost.CostReport getBuildCost (ConfigNode craft)
 		{
-			float mass = 0.0f;
-			Dictionary<string, double> resources = new Dictionary<string, double>();
-			Dictionary<string, double> hull_resources = new Dictionary<string, double>();
-
 			ShipConstruct ship = new ShipConstruct ();
 			ship.LoadShip (craft);
 			GameObject ro = ship.parts[0].localRoot.gameObject;
 			Vessel dummy = ro.AddComponent<Vessel>();
 			dummy.Initialize (true);
 
+			BuildCost resources = new BuildCost ();
+
 			foreach (Part p in ship.parts) {
-				mass += p.mass;
-				foreach (PartResource r in p.Resources) {
-					if (r.resourceName == "IntakeAir" || r.resourceName == "KIntakeAir") {
-						// Ignore intake Air
-						continue;
-					}
-
-					Dictionary<string, double> res_dict = resources;
-
-					PartResourceDefinition res_def;
-					res_def = PartResourceLibrary.Instance.GetDefinition (r.resourceName);
-					if (res_def.resourceTransferMode == ResourceTransferMode.NONE
-						|| res_def.resourceFlowMode == ResourceFlowMode.NO_FLOW) {
-						res_dict = hull_resources;
-					}
-
-					if (!res_dict.ContainsKey (r.resourceName)) {
-						res_dict[r.resourceName] = 0.0;
-					}
-					res_dict[r.resourceName] += r.maxAmount;
-				}
+				resources.addPart (p);
 			}
 			dummy.Die ();
 
-			// RocketParts for the hull is a separate entity to RocketParts in
-			// storage containers
-			PartResourceDefinition rp_def;
-			rp_def = PartResourceLibrary.Instance.GetDefinition ("RocketParts");
-			uis.hullRocketParts = mass / rp_def.density;
-
-			// If non pumpable resources are used, convert to RocketParts
-			foreach (KeyValuePair<string, double> pair in hull_resources) {
-				PartResourceDefinition res_def;
-				res_def = PartResourceLibrary.Instance.GetDefinition (pair.Key);
-				double hull_mass = pair.Value * res_def.density;
-				double hull_parts = hull_mass / rp_def.density;
-				uis.hullRocketParts += hull_parts;
-			}
-
-			// If there is JetFuel (ie LF only tanks as well as LFO tanks - eg a SpacePlane) then split off the Surplus LF as "JetFuel"
-			if (resources.ContainsKey ("Oxidizer") && resources.ContainsKey ("LiquidFuel")) {
-				double jetFuel = 0.0;
-				// The LiquidFuel:Oxidizer ratio is 9:11. Try to minimize rounding effects.
-				jetFuel = (11 * resources["LiquidFuel"] - 9 * resources["Oxidizer"]) / 11;
-				if (jetFuel < 0.01)	{
-					// Forget it. not getting far on that. Any discrepency this
-					// small will be due to precision losses.
-					jetFuel = 0.0;
-				}
-				resources["LiquidFuel"] -= jetFuel;
-				resources["JetFuel"] = jetFuel;
-			}
-
-			return resources;
+			return resources.cost;
 		}
 
 		private void onVesselSituationChange (GameEvents.HostedFromToAction<Vessel, Vessel.Situations> vs)
@@ -844,19 +733,19 @@ namespace ExLP {
 
 		void onVesselChange (Vessel v)
 		{
-			uis.builduivisible = (v == vessel);
+			builduivisible = (v == vessel);
 			UpdateGUIState ();
 		}
 
 		void onHideUI ()
 		{
-			uis.builduivisible = false;
+			builduivisible = false;
 			UpdateGUIState ();
 		}
 
 		void onShowUI ()
 		{
-			uis.builduivisible = true;
+			builduivisible = true;
 			UpdateGUIState ();
 		}
 	}

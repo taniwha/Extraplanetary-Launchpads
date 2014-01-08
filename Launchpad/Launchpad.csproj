@@ -44,6 +44,7 @@
     <Compile Include="Recycler.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="ShipInfo.cs" />
+    <Compile Include="Target.cs" />
     <Compile Include="Workshop.cs" />
   </ItemGroup>
   <ItemGroup>

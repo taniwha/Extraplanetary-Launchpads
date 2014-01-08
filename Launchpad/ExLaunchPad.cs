@@ -232,7 +232,11 @@ namespace ExLP {
 			khNode.AddValue ("name", "KerbalMinutes");
 			khNode.AddValue ("amount", 0);
 			khNode.AddValue ("maxAmount", kerbalMinutes);
-			uis.KerbalMinutes = part.AddResource (khNode);
+			if (uis.KerbalMinutes == null) {
+				uis.KerbalMinutes = part.AddResource (khNode);
+			} else {
+				part.SetResource (khNode);
+			}
 		}
 
 		private void ClearKerbalMinutes ()

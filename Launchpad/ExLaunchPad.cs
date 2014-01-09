@@ -15,7 +15,6 @@ namespace ExLP {
 		[KSPField]
 		public bool DebugPad = false;
 
-		//public static bool kethane_present = CheckForKethane ();
 		public static bool kethane_present;
 
 		public enum CraftType { SPH, VAB, SUB };
@@ -193,14 +192,18 @@ namespace ExLP {
 				if (br.name == "KerbalMinutes") {
 					SetKerbalMinutes (br.amount);
 				} else {
-					padResources.TransferResource (br.name, -br.amount);
+					if (kethane_present && !DebugPad) {
+						padResources.TransferResource (br.name, -br.amount);
+					}
 				}
 			}
 			foreach (var br in buildCost.optional) {
 				craftResources.TransferResource (br.name, -br.amount);
 
 				double tot = br.amount * resourcesliders[br.name];
-				padResources.TransferResource (br.name, -tot);
+				if (kethane_present && !DebugPad) {
+					padResources.TransferResource (br.name, -tot);
+				}
 				craftResources.TransferResource (br.name, tot);
 			}
 		}
@@ -327,8 +330,7 @@ namespace ExLP {
 			FlightGlobals.ForceSetActiveVessel (vsl);
 			vsl.Landed = false;
 
-			if (kethane_present && !DebugPad)
-				UseResources (vsl);
+			UseResources (vsl);
 
 			vesselInfo = new DockedVesselInfo ();
 			vesselInfo.name = vsl.vesselName;

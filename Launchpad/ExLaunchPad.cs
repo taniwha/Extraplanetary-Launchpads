@@ -590,7 +590,9 @@ namespace ExLP {
 		public override void OnSave (ConfigNode node)
 		{
 			if (vesselInfo != null) {
-				vesselInfo.Save (node.AddNode ("DockedVesselInfo"));
+				ConfigNode vi = node.AddNode ("DockedVesselInfo");
+				vesselInfo.Save (vi);
+				vi.AddValue ("autoRelease", autoRelease);
 			}
 
 			PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
@@ -620,8 +622,10 @@ namespace ExLP {
 			GameEvents.onVesselChange.Add (onVesselChange);
 
 			if (node.HasNode ("DockedVesselInfo")) {
+				ConfigNode vi = node.GetNode ("DockedVesselInfo");
 				vesselInfo = new DockedVesselInfo ();
-				vesselInfo.Load (node.GetNode ("DockedVesselInfo"));
+				vesselInfo.Load (vi);
+				bool.TryParse (vi.GetValue ("autoRelease"), out autoRelease);
 			}
 			UpdateGUIState ();
 		}

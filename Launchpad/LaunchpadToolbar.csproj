@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D892E1FC-EC40-4DCA-9FE8-48E7688FD02A}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>LaunchpadToolbarTrampoline</RootNamespace>
-    <AssemblyName>LaunchpadToolbarTrampoline</AssemblyName>
+    <RootNamespace>LaunchpadToolbar</RootNamespace>
+    <AssemblyName>LaunchpadToolbar</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -48,8 +48,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfoToolbarTrampoline.cs" />
-    <Compile Include="ToolbarTrampoline.cs" />
+    <Compile Include="AssemblyInfoToolbar.cs" />
+    <Compile Include="Toolbar.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

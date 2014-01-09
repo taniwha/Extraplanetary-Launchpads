@@ -197,6 +197,8 @@ namespace ExLP {
 				}
 			}
 			foreach (var br in buildCost.optional) {
+				craftResources.TransferResource (br.name, -br.amount);
+
 				double tot = br.amount * resourcesliders[br.name];
 				padResources.TransferResource (br.name, -tot);
 				craftResources.TransferResource (br.name, tot);

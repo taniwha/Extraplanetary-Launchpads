@@ -17,5 +17,10 @@ namespace ExLP {
 			ExEditorButton.ToolTip = "EL Build Resources Display";
 			ExEditorButton.OnClick += (e) => ExShipInfo.ToggleGUI ();
 		}
+
+		void OnDestroy()
+		{
+			ExEditorButton.Destroy ();
+		}
 	}
 }

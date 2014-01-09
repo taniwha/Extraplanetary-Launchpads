@@ -111,9 +111,12 @@ namespace ExLP {
 				}
 				var parts = new BuildResource ("RocketParts", (float) hullMass);
 				report.required.Add (parts);
-				// 5 Kerbal-hours/ton
-				var km = new BuildResource ("KerbalMinutes", hullMass * 300);
-				report.required.Add (km);
+				if (ExLaunchPad.timed_builds) {
+					// 5 Kerbal-hours/ton
+					var km = new BuildResource ("KerbalMinutes",
+												hullMass * 300);
+					report.required.Add (km);
+				}
 				return report;
 			}
 		}

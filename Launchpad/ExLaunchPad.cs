@@ -15,6 +15,7 @@ namespace ExLP {
 		[KSPField]
 		public bool DebugPad = false;
 
+		public static bool timed_builds = false;
 		public static bool kethane_present;
 
 		public enum CraftType { SPH, VAB, SUB };
@@ -190,7 +191,9 @@ namespace ExLP {
 
 			foreach (var br in buildCost.required) {
 				if (br.name == "KerbalMinutes") {
-					SetKerbalMinutes (br.amount);
+					if (timed_builds && !DebugPad) {
+						SetKerbalMinutes (br.amount);
+					}
 				} else {
 					if (kethane_present && !DebugPad) {
 						padResources.TransferResource (br.name, -br.amount);

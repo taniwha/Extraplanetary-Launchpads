@@ -32,6 +32,10 @@ ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/model000.png
 ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/Normal.cfg
 ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/Huge.cfg
 ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/Large.cfg
+ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/hcrphuge.cfg
+ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/hcrplarge.cfg
+ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/hcrpnormal.cfg
+ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/hcrpsmall.cfg
 ExtraplanetaryLaunchpads/Parts/OrbitalDock/Metal.png
 ExtraplanetaryLaunchpads/Parts/OrbitalDock/part.cfg
 ExtraplanetaryLaunchpads/Parts/OrbitalDock/OrbitalDock.mu

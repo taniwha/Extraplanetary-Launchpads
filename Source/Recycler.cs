@@ -92,6 +92,8 @@ public class ExRecycler : PartModule
 		PartResourceDefinition rp_def;
 		rp_def = PartResourceLibrary.Instance.GetDefinition ("RocketParts");
 
+		if (FlightGlobals.ActiveVessel == v)
+			FlightGlobals.ForceSetActiveVessel (this.vessel);
 		float mass = 0;
 		foreach (string resource in scrap.resources.Keys) {
 			amount = scrap.ResourceAmount (resource);

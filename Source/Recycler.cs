@@ -31,7 +31,7 @@ public class ExRecycler : PartModule
 		if (p != null && p.vessel != null && p.vessel != vessel) {
 			float mass;
 			if (p.vessel.isEVA) {
-				mass = RecycleKerbal (p.vessel);
+				mass = RecycleKerbal (p.vessel.GetVesselCrew ()[0], p);
 			} else {
 				mass = RecycleVessel (p.vessel);
 			}
@@ -65,21 +65,33 @@ public class ExRecycler : PartModule
 		return (float) (amount * res_def.density);
 	}
 
-	public float RecycleKerbal (Vessel v)
+	static string FormatTime (double time)
 	{
-		if (!v.isEVA)
-			return 0;
+		int iTime = (int) time % 3600;
+		int seconds = iTime % 60;
+		int minutes = (iTime / 60) % 60;
+		int hours = (iTime / 3600);
+		return hours.ToString ("D2") + ":" + minutes.ToString ("D2")
+			+ ":" + seconds.ToString ("D2");
+	}
 
+	public float RecycleKerbal (ProtoCrewMember crew, Part part)
+	{
 		// idea and numbers taken from Kethane
-		if (v.GetVesselCrew ()[0].isBadass) {
-			v.rootPart.explosionPotential = 10000;
+		if (crew.isBadass && part != null) {
+			part.explosionPotential = 10000;
+			FlightGlobals.ForceSetActiveVessel (this.vessel);
 		}
-		FlightGlobals.ForceSetActiveVessel (this.vessel);
-		v.rootPart.explode ();
+		string message = crew.name + " was mulched";
+		ScreenMessages.PostScreenMessage (message, 30.0f, ScreenMessageStyle.UPPER_CENTER);
+		if (part != null) {
+			FlightLogger.eventLog.Add ("[" + FormatTime (part.vessel.missionTime) + "] " + message);
+			part.explode ();
+		}
 
 		float mass = 0;
-		mass += ReclaimResource ("Kethane", 150, v.name);
-		mass += ReclaimResource ("Metal", 1, v.name);
+		mass += ReclaimResource ("Kethane", 150, crew.name);
+		mass += ReclaimResource ("Metal", 1, crew.name);
 		return mass;
 	}
 
@@ -95,6 +107,9 @@ public class ExRecycler : PartModule
 		if (FlightGlobals.ActiveVessel == v)
 			FlightGlobals.ForceSetActiveVessel (this.vessel);
 		float mass = 0;
+		foreach (var crew in v.GetVesselCrew ()) {
+			mass += RecycleKerbal (crew, null);
+		}
 		foreach (string resource in scrap.resources.Keys) {
 			amount = scrap.ResourceAmount (resource);
 			mass += ReclaimResource (resource, amount, v.name);

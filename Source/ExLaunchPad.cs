@@ -16,7 +16,10 @@ namespace ExLP {
 		public bool DebugPad = false;
 
 		public static bool timed_builds = false;
+		public static bool kethane_checked;
 		public static bool kethane_present;
+		public static bool force_resource_use;
+		public static bool use_resources;
 
 		public enum CraftType { SPH, VAB, SUB };
 
@@ -195,7 +198,7 @@ namespace ExLP {
 						SetKerbalMinutes (br.amount);
 					}
 				} else {
-					if (kethane_present && !DebugPad) {
+					if (use_resources) {
 						padResources.TransferResource (br.name, -br.amount);
 					}
 				}
@@ -204,7 +207,7 @@ namespace ExLP {
 				craftResources.TransferResource (br.name, -br.amount);
 
 				double tot = br.amount * resourcesliders[br.name];
-				if (kethane_present && !DebugPad) {
+				if (use_resources) {
 					padResources.TransferResource (br.name, -tot);
 				}
 				craftResources.TransferResource (br.name, tot);
@@ -384,9 +387,8 @@ namespace ExLP {
 			GUIStyle requiredStyle = Styles.green;
 			if (available >= 0 && available < required) {
 				requiredStyle = Styles.red;
-				// prevent building unless debug mode is on, or kethane is not
-				// installed (kethane is required for resource production)
-				canbuildcraft = (!kethane_present || DebugPad);
+				// prevent building if using resources
+				canbuildcraft = (!use_resources);
 			}
 			// Required and Available
 			GUILayout.Box ((Math.Round (required, 2)).ToString (), requiredStyle, GUILayout.Width (75), GUILayout.Height (40));
@@ -618,7 +620,6 @@ namespace ExLP {
 		public override void OnLoad (ConfigNode node)
 		{
 			dumpxform (part.transform);
-			kethane_present = CheckForKethane ();
 			LoadConfigFile ();
 
 			enabled = false;
@@ -637,8 +638,19 @@ namespace ExLP {
 			UpdateGUIState ();
 		}
 
+		public override void OnAwake ()
+		{
+			if (!kethane_checked) {
+				kethane_present = CheckForKethane ();
+				kethane_checked = true;
+			}
+		}
+
 		public override void OnStart (PartModule.StartState state)
 		{
+			if (force_resource_use || (kethane_present && !DebugPad)) {
+				use_resources = true;
+			}
 			foreach (PartResource res in part.Resources) {
 				if (res.resourceName == "KerbalMinutes") {
 					KerbalMinutes = res;

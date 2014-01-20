@@ -43,6 +43,7 @@
     <Compile Include="ExLaunchPad.cs" />
     <Compile Include="Recycler.cs" />
     <Compile Include="Resources.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="ShipInfo.cs" />
     <Compile Include="Target.cs" />
     <Compile Include="Workshop.cs" />

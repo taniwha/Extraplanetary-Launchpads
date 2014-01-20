@@ -34,7 +34,7 @@ namespace ExLP {
 				settings = new ConfigNode ("Settings");
 				if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
 					enabled = !ExLaunchPad.kethane_present;
-					enabled = true;
+					//enabled = true;
 				}
 			}
 			if (!settings.HasValue ("ForceResourceUse")) {

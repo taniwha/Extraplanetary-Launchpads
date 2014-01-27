@@ -44,14 +44,42 @@ namespace ExLP {
 			ExLaunchPad.force_resource_use = false;
 			var fru = settings.GetValue ("ForceResourceUse");
 			bool.TryParse (fru, out ExLaunchPad.force_resource_use);
+
+			if (settings.HasNode ("ShipInfo")) {
+				var node = settings.GetNode ("ShipInfo");
+				string val = node.GetValue ("rect");
+				if (val != null) {
+					Quaternion pos;
+					pos = ConfigNode.ParseQuaternion (val);
+					ExShipInfo.winpos.x = pos.x;
+					ExShipInfo.winpos.y = pos.y;
+					ExShipInfo.winpos.width = pos.z;
+					ExShipInfo.winpos.height = pos.w;
+				}
+				val = node.GetValue ("visible");
+				if (val != null) {
+					bool.TryParse (val, out ExShipInfo.showGUI);
+				}
+			}
 		}
 
 		public override void OnSave(ConfigNode config)
 		{
+			Debug.Log (String.Format ("[EL] Settings save: {0}", config));
 			var settings = new ConfigNode ("Settings");
 			bool fru = ExLaunchPad.force_resource_use;
 			settings.AddValue ("ForceResourceUse", fru);
 			config.AddNode (settings);
+
+			var node = new ConfigNode ("ShipInfo");
+			Quaternion pos;
+			pos.x = ExShipInfo.winpos.x;
+			pos.y = ExShipInfo.winpos.y;
+			pos.z = ExShipInfo.winpos.width;
+			pos.w = ExShipInfo.winpos.height;
+			node.AddValue ("rect", KSPUtil.WriteQuaternion (pos));
+			node.AddValue ("visible", ExShipInfo.showGUI);
+			settings.AddNode (node);
 		}
 		
 		public override void OnAwake ()

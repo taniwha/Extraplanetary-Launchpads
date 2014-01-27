@@ -38,8 +38,8 @@ namespace ExLP {
 	public class ExShipInfo : MonoBehaviour
 	{
 		static ExShipInfo instance;
-		static Rect winpos;
-		static bool showGUI = true;
+		internal static Rect winpos;
+		internal static bool showGUI = true;
 
 		public BuildCost buildCost;
 		Vector2 scrollPosR, scrollPosO;

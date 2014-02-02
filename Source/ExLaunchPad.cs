@@ -9,7 +9,7 @@ using KSP.IO;
 
 namespace ExLP {
 
-	public class ExLaunchPad : PartModule
+	public class ExLaunchPad : PartModule, ExWorkSink
 	{
 
 		[KSPField]
@@ -159,6 +159,24 @@ namespace ExLP {
 			}
 			Debug.Log ("[EL] Kethane not found");
 			return false;
+		}
+
+		public bool isActive ()
+		{
+			return false;
+		}
+
+		public void DoWork (double kerbalHours)
+		{
+			//padResources.TransferResource (br.name, -br.amount);
+			Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
+									  kerbalHours));
+		}
+
+		[KSPEvent (guiActive=false, active = true)]
+		void ExDiscoverWorkshops (BaseEventData data)
+		{
+			data.Get<List<ExWorkSink>> ("sinks").Add (this);
 		}
 
 		private void UpdateGUIState ()

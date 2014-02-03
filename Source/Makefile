@@ -15,6 +15,7 @@ EL_FILES := \
 	Resources.cs	\
 	Settings.cs		\
 	ShipInfo.cs		\
+	StrutFixer.cs	\
 	Target.cs		\
 	Workshop.cs		\
 	$e

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace ExLP {
 	public class BuildCost
 	{
-		public class BuildResource: IComparable<BuildResource>
+		public class BuildResource: IComparable<BuildResource>, IConfigNode
 		{
 			public string name;
 			public double amount;
@@ -26,6 +26,10 @@ namespace ExLP {
 					return true;
 				}
 				return false;
+			}
+
+			public BuildResource ()
+			{
 			}
 
 			public BuildResource (string name, float mass)
@@ -48,9 +52,31 @@ namespace ExLP {
 				mass = amount * res_def.density;
 				hull = isHullResource (res_def);
 			}
+
+			public void Load (ConfigNode node)
+			{
+				if (!node.HasValue ("name")) {
+					// die?!?
+				}
+				name = node.GetValue ("name");
+				if (node.HasValue ("amount")) {
+					double.TryParse (node.GetValue ("amount"), out amount);
+				}
+				PartResourceDefinition res_def;
+				res_def = PartResourceLibrary.Instance.GetDefinition (name);
+				mass = amount * res_def.density;
+				hull = isHullResource (res_def);
+			}
+
+			public void Save (ConfigNode node)
+			{
+				node.AddValue ("name", name);
+				// 17 digits is enough to uniquely identify any double
+				node.AddValue ("amount", amount.ToString ("G17"));
+			}
 		}
 
-		public class CostReport
+		public class CostReport : IConfigNode
 		{
 			public List<BuildResource> required;
 			public List<BuildResource> optional;
@@ -59,6 +85,34 @@ namespace ExLP {
 			{
 				required = new List<BuildResource> ();
 				optional = new List<BuildResource> ();
+			}
+
+			public void Load (ConfigNode node)
+			{
+				foreach (var r in node.GetNodes ("Required")) {
+					var res = new BuildResource ();
+					res.Load (r);
+					required.Add (res);
+				}
+				foreach (var r in node.GetNodes ("Optional")) {
+					var res = new BuildResource ();
+					res.Load (r);
+					optional.Add (res);
+				}
+			}
+
+			public void Save (ConfigNode node)
+			{
+				var req = node.AddNode ("Required");
+				foreach (var res in required) {
+					var r = req.AddNode ("BuildResrouce");
+					res.Save (r);
+				}
+				var opt = node.AddNode ("Optional");
+				foreach (var res in optional) {
+					var r = opt.AddNode ("BuildResrouce");
+					res.Save (r);
+				}
 			}
 		}
 

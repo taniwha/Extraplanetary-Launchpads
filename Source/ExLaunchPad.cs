@@ -92,7 +92,6 @@ namespace ExLP {
 		public double hullRocketParts = 0.0;
 		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
-		public PartResource KerbalMinutes;
 		public bool autoRelease;
 		public DockedVesselInfo vesselInfo;
 
@@ -151,7 +150,7 @@ namespace ExLP {
 					|| situation == Vessel.Situations.SPLASHED)) {
 				can_build = true;
 			}
-			if (vesselInfo != null && CheckKerbalMinutes ()) {
+			if (vesselInfo != null) {
 				can_release = true;
 			}
 			enabled = can_build && builduiactive && builduivisible;
@@ -167,14 +166,8 @@ namespace ExLP {
 			VesselResources craftResources = new VesselResources (craft);
 
 			foreach (var br in buildCost.required) {
-				if (br.name == "KerbalMinutes") {
-					if (timed_builds && !DebugPad) {
-						SetKerbalMinutes (br.amount);
-					}
-				} else {
-					if (use_resources) {
-						padResources.TransferResource (br.name, -br.amount);
-					}
+				if (use_resources) {
+					padResources.TransferResource (br.name, -br.amount);
 				}
 			}
 			foreach (var br in buildCost.optional) {
@@ -186,38 +179,6 @@ namespace ExLP {
 				}
 				craftResources.TransferResource (br.name, tot);
 			}
-		}
-
-		private void SetKerbalMinutes (double kerbalMinutes)
-		{
-			ConfigNode khNode = new ConfigNode ("RESOURCE");
-			khNode.AddValue ("name", "KerbalMinutes");
-			khNode.AddValue ("amount", 0);
-			khNode.AddValue ("maxAmount", kerbalMinutes);
-			if (KerbalMinutes == null) {
-				KerbalMinutes = part.AddResource (khNode);
-			} else {
-				part.SetResource (khNode);
-			}
-		}
-
-		private void ClearKerbalMinutes ()
-		{
-			if (KerbalMinutes != null) {
-				KerbalMinutes.amount = 0;
-				KerbalMinutes.maxAmount = 0;
-			}
-		}
-
-		private bool CheckKerbalMinutes ()
-		{
-			if (KerbalMinutes == null) {
-				return true;
-			}
-			if (KerbalMinutes.maxAmount - KerbalMinutes.amount < 0.01) {
-				return true;
-			}
-			return false;
 		}
 
 		private Transform GetLanchTransform ()
@@ -423,9 +384,7 @@ namespace ExLP {
 					double a = br.amount;
 					double available = -1;
 
-					if (br.name != "KerbalMinutes") {
-						available = padResources.ResourceAmount (br.name);
-					}
+					available = padResources.ResourceAmount (br.name);
 					ResourceLine (br.name, br.name, 1.0f, a, a, available);
 				}
 				foreach (var br in buildCost.optional) {
@@ -511,13 +470,10 @@ namespace ExLP {
 		public override void OnFixedUpdate ()
 		{
 			if (vesselInfo != null && !vessel.packed) {
-				if (CheckKerbalMinutes ()) {
-					ClearKerbalMinutes ();
-					if (autoRelease) {
-						ReleaseVessel ();
-					}
-					UpdateGUIState ();
+				if (autoRelease) {
+					ReleaseVessel ();
 				}
+				UpdateGUIState ();
 			}
 		}
 
@@ -578,12 +534,6 @@ namespace ExLP {
 		{
 			if (force_resource_use || (kethane_present && !DebugPad)) {
 				use_resources = true;
-			}
-			foreach (PartResource res in part.Resources) {
-				if (res.resourceName == "KerbalMinutes") {
-					KerbalMinutes = res;
-					break;
-				}
 			}
 			part.force_activate ();
 		}
@@ -647,7 +597,7 @@ namespace ExLP {
 		[KSPAction ("Release Vessel")]
 		public void ReleaseVesselAction (KSPActionParam param)
 		{
-			if (vesselInfo != null && CheckKerbalMinutes ()) {
+			if (vesselInfo != null) {
 				ReleaseVessel ();
 			}
 		}

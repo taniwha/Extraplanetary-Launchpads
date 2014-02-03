@@ -621,11 +621,6 @@ namespace ExLP {
 				vesselInfo.Save (vi);
 				vi.AddValue ("autoRelease", autoRelease);
 			}
-
-			PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
-			config.SetValue ("Window Position", windowpos);
-			config.SetValue ("Show Build Menu on StartUp", showbuilduionload);
-			config.save ();
 		}
 
 		private void dumpxform (Transform t, string n = "")
@@ -638,7 +633,6 @@ namespace ExLP {
 		public override void OnLoad (ConfigNode node)
 		{
 			dumpxform (part.transform);
-			LoadConfigFile ();
 
 			enabled = false;
 			GameEvents.onHideUI.Add (onHideUI);
@@ -685,14 +679,6 @@ namespace ExLP {
 
 			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
 			GameEvents.onVesselChange.Remove (onVesselChange);
-		}
-
-		private void LoadConfigFile ()
-		{
-			PluginConfiguration config = PluginConfiguration.CreateForType<ExLaunchPad>();
-			config.load ();
-			windowpos = config.GetValue<Rect>("Window Position");
-			showbuilduionload = config.GetValue<bool>("Show Build Menu on StartUp");
 		}
 
 		// =====================================================================================================================================================

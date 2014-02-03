@@ -149,14 +149,19 @@ namespace ExLP {
 									  GUILayout.MinWidth (200));
 		}
 
-		private void MassLabel (string title, double mass)
+		private void UnitLabel (string title, double amount, string units)
 		{
-			mass = Math.Round (mass, 4);
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label (title + ":");
 			GUILayout.FlexibleSpace ();
-			GUILayout.Label (String.Format ("{0}t", mass));
+			GUILayout.Label (String.Format ("{0}{1}", amount, units));
 			GUILayout.EndHorizontal ();
+		}
+
+		private void MassLabel (string title, double mass)
+		{
+			mass = Math.Round (mass, 4);
+			UnitLabel (title, mass, "t");
 		}
 
 		private Vector2 ResourcePanel (string title,
@@ -183,7 +188,16 @@ namespace ExLP {
 		void InfoWindow (int windowID)
 		{
 			var cost = buildCost.cost;
+			double required_mass = 0;
 			double resource_mass = 0;
+			double kerbalHours = 0;
+
+			foreach (var res in cost.required) {
+				kerbalHours += res.kerbalHours;
+				required_mass += res.mass;
+			}
+			kerbalHours = Math.Round (kerbalHours, 4);
+
 			foreach (var res in cost.optional) {
 				resource_mass += res.mass;
 			}
@@ -192,9 +206,8 @@ namespace ExLP {
 
 			MassLabel ("Dry mass", buildCost.mass);
 			MassLabel ("Resource mass", resource_mass);
-			//FIXME this assumes only RocketParts
-			var req = cost.required[0];
-			MassLabel ("Total mass", req.mass + resource_mass);
+			MassLabel ("Total mass", required_mass + resource_mass);
+			UnitLabel ("Build Time", kerbalHours, "Kh");
 
 			cost.optional.Sort ();
 			GUILayout.Label (" ");

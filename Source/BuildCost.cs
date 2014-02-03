@@ -12,6 +12,7 @@ namespace ExLP {
 			public double amount;
 			public double mass;
 			public bool hull;
+			public double kerbalHours;
 
 			public int CompareTo (BuildResource other)
 			{
@@ -28,6 +29,12 @@ namespace ExLP {
 				return false;
 			}
 
+			private static double KerbalHours (double mass)
+			{
+				// 5 Kerbal-hours/ton
+				return mass * 5;
+			}
+
 			public BuildResource ()
 			{
 			}
@@ -41,6 +48,7 @@ namespace ExLP {
 				res_def = PartResourceLibrary.Instance.GetDefinition (name);
 				amount = mass / res_def.density;
 				hull = isHullResource (res_def);
+				kerbalHours = KerbalHours (mass);
 			}
 
 			public BuildResource (string name, double amount)
@@ -51,6 +59,7 @@ namespace ExLP {
 				res_def = PartResourceLibrary.Instance.GetDefinition (name);
 				mass = amount * res_def.density;
 				hull = isHullResource (res_def);
+				kerbalHours = KerbalHours (mass);
 			}
 
 			public void Load (ConfigNode node)
@@ -66,6 +75,7 @@ namespace ExLP {
 				res_def = PartResourceLibrary.Instance.GetDefinition (name);
 				mass = amount * res_def.density;
 				hull = isHullResource (res_def);
+				kerbalHours = KerbalHours (mass);
 			}
 
 			public void Save (ConfigNode node)
@@ -165,12 +175,6 @@ namespace ExLP {
 				}
 				var parts = new BuildResource ("RocketParts", (float) hullMass);
 				report.required.Add (parts);
-				if (ExLaunchPad.timed_builds) {
-					// 5 Kerbal-hours/ton
-					var km = new BuildResource ("KerbalMinutes",
-												hullMass * 300);
-					report.required.Add (km);
-				}
 				return report;
 			}
 		}

@@ -10,6 +10,7 @@ TARGETS		:= Launchpad.dll LaunchpadToolbar.dll
 EL_FILES := \
     AssemblyInfo.cs	\
 	BuildCost.cs	\
+	BuildWindow.cs	\
 	ExLaunchPad.cs	\
 	Recycler.cs		\
 	Resources.cs	\

@@ -9,9 +9,12 @@ namespace ExLP {
 
 	public class ExLaunchPad : PartModule, ExWorkSink
 	{
-
 		[KSPField]
 		public bool DebugPad = false;
+		[KSPField (isPersistant = false)]
+		public float SpawnHeightOffset = 0.0f;
+		[KSPField (isPersistant = false)]
+		public string SpawnTransform;
 
 		public static bool timed_builds = false;
 		public static bool kethane_checked;
@@ -21,88 +24,16 @@ namespace ExLP {
 
 		public enum CraftType { SPH, VAB, SUB };
 
-		public class Styles {
-			public static GUIStyle normal;
-			public static GUIStyle red;
-			public static GUIStyle yellow;
-			public static GUIStyle green;
-			public static GUIStyle white;
-			public static GUIStyle label;
-			public static GUIStyle slider;
-			public static GUIStyle sliderText;
-
-			private static bool initialized;
-
-			public static void Init ()
-			{
-				if (initialized)
-					return;
-				initialized = true;
-
-				normal = new GUIStyle (GUI.skin.button);
-				normal.normal.textColor = normal.focused.textColor = Color.white;
-				normal.hover.textColor = normal.active.textColor = Color.yellow;
-				normal.onNormal.textColor = normal.onFocused.textColor = normal.onHover.textColor = normal.onActive.textColor = Color.green;
-				normal.padding = new RectOffset (8, 8, 8, 8);
-
-				red = new GUIStyle (GUI.skin.box);
-				red.padding = new RectOffset (8, 8, 8, 8);
-				red.normal.textColor = red.focused.textColor = Color.red;
-
-				yellow = new GUIStyle (GUI.skin.box);
-				yellow.padding = new RectOffset (8, 8, 8, 8);
-				yellow.normal.textColor = yellow.focused.textColor = Color.yellow;
-
-				green = new GUIStyle (GUI.skin.box);
-				green.padding = new RectOffset (8, 8, 8, 8);
-				green.normal.textColor = green.focused.textColor = Color.green;
-
-				white = new GUIStyle (GUI.skin.box);
-				white.padding = new RectOffset (8, 8, 8, 8);
-				white.normal.textColor = white.focused.textColor = Color.white;
-
-				label = new GUIStyle (GUI.skin.label);
-				label.normal.textColor = label.focused.textColor = Color.white;
-				label.alignment = TextAnchor.MiddleCenter;
-
-				slider = new GUIStyle (GUI.skin.horizontalSlider);
-				slider.margin = new RectOffset (0, 0, 0, 0);
-
-				sliderText = new GUIStyle (GUI.skin.label);
-				sliderText.alignment = TextAnchor.MiddleCenter;
-				sliderText.margin = new RectOffset (0, 0, 0, 0);
-			}
-		}
-
-		public Rect windowpos;
-		public bool builduiactive = false;	// Whether the build menu is open or closed
-		public bool builduivisible = true;	// Whether the build menu is allowed to be shown
-		public bool showbuilduionload = false;
-		public bool linklfosliders = true;
-		public bool canbuildcraft = false;
 		public CraftType craftType = CraftType.VAB;
 		public string flagname = null;
-		public CraftBrowser craftlist = null;
-		public bool showcraftbrowser = false;
 		public ConfigNode craftConfig = null;
-		public Vector2 resscroll;
 
+		internal VesselResources padResources;
 		public BuildCost.CostReport buildCost = null;
 		public BuildCost.CostReport builtStuff = null;
-		public double hullRocketParts = 0.0;
-		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
 		public bool autoRelease;
 		public DockedVesselInfo vesselInfo;
-
-		int padPartsCount;					// the number of parts in the pad vessel (for docking detection)
-		VesselResources padResources;		// resources available to the pad
-
-		[KSPField (isPersistant = false)]
-		public float SpawnHeightOffset = 0.0f;	// amount of pad between origin and open space
-
-		[KSPField (isPersistant = false)]
-		public string SpawnTransform;
 
 		private static bool CheckForKethane ()
 		{
@@ -162,51 +93,6 @@ namespace ExLP {
 			data.Get<List<ExWorkSink>> ("sinks").Add (this);
 		}
 
-		private void UpdateGUIState ()
-		{
-			bool can_build = false;
-			bool can_release = false;
-			var situation = Vessel.Situations.LANDED;
-
-			if (vessel) {
-				situation = vessel.situation;
-			}
-			if (vesselInfo == null
-				&& (situation == Vessel.Situations.LANDED
-					|| situation == Vessel.Situations.ORBITING
-					|| situation == Vessel.Situations.PRELAUNCH
-					|| situation == Vessel.Situations.SPLASHED)) {
-				can_build = true;
-			}
-			if (vesselInfo != null) {
-				can_release = true;
-			}
-			enabled = can_build && builduiactive && builduivisible;
-			Events["ShowBuildMenu"].active = can_build && !builduiactive;
-			Events["HideBuildMenu"].active = can_build && builduiactive;
-			Events["ReleaseVessel"].active = can_release;
-		}
-
-		private void UseResources (Vessel craft)
-		{
-			VesselResources craftResources = new VesselResources (craft);
-
-			foreach (var br in buildCost.required) {
-				if (use_resources) {
-					padResources.TransferResource (br.name, -br.amount);
-				}
-			}
-			foreach (var br in buildCost.optional) {
-				craftResources.TransferResource (br.name, -br.amount);
-
-				double tot = br.amount * resourcesliders[br.name];
-				if (use_resources) {
-					padResources.TransferResource (br.name, -tot);
-				}
-				craftResources.TransferResource (br.name, tot);
-			}
-		}
-
 		private Transform GetLanchTransform ()
 		{
 
@@ -214,7 +100,8 @@ namespace ExLP {
 
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
-				Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}", launchTransform, SpawnTransform));
+				Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
+										  launchTransform, SpawnTransform));
 			} else {
 				Vector3 offset = Vector3.up * SpawnHeightOffset;
 				Transform t = this.part.transform;
@@ -224,12 +111,13 @@ namespace ExLP {
 				launchPos.transform.rotation = t.rotation;
 				launchTransform = launchPos.transform;
 				Destroy (launchPos);
-				Debug.Log (String.Format ("[EL] launchPos {0}", launchTransform));
+				Debug.Log (String.Format ("[EL] launchPos {0}",
+										  launchTransform));
 			}
 			return launchTransform;
 		}
 
-		private void BuildAndLaunchCraft ()
+		internal void BuildAndLaunchCraft ()
 		{
 			// build craft
 			ShipConstruct nship = new ShipConstruct ();
@@ -257,7 +145,7 @@ namespace ExLP {
 			FlightGlobals.ForceSetActiveVessel (vsl);
 			vsl.Landed = false;
 
-			UseResources (vsl);
+			//XXX UseResources (vsl);
 
 			vesselInfo = new DockedVesselInfo ();
 			vesselInfo.name = vsl.vesselName;
@@ -280,201 +168,8 @@ namespace ExLP {
 			Staging.beginFlight ();
 		}
 
-		private float ResourceLine (string label, string resourceName, float fraction, double minAmount, double maxAmount, double available)
-		{
-			GUILayout.BeginHorizontal ();
-
-			// Resource name
-			GUILayout.Box (label, Styles.white, GUILayout.Width (120), GUILayout.Height (40));
-
-			// Fill amount
-			GUILayout.BeginVertical ();
-			GUILayout.FlexibleSpace ();
-			// limit slider to 0.5% increments
-			if (minAmount == maxAmount) {
-				GUILayout.Box ("Must be 100%", GUILayout.Width (300), GUILayout.Height (20));
-				fraction = 1.0F;
-			} else {
-				fraction = (float)Math.Round (GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F, Styles.slider, GUI.skin.horizontalSliderThumb, GUILayout.Width (300), GUILayout.Height (20)), 3);
-				fraction = (Mathf.Floor (fraction * 200)) / 200;
-				GUILayout.Box ((fraction * 100).ToString () + "%", Styles.sliderText, GUILayout.Width (300), GUILayout.Height (20));
-			}
-			GUILayout.FlexibleSpace ();
-			GUILayout.EndVertical ();
-
-			double required = minAmount * (1 - fraction)  + maxAmount * fraction;
-
-			// Calculate if we have enough resources to build
-			GUIStyle requiredStyle = Styles.green;
-			if (available >= 0 && available < required) {
-				requiredStyle = Styles.red;
-				// prevent building if using resources
-				canbuildcraft = (!use_resources);
-			}
-			// Required and Available
-			GUILayout.Box ((Math.Round (required, 2)).ToString (), requiredStyle, GUILayout.Width (75), GUILayout.Height (40));
-			if (available >= 0) {
-				GUILayout.Box ((Math.Round (available, 2)).ToString (), Styles.white, GUILayout.Width (75), GUILayout.Height (40));
-			} else {
-				GUILayout.Box ("N/A", Styles.white, GUILayout.Width (75), GUILayout.Height (40));
-			}
-
-			// Flexi space to make sure any unused space is at the right-hand edge
-			GUILayout.FlexibleSpace ();
-
-			GUILayout.EndHorizontal ();
-
-			return fraction;
-		}
-
-		private void WindowGUI (int windowID)
-		{
-			Styles.Init ();
-
-			EditorLogic editor = EditorLogic.fetch;
-			if (editor) return;
-
-			if (!builduiactive) return;
-
-			if (padResources != null && padPartsCount != vessel.Parts.Count) {
-				// something docked or undocked, so rebuild the pad's resouces info
-				padResources = null;
-			}
-			if (padResources == null) {
-				padPartsCount = vessel.Parts.Count;
-				padResources = new VesselResources (vessel);
-			}
-
-			GUILayout.BeginVertical ();
-
-			GUILayout.BeginHorizontal ("box");
-			GUILayout.FlexibleSpace ();
-			// VAB / SPH selection
-			if (GUILayout.Toggle (craftType == CraftType.VAB, "VAB", GUILayout.Width (80))) {
-				craftType = CraftType.VAB;
-			}
-			if (GUILayout.Toggle (craftType == CraftType.SPH, "SPH", GUILayout.Width (80))) {
-				craftType = CraftType.SPH;
-			}
-			if (GUILayout.Toggle (craftType == CraftType.SUB, "SubAss", GUILayout.Width (160))) {
-				craftType = CraftType.SUB;
-			}
-			GUILayout.FlexibleSpace ();
-			GUILayout.EndHorizontal ();
-
-			string strpath = HighLogic.SaveFolder;
-
-			if (GUILayout.Button ("Select Craft", Styles.normal, GUILayout.ExpandWidth (true))) {
-				string [] dir = new string[] {"SPH", "VAB", "../Subassemblies"};
-				bool stock = HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels;
-				if (craftType == CraftType.SUB)
-					HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = false;
-				//GUILayout.Button is "true" when clicked
-				craftlist = new CraftBrowser (new Rect (Screen.width / 2, 100, 350, 500), dir[(int)craftType], strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
-				showcraftbrowser = true;
-				HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = stock;
-			}
-
-			if (craftConfig != null && buildCost != null) {
-				GUILayout.Box ("Selected Craft:	" + craftConfig.GetValue ("ship"), Styles.white);
-
-				// Resource requirements
-				GUILayout.Label ("Resources required to build:", Styles.label, GUILayout.Width (600));
-
-				// Link LFO toggle
-
-				linklfosliders = GUILayout.Toggle (linklfosliders, "Link RocketFuel sliders for LiquidFuel and Oxidizer");
-
-				resscroll = GUILayout.BeginScrollView (resscroll, GUILayout.Width (600), GUILayout.Height (300));
-
-				GUILayout.BeginHorizontal ();
-
-				// Headings
-				GUILayout.Label ("Resource", Styles.label, GUILayout.Width (120));
-				GUILayout.Label ("Fill Percentage", Styles.label, GUILayout.Width (300));
-				GUILayout.Label ("Required", Styles.label, GUILayout.Width (75));
-				GUILayout.Label ("Available", Styles.label, GUILayout.Width (75));
-				GUILayout.EndHorizontal ();
-
-				canbuildcraft = true;	   // default to can build - if something is stopping us from building, we will set to false later
-
-				foreach (var br in buildCost.required) {
-					double a = br.amount;
-					double available = -1;
-
-					available = padResources.ResourceAmount (br.name);
-					ResourceLine (br.name, br.name, 1.0f, a, a, available);
-				}
-				foreach (var br in buildCost.optional) {
-					double available = padResources.ResourceAmount (br.name);
-					if (!resourcesliders.ContainsKey (br.name)) {
-						resourcesliders.Add (br.name, 1);
-					}
-					resourcesliders[br.name] = ResourceLine (br.name, br.name, resourcesliders[br.name], 0, br.amount, available);
-				}
-
-				GUILayout.EndScrollView ();
-
-				// Build button
-				if (canbuildcraft) {
-					if (GUILayout.Button ("Build", Styles.normal, GUILayout.ExpandWidth (true))) {
-						BuildAndLaunchCraft ();
-						// Reset the UI
-						craftConfig = null;
-						buildCost = null;
-						resourcesliders = new Dictionary<string, float>();;
-						builduiactive = false;
-						UpdateGUIState ();
-					}
-				} else {
-					GUILayout.Box ("You do not have the resources to build this craft", Styles.red);
-				}
-			} else {
-				GUILayout.Box ("You must select a craft before you can build", Styles.red);
-			}
-			GUILayout.EndVertical ();
-
-			GUILayout.BeginHorizontal ();
-			GUILayout.FlexibleSpace ();
-			if (GUILayout.Button ("Close")) {
-				HideBuildMenu ();
-			}
-
-			showbuilduionload = GUILayout.Toggle (showbuilduionload, "Show on StartUp");
-
-			GUILayout.FlexibleSpace ();
-			GUILayout.EndHorizontal ();
-			GUI.DragWindow (new Rect (0, 0, 10000, 20));
-
-		}
-
-		// called when the user selects a craft the craft browser
-		private void craftSelectComplete (string filename, string flagname)
-		{
-			showcraftbrowser = false;
-			this.flagname = flagname;
-			ConfigNode craft = ConfigNode.Load (filename);
-
-			// Get list of resources required to build vessel
-			if ((buildCost = getBuildCost (craft)) != null)
-				craftConfig = craft;
-		}
-
-		// called when the user clicks cancel in the craft browser
-		private void craftSelectCancel ()
-		{
-			showcraftbrowser = false;
-
-			buildCost = null;
-			craftConfig = null;
-		}
-
 		private void Start ()
 		{
-			// If "Show GUI on StartUp" ticked, show the GUI
-			if (showbuilduionload) {
-				ShowBuildMenu ();
-			}
 		}
 
 		public override void OnFixedUpdate ()
@@ -483,17 +178,12 @@ namespace ExLP {
 				if (autoRelease) {
 					ReleaseVessel ();
 				}
-				UpdateGUIState ();
 			}
 		}
 
 		private void OnGUI ()
 		{
-			GUI.skin = HighLogic.Skin;
-			windowpos = GUILayout.Window (1, windowpos, WindowGUI, "Extraplanetary Launchpad: " + vessel.situation.ToString (), GUILayout.Width (600));
-			if (showcraftbrowser) {
-				craftlist.OnGUI ();
-			}
+			BuildWindow.OnGUI (this);
 		}
 
 		public override void OnSave (ConfigNode node)
@@ -507,9 +197,9 @@ namespace ExLP {
 
 		private void dumpxform (Transform t, string n = "")
 		{
-			Debug.Log (String.Format ("[EL] {0}", n + t.name));
-			foreach (Transform c in t)
-				dumpxform (c, n + t.name + ".");
+			//Debug.Log (String.Format ("[EL] {0}", n + t.name));
+			//foreach (Transform c in t)
+			//	dumpxform (c, n + t.name + ".");
 		}
 
 		public override void OnLoad (ConfigNode node)
@@ -529,7 +219,6 @@ namespace ExLP {
 				vesselInfo.Load (vi);
 				bool.TryParse (vi.GetValue ("autoRelease"), out autoRelease);
 			}
-			UpdateGUIState ();
 		}
 
 		public override void OnAwake ()
@@ -560,15 +249,11 @@ namespace ExLP {
 		[KSPEvent (guiActive = true, guiName = "Show Build Menu", active = true)]
 		public void ShowBuildMenu ()
 		{
-			builduiactive = true;
-			UpdateGUIState ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Hide Build Menu", active = false)]
 		public void HideBuildMenu ()
 		{
-			builduiactive = false;
-			UpdateGUIState ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Release", active = false)]
@@ -576,7 +261,6 @@ namespace ExLP {
 		{
 			vessel[vesselInfo.rootPartUId].Undock (vesselInfo);
 			vesselInfo = null;
-			UpdateGUIState ();
 		}
 
 		[KSPAction ("Show Build Menu")]
@@ -594,11 +278,11 @@ namespace ExLP {
 		[KSPAction ("Toggle Build Menu")]
 		public void ToggleBuildMenuAction (KSPActionParam param)
 		{
-			if (builduiactive) {
-				HideBuildMenu ();
-			} else {
-				ShowBuildMenu ();
-			}
+			//if (builduiactive) {
+			//	HideBuildMenu ();
+			//} else {
+			//	ShowBuildMenu ();
+			//}
 		}
 
 		[KSPAction ("Release Vessel")]
@@ -631,25 +315,18 @@ namespace ExLP {
 		{
 			if (vs.host != vessel)
 				return;
-			UpdateGUIState ();
 		}
 
 		void onVesselChange (Vessel v)
 		{
-			builduivisible = (v == vessel);
-			UpdateGUIState ();
 		}
 
 		void onHideUI ()
 		{
-			builduivisible = false;
-			UpdateGUIState ();
 		}
 
 		void onShowUI ()
 		{
-			builduivisible = true;
-			UpdateGUIState ();
 		}
 	}
 

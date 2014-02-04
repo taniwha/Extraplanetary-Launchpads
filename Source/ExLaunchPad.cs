@@ -86,7 +86,9 @@ namespace ExLP {
 		public bool showcraftbrowser = false;
 		public ConfigNode craftConfig = null;
 		public Vector2 resscroll;
+
 		public BuildCost.CostReport buildCost = null;
+		public BuildCost.CostReport builtStuff = null;
 		public double hullRocketParts = 0.0;
 		public Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
 
@@ -114,14 +116,44 @@ namespace ExLP {
 
 		public bool isActive ()
 		{
-			return false;
+			return builtStuff != null;
 		}
 
 		public void DoWork (double kerbalHours)
 		{
+			var required = builtStuff.required;
+
 			//padResources.TransferResource (br.name, -br.amount);
 			Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
 									  kerbalHours));
+			bool did_work;
+			do {
+				int count = required.Where (r => r.amount > 0).Count ();
+				if (count == 0)
+					break;
+				double work = kerbalHours / count;
+				did_work = false;
+				foreach (var res in required.Where (r => r.amount > 0)) {
+					double mass = work / 5;	//FIXME not hard-coded (5Kh/t)
+					double amount = mass / res.density;
+					double base_amount = amount;
+
+					if (amount > res.amount)
+						amount = res.amount;
+					double avail = padResources.ResourceAmount (res.name);
+					if (amount > avail)
+						amount = avail;
+					Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}", res.amount, avail, amount));
+					if (amount <= 0)
+						break;
+					did_work = true;
+					// do only the work required to process the actual amount
+					// of consumed resource
+					kerbalHours -= work * amount / base_amount;
+					res.amount -= amount;
+					padResources.TransferResource (res.name, -amount);
+				}
+			} while (did_work && kerbalHours > 0);
 		}
 
 		[KSPEvent (guiActive=false, active = true)]

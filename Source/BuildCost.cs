@@ -10,6 +10,7 @@ namespace ExLP {
 		{
 			public string name;
 			public double amount;
+			public double density;
 			public double mass;
 			public bool hull;
 			public double kerbalHours;
@@ -46,7 +47,8 @@ namespace ExLP {
 
 				PartResourceDefinition res_def;
 				res_def = PartResourceLibrary.Instance.GetDefinition (name);
-				amount = mass / res_def.density;
+				density = res_def.density;
+				amount = mass / density;
 				hull = isHullResource (res_def);
 				kerbalHours = KerbalHours (mass);
 			}
@@ -57,7 +59,8 @@ namespace ExLP {
 				this.amount = amount;
 				PartResourceDefinition res_def;
 				res_def = PartResourceLibrary.Instance.GetDefinition (name);
-				mass = amount * res_def.density;
+				density = res_def.density;
+				mass = amount * density;
 				hull = isHullResource (res_def);
 				kerbalHours = KerbalHours (mass);
 			}

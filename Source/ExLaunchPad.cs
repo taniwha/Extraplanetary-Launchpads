@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-//using System.IO;	  // needed for Path manipulation
-//using Uri;
 using UnityEngine;
 
 using KSP.IO;
@@ -104,8 +102,6 @@ namespace ExLP {
 		[KSPField (isPersistant = false)]
 		public string SpawnTransform;
 
-		//private List<Vessel> bases;
-
 		private static bool CheckForKethane ()
 		{
 			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "MMI_Kethane" || a.assembly.GetName ().Name == "Kethane")) {
@@ -158,8 +154,6 @@ namespace ExLP {
 			Events["HideBuildMenu"].active = can_build && builduiactive;
 			Events["ReleaseVessel"].active = can_release;
 		}
-		// =====================================================================================================================================================
-		// UI Functions
 
 		private void UseResources (Vessel craft)
 		{
@@ -304,14 +298,6 @@ namespace ExLP {
 		private void WindowGUI (int windowID)
 		{
 			Styles.Init ();
-			/*
-			 * ToDo:
-			 * can extend FileBrowser class to see currently highlighted file?
-			 * rslashphish says: public myclass(arg1, arg2) : base(arg1, arg2);
-			 * KSPUtil.ApplicationRootPath - gets KSPO root
-			 * expose m_files and m_selectedFile?
-			 * fileBrowser = new FileBrowser(new Rect(Screen.width / 2, 100, 350, 500), title, callback, true);
-			 */
 
 			EditorLogic editor = EditorLogic.fetch;
 			if (editor) return;
@@ -426,10 +412,6 @@ namespace ExLP {
 
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
-			//DragWindow makes the window draggable. The Rect specifies which part of the window it can by dragged by, and is
-			//clipped to the actual boundary of the window. You can also pass no argument at all and then the window can by
-			//dragged by any part of it. Make sure the DragWindow command is AFTER all your other GUI input stuff, or else
-			//it may "cover up" your controls and make them stop responding to the mouse.
 			GUI.DragWindow (new Rect (0, 0, 10000, 20));
 
 		}
@@ -454,10 +436,6 @@ namespace ExLP {
 			buildCost = null;
 			craftConfig = null;
 		}
-
-		// =====================================================================================================================================================
-		// Event Hooks
-		// See http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html for some help on what fires when
 
 		private void Start ()
 		{
@@ -547,9 +525,6 @@ namespace ExLP {
 			GameEvents.onVesselChange.Remove (onVesselChange);
 		}
 
-		// =====================================================================================================================================================
-		// Flight UI and Action Group Hooks
-
 		[KSPEvent (guiActive = true, guiName = "Show Build Menu", active = true)]
 		public void ShowBuildMenu ()
 		{
@@ -601,9 +576,6 @@ namespace ExLP {
 				ReleaseVessel ();
 			}
 		}
-
-		// =====================================================================================================================================================
-		// Build Helper Functions
 
 		public BuildCost.CostReport getBuildCost (ConfigNode craft)
 		{

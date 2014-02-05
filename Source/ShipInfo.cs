@@ -38,8 +38,8 @@ namespace ExLP {
 	public class ExShipInfo : MonoBehaviour
 	{
 		static ExShipInfo instance;
-		internal static Rect winpos;
-		internal static bool showGUI = true;
+		static Rect winpos;
+		static bool showGUI = true;
 
 		public BuildCost buildCost;
 		Vector2 scrollPosR, scrollPosO;
@@ -48,6 +48,34 @@ namespace ExLP {
 		{
 			showGUI = !showGUI;
 			instance.enabled = showGUI && (instance.buildCost != null);
+		}
+
+		public static void LoadSettings (ConfigNode node)
+		{
+			string val = node.GetValue ("rect");
+			if (val != null) {
+				Quaternion pos;
+				pos = ConfigNode.ParseQuaternion (val);
+				winpos.x = pos.x;
+				winpos.y = pos.y;
+				winpos.width = pos.z;
+				winpos.height = pos.w;
+			}
+			val = node.GetValue ("visible");
+			if (val != null) {
+				bool.TryParse (val, out showGUI);
+			}
+		}
+
+		public static void SaveSettings (ConfigNode node)
+		{
+			Quaternion pos;
+			pos.x = winpos.x;
+			pos.y = winpos.y;
+			pos.z = winpos.width;
+			pos.w = winpos.height;
+			node.AddValue ("rect", KSPUtil.WriteQuaternion (pos));
+			node.AddValue ("visible", showGUI);
 		}
 
 		void addPart (Part part)

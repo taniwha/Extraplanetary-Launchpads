@@ -47,19 +47,7 @@ namespace ExLP {
 
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
-				string val = node.GetValue ("rect");
-				if (val != null) {
-					Quaternion pos;
-					pos = ConfigNode.ParseQuaternion (val);
-					ExShipInfo.winpos.x = pos.x;
-					ExShipInfo.winpos.y = pos.y;
-					ExShipInfo.winpos.width = pos.z;
-					ExShipInfo.winpos.height = pos.w;
-				}
-				val = node.GetValue ("visible");
-				if (val != null) {
-					bool.TryParse (val, out ExShipInfo.showGUI);
-				}
+				ExShipInfo.LoadSettings (node);
 			}
 		}
 
@@ -71,15 +59,7 @@ namespace ExLP {
 			settings.AddValue ("ForceResourceUse", fru);
 			config.AddNode (settings);
 
-			var node = new ConfigNode ("ShipInfo");
-			Quaternion pos;
-			pos.x = ExShipInfo.winpos.x;
-			pos.y = ExShipInfo.winpos.y;
-			pos.z = ExShipInfo.winpos.width;
-			pos.w = ExShipInfo.winpos.height;
-			node.AddValue ("rect", KSPUtil.WriteQuaternion (pos));
-			node.AddValue ("visible", ExShipInfo.showGUI);
-			settings.AddNode (node);
+			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
 		}
 		
 		public override void OnAwake ()

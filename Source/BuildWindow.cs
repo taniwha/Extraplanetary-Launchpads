@@ -7,7 +7,8 @@ using KSP.IO;
 
 namespace ExLP {
 
-	public class BuildWindow
+	[KSPAddon (KSPAddon.Startup.Flight, false)]
+	public class ExBuildWindow : MonoBehaviour
 	{
 		public class Styles {
 			public static GUIStyle normal;
@@ -18,6 +19,9 @@ namespace ExLP {
 			public static GUIStyle label;
 			public static GUIStyle slider;
 			public static GUIStyle sliderText;
+
+			public static GUIStyle listItem;
+			public static GUIStyle listBox;
 
 			private static bool initialized;
 
@@ -59,20 +63,156 @@ namespace ExLP {
 				sliderText = new GUIStyle (GUI.skin.label);
 				sliderText.alignment = TextAnchor.MiddleCenter;
 				sliderText.margin = new RectOffset (0, 0, 0, 0);
+
+				listItem = new GUIStyle ();
+				listItem.normal.textColor = Color.white;
+				Texture2D texInit = new Texture2D(1, 1);
+				texInit.SetPixel(0, 0, Color.white);
+				texInit.Apply();
+				listItem.hover.background = texInit;
+				listItem.onHover.background = texInit;
+				listItem.hover.textColor = Color.black;
+				listItem.onHover.textColor = Color.black;
+				listItem.padding = new RectOffset(4, 4, 4, 4);
+
+				listBox = new GUIStyle(GUI.skin.box);
 			}
 		}
 
-		static ExLaunchPad pad;
+		static ExBuildWindow instance;
+		static bool gui_enabled = true;
 		static Rect windowpos;
+		static bool highlight_pad = true;
+		static bool link_lfo_sliders = true;
 
-		static bool linklfosliders = true;
 		static CraftBrowser craftlist = null;
 		static bool showcraftbrowser = false;
 		static Vector2 resscroll;
 
-		static Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
+		List<ExLaunchPad> launchpads;
+		DropDownList pad_list;
+		ExLaunchPad pad;
 
-		static float ResourceLine (string label, string resourceName, float fraction, double minAmount, double maxAmount, double available)
+		public static void ToggleGUI ()
+		{
+			gui_enabled = !gui_enabled;
+			if (instance != null) {
+				instance.onShowUI ();
+			}
+		}
+
+		public static void LoadSettings (ConfigNode node)
+		{
+			string val = node.GetValue ("rect");
+			if (val != null) {
+				Quaternion pos;
+				pos = ConfigNode.ParseQuaternion (val);
+				windowpos.x = pos.x;
+				windowpos.y = pos.y;
+				windowpos.width = pos.z;
+				windowpos.height = pos.w;
+			}
+			val = node.GetValue ("visible");
+			if (val != null) {
+				bool.TryParse (val, out gui_enabled);
+			}
+			val = node.GetValue ("link_lfo_sliders");
+			if (val != null) {
+				bool.TryParse (val, out link_lfo_sliders);
+			}
+		}
+
+		public static void SaveSettings (ConfigNode node)
+		{
+			Quaternion pos;
+			pos.x = windowpos.x;
+			pos.y = windowpos.y;
+			pos.z = windowpos.width;
+			pos.w = windowpos.height;
+			node.AddValue ("rect", KSPUtil.WriteQuaternion (pos));
+			node.AddValue ("visible", gui_enabled);
+			node.AddValue ("link_lfo_sliders", link_lfo_sliders);
+		}
+
+		void BuildPadList (Vessel v)
+		{
+			launchpads = null;
+			pad_list = null;
+			pad = null;	//FIXME would be nice to not lose the active pad
+			var pads = new List<ExLaunchPad> ();
+
+			foreach (var p in v.Parts) {
+				pads.AddRange (p.Modules.OfType<ExLaunchPad> ());
+			}
+			if (pads.Count > 0) {
+				launchpads = pads;
+				pad = launchpads[0];
+				var pad_names = new List<string> ();
+				int ind = 0;
+				foreach (var p in launchpads) {
+					if (p.PadName != "") {
+						pad_names.Add (p.PadName);
+					} else {
+						pad_names.Add ("pad-" + ind);
+					}
+					ind++;
+				}
+				pad_list = new DropDownList (pad_names);
+			}
+		}
+
+		void onVesselChange (Vessel v)
+		{
+			BuildPadList (v);
+			onShowUI ();
+		}
+
+		void onVesselWasModified (Vessel v)
+		{
+			if (FlightGlobals.ActiveVessel == v) {
+				BuildPadList (v);
+			}
+		}
+
+		void onHideUI ()
+		{
+			enabled = false;
+			if (pad != null) {
+				pad.part.SetHighlightDefault ();
+			}
+		}
+
+		void onShowUI ()
+		{
+			enabled = launchpads != null && gui_enabled;
+			if (enabled && highlight_pad && pad != null) {
+				pad.part.SetHighlightColor (XKCDColors.LightSeaGreen);
+				pad.part.SetHighlight (true);
+			}
+		}
+
+		void Awake ()
+		{
+			instance = this;
+			GameEvents.onVesselChange.Add (onVesselChange);
+			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			GameEvents.onHideUI.Add (onHideUI);
+			GameEvents.onShowUI.Add (onShowUI);
+			enabled = false;
+		}
+
+		void OnDestroy ()
+		{
+			instance = null;
+			GameEvents.onVesselChange.Remove (onVesselChange);
+			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
+			GameEvents.onHideUI.Remove (onHideUI);
+			GameEvents.onShowUI.Remove (onShowUI);
+		}
+
+		Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
+
+		float ResourceLine (string label, string resourceName, float fraction, double minAmount, double maxAmount, double available)
 		{
 			GUILayout.BeginHorizontal ();
 
@@ -118,15 +258,28 @@ namespace ExLP {
 			return fraction;
 		}
 
-		static void WindowGUI (int windowID)
+		void WindowGUI (int windowID)
 		{
 			Styles.Init ();
+			pad_list.styleListItem = Styles.listItem;
+			pad_list.styleListBox = Styles.listBox;
 
-			EditorLogic editor = EditorLogic.fetch;
-			if (editor) return;
+			pad_list.DrawBlockingSelector ();
 
 			GUILayout.BeginVertical ();
 
+			GUILayout.BeginHorizontal ();
+			pad_list.DrawButton ();
+			pad = launchpads[pad_list.SelectedIndex];
+			highlight_pad = GUILayout.Toggle (highlight_pad, "Highlight Pad");
+			if (highlight_pad) {
+				pad.part.SetHighlightColor (XKCDColors.LightSeaGreen);
+				pad.part.SetHighlight (true);
+			} else {
+				pad.part.SetHighlightDefault ();
+			}
+			GUILayout.EndHorizontal ();
+/*
 			GUILayout.BeginHorizontal ("box");
 			GUILayout.FlexibleSpace ();
 			// VAB / SPH selection
@@ -163,7 +316,7 @@ namespace ExLP {
 
 				// Link LFO toggle
 
-				linklfosliders = GUILayout.Toggle (linklfosliders, "Link RocketFuel sliders for LiquidFuel and Oxidizer");
+				link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders, "Link RocketFuel sliders for LiquidFuel and Oxidizer");
 
 				resscroll = GUILayout.BeginScrollView (resscroll, GUILayout.Width (600), GUILayout.Height (300));
 
@@ -204,22 +357,28 @@ namespace ExLP {
 			} else {
 				GUILayout.Box ("You must select a craft before you can build", Styles.red);
 			}
+*/
 			GUILayout.EndVertical ();
 
 			GUILayout.BeginHorizontal ();
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("Close")) {
-				pad.HideBuildMenu ();
+				gui_enabled = false;
+				onHideUI ();
 			}
 
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
+
+			pad_list.DrawDropDown();
+			pad_list.CloseOnOutsideClick();
+
 			GUI.DragWindow (new Rect (0, 0, 10000, 20));
 
 		}
 
 		// called when the user selects a craft the craft browser
-		static void craftSelectComplete (string filename, string flagname)
+		void craftSelectComplete (string filename, string flagname)
 		{
 			showcraftbrowser = false;
 			pad.flagname = flagname;
@@ -231,7 +390,7 @@ namespace ExLP {
 		}
 
 		// called when the user clicks cancel in the craft browser
-		static void craftSelectCancel ()
+		void craftSelectCancel ()
 		{
 			showcraftbrowser = false;
 
@@ -239,11 +398,11 @@ namespace ExLP {
 			pad.craftConfig = null;
 		}
 
-		internal static void OnGUI (ExLaunchPad pad)
+		void OnGUI ()
 		{
 			GUI.skin = HighLogic.Skin;
 			string sit = pad.vessel.situation.ToString ();
-			windowpos = GUILayout.Window (1, windowpos, WindowGUI,
+			windowpos = GUILayout.Window (1342, windowpos, WindowGUI,
 										  "Extraplanetary Launchpad: " + sit,
 										  GUILayout.Width (600));
 			if (showcraftbrowser) {
@@ -251,5 +410,4 @@ namespace ExLP {
 			}
 		}
 	}
-
 }

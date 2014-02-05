@@ -49,6 +49,11 @@ namespace ExLP {
 				var node = settings.GetNode ("ShipInfo");
 				ExShipInfo.LoadSettings (node);
 			}
+
+			if (settings.HasNode ("BuildWindow")) {
+				var node = settings.GetNode ("BuildWindow");
+				ExBuildWindow.LoadSettings (node);
+			}
 		}
 
 		public override void OnSave(ConfigNode config)
@@ -60,6 +65,7 @@ namespace ExLP {
 			config.AddNode (settings);
 
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
+			ExBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
 		}
 		
 		public override void OnAwake ()

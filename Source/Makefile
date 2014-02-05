@@ -11,6 +11,7 @@ EL_FILES := \
     AssemblyInfo.cs	\
 	BuildCost.cs	\
 	BuildWindow.cs	\
+	DropDownList.cs	\
 	ExLaunchPad.cs	\
 	Recycler.cs		\
 	Resources.cs	\

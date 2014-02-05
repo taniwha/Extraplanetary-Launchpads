@@ -15,6 +15,8 @@ namespace ExLP {
 		public float SpawnHeightOffset = 0.0f;
 		[KSPField (isPersistant = false)]
 		public string SpawnTransform;
+		[KSPField (isPersistant = true)]
+		public string PadName = "";
 
 		public static bool timed_builds = false;
 		public static bool kethane_checked;
@@ -181,11 +183,6 @@ namespace ExLP {
 			}
 		}
 
-		private void OnGUI ()
-		{
-			BuildWindow.OnGUI (this);
-		}
-
 		public override void OnSave (ConfigNode node)
 		{
 			if (vesselInfo != null) {
@@ -207,8 +204,6 @@ namespace ExLP {
 			dumpxform (part.transform);
 
 			enabled = false;
-			GameEvents.onHideUI.Add (onHideUI);
-			GameEvents.onShowUI.Add (onShowUI);
 
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
 			GameEvents.onVesselChange.Add (onVesselChange);
@@ -239,21 +234,8 @@ namespace ExLP {
 
 		void OnDestroy ()
 		{
-			GameEvents.onHideUI.Remove (onHideUI);
-			GameEvents.onShowUI.Remove (onShowUI);
-
 			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
 			GameEvents.onVesselChange.Remove (onVesselChange);
-		}
-
-		[KSPEvent (guiActive = true, guiName = "Show Build Menu", active = true)]
-		public void ShowBuildMenu ()
-		{
-		}
-
-		[KSPEvent (guiActive = true, guiName = "Hide Build Menu", active = false)]
-		public void HideBuildMenu ()
-		{
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Release", active = false)]
@@ -263,26 +245,10 @@ namespace ExLP {
 			vesselInfo = null;
 		}
 
-		[KSPAction ("Show Build Menu")]
-		public void EnableBuildMenuAction (KSPActionParam param)
-		{
-			ShowBuildMenu ();
-		}
-
-		[KSPAction ("Hide Build Menu")]
-		public void DisableBuildMenuAction (KSPActionParam param)
-		{
-			HideBuildMenu ();
-		}
-
 		[KSPAction ("Toggle Build Menu")]
 		public void ToggleBuildMenuAction (KSPActionParam param)
 		{
-			//if (builduiactive) {
-			//	HideBuildMenu ();
-			//} else {
-			//	ShowBuildMenu ();
-			//}
+			ExBuildWindow.ToggleGUI ();
 		}
 
 		[KSPAction ("Release Vessel")]
@@ -318,14 +284,6 @@ namespace ExLP {
 		}
 
 		void onVesselChange (Vessel v)
-		{
-		}
-
-		void onHideUI ()
-		{
-		}
-
-		void onShowUI ()
 		{
 		}
 	}

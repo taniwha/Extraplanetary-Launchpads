@@ -47,6 +47,8 @@ namespace ExLP {
 			List<GUILayoutOption> options = new List<GUILayoutOption> ();
 			if (width == 0) {
 				options.Add (GUILayout.ExpandWidth (true));
+			} else {
+				options.Add (GUILayout.Width (width));
 			}
 			GUILayout.Label ("", style_back, options.ToArray ());
 			return GUILayoutUtility.GetLastRect ();

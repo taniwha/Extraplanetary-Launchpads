@@ -208,9 +208,10 @@ namespace ExLP {
 
 		public void BuildCraft ()
 		{
-			BuildAndLaunchCraft ();
-			craftConfig = null;
-			buildCost = null;
+			if (craftConfig != null) {
+				builtStuff = getBuildCost (craftConfig);
+				state = State.Building;
+			}
 		}
 
 		private void Start ()

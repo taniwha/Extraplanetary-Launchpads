@@ -234,7 +234,6 @@ namespace ExLP {
 				GUILayout.Box ("Must be 100%", GUILayout.Width (300),
 							   GUILayout.Height (20));
 				fraction = 1.0F;
-				Styles.bar.Draw (0.75f, "hi there");
 			} else {
 				fraction = GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F,
 													   Styles.slider,
@@ -274,6 +273,41 @@ namespace ExLP {
 			GUILayout.EndHorizontal ();
 
 			return fraction;
+		}
+
+		void ResourceProgress (string label, BuildCost.BuildResource br,
+							   BuildCost.BuildResource req)
+		{
+			double fraction = (req.amount - br.amount) / req.amount;
+			double required = br.amount;
+			double available = pad.padResources.ResourceAmount (br.name);
+
+			GUILayout.BeginHorizontal ();
+
+			// Resource name
+			GUILayout.Box (label, Styles.white, GUILayout.Width (120),
+						   GUILayout.Height (40));
+
+			GUILayout.BeginVertical ();
+			var percent = (fraction * 100).ToString("G4") + "%";
+			Styles.bar.Draw ((float) fraction, percent, 300);
+			GUILayout.EndVertical ();
+
+			// Calculate if we have enough resources to build
+			GUIStyle requiredStyle = Styles.green;
+			if (required > available) {
+				requiredStyle = Styles.yellow;
+			}
+			// Required and Available
+			GUILayout.Box ((Math.Round (required, 2)).ToString (),
+						   requiredStyle, GUILayout.Width (75),
+						   GUILayout.Height (40));
+			GUILayout.Box ((Math.Round (available, 2)).ToString (),
+						   Styles.white, GUILayout.Width (75),
+						   GUILayout.Height (40));
+			GUILayout.FlexibleSpace ();
+
+			GUILayout.EndHorizontal ();
 		}
 
 		void SelectPad_start ()
@@ -387,6 +421,19 @@ namespace ExLP {
 			}
 		}
 
+		void BuildProgress ()
+		{
+			resscroll = GUILayout.BeginScrollView (resscroll,
+												   GUILayout.Width (600),
+												   GUILayout.Height (300));
+			foreach (var br in pad.builtStuff.required) {
+				var q = pad.buildCost.required.Where(r => r.name == br.name);
+				var req = q.FirstOrDefault ();
+				ResourceProgress (br.name, br, req);
+			}
+			GUILayout.EndScrollView ();
+		}
+
 		void OptionalResources ()
 		{
 			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
@@ -403,6 +450,14 @@ namespace ExLP {
 				resslide[br.name] = ResourceLine (br.name, br.name,
 												  resslide[br.name],
 												  0, br.amount, available);
+				if (link_lfo_sliders
+					&& (br.name == "LiquidFuel" || br.name == "Oxidizer")) {
+					if (br.name == "LiquidFuel") {
+						resslide["Oxidizer"] = resslide["LiquidFuel"];
+					} else {
+						resslide["LiquidFuel"] = resslide["Oxidizer"];
+					}
+				}
 			}
 			GUILayout.EndScrollView ();
 		}
@@ -439,6 +494,8 @@ namespace ExLP {
 				BuildButton ();
 				break;
 			case ExLaunchPad.State.Building:
+				SelectedCraft ();
+				BuildProgress ();
 				break;
 			case ExLaunchPad.State.Complete:
 				OptionalResources ();

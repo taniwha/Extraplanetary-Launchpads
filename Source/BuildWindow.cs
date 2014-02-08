@@ -215,8 +215,6 @@ namespace ExLP {
 			GameEvents.onShowUI.Remove (onShowUI);
 		}
 
-		Dictionary<string, float> resslide = new Dictionary<string, float>();
-
 		float ResourceLine (string label, string resourceName, float fraction,
 							double minAmount, double maxAmount,
 							double available)
@@ -417,8 +415,12 @@ namespace ExLP {
 			if (GUILayout.Button ("Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				pad.BuildCraft ();
-				resslide = new Dictionary<string, float>();;
 			}
+		}
+
+		static BuildCost.BuildResource FindResource (List<BuildCost.BuildResource> reslist, string name)
+		{
+			return reslist.Where(r => r.name == name).FirstOrDefault ();
 		}
 
 		void BuildProgress ()
@@ -427,8 +429,7 @@ namespace ExLP {
 												   GUILayout.Width (600),
 												   GUILayout.Height (300));
 			foreach (var br in pad.builtStuff.required) {
-				var q = pad.buildCost.required.Where(r => r.name == br.name);
-				var req = q.FirstOrDefault ();
+				var req = FindResource (pad.buildCost.required, br.name);
 				ResourceProgress (br.name, br, req);
 			}
 			GUILayout.EndScrollView ();
@@ -444,22 +445,34 @@ namespace ExLP {
 												   GUILayout.Height (300));
 			foreach (var br in pad.buildCost.optional) {
 				double available = pad.padResources.ResourceAmount (br.name);
-				if (!resslide.ContainsKey (br.name)) {
-					resslide.Add (br.name, 1);
-				}
-				resslide[br.name] = ResourceLine (br.name, br.name,
-												  resslide[br.name],
-												  0, br.amount, available);
+				double maximum = pad.craftResources.ResourceCapacity(br.name);
+				float frac = (float) (br.amount / maximum);
+				frac = ResourceLine (br.name, br.name, frac, 0,
+									 maximum, available);
 				if (link_lfo_sliders
 					&& (br.name == "LiquidFuel" || br.name == "Oxidizer")) {
+					string other;
 					if (br.name == "LiquidFuel") {
-						resslide["Oxidizer"] = resslide["LiquidFuel"];
+						other = "Oxidizer";
 					} else {
-						resslide["LiquidFuel"] = resslide["Oxidizer"];
+						other = "LiquidFuel";
 					}
+					var or = FindResource (pad.buildCost.optional, other);
+					double om = pad.craftResources.ResourceCapacity (other);
+					or.amount = om * frac;
 				}
+				br.amount = maximum * frac;
 			}
 			GUILayout.EndScrollView ();
+		}
+
+		void ReleaseButton ()
+		{
+			if (GUILayout.Button ("Release", Styles.normal,
+								  GUILayout.ExpandWidth (true))) {
+				pad.TransferResources ();
+				pad.ReleaseVessel ();
+			}
 		}
 
 		void CloseButton ()
@@ -498,7 +511,9 @@ namespace ExLP {
 				BuildProgress ();
 				break;
 			case ExLaunchPad.State.Complete:
+				SelectedCraft ();
 				OptionalResources ();
+				ReleaseButton ();
 				break;
 			}
 

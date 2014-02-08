@@ -44,6 +44,11 @@ namespace ExLP {
 			get;
 			private set;
 		}
+		public VesselResources craftResources
+		{
+			get;
+			private set;
+		}
 		public BuildCost.CostReport buildCost
 		{
 			get;
@@ -60,8 +65,6 @@ namespace ExLP {
 			private set;
 		}
 
-		public bool autoRelease;
-
 		DockedVesselInfo vesselInfo;
 
 		private static bool CheckForKethane ()
@@ -76,7 +79,7 @@ namespace ExLP {
 
 		public bool isActive ()
 		{
-			return builtStuff != null;
+			return state == State.Building;
 		}
 
 		public void DoWork (double kerbalHours)
@@ -86,8 +89,9 @@ namespace ExLP {
 			Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
 									  kerbalHours));
 			bool did_work;
+			int count;
 			do {
-				int count = required.Where (r => r.amount > 0).Count ();
+				count = required.Where (r => r.amount > 0).Count ();
 				if (count == 0)
 					break;
 				double work = kerbalHours / count;
@@ -113,6 +117,11 @@ namespace ExLP {
 					padResources.TransferResource (res.name, -amount);
 				}
 			} while (did_work && kerbalHours > 0);
+
+			if (count == 0) {
+				BuildAndLaunchCraft ();
+				state = State.Complete;
+			}
 		}
 
 		[KSPEvent (guiActive=false, active = true)]
@@ -145,6 +154,25 @@ namespace ExLP {
 			return launchTransform;
 		}
 
+		internal void SetupCraftResources (Vessel vsl)
+		{
+			craftResources = new VesselResources (vsl);
+			foreach (var br in buildCost.optional) {
+				var amount = craftResources.ResourceAmount (br.name);
+				craftResources.TransferResource (br.name, -amount);
+			}
+		}
+
+		internal void TransferResources ()
+		{
+			foreach (var br in buildCost.optional) {
+				var a = padResources.TransferResource (br.name, -br.amount);
+				a += br.amount;
+				var b = craftResources.TransferResource (br.name, a);
+				padResources.TransferResource (br.name, b);
+			}
+		}
+
 		internal void BuildAndLaunchCraft ()
 		{
 			// build craft
@@ -173,7 +201,7 @@ namespace ExLP {
 			FlightGlobals.ForceSetActiveVessel (vsl);
 			vsl.Landed = false;
 
-			//XXX UseResources (vsl);
+			SetupCraftResources (vsl);
 
 			vesselInfo = new DockedVesselInfo ();
 			vesselInfo.name = vsl.vesselName;
@@ -186,12 +214,8 @@ namespace ExLP {
 				GameObject.Destroy (vsl.rootPart.attachJoint);
 				vsl.rootPart.attachJoint = null;
 			}
-			autoRelease = false;
 
 			FlightGlobals.ForceSetActiveVessel (vessel);
-			if (vessel.situation != Vessel.Situations.ORBITING) {
-				autoRelease = true;
-			}
 
 			Staging.beginFlight ();
 		}
@@ -214,25 +238,11 @@ namespace ExLP {
 			}
 		}
 
-		private void Start ()
-		{
-		}
-
-		public override void OnFixedUpdate ()
-		{
-			if (vesselInfo != null && !vessel.packed) {
-				if (autoRelease) {
-					ReleaseVessel ();
-				}
-			}
-		}
-
 		public override void OnSave (ConfigNode node)
 		{
 			if (vesselInfo != null) {
 				ConfigNode vi = node.AddNode ("DockedVesselInfo");
 				vesselInfo.Save (vi);
-				vi.AddValue ("autoRelease", autoRelease);
 			}
 		}
 
@@ -253,7 +263,6 @@ namespace ExLP {
 				ConfigNode vi = node.GetNode ("DockedVesselInfo");
 				vesselInfo = new DockedVesselInfo ();
 				vesselInfo.Load (vi);
-				bool.TryParse (vi.GetValue ("autoRelease"), out autoRelease);
 			}
 		}
 
@@ -290,7 +299,13 @@ namespace ExLP {
 		public void ReleaseVessel ()
 		{
 			vessel[vesselInfo.rootPartUId].Undock (vesselInfo);
+			Vessel vsl = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
+			FlightGlobals.ForceSetActiveVessel (vsl);
+			craftConfig = null;
 			vesselInfo = null;
+			buildCost = null;
+			builtStuff = null;
+			state = State.Idle;
 		}
 
 		[KSPAction ("Toggle Build Menu")]

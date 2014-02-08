@@ -23,6 +23,8 @@ namespace ExLP {
 			public static GUIStyle listItem;
 			public static GUIStyle listBox;
 
+			public static ProgressBar bar;
+
 			private static bool initialized;
 
 			public static void Init ()
@@ -76,6 +78,10 @@ namespace ExLP {
 				listItem.padding = new RectOffset(4, 4, 4, 4);
 
 				listBox = new GUIStyle(GUI.skin.box);
+
+				bar = new ProgressBar (XKCDColors.Amber,
+									   XKCDColors.Amethyst,
+									   new Color(255, 255, 255, 0.8f));
 			}
 		}
 
@@ -86,7 +92,6 @@ namespace ExLP {
 		static bool link_lfo_sliders = true;
 
 		static CraftBrowser craftlist = null;
-		static bool showcraftbrowser = false;
 		static Vector2 resscroll;
 
 		List<ExLaunchPad> launchpads;
@@ -210,47 +215,60 @@ namespace ExLP {
 			GameEvents.onShowUI.Remove (onShowUI);
 		}
 
-		Dictionary<string, float> resourcesliders = new Dictionary<string, float>();
+		Dictionary<string, float> resslide = new Dictionary<string, float>();
 
-		float ResourceLine (string label, string resourceName, float fraction, double minAmount, double maxAmount, double available)
+		float ResourceLine (string label, string resourceName, float fraction,
+							double minAmount, double maxAmount,
+							double available)
 		{
 			GUILayout.BeginHorizontal ();
 
 			// Resource name
-			GUILayout.Box (label, Styles.white, GUILayout.Width (120), GUILayout.Height (40));
+			GUILayout.Box (label, Styles.white, GUILayout.Width (120),
+						   GUILayout.Height (40));
 
 			// Fill amount
-			GUILayout.BeginVertical ();
-			GUILayout.FlexibleSpace ();
 			// limit slider to 0.5% increments
+			GUILayout.BeginVertical ();
 			if (minAmount == maxAmount) {
-				GUILayout.Box ("Must be 100%", GUILayout.Width (300), GUILayout.Height (20));
+				GUILayout.Box ("Must be 100%", GUILayout.Width (300),
+							   GUILayout.Height (20));
 				fraction = 1.0F;
+				Styles.bar.Draw (0.75f, "hi there");
 			} else {
-				fraction = (float)Math.Round (GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F, Styles.slider, GUI.skin.horizontalSliderThumb, GUILayout.Width (300), GUILayout.Height (20)), 3);
+				fraction = GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F,
+													   Styles.slider,
+													   GUI.skin.horizontalSliderThumb,
+													   GUILayout.Width (300),
+													   GUILayout.Height (20));
+				fraction = (float)Math.Round (fraction, 3);
 				fraction = (Mathf.Floor (fraction * 200)) / 200;
-				GUILayout.Box ((fraction * 100).ToString () + "%", Styles.sliderText, GUILayout.Width (300), GUILayout.Height (20));
+				GUILayout.Box ((fraction * 100).ToString () + "%",
+							   Styles.sliderText, GUILayout.Width (300),
+							   GUILayout.Height (20));
 			}
-			GUILayout.FlexibleSpace ();
 			GUILayout.EndVertical ();
 
-			double required = minAmount * (1 - fraction)  + maxAmount * fraction;
+			double required = minAmount + (maxAmount - minAmount) * fraction;
 
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
 			if (available >= 0 && available < required) {
-				requiredStyle = Styles.red;
-				// prevent building if using resources
+				requiredStyle = Styles.yellow;
 			}
 			// Required and Available
-			GUILayout.Box ((Math.Round (required, 2)).ToString (), requiredStyle, GUILayout.Width (75), GUILayout.Height (40));
+			GUILayout.Box ((Math.Round (required, 2)).ToString (),
+						   requiredStyle, GUILayout.Width (75),
+						   GUILayout.Height (40));
 			if (available >= 0) {
-				GUILayout.Box ((Math.Round (available, 2)).ToString (), Styles.white, GUILayout.Width (75), GUILayout.Height (40));
+				GUILayout.Box ((Math.Round (available, 2)).ToString (),
+							   Styles.white, GUILayout.Width (75),
+							   GUILayout.Height (40));
 			} else {
-				GUILayout.Box ("N/A", Styles.white, GUILayout.Width (75), GUILayout.Height (40));
+				GUILayout.Box ("N/A", Styles.white, GUILayout.Width (75),
+							   GUILayout.Height (40));
 			}
 
-			// Flexi space to make sure any unused space is at the right-hand edge
 			GUILayout.FlexibleSpace ();
 
 			GUILayout.EndHorizontal ();
@@ -258,16 +276,15 @@ namespace ExLP {
 			return fraction;
 		}
 
-		void WindowGUI (int windowID)
+		void SelectPad_start ()
 		{
-			Styles.Init ();
 			pad_list.styleListItem = Styles.listItem;
 			pad_list.styleListBox = Styles.listBox;
-
 			pad_list.DrawBlockingSelector ();
+		}
 
-			GUILayout.BeginVertical ();
-
+		void SelectPad ()
+		{
 			GUILayout.BeginHorizontal ();
 			pad_list.DrawButton ();
 			pad = launchpads[pad_list.SelectedIndex];
@@ -279,123 +296,174 @@ namespace ExLP {
 				pad.part.SetHighlightDefault ();
 			}
 			GUILayout.EndHorizontal ();
-/*
+		}
+
+		void SelectPad_end ()
+		{
+			pad_list.DrawDropDown();
+			pad_list.CloseOnOutsideClick();
+		}
+
+		void SelectCraft ()
+		{
 			GUILayout.BeginHorizontal ("box");
 			GUILayout.FlexibleSpace ();
 			// VAB / SPH selection
-			if (GUILayout.Toggle (pad.craftType == ExLaunchPad.CraftType.VAB, "VAB", GUILayout.Width (80))) {
-				pad.craftType = ExLaunchPad.CraftType.VAB;
-			}
-			if (GUILayout.Toggle (pad.craftType == ExLaunchPad.CraftType.SPH, "SPH", GUILayout.Width (80))) {
-				pad.craftType = ExLaunchPad.CraftType.SPH;
-			}
-			if (GUILayout.Toggle (pad.craftType == ExLaunchPad.CraftType.SUB, "SubAss", GUILayout.Width (160))) {
-				pad.craftType = ExLaunchPad.CraftType.SUB;
+			for (var t = ExLaunchPad.CraftType.VAB;
+				 t <= ExLaunchPad.CraftType.SubAss;
+				 t++) {
+				if (GUILayout.Toggle (pad.craftType == t, t.ToString (),
+									  GUILayout.Width (80))) {
+					pad.craftType = t;
+				}
 			}
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
 
 			string strpath = HighLogic.SaveFolder;
 
-			if (GUILayout.Button ("Select Craft", Styles.normal, GUILayout.ExpandWidth (true))) {
-				string [] dir = new string[] {"SPH", "VAB", "../Subassemblies"};
-				bool stock = HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels;
-				if (pad.craftType == ExLaunchPad.CraftType.SUB)
-					HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = false;
+			if (GUILayout.Button ("Select Craft", Styles.normal,
+								  GUILayout.ExpandWidth (true))) {
+				string []dir = new string[] {"VAB", "SPH", "../Subassemblies"};
+				var diff = HighLogic.CurrentGame.Parameters.Difficulty;
+				bool stock = diff.AllowStockVessels;
+				if (pad.craftType == ExLaunchPad.CraftType.SubAss) {
+					diff.AllowStockVessels = false;
+				}
 				//GUILayout.Button is "true" when clicked
-				craftlist = new CraftBrowser (new Rect (Screen.width / 2, 100, 350, 500), dir[(int)pad.craftType], strpath, "Select a ship to load", craftSelectComplete, craftSelectCancel, HighLogic.Skin, EditorLogic.ShipFileImage, true);
-				showcraftbrowser = true;
-				HighLogic.CurrentGame.Parameters.Difficulty.AllowStockVessels = stock;
+				var clrect = new Rect (Screen.width / 2, 100, 350, 500);
+				craftlist = new CraftBrowser (clrect, dir[(int)pad.craftType],
+											  strpath, "Select a ship to load",
+											  craftSelectComplete,
+											  craftSelectCancel,
+											  HighLogic.Skin,
+											  EditorLogic.ShipFileImage, true);
+				diff.AllowStockVessels = stock;
 			}
+		}
 
-			if (pad.craftConfig != null && pad.buildCost != null) {
-				GUILayout.Box ("Selected Craft:	" + pad.craftConfig.GetValue ("ship"), Styles.white);
+		void SelectedCraft ()
+		{
+			var ship_name = pad.craftConfig.GetValue ("ship");
+			GUILayout.Box ("Selected Craft:	" + ship_name, Styles.white);
+		}
 
-				// Resource requirements
-				GUILayout.Label ("Resources required to build:", Styles.label, GUILayout.Width (600));
+		void ResourceHeader ()
+		{
+			var width120 = GUILayout.Width (120);
+			var width300 = GUILayout.Width (300);
+			var width75 = GUILayout.Width (75);
+			GUILayout.BeginHorizontal ();
+			GUILayout.Label ("Resource", Styles.label, width120);
+			GUILayout.Label ("Fill Percentage", Styles.label, width300);
+			GUILayout.Label ("Required", Styles.label, width75);
+			GUILayout.Label ("Available", Styles.label, width75);
+			GUILayout.EndHorizontal ();
+		}
 
-				// Link LFO toggle
+		void RequiredResources ()
+		{
+			GUILayout.Label ("Resources required to build:", Styles.label,
+							 GUILayout.Width (600));
+			resscroll = GUILayout.BeginScrollView (resscroll,
+												   GUILayout.Width (600),
+												   GUILayout.Height (300));
+			foreach (var br in pad.buildCost.required) {
+				double a = br.amount;
+				double available = -1;
 
-				link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders, "Link RocketFuel sliders for LiquidFuel and Oxidizer");
-
-				resscroll = GUILayout.BeginScrollView (resscroll, GUILayout.Width (600), GUILayout.Height (300));
-
-				GUILayout.BeginHorizontal ();
-
-				// Headings
-				GUILayout.Label ("Resource", Styles.label, GUILayout.Width (120));
-				GUILayout.Label ("Fill Percentage", Styles.label, GUILayout.Width (300));
-				GUILayout.Label ("Required", Styles.label, GUILayout.Width (75));
-				GUILayout.Label ("Available", Styles.label, GUILayout.Width (75));
-				GUILayout.EndHorizontal ();
-
-				foreach (var br in pad.buildCost.required) {
-					double a = br.amount;
-					double available = -1;
-
-					available = pad.padResources.ResourceAmount (br.name);
-					ResourceLine (br.name, br.name, 1.0f, a, a, available);
-				}
-				foreach (var br in pad.buildCost.optional) {
-					double available = pad.padResources.ResourceAmount (br.name);
-					if (!resourcesliders.ContainsKey (br.name)) {
-						resourcesliders.Add (br.name, 1);
-					}
-					resourcesliders[br.name] = ResourceLine (br.name, br.name, resourcesliders[br.name], 0, br.amount, available);
-				}
-
-				GUILayout.EndScrollView ();
-
-				// Build button
-				if (GUILayout.Button ("Build", Styles.normal, GUILayout.ExpandWidth (true))) {
-					pad.BuildAndLaunchCraft ();
-
-					pad.craftConfig = null;
-					pad.buildCost = null;
-					resourcesliders = new Dictionary<string, float>();;
-				}
-			} else {
-				GUILayout.Box ("You must select a craft before you can build", Styles.red);
+				available = pad.padResources.ResourceAmount (br.name);
+				ResourceLine (br.name, br.name, 1.0f, a, a, available);
 			}
-*/
-			GUILayout.EndVertical ();
+			GUILayout.EndScrollView ();
+		}
 
+		void BuildButton ()
+		{
+			if (GUILayout.Button ("Build", Styles.normal,
+								  GUILayout.ExpandWidth (true))) {
+				pad.BuildCraft ();
+				resslide = new Dictionary<string, float>();;
+			}
+		}
+
+		void OptionalResources ()
+		{
+			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
+												 "Link LiquidFuel and "
+												 + "Oxidizer sliders");
+			resscroll = GUILayout.BeginScrollView (resscroll,
+												   GUILayout.Width (600),
+												   GUILayout.Height (300));
+			foreach (var br in pad.buildCost.optional) {
+				double available = pad.padResources.ResourceAmount (br.name);
+				if (!resslide.ContainsKey (br.name)) {
+					resslide.Add (br.name, 1);
+				}
+				resslide[br.name] = ResourceLine (br.name, br.name,
+												  resslide[br.name],
+												  0, br.amount, available);
+			}
+			GUILayout.EndScrollView ();
+		}
+
+		void CloseButton ()
+		{
 			GUILayout.BeginHorizontal ();
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("Close")) {
 				gui_enabled = false;
 				onHideUI ();
 			}
-
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
+		}
 
-			pad_list.DrawDropDown();
-			pad_list.CloseOnOutsideClick();
+		void WindowGUI (int windowID)
+		{
+			Styles.Init ();
+
+			SelectPad_start ();
+
+			GUILayout.BeginVertical ();
+			SelectPad ();
+
+			switch (pad.state) {
+			case ExLaunchPad.State.Idle:
+				SelectCraft ();
+				break;
+			case ExLaunchPad.State.Planning:
+				SelectCraft ();
+				SelectedCraft ();
+				RequiredResources ();
+				BuildButton ();
+				break;
+			case ExLaunchPad.State.Building:
+				break;
+			case ExLaunchPad.State.Complete:
+				OptionalResources ();
+				break;
+			}
+
+			GUILayout.EndVertical ();
+
+			CloseButton ();
+
+			SelectPad_end ();
 
 			GUI.DragWindow (new Rect (0, 0, 10000, 20));
 
 		}
 
-		// called when the user selects a craft the craft browser
-		void craftSelectComplete (string filename, string flagname)
+		private void craftSelectComplete (string filename, string flagname)
 		{
-			showcraftbrowser = false;
-			pad.flagname = flagname;
-			ConfigNode craft = ConfigNode.Load (filename);
-
-			// Get list of resources required to build vessel
-			if ((pad.buildCost = pad.getBuildCost (craft)) != null)
-				pad.craftConfig = craft;
+			craftlist = null;
+			pad.LoadCraft (filename, flagname);
 		}
 
-		// called when the user clicks cancel in the craft browser
-		void craftSelectCancel ()
+		private void craftSelectCancel ()
 		{
-			showcraftbrowser = false;
-
-			pad.buildCost = null;
-			pad.craftConfig = null;
+			craftlist = null;
 		}
 
 		void OnGUI ()
@@ -405,7 +473,7 @@ namespace ExLP {
 			windowpos = GUILayout.Window (1342, windowpos, WindowGUI,
 										  "Extraplanetary Launchpad: " + sit,
 										  GUILayout.Width (600));
-			if (showcraftbrowser) {
+			if (craftlist != null) {
 				craftlist.OnGUI ();
 			}
 		}

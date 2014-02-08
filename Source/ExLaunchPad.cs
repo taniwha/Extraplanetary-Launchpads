@@ -24,18 +24,45 @@ namespace ExLP {
 		public static bool force_resource_use;
 		public static bool use_resources;
 
-		public enum CraftType { SPH, VAB, SUB };
+		public enum CraftType { VAB, SPH, SubAss };
+		public enum State { Idle, Planning, Building, Complete };
 
 		public CraftType craftType = CraftType.VAB;
-		public string flagname = null;
-		public ConfigNode craftConfig = null;
 
-		internal VesselResources padResources;
-		public BuildCost.CostReport buildCost = null;
-		public BuildCost.CostReport builtStuff = null;
+		public string flagname
+		{
+			get;
+			private set;
+		}
+		public ConfigNode craftConfig
+		{
+			get;
+			private set;
+		}
+		public VesselResources padResources
+		{
+			get;
+			private set;
+		}
+		public BuildCost.CostReport buildCost
+		{
+			get;
+			private set;
+		}
+		public BuildCost.CostReport builtStuff
+		{
+			get;
+			private set;
+		}
+		public State state
+		{
+			get;
+			private set;
+		}
 
 		public bool autoRelease;
-		public DockedVesselInfo vesselInfo;
+
+		DockedVesselInfo vesselInfo;
 
 		private static bool CheckForKethane ()
 		{
@@ -56,7 +83,6 @@ namespace ExLP {
 		{
 			var required = builtStuff.required;
 
-			//padResources.TransferResource (br.name, -br.amount);
 			Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
 									  kerbalHours));
 			bool did_work;
@@ -126,7 +152,7 @@ namespace ExLP {
 			nship.LoadShip (craftConfig);
 
 			int numParts = vessel.parts.Count;
-			if (craftType != CraftType.SUB)
+			if (craftType != CraftType.SubAss)
 				numParts = 0;
 
 			StrutFixer.HackStruts (nship, numParts);
@@ -170,6 +196,23 @@ namespace ExLP {
 			Staging.beginFlight ();
 		}
 
+		public void LoadCraft (string filename, string flagname)
+		{
+			this.flagname = flagname;
+			ConfigNode craft = ConfigNode.Load (filename);
+			if ((buildCost = getBuildCost (craft)) != null) {
+				craftConfig = craft;
+			}
+			state = State.Planning;
+		}
+
+		public void BuildCraft ()
+		{
+			BuildAndLaunchCraft ();
+			craftConfig = null;
+			buildCost = null;
+		}
+
 		private void Start ()
 		{
 		}
@@ -205,9 +248,6 @@ namespace ExLP {
 
 			enabled = false;
 
-			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
-			GameEvents.onVesselChange.Add (onVesselChange);
-
 			if (node.HasNode ("DockedVesselInfo")) {
 				ConfigNode vi = node.GetNode ("DockedVesselInfo");
 				vesselInfo = new DockedVesselInfo ();
@@ -222,20 +262,27 @@ namespace ExLP {
 				kethane_present = CheckForKethane ();
 				kethane_checked = true;
 			}
+			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
+			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 		}
 
 		public override void OnStart (PartModule.StartState state)
 		{
+			if (state == PartModule.StartState.None
+				|| state == PartModule.StartState.Editor) {
+				return;
+			}
 			if (force_resource_use || (kethane_present && !DebugPad)) {
 				use_resources = true;
 			}
 			part.force_activate ();
+			padResources = new VesselResources (vessel);
 		}
 
 		void OnDestroy ()
 		{
 			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
-			GameEvents.onVesselChange.Remove (onVesselChange);
+			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Release", active = false)]
@@ -283,8 +330,11 @@ namespace ExLP {
 				return;
 		}
 
-		void onVesselChange (Vessel v)
+		void onVesselWasModified (Vessel v)
 		{
+			if (v == vessel) {
+				padResources = new VesselResources (vessel);
+			}
 		}
 	}
 

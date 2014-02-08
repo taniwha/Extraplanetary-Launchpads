@@ -13,6 +13,7 @@ EL_FILES := \
 	BuildWindow.cs	\
 	DropDownList.cs	\
 	ExLaunchPad.cs	\
+	ProgressBar.cs	\
 	Recycler.cs		\
 	Resources.cs	\
 	Settings.cs		\

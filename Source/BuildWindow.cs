@@ -527,7 +527,8 @@ namespace ExLP {
 		{
 			GUI.skin = HighLogic.Skin;
 			string sit = pad.vessel.situation.ToString ();
-			windowpos = GUILayout.Window (1342, windowpos, WindowGUI,
+			windowpos = GUILayout.Window (GetInstanceID (),
+										  windowpos, WindowGUI,
 										  "Extraplanetary Launchpad: " + sit,
 										  GUILayout.Width (600));
 			if (craftlist != null) {

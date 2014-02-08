@@ -172,7 +172,7 @@ namespace ExLP {
 				winpos.width = 300;
 				winpos.height = 100;
 			}
-			winpos = GUILayout.Window (1324, winpos, InfoWindow,
+			winpos = GUILayout.Window (GetInstanceID (), winpos, InfoWindow,
 									  "Build Resources",
 									  GUILayout.MinWidth (200));
 		}

@@ -90,7 +90,7 @@ public class ExWorkshop : PartModule
 			float y = 1 - 2 * s;
 			contribution = y + (v + a * c / 2) * c;
 		} else {
-			contribution = 1 - 2 * s * c * c;
+			contribution = 1 - s * (1 + c * c);
 		}
 		return contribution;
 	}

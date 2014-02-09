@@ -397,14 +397,28 @@ namespace ExLP {
 			GUILayout.EndHorizontal ();
 		}
 
+		void ResourceScroll_begin ()
+		{
+			resscroll = GUILayout.BeginScrollView (resscroll,
+												   GUILayout.Width (625),
+												   GUILayout.Height (300));
+			GUILayout.BeginHorizontal ();
+			GUILayout.BeginVertical ();
+		}
+
+		void ResourceScroll_end ()
+		{
+			GUILayout.EndVertical ();
+			GUILayout.Label ("", Styles.label, GUILayout.Width (15));
+			GUILayout.EndHorizontal ();
+			GUILayout.EndScrollView ();
+		}
+
 		bool RequiredResources ()
 		{
 			bool can_build = true;
 			GUILayout.Label ("Resources required to build:", Styles.label,
-							 GUILayout.Width (600));
-			resscroll = GUILayout.BeginScrollView (resscroll,
-												   GUILayout.Width (600),
-												   GUILayout.Height (300));
+							 GUILayout.ExpandWidth (true));
 			foreach (var br in pad.buildCost.required) {
 				double a = br.amount;
 				double available = -1;
@@ -415,7 +429,6 @@ namespace ExLP {
 					can_build = false;
 				}
 			}
-			GUILayout.EndScrollView ();
 			return can_build;
 		}
 
@@ -434,14 +447,10 @@ namespace ExLP {
 
 		void BuildProgress ()
 		{
-			resscroll = GUILayout.BeginScrollView (resscroll,
-												   GUILayout.Width (600),
-												   GUILayout.Height (300));
 			foreach (var br in pad.builtStuff.required) {
 				var req = FindResource (pad.buildCost.required, br.name);
 				ResourceProgress (br.name, br, req);
 			}
-			GUILayout.EndScrollView ();
 		}
 
 		bool OptionalResources ()
@@ -451,9 +460,6 @@ namespace ExLP {
 			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
 												 "Link LiquidFuel and "
 												 + "Oxidizer sliders");
-			resscroll = GUILayout.BeginScrollView (resscroll,
-												   GUILayout.Width (600),
-												   GUILayout.Height (300));
 			foreach (var br in pad.buildCost.optional) {
 				double available = pad.padResources.ResourceAmount (br.name);
 				double maximum = pad.craftResources.ResourceCapacity(br.name);
@@ -477,7 +483,6 @@ namespace ExLP {
 					can_build = false;
 				}
 			}
-			GUILayout.EndScrollView ();
 			return can_build;
 		}
 
@@ -519,16 +524,22 @@ namespace ExLP {
 				case ExLaunchPad.State.Planning:
 					SelectCraft ();
 					SelectedCraft ();
+					ResourceScroll_begin ();
 					RequiredResources ();
+					ResourceScroll_end ();
 					BuildButton ();
 					break;
 				case ExLaunchPad.State.Building:
 					SelectedCraft ();
+					ResourceScroll_begin ();
 					BuildProgress ();
+					ResourceScroll_end ();
 					break;
 				case ExLaunchPad.State.Complete:
 					SelectedCraft ();
+					ResourceScroll_begin ();
 					OptionalResources ();
+					ResourceScroll_end ();
 					ReleaseButton ();
 					break;
 				}
@@ -540,8 +551,10 @@ namespace ExLP {
 				case ExLaunchPad.State.Planning:
 					SelectCraft ();
 					SelectedCraft ();
+					ResourceScroll_begin ();
 					bool have_required = RequiredResources ();
 					bool have_optional = OptionalResources ();
+					ResourceScroll_end ();
 					if (have_required && have_optional) {
 						BuildButton ();
 					}
@@ -584,7 +597,7 @@ namespace ExLP {
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,
 										  "Extraplanetary Launchpad: " + sit,
-										  GUILayout.Width (600));
+										  GUILayout.Width (640));
 			if (craftlist != null) {
 				craftlist.OnGUI ();
 			}

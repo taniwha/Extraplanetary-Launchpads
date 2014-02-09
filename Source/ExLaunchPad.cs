@@ -18,7 +18,7 @@ namespace ExLP {
 		[KSPField (isPersistant = true)]
 		public string PadName = "";
 
-		public static bool timed_builds = false;
+		public static bool timed_builds = true;
 		public static bool kethane_checked;
 		public static bool kethane_present;
 		public static bool force_resource_use;

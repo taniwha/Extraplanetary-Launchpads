@@ -33,8 +33,7 @@ namespace ExLP {
 			if (settings == null) {
 				settings = new ConfigNode ("Settings");
 				if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
-					enabled = !ExLaunchPad.kethane_present;
-					//enabled = true;
+					enabled = true;
 				}
 			}
 			if (!settings.HasValue ("ForceResourceUse")) {
@@ -44,6 +43,10 @@ namespace ExLP {
 			ExLaunchPad.force_resource_use = false;
 			var fru = settings.GetValue ("ForceResourceUse");
 			bool.TryParse (fru, out ExLaunchPad.force_resource_use);
+
+			ExLaunchPad.timed_builds = true;
+			var tb = settings.GetValue ("TimedBuilds");
+			bool.TryParse (tb, out ExLaunchPad.timed_builds);
 
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
@@ -60,8 +63,13 @@ namespace ExLP {
 		{
 			//Debug.Log (String.Format ("[EL] Settings save: {0}", config));
 			var settings = new ConfigNode ("Settings");
+
 			bool fru = ExLaunchPad.force_resource_use;
 			settings.AddValue ("ForceResourceUse", fru);
+
+			bool tb = ExLaunchPad.timed_builds;
+			settings.AddValue ("TimedBuilds", tb);
+
 			config.AddNode (settings);
 
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
@@ -84,9 +92,15 @@ namespace ExLP {
 								GUI.skin.window);
 			GUILayout.BeginVertical ();
 
-			bool fru = ExLaunchPad.force_resource_use;
-			fru = GUILayout.Toggle (fru, "Always use resources");
-			ExLaunchPad.force_resource_use = fru;
+			if (!ExLaunchPad.kethane_present) {
+				bool fru = ExLaunchPad.force_resource_use;
+				fru = GUILayout.Toggle (fru, "Always use resources");
+				ExLaunchPad.force_resource_use = fru;
+			}
+
+			bool tb = ExLaunchPad.timed_builds;
+			tb = GUILayout.Toggle (tb, "Allow progressive builds");
+			ExLaunchPad.timed_builds = tb;
 
 			if (GUILayout.Button ("OK")) {
 				enabled = false;

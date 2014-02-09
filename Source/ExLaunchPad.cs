@@ -227,15 +227,20 @@ namespace ExLP {
 			ConfigNode craft = ConfigNode.Load (filename);
 			if ((buildCost = getBuildCost (craft)) != null) {
 				craftConfig = craft;
+				state = State.Planning;
 			}
-			state = State.Planning;
 		}
 
 		public void BuildCraft ()
 		{
 			if (craftConfig != null) {
 				builtStuff = getBuildCost (craftConfig);
-				state = State.Building;
+				if (timed_builds) {
+					state = State.Building;
+				} else {
+					BuildAndLaunchCraft ();
+					state = State.Complete;
+				}
 			}
 		}
 
@@ -330,6 +335,8 @@ namespace ExLP {
 			GameObject ro = ship.parts[0].localRoot.gameObject;
 			Vessel dummy = ro.AddComponent<Vessel>();
 			dummy.Initialize (true);
+
+			craftResources = new VesselResources (dummy);
 
 			BuildCost resources = new BuildCost ();
 

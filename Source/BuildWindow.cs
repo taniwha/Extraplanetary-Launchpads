@@ -251,7 +251,11 @@ namespace ExLP {
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
 			if (available >= 0 && available < required) {
-				requiredStyle = Styles.yellow;
+				if (ExLaunchPad.timed_builds) {
+					requiredStyle = Styles.yellow;
+				} else {
+					requiredStyle = Styles.red;
+				}
 			}
 			// Required and Available
 			GUILayout.Box ((Math.Round (required, 2)).ToString (),
@@ -393,8 +397,9 @@ namespace ExLP {
 			GUILayout.EndHorizontal ();
 		}
 
-		void RequiredResources ()
+		bool RequiredResources ()
 		{
+			bool can_build = true;
 			GUILayout.Label ("Resources required to build:", Styles.label,
 							 GUILayout.Width (600));
 			resscroll = GUILayout.BeginScrollView (resscroll,
@@ -406,8 +411,12 @@ namespace ExLP {
 
 				available = pad.padResources.ResourceAmount (br.name);
 				ResourceLine (br.name, br.name, 1.0f, a, a, available);
+				if (br.amount > available) {
+					can_build = false;
+				}
 			}
 			GUILayout.EndScrollView ();
+			return can_build;
 		}
 
 		void BuildButton ()
@@ -435,8 +444,10 @@ namespace ExLP {
 			GUILayout.EndScrollView ();
 		}
 
-		void OptionalResources ()
+		bool OptionalResources ()
 		{
+			bool can_build = true;
+
 			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
 												 "Link LiquidFuel and "
 												 + "Oxidizer sliders");
@@ -462,8 +473,12 @@ namespace ExLP {
 					or.amount = om * frac;
 				}
 				br.amount = maximum * frac;
+				if (br.amount > available) {
+					can_build = false;
+				}
 			}
 			GUILayout.EndScrollView ();
+			return can_build;
 		}
 
 		void ReleaseButton ()
@@ -496,25 +511,49 @@ namespace ExLP {
 			GUILayout.BeginVertical ();
 			SelectPad ();
 
-			switch (pad.state) {
-			case ExLaunchPad.State.Idle:
-				SelectCraft ();
-				break;
-			case ExLaunchPad.State.Planning:
-				SelectCraft ();
-				SelectedCraft ();
-				RequiredResources ();
-				BuildButton ();
-				break;
-			case ExLaunchPad.State.Building:
-				SelectedCraft ();
-				BuildProgress ();
-				break;
-			case ExLaunchPad.State.Complete:
-				SelectedCraft ();
-				OptionalResources ();
-				ReleaseButton ();
-				break;
+			if (ExLaunchPad.timed_builds) {
+				switch (pad.state) {
+				case ExLaunchPad.State.Idle:
+					SelectCraft ();
+					break;
+				case ExLaunchPad.State.Planning:
+					SelectCraft ();
+					SelectedCraft ();
+					RequiredResources ();
+					BuildButton ();
+					break;
+				case ExLaunchPad.State.Building:
+					SelectedCraft ();
+					BuildProgress ();
+					break;
+				case ExLaunchPad.State.Complete:
+					SelectedCraft ();
+					OptionalResources ();
+					ReleaseButton ();
+					break;
+				}
+			} else {
+				switch (pad.state) {
+				case ExLaunchPad.State.Idle:
+					SelectCraft ();
+					break;
+				case ExLaunchPad.State.Planning:
+					SelectCraft ();
+					SelectedCraft ();
+					bool have_required = RequiredResources ();
+					bool have_optional = OptionalResources ();
+					if (have_required && have_optional) {
+						BuildButton ();
+					}
+					break;
+				case ExLaunchPad.State.Building:
+					// shouldn't happen
+					break;
+				case ExLaunchPad.State.Complete:
+					SelectedCraft ();
+					ReleaseButton ();
+					break;
+				}
 			}
 
 			GUILayout.EndVertical ();

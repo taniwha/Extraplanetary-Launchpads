@@ -20,7 +20,7 @@ namespace ExLP {
 		public static void CreateSettings (Game game)
 		{
 			if (!game.scenarios.Any (p => p.moduleName == typeof (ExSettings).Name)) {
-				Debug.Log (String.Format ("[EL] Settings create"));
+				//Debug.Log (String.Format ("[EL] Settings create"));
 				var proto = game.AddProtoScenarioModule (typeof (ExSettings), GameScenes.SPACECENTER, GameScenes.EDITOR, GameScenes.SPH, GameScenes.TRACKSTATION, GameScenes.FLIGHT);
 				proto.Load (ScenarioRunner.fetch);
 			}
@@ -28,7 +28,7 @@ namespace ExLP {
 
 		public override void OnLoad (ConfigNode config)
 		{
-			Debug.Log (String.Format ("[EL] Settings load"));
+			//Debug.Log (String.Format ("[EL] Settings load"));
 			var settings = config.GetNode ("Settings");
 			if (settings == null) {
 				settings = new ConfigNode ("Settings");
@@ -58,7 +58,7 @@ namespace ExLP {
 
 		public override void OnSave(ConfigNode config)
 		{
-			Debug.Log (String.Format ("[EL] Settings save: {0}", config));
+			//Debug.Log (String.Format ("[EL] Settings save: {0}", config));
 			var settings = new ConfigNode ("Settings");
 			bool fru = ExLaunchPad.force_resource_use;
 			settings.AddValue ("ForceResourceUse", fru);
@@ -103,7 +103,7 @@ namespace ExLP {
 		public static ExSettingsCreator me;
 		void onGameStateCreated (Game game)
 		{
-			Debug.Log (String.Format ("[EL] onGameStateCreated"));
+			//Debug.Log (String.Format ("[EL] onGameStateCreated"));
 			ExSettings.CreateSettings (game);
 		}
 
@@ -119,7 +119,7 @@ namespace ExLP {
 
 		void Start ()
 		{
-			Debug.Log (String.Format ("[EL] ExSettingsCreatorSpawn.Start"));
+			//Debug.Log (String.Format ("[EL] ExSettingsCreatorSpawn.Start"));
 			ExSettingsCreator.me = new ExSettingsCreator ();
 			enabled = false;
 		}

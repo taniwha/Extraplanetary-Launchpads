@@ -12,7 +12,7 @@ namespace ExLP {
 		void OnResourcesModified (BaseEventData data)
 		{
 			Part part = data.Get<Part> ("part");
-			Debug.Log (String.Format ("[EL GUI] res modify: {0}", part));
+			//Debug.Log (String.Format ("[EL GUI] res modify: {0}", part));
 			shipinfo.buildCost.removePartMassless (part);
 			shipinfo.buildCost.addPartMassless (part);
 		}
@@ -21,8 +21,8 @@ namespace ExLP {
 		{
 			Part part = data.Get<Part> ("part");
 			float oldmass = data.Get<float> ("oldmass");
-			Debug.Log (String.Format ("[EL GUI] mass modify: {0} {1} {2}",
-									  part, oldmass, part.mass));
+			//Debug.Log (String.Format ("[EL GUI] mass modify: {0} {1} {2}",
+			//						  part, oldmass, part.mass));
 			shipinfo.buildCost.mass -= oldmass;
 			shipinfo.buildCost.mass += part.mass;
 		}
@@ -80,7 +80,7 @@ namespace ExLP {
 
 		void addPart (Part part)
 		{
-			Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
+			//Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
 			buildCost.addPart (part);
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)part.AddModule ("ExShipInfoEventCatcher");
@@ -89,7 +89,7 @@ namespace ExLP {
 
 		void removePart (Part part)
 		{
-			Debug.Log (String.Format ("[EL GUI] remove: {0}", part));
+			//Debug.Log (String.Format ("[EL GUI] remove: {0}", part));
 			buildCost.removePart (part);
 
 			ExShipInfoEventCatcher ec = part.GetComponent<ExShipInfoEventCatcher> ();
@@ -98,7 +98,7 @@ namespace ExLP {
 
 		void addRootPart (Part root)
 		{
-			Debug.Log (String.Format ("[EL GUI] root: {0}", root));
+			//Debug.Log (String.Format ("[EL GUI] root: {0}", root));
 			buildCost = new BuildCost ();
 			buildCost.addPart (root);
 
@@ -122,7 +122,7 @@ namespace ExLP {
 					enabled = showGUI;
 				}
 			} else {
-				Debug.Log (String.Format ("[EL GUI] new"));
+				//Debug.Log (String.Format ("[EL GUI] new"));
 				buildCost = null;
 				enabled = false;
 			}

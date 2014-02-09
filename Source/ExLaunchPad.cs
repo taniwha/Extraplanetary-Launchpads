@@ -70,10 +70,10 @@ namespace ExLP {
 		private static bool CheckForKethane ()
 		{
 			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "MMI_Kethane" || a.assembly.GetName ().Name == "Kethane")) {
-				Debug.Log ("[EL] Kethane found");
+				//Debug.Log ("[EL] Kethane found");
 				return true;
 			}
-			Debug.Log ("[EL] Kethane not found");
+			//Debug.Log ("[EL] Kethane not found");
 			return false;
 		}
 
@@ -86,8 +86,8 @@ namespace ExLP {
 		{
 			var required = builtStuff.required;
 
-			Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
-									  kerbalHours));
+			//Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
+			//						  kerbalHours));
 			bool did_work;
 			int count;
 			do {
@@ -106,7 +106,8 @@ namespace ExLP {
 					double avail = padResources.ResourceAmount (res.name);
 					if (amount > avail)
 						amount = avail;
-					Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}", res.amount, avail, amount));
+					//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}",
+					//						  res.amount, avail, amount));
 					if (amount <= 0)
 						break;
 					did_work = true;
@@ -137,8 +138,8 @@ namespace ExLP {
 
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
-				Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
-										  launchTransform, SpawnTransform));
+				//Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
+				//						  launchTransform, SpawnTransform));
 			} else {
 				Vector3 offset = Vector3.up * SpawnHeightOffset;
 				Transform t = this.part.transform;
@@ -148,8 +149,8 @@ namespace ExLP {
 				launchPos.transform.rotation = t.rotation;
 				launchTransform = launchPos.transform;
 				Destroy (launchPos);
-				Debug.Log (String.Format ("[EL] launchPos {0}",
-										  launchTransform));
+				//Debug.Log (String.Format ("[EL] launchPos {0}",
+				//						  launchTransform));
 			}
 			return launchTransform;
 		}

@@ -27,7 +27,7 @@ public class ExRecycler : PartModule
 			|| col.gameObject.name == "MapOverlay collider")	// kethane
 			return;
 		Part p = col.attachedRigidbody.GetComponent<Part>();
-		Debug.Log (String.Format ("[EL] {0}", p));
+		//Debug.Log (String.Format ("[EL] {0}", p));
 		if (p != null && p.vessel != null && p.vessel != vessel) {
 			float mass;
 			if (p.vessel.isEVA) {
@@ -61,7 +61,7 @@ public class ExRecycler : PartModule
 			&& res_def.resourceFlowMode != ResourceFlowMode.NO_FLOW) {
 			remain = recycler.TransferResource (resource, amount);
 		}
-		Debug.Log (String.Format ("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", vessel_name, name, amount, amount - remain, remain));
+		//Debug.Log (String.Format ("[EL] {0}-{1}: {2} taken {3} reclaimed, {4} lost", vessel_name, name, amount, amount - remain, remain));
 		return (float) (amount * res_def.density);
 	}
 

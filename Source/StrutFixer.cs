@@ -50,16 +50,16 @@ namespace ExLP {
 					GameObject hit = hitInfo.collider.gameObject;
 					target = EditorLogic.GetComponentUpwards<Part>(hit);
 				}
-				Debug.Log (String.Format ("[EL] {0} {1} {2} {3}", target,
-										  targetName, xform.position,
-										  xform.rotation));
+				//Debug.Log (String.Format ("[EL] {0} {1} {2} {3}", target,
+				//						  targetName, xform.position,
+				//						  xform.rotation));
 			}
 		}
 
 		private static void HackStrutCData (ShipConstruct ship, Part p,
 											int part_base)
 		{
-			Debug.Log (String.Format ("[EL] before {0}", p.customPartData));
+			//Debug.Log (String.Format ("[EL] before {0}", p.customPartData));
 			string[] Params = p.customPartData.Split (';');
 			for (int i = 0; i < Params.Length; i++) {
 				string[] keyval = Params[i].Split (':');
@@ -83,7 +83,7 @@ namespace ExLP {
 				}
 			}
 			p.customPartData = String.Join ("; ", Params);
-			Debug.Log (String.Format ("[EL] after {0}", p.customPartData));
+			//Debug.Log (String.Format ("[EL] after {0}", p.customPartData));
 		}
 
 		public static void HackStruts (ShipConstruct ship, int part_base)

@@ -50,7 +50,7 @@ public class ExWorkshop : PartModule
 	{
 		ExWorkshop shop = findFirstWorkshop (vessel.rootPart);
 		if (shop == this) {
-			Debug.Log (String.Format ("[EL Workshop] master"));
+			//Debug.Log (String.Format ("[EL Workshop] master"));
 			var data = new BaseEventData (BaseEventData.Sender.USER);
 			data.Set<ExWorkshop> ("master", this);
 			sources = new List<ExWorkshop> ();
@@ -73,7 +73,7 @@ public class ExWorkshop : PartModule
 	void ExDiscoverWorkshops (BaseEventData data)
 	{
 		// Even the master workshop is its own slave.
-		Debug.Log (String.Format ("[EL Workshop] slave"));
+		//Debug.Log (String.Format ("[EL Workshop] slave"));
 		master = data.Get<ExWorkshop> ("master");
 		data.Get<List<ExWorkshop>> ("sources").Add (this);
 	}
@@ -153,8 +153,8 @@ public class ExWorkshop : PartModule
 			foreach (var source in sources) {
 				hours += source.GetProductivity ();
 			}
-			Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
-									  hours));
+			//Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
+			//						  hours));
 			int num_sinks = 0;
 			foreach (var sink in sinks) {
 				if (sink.isActive ()) {

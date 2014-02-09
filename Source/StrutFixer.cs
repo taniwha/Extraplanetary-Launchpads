@@ -13,7 +13,7 @@ namespace ExLP {
 			GameObject gameObject;
 			Vector3 pos;
 			Vector3 dir;
-			string targetName;
+			//string targetName;
 			float maxLength;
 			public Part target;
 
@@ -33,7 +33,7 @@ namespace ExLP {
 					string Key = keyval[0].Trim ();
 					string Value = keyval[1].Trim ();
 					if (Key == "tgt") {
-						targetName = Value.Split ('_')[0];
+						//targetName = Value.Split ('_')[0];
 					} else if (Key == "pos") {
 						pos = KSPUtil.ParseVector3 (Value);
 					} else if (Key == "dir") {

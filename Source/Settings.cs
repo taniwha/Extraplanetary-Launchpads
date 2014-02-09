@@ -37,7 +37,12 @@ namespace ExLP {
 				}
 			}
 			if (!settings.HasValue ("ForceResourceUse")) {
-				settings.AddValue ("ForceResourceUse", false);
+				var val = ExLaunchPad.force_resource_use;
+				settings.AddValue ("ForceResourceUse", val);
+			}
+			if (!settings.HasValue ("TimedBuilds")) {
+				var val = ExLaunchPad.timed_builds;
+				settings.AddValue ("TimedBuilds", val);
 			}
 
 			ExLaunchPad.force_resource_use = false;

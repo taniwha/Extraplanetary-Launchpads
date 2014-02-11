@@ -91,7 +91,11 @@ public class ExRecycler : PartModule
 
 		float mass = 0;
 		mass += ReclaimResource ("Kethane", 150, crew.name);
-		mass += ReclaimResource ("Metal", 1, crew.name);
+		if (ExLaunchPad.kethane_present) {
+			mass += ReclaimResource ("Metal", 1, crew.name);
+		} else {
+			mass += ReclaimResource ("RocketParts", 1, crew.name);
+		}
 		return mass;
 	}
 
@@ -100,9 +104,15 @@ public class ExRecycler : PartModule
 		float ConversionEfficiency = 0.8f;
 		double amount;
 		VesselResources scrap = new VesselResources (v);
+		string target_resource;
 
 		PartResourceDefinition rp_def;
-		rp_def = PartResourceLibrary.Instance.GetDefinition ("Metal");
+		if (ExLaunchPad.kethane_present) {
+			target_resource = "Metal";
+		} else {
+			target_resource = "RocketParts";
+		}
+		rp_def = PartResourceLibrary.Instance.GetDefinition (target_resource);
 
 		if (FlightGlobals.ActiveVessel == v)
 			FlightGlobals.ForceSetActiveVessel (this.vessel);
@@ -116,7 +126,7 @@ public class ExRecycler : PartModule
 		}
 		float hull_mass = v.GetTotalMass ();
 		amount = hull_mass * ConversionEfficiency / rp_def.density;
-		mass += ReclaimResource ("Metal", amount, v.name, "hull");
+		mass += ReclaimResource (target_resource, amount, v.name, "hull");
 		v.Die ();
 		return mass;
 	}

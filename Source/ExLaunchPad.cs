@@ -167,12 +167,24 @@ namespace ExLP {
 			if (vessel) {
 				situation = vessel.situation;
 			}
-			if (vesselInfo == null
-				&& (situation == Vessel.Situations.LANDED
-					|| situation == Vessel.Situations.ORBITING
-					|| situation == Vessel.Situations.PRELAUNCH
-					|| situation == Vessel.Situations.SPLASHED)) {
+			switch (situation) {
+			case Vessel.Situations.LANDED:
+			case Vessel.Situations.SPLASHED:
+			case Vessel.Situations.PRELAUNCH:
 				can_build = true;
+				break;
+			case Vessel.Situations.FLYING:
+			case Vessel.Situations.SUB_ORBITAL:
+				can_build = false;
+				break;
+			case Vessel.Situations.ORBITING:
+			case Vessel.Situations.ESCAPING:
+				can_build = true;
+				break;
+			case Vessel.Situations.DOCKED:
+				// does this happen? maybe docked to a planet?
+				can_build = true;
+				break;
 			}
 			if (vesselInfo != null && CheckKerbalMinutes ()) {
 				can_release = true;
@@ -349,7 +361,8 @@ namespace ExLP {
 			autoRelease = false;
 
 			FlightGlobals.ForceSetActiveVessel (vessel);
-			if (vessel.situation != Vessel.Situations.ORBITING) {
+			if (vessel.situation != Vessel.Situations.ORBITING
+				&& vessel.situation != Vessel.Situations.ESCAPING) {
 				autoRelease = true;
 			}
 

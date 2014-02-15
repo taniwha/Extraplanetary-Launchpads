@@ -246,30 +246,83 @@ namespace ExLP {
 
 		public override void OnSave (ConfigNode node)
 		{
+			node.AddValue ("flagname", flagname);
+			if (craftConfig != null) {
+				craftConfig.name = "CraftConfig";
+				node.AddNode (craftConfig);
+			}
+			if (buildCost != null) {
+				var bc = node.AddNode ("BuildCost");
+				buildCost.Save (bc);
+			}
+			if (builtStuff != null) {
+				var bs = node.AddNode ("BuiltStuff");
+				builtStuff.Save (bs);
+			}
+			node.AddValue ("state", state);
 			if (vesselInfo != null) {
 				ConfigNode vi = node.AddNode ("DockedVesselInfo");
 				vesselInfo.Save (vi);
 			}
 		}
 
-		private void dumpxform (Transform t, string n = "")
+		internal static void dumpxform (Transform t, string n = "")
 		{
-			//Debug.Log (String.Format ("[EL] {0}", n + t.name));
-			//foreach (Transform c in t)
-			//	dumpxform (c, n + t.name + ".");
+			Debug.Log (String.Format ("[EL] {0}", n + t.name));
+			foreach (Transform c in t)
+				dumpxform (c, n + t.name + ".");
+		}
+
+		internal List<Part> CraftParts ()
+		{
+			var part_list = new List<Part> ();
+			if (vesselInfo != null) {
+				var root = vessel[vesselInfo.rootPartUId];
+				Debug.Log (String.Format ("[EL] CraftParts root {0}", root));
+				part_list.Add (root);
+				part_list.AddRange (root.FindChildParts<Part> (true));
+			}
+			return part_list;
+		}
+
+		internal void FindVesselResources ()
+		{
+			padResources = new VesselResources (vessel);
+			var craft_parts = CraftParts ();
+			if (craft_parts.Count > 0) {
+				craftResources = new VesselResources ();
+			}
+			foreach (var part in craft_parts) {
+				padResources.RemovePart (part);
+				craftResources.AddPart (part);
+			}
 		}
 
 		public override void OnLoad (ConfigNode node)
 		{
-			dumpxform (part.transform);
-
-			enabled = false;
-
+			flagname = node.GetValue ("flagname");
+			craftConfig = node.GetNode ("CraftConfig");
+			if (node.HasNode ("BuildCost")) {
+				var bc = node.GetNode ("BuildCost");
+				buildCost = new BuildCost.CostReport ();
+				buildCost.Load (bc);
+			}
+			if (node.HasNode ("BuiltStuff")) {
+				var bs = node.GetNode ("BuiltStuff");
+				builtStuff = new BuildCost.CostReport ();
+				builtStuff.Load (bs);
+			}
+			if (node.HasValue ("state")) {
+				var s = node.GetValue ("state");
+				state = (State) Enum.Parse (typeof (State), s);
+			}
 			if (node.HasNode ("DockedVesselInfo")) {
 				ConfigNode vi = node.GetNode ("DockedVesselInfo");
 				vesselInfo = new DockedVesselInfo ();
 				vesselInfo.Load (vi);
 			}
+			if (vessel != null)
+				FindVesselResources ();
 		}
 
 		public override void OnAwake ()

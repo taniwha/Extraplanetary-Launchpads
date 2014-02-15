@@ -321,8 +321,6 @@ namespace ExLP {
 				vesselInfo = new DockedVesselInfo ();
 				vesselInfo.Load (vi);
 			}
-			if (vessel != null)
-				FindVesselResources ();
 		}
 
 		public override void OnAwake ()
@@ -345,7 +343,7 @@ namespace ExLP {
 				use_resources = true;
 			}
 			part.force_activate ();
-			padResources = new VesselResources (vessel);
+			FindVesselResources ();
 		}
 
 		void OnDestroy ()

@@ -336,8 +336,10 @@ namespace ExLP {
 
 		void SelectPad_end ()
 		{
-			pad_list.DrawDropDown();
-			pad_list.CloseOnOutsideClick();
+			if (pad_list != null) {
+				pad_list.DrawDropDown();
+				pad_list.CloseOnOutsideClick();
+			}
 		}
 
 		void SelectCraft ()

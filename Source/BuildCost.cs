@@ -102,12 +102,14 @@ namespace ExLP {
 
 			public void Load (ConfigNode node)
 			{
-				foreach (var r in node.GetNodes ("Required")) {
+				var req = node.GetNode ("Required");
+				foreach (var r in req.GetNodes ("BuildResrouce")) {
 					var res = new BuildResource ();
 					res.Load (r);
 					required.Add (res);
 				}
-				foreach (var r in node.GetNodes ("Optional")) {
+				var opt = node.GetNode ("Optional");
+				foreach (var r in opt.GetNodes ("BuildResrouce")) {
 					var res = new BuildResource ();
 					res.Load (r);
 					optional.Add (res);

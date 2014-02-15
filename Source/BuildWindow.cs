@@ -86,6 +86,7 @@ namespace ExLP {
 		}
 
 		static ExBuildWindow instance;
+		static bool hide_ui = false;
 		static bool gui_enabled = true;
 		static Rect windowpos;
 		static bool highlight_pad = true;
@@ -102,7 +103,7 @@ namespace ExLP {
 		{
 			gui_enabled = !gui_enabled;
 			if (instance != null) {
-				instance.onShowUI ();
+				instance.UpdateGUIState ();
 			}
 		}
 
@@ -141,6 +142,9 @@ namespace ExLP {
 
 		void BuildPadList (Vessel v)
 		{
+			if (pad != null) {
+				pad.part.SetHighlightDefault ();
+			}
 			launchpads = null;
 			pad_list = null;
 			pad = null;	//FIXME would be nice to not lose the active pad
@@ -169,7 +173,7 @@ namespace ExLP {
 		void onVesselChange (Vessel v)
 		{
 			BuildPadList (v);
-			onShowUI ();
+			UpdateGUIState ();
 		}
 
 		void onVesselWasModified (Vessel v)
@@ -179,21 +183,29 @@ namespace ExLP {
 			}
 		}
 
+		void UpdateGUIState ()
+		{
+			enabled = !hide_ui && launchpads != null && gui_enabled;
+			if (pad != null) {
+				if (enabled && highlight_pad) {
+					pad.part.SetHighlightColor (XKCDColors.LightSeaGreen);
+					pad.part.SetHighlight (true);
+				} else {
+					pad.part.SetHighlightDefault ();
+				}
+			}
+		}
+
 		void onHideUI ()
 		{
-			enabled = false;
-			if (pad != null) {
-				pad.part.SetHighlightDefault ();
-			}
+			hide_ui = true;
+			UpdateGUIState ();
 		}
 
 		void onShowUI ()
 		{
-			enabled = launchpads != null && gui_enabled;
-			if (enabled && highlight_pad && pad != null) {
-				pad.part.SetHighlightColor (XKCDColors.LightSeaGreen);
-				pad.part.SetHighlight (true);
-			}
+			hide_ui = false;
+			UpdateGUIState ();
 		}
 
 		void Awake ()

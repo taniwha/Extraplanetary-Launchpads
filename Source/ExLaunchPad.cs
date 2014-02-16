@@ -231,6 +231,12 @@ namespace ExLP {
 			}
 		}
 
+		public void UnloadCraft ()
+		{
+			craftConfig = null;
+			state = State.Idle;
+		}
+
 		public void BuildCraft ()
 		{
 			if (craftConfig != null) {

@@ -372,6 +372,7 @@ namespace ExLP {
 
 			string strpath = HighLogic.SaveFolder;
 
+			GUILayout.BeginHorizontal ();
 			if (GUILayout.Button ("Select Craft", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				string []dir = new string[] {"VAB", "SPH", "../Subassemblies"};
@@ -390,6 +391,13 @@ namespace ExLP {
 											  EditorLogic.ShipFileImage, true);
 				diff.AllowStockVessels = stock;
 			}
+			GUI.enabled = pad.craftConfig != null;
+			if (GUILayout.Button ("Clear", Styles.normal,
+								  GUILayout.ExpandWidth (false))) {
+				pad.UnloadCraft ();
+			}
+			GUI.enabled = true;
+			GUILayout.EndHorizontal ();
 		}
 
 		void SelectedCraft ()

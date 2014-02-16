@@ -79,8 +79,8 @@ namespace ExLP {
 
 				listBox = new GUIStyle(GUI.skin.box);
 
-				bar = new ProgressBar (XKCDColors.Amber,
-									   XKCDColors.Amethyst,
+				bar = new ProgressBar (XKCDColors.Azure,
+									   XKCDColors.ElectricBlue,
 									   new Color(255, 255, 255, 0.8f));
 			}
 		}

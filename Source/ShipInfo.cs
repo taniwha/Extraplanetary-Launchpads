@@ -41,6 +41,7 @@ namespace ExLP {
 		static Rect winpos;
 		static bool showGUI = true;
 
+		int parts_count;
 		public BuildCost buildCost;
 		Vector2 scrollPosR, scrollPosO;
 
@@ -80,8 +81,10 @@ namespace ExLP {
 
 		void addPart (Part part)
 		{
-			//Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
+			Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
 			buildCost.addPart (part);
+			var ship = EditorLogic.fetch.ship;
+			parts_count = ship.parts.Count;
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)part.AddModule ("ExShipInfoEventCatcher");
 			ec.shipinfo = this;
@@ -89,8 +92,13 @@ namespace ExLP {
 
 		void removePart (Part part)
 		{
-			//Debug.Log (String.Format ("[EL GUI] remove: {0}", part));
-			buildCost.removePart (part);
+			Debug.Log (String.Format ("[EL GUI] remove: {0}", part));
+
+			var ship = EditorLogic.fetch.ship;
+			if (ship.parts.Count != parts_count) {
+				buildCost.removePart (part);
+				parts_count--;
+			}
 
 			ExShipInfoEventCatcher ec = part.GetComponent<ExShipInfoEventCatcher> ();
 			part.RemoveModule (ec);

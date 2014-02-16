@@ -361,6 +361,19 @@ namespace ExLP {
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 		}
 
+		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
+		public void HideUI ()
+		{
+			ExBuildWindow.HideGUI ();
+		}
+
+		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
+		public void ShowUI ()
+		{
+			ExBuildWindow.ShowGUI ();
+			ExBuildWindow.SelectPad (this);
+		}
+
 		[KSPEvent (guiActive = true, guiName = "Release", active = false)]
 		public void ReleaseVessel ()
 		{
@@ -374,18 +387,10 @@ namespace ExLP {
 			state = State.Idle;
 		}
 
-		[KSPAction ("Toggle Build Menu")]
-		public void ToggleBuildMenuAction (KSPActionParam param)
+		public void UpdateMenus (bool visible)
 		{
-			ExBuildWindow.ToggleGUI ();
-		}
-
-		[KSPAction ("Release Vessel")]
-		public void ReleaseVesselAction (KSPActionParam param)
-		{
-			if (vesselInfo != null) {
-				ReleaseVessel ();
-			}
+			Events["HideUI"].active = visible;
+			Events["ShowUI"].active = !visible;
 		}
 
 		public BuildCost.CostReport getBuildCost (ConfigNode craft)

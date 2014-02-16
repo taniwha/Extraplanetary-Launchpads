@@ -107,6 +107,22 @@ namespace ExLP {
 			}
 		}
 
+		public static void HideGUI ()
+		{
+			gui_enabled = false;
+			if (instance != null) {
+				instance.UpdateGUIState ();
+			}
+		}
+
+		public static void ShowGUI ()
+		{
+			gui_enabled = true;
+			if (instance != null) {
+				instance.UpdateGUIState ();
+			}
+		}
+
 		public static void LoadSettings (ConfigNode node)
 		{
 			string val = node.GetValue ("rect");
@@ -192,6 +208,11 @@ namespace ExLP {
 					pad.part.SetHighlight (true);
 				} else {
 					pad.part.SetHighlightDefault ();
+				}
+			}
+			if (launchpads != null) {
+				foreach (var p in launchpads) {
+					p.UpdateMenus (enabled && p == pad);
 				}
 			}
 		}
@@ -331,18 +352,27 @@ namespace ExLP {
 			pad_list.DrawBlockingSelector ();
 		}
 
+		public static void SelectPad (ExLaunchPad selected_pad)
+		{
+			instance.Select_Pad (selected_pad);
+		}
+
+		void Select_Pad (ExLaunchPad selected_pad)
+		{
+			if (pad) {
+				pad.part.SetHighlightDefault ();
+			}
+			pad = selected_pad;
+			pad_list.SelectItem (launchpads.IndexOf (pad));
+			UpdateGUIState ();
+		}
+
 		void SelectPad ()
 		{
 			GUILayout.BeginHorizontal ();
 			pad_list.DrawButton ();
-			pad = launchpads[pad_list.SelectedIndex];
 			highlight_pad = GUILayout.Toggle (highlight_pad, "Highlight Pad");
-			if (highlight_pad) {
-				pad.part.SetHighlightColor (XKCDColors.LightSeaGreen);
-				pad.part.SetHighlight (true);
-			} else {
-				pad.part.SetHighlightDefault ();
-			}
+			Select_Pad (launchpads[pad_list.SelectedIndex]);
 			GUILayout.EndHorizontal ();
 		}
 

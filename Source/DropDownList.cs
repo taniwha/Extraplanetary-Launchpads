@@ -43,6 +43,16 @@ namespace ExLP {
             SelectedIndex = 0;
         }
 
+		public void SelectItem (int index)
+		{
+			if (Items == null || Items.Count < 1 || index < 0) {
+				index = 0;
+			} else if (index >= Items.Count) {
+				index = Items.Count - 1;
+			}
+			SelectedIndex = index;
+		}
+
         //Draw the button behind everything else to catch the first mouse click
         internal void DrawBlockingSelector()
         {

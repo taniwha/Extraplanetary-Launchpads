@@ -92,6 +92,9 @@ public class ExWorkshop : PartModule
 		} else {
 			contribution = 1 - s * (1 + c * c);
 		}
+		Debug.Log (String.Format ("[EL Workshop] Kerbal: {0} {1} {2} {3} {4}",
+								  kerbal.name, s, c, kerbal.isBadass,
+								  contribution));
 		return contribution;
 	}
 
@@ -99,7 +102,11 @@ public class ExWorkshop : PartModule
 	{
 		float kh = 0;
 		foreach (var crew in part.protoModuleCrew) {
-			kh += KerbalContribution (crew.KerbalRef);
+			if (crew.KerbalRef != null) {
+				kh += KerbalContribution (crew.KerbalRef);
+			} else {
+				Debug.Log (String.Format ("[EL Workshop] empty seat"));
+			}
 		}
 		Productivity = kh * ProductivityFactor;
 	}

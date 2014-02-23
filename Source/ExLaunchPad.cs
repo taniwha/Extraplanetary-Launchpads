@@ -66,6 +66,9 @@ namespace ExLP {
 		}
 
 		DockedVesselInfo vesselInfo;
+		Transform launchTransform;
+		Vessel craftVessel;
+		Vector3 craftOffset;
 
 		private static bool CheckForKethane ()
 		{
@@ -133,9 +136,6 @@ namespace ExLP {
 
 		private Transform GetLanchTransform ()
 		{
-
-			Transform launchTransform;
-
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
 				//Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
@@ -174,6 +174,37 @@ namespace ExLP {
 			}
 		}
 
+		private IEnumerator<YieldInstruction> CaptureCraft ()
+		{
+			Vector3 pos;
+			while (true) {
+				bool partsInitialized = true;
+				foreach (Part p in craftVessel.parts) {
+					if (!p.started) {
+						partsInitialized = false;
+						break;
+					}
+				}
+				pos = launchTransform.TransformPoint (craftOffset);
+				craftVessel.SetPosition (pos, true);
+				if (partsInitialized) {
+					break;
+				}
+				yield return null;
+			}
+			craftVessel.SetWorldVelocity (part.rigidbody.velocity);
+			pos = launchTransform.TransformPoint (craftOffset);
+			craftVessel.SetPosition (pos, true);
+
+			vesselInfo = new DockedVesselInfo ();
+			vesselInfo.name = craftVessel.vesselName;
+			vesselInfo.vesselType = craftVessel.vesselType;
+			vesselInfo.rootPartUId = craftVessel.rootPart.flightID;
+			craftVessel.rootPart.Couple (part);
+
+			FlightGlobals.ForceSetActiveVessel (vessel);
+		}
+
 		internal void BuildAndLaunchCraft ()
 		{
 			// build craft
@@ -184,6 +215,8 @@ namespace ExLP {
 			if (craftType != CraftType.SubAss)
 				numParts = 0;
 
+			ShipConstruction.CreateBackup (nship);
+
 			StrutFixer.HackStruts (nship, numParts);
 
 			Vector3 offset = nship.Parts[0].transform.localPosition;
@@ -193,32 +226,22 @@ namespace ExLP {
 			Game state = FlightDriver.FlightStateCache;
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
-			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, state, crew);
+			GetLanchTransform ();
+			ShipConstruction.PutShipToGround (nship, launchTransform);
+			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, state,
+												crew);
+			var FlightVessels = FlightGlobals.Vessels;
+			craftVessel = FlightVessels[FlightVessels.Count - 1];
+			offset = craftVessel.transform.position - launchTransform.position;
+			craftOffset = launchTransform.InverseTransformDirection (offset);
+			craftVessel.Landed = false;
+			SetupCraftResources (craftVessel);
 
-			ShipConstruction.CreateBackup (nship);
-			ShipConstruction.PutShipToGround (nship, GetLanchTransform ());
-
-			Vessel vsl = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
-			FlightGlobals.ForceSetActiveVessel (vsl);
-			vsl.Landed = false;
-
-			SetupCraftResources (vsl);
-
-			vesselInfo = new DockedVesselInfo ();
-			vesselInfo.name = vsl.vesselName;
-			vesselInfo.vesselType = vsl.vesselType;
-			vesselInfo.rootPartUId = vsl.rootPart.flightID;
-			vsl.rootPart.Couple (part);
-			// For some reason a second attachJoint gets created by KSP later
-			// on, so delete the one created by the above call to Couple.
-			if (vsl.rootPart.attachJoint != null) {
-				GameObject.Destroy (vsl.rootPart.attachJoint);
-				vsl.rootPart.attachJoint = null;
-			}
+			Staging.beginFlight ();
 
 			FlightGlobals.ForceSetActiveVessel (vessel);
 
-			Staging.beginFlight ();
+			StartCoroutine (CaptureCraft ());
 		}
 
 		public void LoadCraft (string filename, string flagname)

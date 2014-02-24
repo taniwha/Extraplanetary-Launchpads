@@ -190,6 +190,7 @@ namespace ExLP {
 				if (partsInitialized) {
 					break;
 				}
+				OrbitPhysicsManager.HoldVesselUnpack (2);
 				yield return null;
 			}
 			craftVessel.SetWorldVelocity (part.rigidbody.velocity);

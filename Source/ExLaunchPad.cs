@@ -174,6 +174,20 @@ namespace ExLP {
 			}
 		}
 
+		static ConfigNode orbit (Orbit orb)
+		{
+			var snap = new OrbitSnapshot (orb);
+			var node = new ConfigNode ();
+			snap.Save (node);
+			return node;
+		}
+
+		public Vector3 GetVesselWorldCoM (Vessel v)
+		{
+			var com = v.findLocalCenterOfMass ();
+			return v.rootPart.partTransform.TransformPoint (com);
+		}
+
 		private IEnumerator<YieldInstruction> CaptureCraft ()
 		{
 			Vector3 pos;
@@ -193,9 +207,24 @@ namespace ExLP {
 				OrbitPhysicsManager.HoldVesselUnpack (2);
 				yield return null;
 			}
-			craftVessel.SetWorldVelocity (part.rigidbody.velocity);
 			pos = launchTransform.TransformPoint (craftOffset);
 			craftVessel.SetPosition (pos, true);
+
+			var craftCoM = GetVesselWorldCoM (craftVessel);
+			var vesselCoM = GetVesselWorldCoM (vessel);
+			var offset = (Vector3d.zero + craftCoM - vesselCoM).xzy;
+
+			var mode = OrbitDriver.UpdateMode.UPDATE;
+			craftVessel.orbitDriver.SetOrbitMode (mode);
+			var corb = craftVessel.orbit;
+			var orb = vessel.orbit;
+			var UT = Planetarium.GetUniversalTime ();
+			var body = orb.referenceBody;
+			corb.UpdateFromStateVectors (orb.pos + offset, orb.vel, body, UT);
+			craftVessel.GoOffRails ();
+
+			Debug.Log (String.Format ("[EL] {0} {1}", orbit(orb), orb.pos));
+			Debug.Log (String.Format ("[EL] {0} {1}", orbit(corb), corb.pos));
 
 			vesselInfo = new DockedVesselInfo ();
 			vesselInfo.name = craftVessel.vesselName;
@@ -203,7 +232,10 @@ namespace ExLP {
 			vesselInfo.rootPartUId = craftVessel.rootPart.flightID;
 			craftVessel.rootPart.Couple (part);
 
-			FlightGlobals.ForceSetActiveVessel (vessel);
+			if (vessel != FlightGlobals.ActiveVessel) {
+				FlightGlobals.ForceSetActiveVessel (vessel);
+			}
+
 		}
 
 		internal void BuildAndLaunchCraft ()
@@ -235,7 +267,7 @@ namespace ExLP {
 			craftVessel = FlightVessels[FlightVessels.Count - 1];
 			offset = craftVessel.transform.position - launchTransform.position;
 			craftOffset = launchTransform.InverseTransformDirection (offset);
-			craftVessel.Landed = false;
+			craftVessel.Splashed = craftVessel.Landed = false;
 			SetupCraftResources (craftVessel);
 
 			Staging.beginFlight ();

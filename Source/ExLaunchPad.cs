@@ -188,6 +188,25 @@ namespace ExLP {
 			return v.rootPart.partTransform.TransformPoint (com);
 		}
 
+		private void SetCraftOrbit ()
+		{
+			var mode = OrbitDriver.UpdateMode.UPDATE;
+			craftVessel.orbitDriver.SetOrbitMode (mode);
+
+			var craftCoM = GetVesselWorldCoM (craftVessel);
+			var vesselCoM = GetVesselWorldCoM (vessel);
+			var offset = (Vector3d.zero + craftCoM - vesselCoM).xzy;
+
+			var corb = craftVessel.orbit;
+			var orb = vessel.orbit;
+			var UT = Planetarium.GetUniversalTime ();
+			var body = orb.referenceBody;
+			corb.UpdateFromStateVectors (orb.pos + offset, orb.vel, body, UT);
+
+			Debug.Log (String.Format ("[EL] {0} {1}", orbit(orb), orb.pos));
+			Debug.Log (String.Format ("[EL] {0} {1}", orbit(corb), corb.pos));
+		}
+
 		private IEnumerator<YieldInstruction> CaptureCraft ()
 		{
 			Vector3 pos;
@@ -207,24 +226,9 @@ namespace ExLP {
 				OrbitPhysicsManager.HoldVesselUnpack (2);
 				yield return null;
 			}
-			pos = launchTransform.TransformPoint (craftOffset);
-			craftVessel.SetPosition (pos, true);
 
-			var craftCoM = GetVesselWorldCoM (craftVessel);
-			var vesselCoM = GetVesselWorldCoM (vessel);
-			var offset = (Vector3d.zero + craftCoM - vesselCoM).xzy;
-
-			var mode = OrbitDriver.UpdateMode.UPDATE;
-			craftVessel.orbitDriver.SetOrbitMode (mode);
-			var corb = craftVessel.orbit;
-			var orb = vessel.orbit;
-			var UT = Planetarium.GetUniversalTime ();
-			var body = orb.referenceBody;
-			corb.UpdateFromStateVectors (orb.pos + offset, orb.vel, body, UT);
+			SetCraftOrbit ();
 			craftVessel.GoOffRails ();
-
-			Debug.Log (String.Format ("[EL] {0} {1}", orbit(orb), orb.pos));
-			Debug.Log (String.Format ("[EL] {0} {1}", orbit(corb), corb.pos));
 
 			vesselInfo = new DockedVesselInfo ();
 			vesselInfo.name = craftVessel.vesselName;

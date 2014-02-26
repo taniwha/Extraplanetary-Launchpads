@@ -240,6 +240,7 @@ namespace ExLP {
 				yield return null;
 			}
 
+			FlightGlobals.overrideOrbit = false;
 			SetCraftOrbit ();
 			craftVessel.GoOffRails ();
 
@@ -282,6 +283,7 @@ namespace ExLP {
 
 			FlightGlobals.ForceSetActiveVessel (vessel);
 
+			FlightGlobals.overrideOrbit = true;
 			StartCoroutine (CaptureCraft ());
 		}
 

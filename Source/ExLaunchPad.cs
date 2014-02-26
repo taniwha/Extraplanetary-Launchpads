@@ -207,6 +207,19 @@ namespace ExLP {
 			Debug.Log (String.Format ("[EL] {0} {1}", orbit(corb), corb.pos));
 		}
 
+		private void CoupleWithCraft ()
+		{
+			vesselInfo = new DockedVesselInfo ();
+			vesselInfo.name = craftVessel.vesselName;
+			vesselInfo.vesselType = craftVessel.vesselType;
+			vesselInfo.rootPartUId = craftVessel.rootPart.flightID;
+			craftVessel.rootPart.Couple (part);
+
+			if (vessel != FlightGlobals.ActiveVessel) {
+				FlightGlobals.ForceSetActiveVessel (vessel);
+			}
+		}
+
 		private IEnumerator<YieldInstruction> CaptureCraft ()
 		{
 			Vector3 pos;
@@ -230,16 +243,7 @@ namespace ExLP {
 			SetCraftOrbit ();
 			craftVessel.GoOffRails ();
 
-			vesselInfo = new DockedVesselInfo ();
-			vesselInfo.name = craftVessel.vesselName;
-			vesselInfo.vesselType = craftVessel.vesselType;
-			vesselInfo.rootPartUId = craftVessel.rootPart.flightID;
-			craftVessel.rootPart.Couple (part);
-
-			if (vessel != FlightGlobals.ActiveVessel) {
-				FlightGlobals.ForceSetActiveVessel (vessel);
-			}
-
+			CoupleWithCraft ();
 		}
 
 		internal void BuildAndLaunchCraft ()

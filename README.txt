@@ -26,7 +26,7 @@ Detecting and mining of Ore.
 Processing of Ore into Metal.
 Processing of Metal into RocketParts.
 
-Please report all issues at https://github.com/skykooler/Extraplanetary-Launchpads/issues
+Please report all issues at https://github.com/taniwha-qf/Extraplanetary-Launchpads/issues
 
 Based on the following projects:
 

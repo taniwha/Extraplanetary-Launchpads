@@ -78,13 +78,14 @@ public class ExWorkshop : PartModule
 		data.Get<List<ExWorkshop>> ("sources").Add (this);
 	}
 
-	private float KerbalContribution (Kerbal kerbal)
+	private float KerbalContribution (string name, float stupidity,
+									  float courage, bool isBadass)
 	{
-		float s = kerbal.stupidity;
-		float c = kerbal.courage;
+		float s = stupidity;
+		float c = courage;
 		float contribution;
 		
-		if (kerbal.isBadass) {
+		if (isBadass) {
 			float a = -2;
 			float v = 2 * (1 - s);
 			float y = 1 - 2 * s;
@@ -93,8 +94,7 @@ public class ExWorkshop : PartModule
 			contribution = 1 - s * (1 + c * c);
 		}
 		Debug.Log (String.Format ("[EL Workshop] Kerbal: {0} {1} {2} {3} {4}",
-								  kerbal.name, s, c, kerbal.isBadass,
-								  contribution));
+								  name, s, c, isBadass, contribution));
 		return contribution;
 	}
 
@@ -102,11 +102,8 @@ public class ExWorkshop : PartModule
 	{
 		float kh = 0;
 		foreach (var crew in part.protoModuleCrew) {
-			if (crew.KerbalRef != null) {
-				kh += KerbalContribution (crew.KerbalRef);
-			} else {
-				Debug.Log (String.Format ("[EL Workshop] empty seat"));
-			}
+			kh += KerbalContribution (crew.name, crew.stupidity, crew.courage,
+									  crew.isBadass);
 		}
 		Productivity = kh * ProductivityFactor;
 	}

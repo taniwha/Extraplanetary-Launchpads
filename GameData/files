@@ -40,6 +40,10 @@ ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/hcrpsmall.cfg
 ExtraplanetaryLaunchpads/Parts/OrbitalDock/Metal.png
 ExtraplanetaryLaunchpads/Parts/OrbitalDock/part.cfg
 ExtraplanetaryLaunchpads/Parts/OrbitalDock/OrbitalDock.mu
+ExtraplanetaryLaunchpads/Parts/Workshop/Hull.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Hatch.png
+ExtraplanetaryLaunchpads/Parts/Workshop/part.cfg
+ExtraplanetaryLaunchpads/Parts/Workshop/workshop.mu
 ExtraplanetaryLaunchpads/Parts/smelter/model.mu
 ExtraplanetaryLaunchpads/Parts/smelter/part.cfg
 ExtraplanetaryLaunchpads/Parts/smelter/model002.mbm

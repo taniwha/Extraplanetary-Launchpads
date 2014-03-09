@@ -552,8 +552,7 @@ namespace ExLP {
 			GUILayout.BeginHorizontal ();
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("Close")) {
-				gui_enabled = false;
-				onHideUI ();
+				HideGUI ();
 			}
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();

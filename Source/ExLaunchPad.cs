@@ -64,6 +64,11 @@ namespace ExLP {
 			get;
 			private set;
 		}
+		public bool paused
+		{
+			get;
+			private set;
+		}
 
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
@@ -80,9 +85,21 @@ namespace ExLP {
 			return false;
 		}
 
+		public void PauseBuild ()
+		{
+			if (state == State.Building) {
+				paused = true;
+			}
+		}
+
+		public void ResumeBuild ()
+		{
+			paused = false;
+		}
+
 		public bool isActive ()
 		{
-			return state == State.Building;
+			return (state == State.Building) && !paused;
 		}
 
 		public void DoWork (double kerbalHours)
@@ -309,6 +326,7 @@ namespace ExLP {
 				builtStuff = getBuildCost (craftConfig);
 				if (timed_builds) {
 					state = State.Building;
+					paused = false;
 				} else {
 					BuildAndLaunchCraft ();
 					state = State.Complete;
@@ -332,6 +350,7 @@ namespace ExLP {
 				builtStuff.Save (bs);
 			}
 			node.AddValue ("state", state);
+			node.AddValue ("paused", paused);
 			if (vesselInfo != null) {
 				ConfigNode vi = node.AddNode ("DockedVesselInfo");
 				vesselInfo.Save (vi);
@@ -390,6 +409,12 @@ namespace ExLP {
 			if (node.HasValue ("state")) {
 				var s = node.GetValue ("state");
 				state = (State) Enum.Parse (typeof (State), s);
+			}
+			if (node.HasValue ("paused")) {
+				var s = node.GetValue ("paused");
+				bool p = false;
+				bool.TryParse (s, out p);
+				paused = p;
 			}
 			if (node.HasNode ("DockedVesselInfo")) {
 				ConfigNode vi = node.GetNode ("DockedVesselInfo");

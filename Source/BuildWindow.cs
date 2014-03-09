@@ -538,6 +538,23 @@ namespace ExLP {
 			return can_build;
 		}
 
+		void PauseButton ()
+		{
+			if (pad.paused) {
+				if (GUILayout.Button ("Resume Build", Styles.normal,
+									  GUILayout.ExpandWidth (true))) {
+					pad.TransferResources ();
+					pad.ResumeBuild ();
+				}
+			} else {
+				if (GUILayout.Button ("Pause Build", Styles.normal,
+									  GUILayout.ExpandWidth (true))) {
+					pad.TransferResources ();
+					pad.PauseBuild ();
+				}
+			}
+		}
+
 		void ReleaseButton ()
 		{
 			if (GUILayout.Button ("Release", Styles.normal,
@@ -585,6 +602,7 @@ namespace ExLP {
 					ResourceScroll_begin ();
 					BuildProgress ();
 					ResourceScroll_end ();
+					PauseButton ();
 					break;
 				case ExLaunchPad.State.Complete:
 					SelectedCraft ();

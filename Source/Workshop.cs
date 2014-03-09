@@ -165,10 +165,12 @@ public class ExWorkshop : PartModule
 					num_sinks++;
 				}
 			}
-			double work = hours / num_sinks;
-			foreach (var sink in sinks) {
-				if (sink.isActive ()) {
-					sink.DoWork (work);
+			if (num_sinks > 0) {
+				double work = hours / num_sinks;
+				foreach (var sink in sinks) {
+					if (sink.isActive ()) {
+						sink.DoWork (work);
+					}
 				}
 			}
 		}

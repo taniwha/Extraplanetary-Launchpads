@@ -48,7 +48,12 @@ namespace ExLP {
 				PartResourceDefinition res_def;
 				res_def = PartResourceLibrary.Instance.GetDefinition (name);
 				density = res_def.density;
-				amount = mass / density;
+				if (density > 0) {
+					amount = mass / density;
+				} else {
+					amount = mass;
+					mass = 0;
+				}
 				hull = isHullResource (res_def);
 				kerbalHours = KerbalHours (mass);
 			}

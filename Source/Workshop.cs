@@ -77,6 +77,9 @@ public class ExWorkshop : PartModule
 	[KSPEvent (guiActive=false, active = true)]
 	void ExDiscoverWorkshops (BaseEventData data)
 	{
+		if (!functional) {
+			return;
+		}
 		// Even the master workshop is its own slave.
 		//Debug.Log (String.Format ("[EL Workshop] slave"));
 		master = data.Get<ExWorkshop> ("master");

@@ -25,6 +25,7 @@ public class ExWorkshop : PartModule
 	private ExWorkshop master;
 	private List<ExWorkshop> sources;
 	private List<ExWorkSink> sinks;
+	private bool functional;
 
 	public override string GetInfo ()
 	{
@@ -39,7 +40,7 @@ public class ExWorkshop : PartModule
 		}
 		foreach (Part p in part.children) {
 			shop = findFirstWorkshop (p);
-			if (shop != null) {
+			if (shop != null && shop.functional) {
 				return shop;
 			}
 		}
@@ -114,6 +115,8 @@ public class ExWorkshop : PartModule
 
 		if (p != part)
 			return;
+		//Debug.Log (String.Format ("[EL Workshop] board: {0} {1}",
+		//						  ft.from, ft.to));
 		DetermineProductivity ();
 	}
 
@@ -123,14 +126,21 @@ public class ExWorkshop : PartModule
 
 		if (p != part)
 			return;
+		//Debug.Log (String.Format ("[EL Workshop] EVA: {0} {1}",
+		//						  ft.from, ft.to));
 		DetermineProductivity ();
 	}
 
 	public override void OnLoad (ConfigNode node)
 	{
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
-			GameEvents.onCrewBoardVessel.Add (onCrewBoard);
-			GameEvents.onCrewOnEva.Add (onCrewEVA);
+			if (part.CrewCapacity > 0) {
+				GameEvents.onCrewBoardVessel.Add (onCrewBoard);
+				GameEvents.onCrewOnEva.Add (onCrewEVA);
+				functional = true;
+			} else {
+				functional = false;
+			}
 		}
 	}
 
@@ -142,6 +152,9 @@ public class ExWorkshop : PartModule
 
 	public override void OnStart (PartModule.StartState state)
 	{
+		if (!functional) {
+			return;
+		}
 		if (state == PartModule.StartState.None
 			|| state == PartModule.StartState.Editor)
 			return;

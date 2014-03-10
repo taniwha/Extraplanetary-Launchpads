@@ -22,10 +22,14 @@ public class ExWorkshop : PartModule
 	[KSPField (guiName = "Productivity", guiActive = true)]
 	public float Productivity;
 
+	[KSPField (guiName = "Vessel Productivity", guiActive = true)]
+	public float GlobalProductivity;
+
 	private ExWorkshop master;
 	private List<ExWorkshop> sources;
 	private List<ExWorkSink> sinks;
 	private bool functional;
+	private float vessel_productivity;
 
 	public override string GetInfo ()
 	{
@@ -153,6 +157,7 @@ public class ExWorkshop : PartModule
 	public override void OnStart (PartModule.StartState state)
 	{
 		if (!functional) {
+			enabled = false;
 			return;
 		}
 		if (state == PartModule.StartState.None
@@ -163,12 +168,19 @@ public class ExWorkshop : PartModule
 		part.force_activate ();
 	}
 
+	private void Update ()
+	{
+		GlobalProductivity = master.vessel_productivity;
+	}
+
 	public override void OnFixedUpdate ()
 	{
 		if (this == master) {
 			double hours = 0;
+			vessel_productivity = 0;
 			foreach (var source in sources) {
 				hours += source.GetProductivity ();
+				vessel_productivity += source.Productivity;
 			}
 			//Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
 			//						  hours));

@@ -69,6 +69,19 @@ public class ExWorkshop : PartModule
 		}
 	}
 
+	private IEnumerator<YieldInstruction> UpdateNetwork ()
+	{
+		yield return null;
+		DiscoverWorkshops ();
+	}
+
+	private void onVesselWasModified (Vessel v)
+	{
+		if (v == vessel) {
+			StartCoroutine (UpdateNetwork ());
+		}
+	}
+
 	private double GetProductivity ()
 	{
 		return Productivity * TimeWarp.fixedDeltaTime / 3600;
@@ -144,6 +157,7 @@ public class ExWorkshop : PartModule
 			if (part.CrewCapacity > 0) {
 				GameEvents.onCrewBoardVessel.Add (onCrewBoard);
 				GameEvents.onCrewOnEva.Add (onCrewEVA);
+				GameEvents.onVesselWasModified.Add (onVesselWasModified);
 				functional = true;
 			} else {
 				functional = false;
@@ -155,6 +169,7 @@ public class ExWorkshop : PartModule
 	{
 		GameEvents.onCrewBoardVessel.Remove (onCrewBoard);
 		GameEvents.onCrewOnEva.Remove (onCrewEVA);
+		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 
 	public override void OnStart (PartModule.StartState state)

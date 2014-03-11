@@ -23,7 +23,7 @@ public class ExWorkshop : PartModule
 	public float Productivity;
 
 	[KSPField (guiName = "Vessel Productivity", guiActive = true)]
-	public float GlobalProductivity;
+	public float VesselProductivity;
 
 	private ExWorkshop master;
 	private List<ExWorkshop> sources;
@@ -39,12 +39,12 @@ public class ExWorkshop : PartModule
 	private static ExWorkshop findFirstWorkshop (Part part)
 	{
 		var shop = part.Modules.OfType<ExWorkshop> ().FirstOrDefault ();
-		if (shop != null) {
+		if (shop != null && shop.functional) {
 			return shop;
 		}
 		foreach (Part p in part.children) {
 			shop = findFirstWorkshop (p);
-			if (shop != null && shop.functional) {
+			if (shop != null) {
 				return shop;
 			}
 		}
@@ -161,6 +161,8 @@ public class ExWorkshop : PartModule
 				functional = true;
 			} else {
 				functional = false;
+				Fields["Productivity"].guiActive = false;
+				Fields["VesselProductivity"].guiActive = false;
 			}
 		}
 	}
@@ -188,7 +190,7 @@ public class ExWorkshop : PartModule
 
 	private void Update ()
 	{
-		GlobalProductivity = master.vessel_productivity;
+		VesselProductivity = master.vessel_productivity;
 	}
 
 	public override void OnFixedUpdate ()

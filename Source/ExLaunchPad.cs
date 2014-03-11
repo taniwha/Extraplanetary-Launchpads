@@ -25,7 +25,7 @@ namespace ExLP {
 		public static bool use_resources;
 
 		public enum CraftType { VAB, SPH, SubAss };
-		public enum State { Idle, Planning, Building, Complete };
+		public enum State { Idle, Planning, Building, Dewarping, Complete };
 
 		public CraftType craftType = CraftType.VAB;
 
@@ -102,6 +102,22 @@ namespace ExLP {
 			return (state == State.Building) && !paused;
 		}
 
+		private IEnumerator<YieldInstruction> DewarpAndBuildCraft ()
+		{
+			state = State.Dewarping;
+			Debug.Log (String.Format ("[EL Launchpad] dewarp"));
+			TimeWarp.SetRate (0, false);
+			while (vessel.packed) {
+				yield return null;
+			}
+			if (!vessel.LandedOrSplashed) {
+				while (vessel.geeForce > 0.1) {
+					yield return null;
+				}
+			}
+			BuildAndLaunchCraft ();
+		}
+
 		public void DoWork (double kerbalHours)
 		{
 			var required = builtStuff.required;
@@ -140,8 +156,7 @@ namespace ExLP {
 			} while (did_work && kerbalHours > 0);
 
 			if (count == 0) {
-				BuildAndLaunchCraft ();
-				state = State.Complete;
+				StartCoroutine (DewarpAndBuildCraft ());
 			}
 		}
 
@@ -262,9 +277,10 @@ namespace ExLP {
 			craftVessel.GoOffRails ();
 
 			CoupleWithCraft ();
+			state = State.Complete;
 		}
 
-		internal void BuildAndLaunchCraft ()
+		private void BuildAndLaunchCraft ()
 		{
 			// build craft
 			ShipConstruct nship = new ShipConstruct ();
@@ -328,8 +344,7 @@ namespace ExLP {
 					state = State.Building;
 					paused = false;
 				} else {
-					BuildAndLaunchCraft ();
-					state = State.Complete;
+					StartCoroutine (DewarpAndBuildCraft ());
 				}
 			}
 		}

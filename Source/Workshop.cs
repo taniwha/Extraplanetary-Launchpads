@@ -15,9 +15,11 @@ public interface ExWorkSink
 
 public class ExWorkshop : PartModule
 {
-
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
+
+	[KSPField]
+	public bool IgnoreCrewCapacity = false;
 
 	[KSPField (guiName = "Productivity", guiActive = true)]
 	public float Productivity;
@@ -154,7 +156,7 @@ public class ExWorkshop : PartModule
 	public override void OnLoad (ConfigNode node)
 	{
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
-			if (part.CrewCapacity > 0) {
+			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
 				GameEvents.onCrewBoardVessel.Add (onCrewBoard);
 				GameEvents.onCrewOnEva.Add (onCrewEVA);
 				GameEvents.onVesselWasModified.Add (onVesselWasModified);

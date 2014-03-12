@@ -180,7 +180,6 @@ namespace ExLP {
 				launchPos.transform.position += t.TransformDirection (offset);
 				launchPos.transform.rotation = t.rotation;
 				launchTransform = launchPos.transform;
-				Destroy (launchPos);
 				//Debug.Log (String.Format ("[EL] launchPos {0}",
 				//						  launchTransform));
 			}

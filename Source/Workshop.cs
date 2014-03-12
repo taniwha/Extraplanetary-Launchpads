@@ -19,7 +19,7 @@ public class ExWorkshop : PartModule
 	public float ProductivityFactor = 1.0f;
 
 	[KSPField]
-	public bool IgnoreCrewCapacity = false;
+	public bool IgnoreCrewCapacity = true;
 
 	[KSPField (guiName = "Productivity", guiActive = true)]
 	public float Productivity;

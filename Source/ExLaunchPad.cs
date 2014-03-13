@@ -72,6 +72,7 @@ namespace ExLP {
 
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
+		Part craftRoot;
 		Vessel craftVessel;
 		Vector3 craftOffset;
 
@@ -240,11 +241,12 @@ namespace ExLP {
 
 		private void CoupleWithCraft ()
 		{
+			craftRoot = craftVessel.rootPart;
 			vesselInfo = new DockedVesselInfo ();
 			vesselInfo.name = craftVessel.vesselName;
 			vesselInfo.vesselType = craftVessel.vesselType;
-			vesselInfo.rootPartUId = craftVessel.rootPart.flightID;
-			craftVessel.rootPart.Couple (part);
+			vesselInfo.rootPartUId = craftRoot.flightID;
+			craftRoot.Couple (part);
 
 			if (vessel != FlightGlobals.ActiveVessel) {
 				FlightGlobals.ForceSetActiveVessel (vessel);
@@ -381,8 +383,8 @@ namespace ExLP {
 		internal List<Part> CraftParts ()
 		{
 			var part_list = new List<Part> ();
-			if (vesselInfo != null) {
-				var root = vessel[vesselInfo.rootPartUId];
+			if (craftRoot != null) {
+				var root = craftRoot;
 				Debug.Log (String.Format ("[EL] CraftParts root {0}", root));
 				part_list.Add (root);
 				part_list.AddRange (root.FindChildParts<Part> (true));
@@ -457,6 +459,9 @@ namespace ExLP {
 				use_resources = true;
 			}
 			part.force_activate ();
+			if (vesselInfo != null) {
+				craftRoot = vessel[vesselInfo.rootPartUId];
+			}
 			FindVesselResources ();
 		}
 
@@ -482,9 +487,12 @@ namespace ExLP {
 		[KSPEvent (guiActive = true, guiName = "Release", active = false)]
 		public void ReleaseVessel ()
 		{
-			vessel[vesselInfo.rootPartUId].Undock (vesselInfo);
-			Vessel vsl = FlightGlobals.Vessels[FlightGlobals.Vessels.Count - 1];
-			FlightGlobals.ForceSetActiveVessel (vsl);
+			if (craftRoot != null) {
+				craftRoot.Undock (vesselInfo);
+				var vesselCount = FlightGlobals.Vessels.Count;
+				Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
+				FlightGlobals.ForceSetActiveVessel (vsl);
+			}
 			craftConfig = null;
 			vesselInfo = null;
 			buildCost = null;
@@ -528,6 +536,10 @@ namespace ExLP {
 		{
 			if (v == vessel) {
 				padResources = new VesselResources (vessel);
+				if (craftRoot != null && craftRoot.vessel != vessel) {
+					craftRoot = null;
+					ReleaseVessel ();
+				}
 			}
 		}
 	}

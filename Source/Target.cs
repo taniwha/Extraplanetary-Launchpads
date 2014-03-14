@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,23 +18,9 @@ namespace ExLP {
 		public string TargetTransform;
 		public Transform targetTransform;
 
-		private FieldInfo targetMode;
-
 		public override string GetInfo ()
 		{
 			return "Targetable";
-		}
-
-		public override void OnStart (PartModule.StartState state)
-		{
-			var mask = BindingFlags.NonPublic | BindingFlags.Instance;
-			FieldInfo[] fields = typeof (FlightGlobals).GetFields(mask);
-			foreach (var f in fields) {
-				if (f.FieldType == typeof (FlightGlobals.VesselTargetModes)) {
-					targetMode = f;
-					break;
-				}
-			}
 		}
 
 		// ITargetable interface
@@ -71,6 +56,10 @@ namespace ExLP {
 		{
 			return vessel;
 		}
+		public VesselTargetModes GetTargetingMode ()
+		{
+			return VesselTargetModes.DirectionVelocityAndOrientation;
+		}
 
 		public override void OnLoad (ConfigNode node)
 		{
@@ -97,10 +86,6 @@ namespace ExLP {
 		public void SetAsTarget ()
 		{
 			FlightGlobals.fetch.SetVesselTarget (this);
-			if (targetMode != null) {
-				targetMode.SetValue (FlightGlobals.fetch,
-									 FlightGlobals.VesselTargetModes.DirectionVelocityAndOrientation);
-			}
 		}
 
 		[KSPEvent (guiName = "Unset Target", guiActiveUnfocused = true,

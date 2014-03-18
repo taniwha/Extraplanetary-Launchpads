@@ -345,6 +345,9 @@ namespace ExLP {
 					state = State.Building;
 					paused = false;
 				} else {
+					foreach (var res in builtStuff.required) {
+						padResources.TransferResource (res.name, -res.amount);
+					}
 					StartCoroutine (DewarpAndBuildCraft ());
 				}
 			}

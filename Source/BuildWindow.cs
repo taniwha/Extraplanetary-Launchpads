@@ -527,8 +527,10 @@ namespace ExLP {
 						other = "LiquidFuel";
 					}
 					var or = FindResource (pad.buildCost.optional, other);
-					double om = pad.craftResources.ResourceCapacity (other);
-					or.amount = om * frac;
+					if (or != null) {
+						double om = pad.craftResources.ResourceCapacity (other);
+						or.amount = om * frac;
+					}
 				}
 				br.amount = maximum * frac;
 				if (br.amount > available) {

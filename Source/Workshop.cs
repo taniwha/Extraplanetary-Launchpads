@@ -9,7 +9,7 @@ namespace ExLP {
 
 public interface ExWorkSink
 {
-	void DoWork (double kerbalHourse);
+	void DoWork (double kerbalHours);
 	bool isActive ();
 }
 

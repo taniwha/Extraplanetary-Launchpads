@@ -123,6 +123,7 @@ public class ExRecycler : PartModule
 		foreach (string resource in scrap.resources.Keys) {
 			amount = scrap.ResourceAmount (resource);
 			mass += ReclaimResource (resource, amount, v.name);
+			scrap.TransferResource (resource, -amount);
 		}
 		float hull_mass = v.GetTotalMass ();
 		amount = hull_mass * ConversionEfficiency / rp_def.density;

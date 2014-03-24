@@ -19,6 +19,22 @@ public class ExRecycler : PartModule
 		return "Recycler:\n" + String.Format ("rate: {0}t/s", RecycleRate);
 	}
 
+	public bool CanRecycle (Vessel vsl)
+	{
+		if (vsl == null || vsl == vessel) {
+			// avoid oroboro
+			return false;
+		}
+		foreach (Part p in vsl.parts) {
+			// Don't try to recycle an asteroid or any vessel attached to
+			// an asteroid.
+			if (p.Modules.Contains ("ModuleAsteroid")) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void OnTriggerStay (Collider col)
 	{
 		if (!recyclerActive
@@ -28,7 +44,7 @@ public class ExRecycler : PartModule
 			return;
 		Part p = col.attachedRigidbody.GetComponent<Part>();
 		//Debug.Log (String.Format ("[EL] {0}", p));
-		if (p != null && p.vessel != null && p.vessel != vessel) {
+		if (p != null && CanRecycle (p.vessel)) {
 			float mass;
 			if (p.vessel.isEVA) {
 				mass = RecycleKerbal (p.vessel.GetVesselCrew ()[0], p);

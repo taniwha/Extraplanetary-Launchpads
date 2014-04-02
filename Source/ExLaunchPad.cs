@@ -25,7 +25,7 @@ namespace ExLP {
 		public static bool use_resources;
 
 		public enum CraftType { VAB, SPH, SubAss };
-		public enum State { Idle, Planning, Building, Dewarping, Complete };
+		public enum State { Idle, Planning, Building, Dewarping, Complete, Transfer };
 
 		public CraftType craftType = CraftType.VAB;
 
@@ -117,7 +117,10 @@ namespace ExLP {
 					yield return null;
 				}
 			}
-			BuildAndLaunchCraft ();
+			state = State.Complete;
+			if (!timed_builds) {
+				BuildAndLaunchCraft ();
+			}
 		}
 
 		void SetPadMass ()
@@ -298,10 +301,10 @@ namespace ExLP {
 			part.mass = base_mass;
 
 			CoupleWithCraft ();
-			state = State.Complete;
+			state = State.Transfer;
 		}
 
-		private void BuildAndLaunchCraft ()
+		internal void BuildAndLaunchCraft ()
 		{
 			// build craft
 			ShipConstruct nship = new ShipConstruct ();

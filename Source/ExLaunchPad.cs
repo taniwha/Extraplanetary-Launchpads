@@ -75,6 +75,7 @@ namespace ExLP {
 		Part craftRoot;
 		Vessel craftVessel;
 		Vector3 craftOffset;
+		float base_mass;
 
 		private static bool CheckForKethane ()
 		{
@@ -119,6 +120,21 @@ namespace ExLP {
 			BuildAndLaunchCraft ();
 		}
 
+		void SetPadMass ()
+		{
+			double mass = 0;
+			if (builtStuff != null && buildCost!= null) {
+				var built = builtStuff.required;
+				var cost = buildCost.required;
+
+				foreach (var bres in built) {
+					var cres = ExBuildWindow.FindResource (cost, bres.name);
+					mass += (cres.amount - bres.amount) * bres.density;
+				}
+			}
+			part.mass = base_mass + (float) mass;
+		}
+
 		public void DoWork (double kerbalHours)
 		{
 			var required = builtStuff.required;
@@ -155,6 +171,8 @@ namespace ExLP {
 					padResources.TransferResource (res.name, -amount);
 				}
 			} while (did_work && kerbalHours > 0);
+
+			SetPadMass ();
 
 			if (count == 0) {
 				StartCoroutine (DewarpAndBuildCraft ());
@@ -277,6 +295,8 @@ namespace ExLP {
 			SetCraftOrbit ();
 			craftVessel.GoOffRails ();
 
+			part.mass = base_mass;
+
 			CoupleWithCraft ();
 			state = State.Complete;
 		}
@@ -356,6 +376,7 @@ namespace ExLP {
 		public override void OnSave (ConfigNode node)
 		{
 			node.AddValue ("flagname", flagname);
+			node.AddValue ("baseMass", base_mass);
 			if (craftConfig != null) {
 				craftConfig.name = "CraftConfig";
 				node.AddNode (craftConfig);
@@ -414,6 +435,11 @@ namespace ExLP {
 		public override void OnLoad (ConfigNode node)
 		{
 			flagname = node.GetValue ("flagname");
+			if (node.HasValue ("baseMass")) {
+				float.TryParse (node.GetValue ("baseMass"), out base_mass);
+			} else {
+				base_mass = part.mass;
+			}
 			craftConfig = node.GetNode ("CraftConfig");
 			if (node.HasNode ("BuildCost")) {
 				var bc = node.GetNode ("BuildCost");
@@ -466,6 +492,7 @@ namespace ExLP {
 				craftRoot = vessel[vesselInfo.rootPartUId];
 			}
 			FindVesselResources ();
+			SetPadMass ();
 		}
 
 		void OnDestroy ()

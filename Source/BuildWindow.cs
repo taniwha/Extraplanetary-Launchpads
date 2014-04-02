@@ -492,7 +492,7 @@ namespace ExLP {
 			}
 		}
 
-		static BuildCost.BuildResource FindResource (List<BuildCost.BuildResource> reslist, string name)
+		internal static BuildCost.BuildResource FindResource (List<BuildCost.BuildResource> reslist, string name)
 		{
 			return reslist.Where(r => r.name == name).FirstOrDefault ();
 		}

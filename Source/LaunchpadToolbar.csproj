@@ -20,7 +20,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -29,22 +28,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <ProjectReference Include="Launchpad.csproj">
       <Project>{80164A54-FEBD-4777-95A7-FFAB8885DBBD}</Project>
-      <Name>Kethane</Name>
+      <Name>Launchpad</Name>
+      <Private>False</Private>
     </ProjectReference>
-    <Reference Include="Toolbar">
-      <HintPath>\home\bill\ksp\KSP_linux\GameData\000_Toolbar\Toolbar.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>\home\bill\ksp\KSP_linux\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>\home\bill\ksp\KSP_linux\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="aaa_Toolbar">
+      <HintPath>\home\bill\ksp\KSP_linux\GameData\000_Toolbar\Toolbar.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -54,8 +56,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-		mkdir -p \home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins
-		cp "$(TargetPath)" "\home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins"
-	</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>build\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,7 +31,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>build\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -40,11 +40,15 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BuildCost.cs" />
+    <Compile Include="BuildWindow.cs" />
+    <Compile Include="DropDownList.cs" />
     <Compile Include="ExLaunchPad.cs" />
+    <Compile Include="ProgressBar.cs" />
     <Compile Include="Recycler.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ShipInfo.cs" />
+    <Compile Include="StrutFixer.cs" />
     <Compile Include="Target.cs" />
     <Compile Include="Workshop.cs" />
   </ItemGroup>
@@ -52,16 +56,16 @@
     <Reference Include="System" />
     <Reference Include="Assembly-CSharp">
       <HintPath>\home\bill\ksp\KSP_linux\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>\home\bill\ksp\KSP_linux\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-		mkdir -p \home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins
-		cp "$(TargetPath)" "\home\bill\ksp\KSP_linux\GameData\ExtraplanetaryLaunchpads\Plugins"
-	</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

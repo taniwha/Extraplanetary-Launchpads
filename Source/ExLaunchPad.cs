@@ -301,7 +301,9 @@ namespace ExLP {
 			part.mass = base_mass;
 
 			CoupleWithCraft ();
-			state = State.Transfer;
+			if (timed_builds) {
+				state = State.Transfer;
+			}
 		}
 
 		internal void BuildAndLaunchCraft ()

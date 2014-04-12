@@ -517,7 +517,6 @@ namespace ExLP {
 			ExBuildWindow.SelectPad (this);
 		}
 
-		[KSPEvent (guiActive = true, guiName = "Release", active = false)]
 		public void ReleaseVessel ()
 		{
 			if (craftRoot != null) {

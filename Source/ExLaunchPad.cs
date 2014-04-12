@@ -338,9 +338,9 @@ namespace ExLP {
 			craftVessel.Splashed = craftVessel.Landed = false;
 			SetupCraftResources (craftVessel);
 
-			Staging.beginFlight ();
+			FlightGlobals.ForceSetActiveVessel (craftVessel);
 
-			FlightGlobals.ForceSetActiveVessel (vessel);
+			Staging.beginFlight ();
 
 			FlightGlobals.overrideOrbit = true;
 			StartCoroutine (CaptureCraft ());

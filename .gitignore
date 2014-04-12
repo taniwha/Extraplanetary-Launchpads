@@ -10,3 +10,4 @@
 *.blend?
 build
 obj
+bin

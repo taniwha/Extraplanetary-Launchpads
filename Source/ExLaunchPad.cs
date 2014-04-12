@@ -379,7 +379,9 @@ namespace ExLP {
 		public override void OnSave (ConfigNode node)
 		{
 			node.AddValue ("flagname", flagname);
-			node.AddValue ("baseMass", base_mass);
+			if (base_mass != 0) {
+				node.AddValue ("baseMass", base_mass);
+			}
 			if (craftConfig != null) {
 				craftConfig.name = "CraftConfig";
 				node.AddNode (craftConfig);

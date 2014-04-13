@@ -70,6 +70,13 @@ namespace ExLP {
 			private set;
 		}
 
+		public static bool useResources
+		{
+			get {
+				return kethane_present || force_resource_use;
+			}
+		}
+
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
 		Part craftRoot;
@@ -220,10 +227,15 @@ namespace ExLP {
 		internal void TransferResources ()
 		{
 			foreach (var br in buildCost.optional) {
-				var a = padResources.TransferResource (br.name, -br.amount);
-				a += br.amount;
-				var b = craftResources.TransferResource (br.name, a);
-				padResources.TransferResource (br.name, b);
+				if (useResources) {
+					var a = padResources.TransferResource (br.name,
+														   -br.amount);
+					a += br.amount;
+					var b = craftResources.TransferResource (br.name, a);
+					padResources.TransferResource (br.name, b);
+				} else {
+					craftResources.TransferResource (br.name, br.amount);
+				}
 			}
 		}
 
@@ -370,8 +382,11 @@ namespace ExLP {
 					state = State.Building;
 					paused = false;
 				} else {
-					foreach (var res in builtStuff.required) {
-						padResources.TransferResource (res.name, -res.amount);
+					if (useResources) {
+						foreach (var res in builtStuff.required) {
+							padResources.TransferResource (res.name,
+														   -res.amount);
+						}
 					}
 					StartCoroutine (DewarpAndBuildCraft ());
 				}

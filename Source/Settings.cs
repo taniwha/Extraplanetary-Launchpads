@@ -91,7 +91,7 @@ namespace ExLP {
 			var rect = new Rect(Screen.width / 2 - 250, Screen.height / 2 - 30,
 								500, 100);
 
-			GUI.skin = AssetBase.GetGUISkin("KSP window 2");
+			GUI.skin = HighLogic.Skin;
 
 			GUILayout.BeginArea(rect, "Extraplanetary Launchpads Settings",
 								GUI.skin.window);

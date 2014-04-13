@@ -34,7 +34,11 @@ GIT		:= git
 TAR		:= tar
 ZIP		:= zip
 
-all: ${TARGETS}
+all: version ${TARGETS}
+
+.PHONY: version
+version:
+	@./git-version.sh
 
 info:
 	@echo "Extraplanetary Launchpads Build Information"
@@ -58,7 +62,7 @@ LaunchpadToolbar.dll: ${ELTB_FILES} Launchpad.dll
 		-out:$@ ${ELTB_FILES}
 
 clean:
-	rm -f ${TARGETS}
+	rm -f ${TARGETS} AssemblyInfoToolbar.cs AssemblyInfo.cs
 
 install: all
 	mkdir -p ${PLUGINDIR}

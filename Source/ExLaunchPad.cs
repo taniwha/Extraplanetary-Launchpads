@@ -79,7 +79,7 @@ namespace ExLP {
 
 		private static bool CheckForKethane ()
 		{
-			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "MMI_Kethane" || a.assembly.GetName ().Name == "Kethane")) {
+			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "Kethane")) {
 				//Debug.Log ("[EL] Kethane found");
 				return true;
 			}

@@ -637,7 +637,8 @@ namespace ExLP {
 					bool have_required = RequiredResources ();
 					bool have_optional = OptionalResources ();
 					ResourceScroll_end ();
-					if (have_required && have_optional) {
+					if (!ExLaunchPad.useResources
+						|| (have_required && have_optional)) {
 						BuildButton ();
 					}
 					break;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using UnityEngine;
 
@@ -673,13 +674,28 @@ namespace ExLP {
 			craftlist = null;
 		}
 
+		static string GetVersion ()
+		{
+			var asm = Assembly.GetCallingAssembly ();
+			var cattrs = asm.GetCustomAttributes(true);
+			foreach (var attr in cattrs) {
+				if (attr is AssemblyInformationalVersionAttribute) {
+					var ver = attr as AssemblyInformationalVersionAttribute;
+					return ver.InformationalVersion;
+				}
+			}
+			return asm.GetName().Version.ToString ();
+		}
+
 		void OnGUI ()
 		{
 			GUI.skin = HighLogic.Skin;
+			string name = "Extraplanetary Launchpad";
+			string ver = GetVersion ();
 			string sit = pad.vessel.situation.ToString ();
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,
-										  "Extraplanetary Launchpad: " + sit,
+										  name + " " + ver + ": " + sit,
 										  GUILayout.Width (640));
 			if (craftlist != null) {
 				craftlist.OnGUI ();

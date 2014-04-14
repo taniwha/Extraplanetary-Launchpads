@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using UnityEngine;
 
@@ -8,6 +9,28 @@ using KSP.IO;
 namespace ExLP {
 	public class ExSettings : ScenarioModule
 	{
+		static string version = null;
+		public static string GetVersion ()
+		{
+			if (version == null) {
+				return version;
+			}
+
+			var asm = Assembly.GetCallingAssembly ();
+			version =  asm.GetName().Version.ToString ();
+
+			var cattrs = asm.GetCustomAttributes(true);
+			foreach (var attr in cattrs) {
+				if (attr is AssemblyInformationalVersionAttribute) {
+					var ver = attr as AssemblyInformationalVersionAttribute;
+					version = ver.InformationalVersion;
+					break;
+				}
+			}
+
+			return version;
+		}
+
 		public static ExSettings current
 		{
 			get {
@@ -93,8 +116,9 @@ namespace ExLP {
 
 			GUI.skin = HighLogic.Skin;
 
-			GUILayout.BeginArea(rect, "Extraplanetary Launchpads Settings",
-								GUI.skin.window);
+			string name = "Extraplanetary Launchpads Settings: ";
+			string ver = GetVersion ();
+			GUILayout.BeginArea(rect, name + ver, GUI.skin.window);
 			GUILayout.BeginVertical ();
 
 			if (!ExLaunchPad.kethane_present) {

@@ -180,8 +180,9 @@ namespace ExLP {
 				winpos.width = 300;
 				winpos.height = 100;
 			}
+			string ver = ExSettings.GetVersion ();
 			winpos = GUILayout.Window (GetInstanceID (), winpos, InfoWindow,
-									  "Build Resources",
+									  "Build Resources: " + ver,
 									  GUILayout.MinWidth (200));
 		}
 

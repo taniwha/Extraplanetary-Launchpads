@@ -12,7 +12,7 @@ namespace ExLP {
 		static string version = null;
 		public static string GetVersion ()
 		{
-			if (version == null) {
+			if (version != null) {
 				return version;
 			}
 

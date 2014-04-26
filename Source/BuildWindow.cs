@@ -492,7 +492,7 @@ namespace ExLP {
 			}
 		}
 
-		void FinalizeButton ()
+		void SpawnOffset ()
 		{
 			if (pad.vessel.situation == Vessel.Situations.LANDED) {
 				GUILayout.BeginVertical();
@@ -516,7 +516,10 @@ namespace ExLP {
 			} else {
 				pad.SpawnHeightOffset = 0.0f;
 			}
-			
+		}
+
+		void FinalizeButton ()
+		{
 			if (GUILayout.Button ("Finalize Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				pad.BuildAndLaunchCraft ();
@@ -638,6 +641,7 @@ namespace ExLP {
 					PauseButton ();
 					break;
 				case ExLaunchPad.State.Complete:
+					SpawnOffset ();
 					FinalizeButton ();
 					break;
 				case ExLaunchPad.State.Transfer:
@@ -660,6 +664,7 @@ namespace ExLP {
 					bool have_required = RequiredResources ();
 					bool have_optional = OptionalResources ();
 					ResourceScroll_end ();
+					SpawnOffset ();
 					if (!ExLaunchPad.useResources
 						|| (have_required && have_optional)) {
 						BuildButton ();

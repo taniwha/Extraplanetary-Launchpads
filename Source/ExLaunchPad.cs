@@ -28,6 +28,7 @@ namespace ExLP {
 		public enum State { Idle, Planning, Building, Dewarping, Complete, Transfer };
 
 		public CraftType craftType = CraftType.VAB;
+		public float spawnOffset = 0;
 
 		public string flagname
 		{
@@ -202,7 +203,7 @@ namespace ExLP {
 				//Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
 				//						  launchTransform, SpawnTransform));
 			} else {
-				Vector3 offset = Vector3.up * SpawnHeightOffset;
+				Vector3 offset = Vector3.up * (SpawnHeightOffset + spawnOffset);
 				Transform t = this.part.transform;
 				GameObject launchPos = new GameObject ();
 				launchPos.transform.position = t.position;

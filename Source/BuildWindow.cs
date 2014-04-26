@@ -500,14 +500,12 @@ namespace ExLP {
 				GUILayout.BeginHorizontal();
 				GUILayout.Box("Spawn Height Offset", Styles.white,
 							  GUILayout.Width(180), GUILayout.Height(40));
-				pad.SpawnHeightOffset = GUILayout.HorizontalSlider(pad.SpawnHeightOffset, 0.0F, 10.0F,
-													   Styles.slider,
-													   GUI.skin.horizontalSliderThumb,
-													   GUILayout.Width(300),
-													   GUILayout.Height(40));
-				pad.SpawnHeightOffset = (float)Math.Round(pad.SpawnHeightOffset, 1);
-				GUILayout.Box(pad.SpawnHeightOffset.ToString() + " meters",
-							  Styles.white, GUILayout.Width(200),
+				pad.spawnOffset = GUILayout.HorizontalSlider(pad.spawnOffset,
+					0.0F, 10.0F, Styles.slider, GUI.skin.horizontalSliderThumb,
+					GUILayout.Width(300), GUILayout.Height(40));
+				pad.spawnOffset = (float)Math.Round(pad.spawnOffset, 1);
+				GUILayout.Box(pad.spawnOffset.ToString() + "m",
+							  Styles.white, GUILayout.Width(75),
 							  GUILayout.Height(40));
 				GUILayout.FlexibleSpace();
 

@@ -10,6 +10,7 @@ namespace ExLP {
 	public class ExSettings : ScenarioModule
 	{
 		static string version = null;
+		static Rect windowpos;
 		public static string GetVersion ()
 		{
 			if (version != null) {
@@ -109,16 +110,8 @@ namespace ExLP {
 			enabled = false;
 		}
 
-		void OnGUI ()
+		void WindowGUI (int windowID)
 		{
-			var rect = new Rect(Screen.width / 2 - 250, Screen.height / 2 - 30,
-								500, 100);
-
-			GUI.skin = HighLogic.Skin;
-
-			string name = "Extraplanetary Launchpads Settings: ";
-			string ver = GetVersion ();
-			GUILayout.BeginArea(rect, name + ver, GUI.skin.window);
 			GUILayout.BeginVertical ();
 
 			if (!ExLaunchPad.kethane_present) {
@@ -135,7 +128,23 @@ namespace ExLP {
 				enabled = false;
 			}
 			GUILayout.EndVertical ();
-			GUILayout.EndArea();
+			GUI.DragWindow (new Rect (0, 0, 10000, 20));
+		}
+
+		void OnGUI ()
+		{
+			GUI.skin = HighLogic.Skin;
+
+			string name = "Extraplanetary Launchpad";
+			string ver = ExSettings.GetVersion ();
+			if (windowpos.x == 0) {
+				windowpos = new Rect (Screen.width / 2 - 250,
+								  Screen.height / 2 - 30, 0, 0);
+			}
+			windowpos = GUILayout.Window (GetInstanceID (),
+										  windowpos, WindowGUI,
+										  name + " " + ver,
+										  GUILayout.Width (500));
 		}
 	}
 

@@ -7,6 +7,7 @@ namespace ExLP {
 	class ExShipInfoEventCatcher : PartModule
 	{
 		public ExShipInfo shipinfo;
+		public float oldmass;
 
 		[KSPEvent (guiActive=false, active = true)]
 		void OnResourcesModified (BaseEventData data)
@@ -20,7 +21,10 @@ namespace ExLP {
 		void OnMassModified (BaseEventData data)
 		{
 			Part part = data.Get<Part> ("part");
-			float oldmass = data.Get<float> ("oldmass");
+			// Only get the old mass from the event if it's actually there.
+			foreach(object o in data.Keys)
+				if((o as string) == "oldmass")
+					oldmass = data.Get<float> ("oldmass");
 			//Debug.Log (String.Format ("[EL GUI] mass modify: {0} {1} {2}",
 			//						  part, oldmass, part.mass));
 			shipinfo.buildCost.mass -= oldmass;
@@ -31,6 +35,7 @@ namespace ExLP {
 		{
 			node.ClearData ();
 			node.name = "IGNORE_THIS_NODE";
+			node.AddValue("MM_DYNAMIC", "true");
 		}
 	}
 
@@ -88,6 +93,7 @@ namespace ExLP {
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)part.AddModule ("ExShipInfoEventCatcher");
 			ec.shipinfo = this;
+			ec.oldmass = part.mass;
 		}
 
 		void removePart (Part part)
@@ -112,6 +118,7 @@ namespace ExLP {
 
 			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)root.AddModule ("ExShipInfoEventCatcher");
 			ec.shipinfo = this;
+			ec.oldmass = root.mass;
 		}
 
 		void onRootPart (GameEvents.FromToAction<ControlTypes, ControlTypes>h)

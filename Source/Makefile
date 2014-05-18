@@ -4,6 +4,7 @@ GAMEDATA	:= ${KSPDIR}/GameData
 ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
 PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 TBGAMEDATA  := ${GAMEDATA}/000_Toolbar
+APIEXTDATA	:= ${PLUGINDIR}
 
 TARGETS		:= Launchpad.dll LaunchpadToolbar.dll
 
@@ -52,8 +53,9 @@ info:
 	@echo "    KSP Data:   ${KSPDIR}"
 
 Launchpad.dll: ${EL_FILES}
-	${GMCS} ${GMCSFLAGS} -t:library -lib:${MANAGED} \
+	${GMCS} ${GMCSFLAGS} -t:library -lib:${APIEXTDATA},${MANAGED} \
 		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
+		-r:KSPAPIExtensions \
 		-out:$@ $^
 
 LaunchpadToolbar.dll: ${ELTB_FILES} Launchpad.dll

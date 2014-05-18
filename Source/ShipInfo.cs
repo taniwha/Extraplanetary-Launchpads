@@ -111,15 +111,18 @@ namespace ExLP {
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label (title + ":");
 			GUILayout.FlexibleSpace ();
-			GUILayout.Label (String.Format ("{0}{1}", amount, units));
+			GUILayout.Label (MathUtils.ToStringSI(amount, 4, unit:units));
 			GUILayout.EndHorizontal ();
 		}
 
 		private void MassLabel (string title, double mass)
 		{
-			mass = Math.Round (mass, 4);
-			UnitLabel (title, mass, "t");
-		}
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(title + ":");
+            GUILayout.FlexibleSpace();
+            GUILayout.Label(MathUtils.FormatMass(mass));
+            GUILayout.EndHorizontal();
+        }
 
 		private Vector2 ResourcePanel (string title,
 									   List<BuildCost.BuildResource> resources,
@@ -129,12 +132,10 @@ namespace ExLP {
 			GUILayout.BeginVertical (GUILayout.Height (100));
 			scrollPos = GUILayout.BeginScrollView (scrollPos);
 			foreach (var res in resources) {
-				double damount = Math.Round (res.amount, 4);
-				double dresmass = Math.Round (res.mass, 4);
 				GUILayout.BeginHorizontal ();
 				GUILayout.Label (String.Format ("{0}:", res.name));
 				GUILayout.FlexibleSpace ();
-				GUILayout.Label (String.Format ("{0}u ({1}t)", damount, dresmass));
+				GUILayout.Label (String.Format ("{0} ({1})", res.amount.ToStringSI(4, unit:"u"), MathUtils.FormatMass(res.mass, 4)));
 				GUILayout.EndHorizontal ();
 			}
 			GUILayout.EndScrollView ();

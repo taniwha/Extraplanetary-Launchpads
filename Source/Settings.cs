@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using UnityEngine;
+using KSPAPIExtensions;
 
 using KSP.IO;
 
@@ -18,16 +19,7 @@ namespace ExLP {
 			}
 
 			var asm = Assembly.GetCallingAssembly ();
-			version =  asm.GetName().Version.ToString ();
-
-			var cattrs = asm.GetCustomAttributes(true);
-			foreach (var attr in cattrs) {
-				if (attr is AssemblyInformationalVersionAttribute) {
-					var ver = attr as AssemblyInformationalVersionAttribute;
-					version = ver.InformationalVersion;
-					break;
-				}
-			}
+			version =  SystemUtils.GetAssemblyVersionString (asm);
 
 			return version;
 		}

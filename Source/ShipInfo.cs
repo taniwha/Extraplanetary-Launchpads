@@ -1,48 +1,14 @@
+using KSPAPIExtensions;
+using KSPAPIExtensions.PartMessage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace ExLP {
-	class ExShipInfoEventCatcher : PartModule
-	{
-		public ExShipInfo shipinfo;
-		public float oldmass;
-
-		[KSPEvent (guiActive=false, active = true)]
-		void OnResourcesModified (BaseEventData data)
-		{
-			Part part = data.Get<Part> ("part");
-			//Debug.Log (String.Format ("[EL GUI] res modify: {0}", part));
-			shipinfo.buildCost.removePartMassless (part);
-			shipinfo.buildCost.addPartMassless (part);
-		}
-		[KSPEvent (guiActive=false, active = true)]
-		void OnMassModified (BaseEventData data)
-		{
-			Part part = data.Get<Part> ("part");
-			// Only get the old mass from the event if it's actually there.
-			foreach(object o in data.Keys)
-				if((o as string) == "oldmass")
-					oldmass = data.Get<float> ("oldmass");
-			//Debug.Log (String.Format ("[EL GUI] mass modify: {0} {1} {2}",
-			//						  part, oldmass, part.mass));
-			shipinfo.buildCost.mass -= oldmass;
-			shipinfo.buildCost.mass += part.mass;
-		}
-
-		public override void OnSave (ConfigNode node)
-		{
-			node.ClearData ();
-			node.name = "IGNORE_THIS_NODE";
-			node.AddValue("MM_DYNAMIC", "true");
-		}
-	}
-
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ExShipInfo : MonoBehaviour
 	{
-		static ExShipInfo instance;
 		static Rect winpos;
 		static bool showGUI = true;
 
@@ -53,7 +19,6 @@ namespace ExLP {
 		public static void ToggleGUI ()
 		{
 			showGUI = !showGUI;
-			instance.enabled = showGUI && (instance.buildCost != null);
 		}
 
 		public static void LoadSettings (ConfigNode node)
@@ -86,101 +51,49 @@ namespace ExLP {
 
 		void addPart (Part part)
 		{
-			Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
+			//Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
 			buildCost.addPart (part);
-			var ship = EditorLogic.fetch.ship;
-			parts_count = ship.parts.Count;
-
-			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)part.AddModule ("ExShipInfoEventCatcher");
-			ec.shipinfo = this;
-			ec.oldmass = part.mass;
+            parts_count++;
 		}
 
-		void removePart (Part part)
-		{
-			Debug.Log (String.Format ("[EL GUI] remove: {0}", part));
+        [PartMessageListener(typeof(PartMassChanged), relations: PartRelationship.Unknown, scenes: GameSceneFilter.AnyEditor)]
+        private void MassChanged(float mass)
+        {
+            RebuildList();
+        }
 
-			var ship = EditorLogic.fetch.ship;
-			if (ship.parts.Count != parts_count) {
-				buildCost.removePart (part);
-				parts_count--;
-			}
+        [PartMessageListener(typeof(PartHeirachyChanged), relations: PartRelationship.Unknown, scenes: GameSceneFilter.AnyEditor)]
+        [PartMessageListener(typeof(PartResourcesChanged), relations: PartRelationship.Unknown, scenes: GameSceneFilter.AnyEditor)]
+        public void RebuildList()
+        {
+            buildCost = null;
+            parts_count = 0;
 
-			ExShipInfoEventCatcher ec = part.GetComponent<ExShipInfoEventCatcher> ();
-			part.RemoveModule (ec);
-		}
-
-		void addRootPart (Part root)
-		{
-			//Debug.Log (String.Format ("[EL GUI] root: {0}", root));
-			buildCost = new BuildCost ();
-			buildCost.addPart (root);
-
-			ExShipInfoEventCatcher ec = (ExShipInfoEventCatcher)root.AddModule ("ExShipInfoEventCatcher");
-			ec.shipinfo = this;
-			ec.oldmass = root.mass;
-		}
-
-		void onRootPart (GameEvents.FromToAction<ControlTypes, ControlTypes>h)
-		{
 			var ship = EditorLogic.fetch.ship;
 
 			if (ship.parts.Count > 0) {
-				if (buildCost == null) {
-					Part root = ship.parts[0];
-					addRootPart (root);
-					foreach (Part p in root.GetComponentsInChildren<Part>()) {
-						if (p != root) {
-							addPart (p);
-						}
+				Part root = ship.parts[0];
+
+                buildCost = new BuildCost();
+				addPart (root);
+				foreach (Part p in root.GetComponentsInChildren<Part>()) {
+					if (p != root) {
+						addPart (p);
 					}
-					enabled = showGUI;
-				}
-			} else {
-				//Debug.Log (String.Format ("[EL GUI] new"));
-				buildCost = null;
-				enabled = false;
-			}
-		}
-		void onPartAttach (GameEvents.HostTargetAction<Part,Part> host_target)
-		{
-			Part part = host_target.host;
-			Part parent = host_target.target;
-			if (buildCost == null) {
-				addRootPart (parent);
-				enabled = showGUI;
-			}
-			foreach (Part p in part.GetComponentsInChildren<Part>()) {
-				addPart (p);
-			}
-		}
-		void onPartRemove (GameEvents.HostTargetAction<Part,Part> host_target)
-		{
-			Part part = host_target.target;
-			if (buildCost != null) {
-				foreach (Part p in part.GetComponentsInChildren<Part>()) {
-					removePart (p);
 				}
 			}
-		}
+        }
+
 		void Awake ()
 		{
-			instance = this;
-
-			GameEvents.onInputLocksModified.Add (onRootPart);
-			GameEvents.onPartAttach.Add (onPartAttach);
-			GameEvents.onPartRemove.Add (onPartRemove);
-
-			enabled = false;
+            PartMessageService.Register<ExShipInfo>(this);
 		}
-		void OnDestroy ()
-		{
-			GameEvents.onInputLocksModified.Remove (onRootPart);
-			GameEvents.onPartAttach.Remove (onPartAttach);
-			GameEvents.onPartRemove.Remove (onPartRemove);
-		}
+
 		void OnGUI ()
 		{
+            if (!showGUI || buildCost == null)
+                return;
+
 			if (winpos.x == 0 && winpos.y == 0) {
 				winpos.x = Screen.width / 2;
 				winpos.y = Screen.height / 2;

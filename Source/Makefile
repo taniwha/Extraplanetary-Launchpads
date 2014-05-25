@@ -4,7 +4,7 @@ GAMEDATA	:= ${KSPDIR}/GameData
 ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
 PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 TBGAMEDATA  := ${GAMEDATA}/000_Toolbar
-APIEXTDATA	:= ${PLUGINDIR}
+APIEXTDATA	:= ${GAMEDATA}/KSPAPIExt/Plugins
 
 TARGETS		:= Launchpad.dll LaunchpadToolbar.dll
 

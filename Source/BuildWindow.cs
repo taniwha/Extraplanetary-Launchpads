@@ -577,13 +577,11 @@ namespace ExLP {
 			if (pad.paused) {
 				if (GUILayout.Button ("Resume Build", Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
-					pad.TransferResources ();
 					pad.ResumeBuild ();
 				}
 			} else {
 				if (GUILayout.Button ("Pause Build", Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
-					pad.TransferResources ();
 					pad.PauseBuild ();
 				}
 			}

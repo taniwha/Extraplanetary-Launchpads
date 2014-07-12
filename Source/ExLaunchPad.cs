@@ -330,8 +330,6 @@ namespace ExLP {
 			if (craftType != CraftType.SubAss)
 				numParts = 0;
 
-			ShipConstruction.CreateBackup (nship);
-
 			StrutFixer.HackStruts (nship, numParts);
 
 			Vector3 offset = nship.Parts[0].transform.localPosition;

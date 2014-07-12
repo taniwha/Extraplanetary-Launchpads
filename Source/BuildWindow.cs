@@ -591,7 +591,6 @@ namespace ExLP {
 		{
 			if (GUILayout.Button ("Release", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
-				pad.TransferResources ();
 				pad.ReleaseVessel ();
 			}
 		}

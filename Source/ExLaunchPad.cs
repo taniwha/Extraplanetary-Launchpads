@@ -128,6 +128,7 @@ namespace ExLP {
 			state = State.Complete;
 			if (!timed_builds) {
 				BuildAndLaunchCraft ();
+				TransferResources ();
 			}
 		}
 
@@ -225,7 +226,7 @@ namespace ExLP {
 			}
 		}
 
-		internal void TransferResources ()
+		private void TransferResources ()
 		{
 			foreach (var br in buildCost.optional) {
 				if (useResources) {
@@ -539,6 +540,9 @@ namespace ExLP {
 
 		public void ReleaseVessel ()
 		{
+			if (timed_builds) {
+				TransferResources ();
+			}
 			if (craftRoot != null) {
 				craftRoot.Undock (vesselInfo);
 				var vesselCount = FlightGlobals.Vessels.Count;

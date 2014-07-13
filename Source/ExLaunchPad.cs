@@ -98,12 +98,13 @@ namespace ExLP {
 		public void CancelBuild ()
 		{
 			if (state == State.Building) {
+				state = State.Canceling;
 			}
 		}
 
 		public void PauseBuild ()
 		{
-			if (state == State.Building) {
+			if (state == State.Building || state == State.Canceling) {
 				paused = true;
 			}
 		}
@@ -115,7 +116,8 @@ namespace ExLP {
 
 		public bool isActive ()
 		{
-			return (state == State.Building) && !paused;
+			return ((state == State.Building || state == State.Canceling)
+					&& !paused);
 		}
 
 		private IEnumerator<YieldInstruction> DewarpAndBuildCraft ()
@@ -199,6 +201,61 @@ namespace ExLP {
 
 		private void DoWork_Cancel (double kerbalHours)
 		{
+			var built = builtStuff.required;
+			var cost = buildCost.required;
+
+			bool did_work;
+			int count;
+			do {
+				count = 0;
+				foreach (var bres in built) {
+					var cres = ExBuildWindow.FindResource (cost, bres.name);
+					if (cres.amount - bres.amount > 0) {
+						count++;
+					}
+				}
+				if (count == 0) {
+					break;
+				}
+
+				double work = kerbalHours / count;
+				did_work = false;
+				count = 0;
+				foreach (var bres in built) {
+					var cres = ExBuildWindow.FindResource (cost, bres.name);
+					double remaining = cres.amount - bres.amount;
+					if (remaining < 0) {
+						continue;
+					}
+					double mass = work / 5;	//FIXME not hard-coded (5Kh/t)
+					double amount = mass / bres.density;
+					double base_amount = amount;
+
+					if (amount > remaining) {
+						amount = remaining;
+					}
+					double capacity = padResources.ResourceCapacity (bres.name)
+									- padResources.ResourceAmount (bres.name);
+					if (amount > capacity) {
+						amount = capacity;
+					}
+					if (amount <= 0)
+						break;
+					count++;
+					did_work = true;
+					// do only the work required to process the actual amount
+					// of returned resource
+					kerbalHours -= work * amount / base_amount;
+					bres.amount += amount;
+					padResources.TransferResource (bres.name, amount);
+				}
+			} while (did_work && kerbalHours > 0);
+
+			SetPadMass ();
+
+			if (count == 0) {
+				state = State.Planning;
+			}
 		}
 
 		public void DoWork (double kerbalHours)

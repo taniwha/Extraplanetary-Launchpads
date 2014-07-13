@@ -574,6 +574,7 @@ namespace ExLP {
 
 		void PauseButton ()
 		{
+			GUILayout.BeginHorizontal ();
 			if (pad.paused) {
 				if (GUILayout.Button ("Resume Build", Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
@@ -589,6 +590,7 @@ namespace ExLP {
 								  GUILayout.ExpandWidth (true))) {
 				pad.CancelBuild ();
 			}
+			GUILayout.EndHorizontal ();
 		}
 
 		void ReleaseButton ()
@@ -633,6 +635,13 @@ namespace ExLP {
 					BuildButton ();
 					break;
 				case ExLaunchPad.State.Building:
+					SelectedCraft ();
+					ResourceScroll_begin ();
+					BuildProgress ();
+					ResourceScroll_end ();
+					PauseButton ();
+					break;
+				case ExLaunchPad.State.Canceling:
 					SelectedCraft ();
 					ResourceScroll_begin ();
 					BuildProgress ();

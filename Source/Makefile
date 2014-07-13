@@ -21,6 +21,7 @@ EL_FILES := \
 	ShipInfo.cs		\
 	StrutFixer.cs	\
 	Target.cs		\
+	VersionReport.cs\
 	Workshop.cs		\
 	$e
 

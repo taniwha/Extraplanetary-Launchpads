@@ -572,23 +572,34 @@ namespace ExLP {
 			return can_build;
 		}
 
+		static string[] state_str = {
+			"Build", "Teardown",
+		};
 		void PauseButton ()
 		{
+			int ind = pad.state == ExLaunchPad.State.Building ? 0 : 1;
 			GUILayout.BeginHorizontal ();
 			if (pad.paused) {
-				if (GUILayout.Button ("Resume Build", Styles.normal,
+				if (GUILayout.Button ("Resume " + state_str[ind], Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
 					pad.ResumeBuild ();
 				}
 			} else {
-				if (GUILayout.Button ("Pause Build", Styles.normal,
+				if (GUILayout.Button ("Pause " + state_str[ind], Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
 					pad.PauseBuild ();
 				}
 			}
-			if (GUILayout.Button ("Cancel Build", Styles.normal,
-								  GUILayout.ExpandWidth (true))) {
-				pad.CancelBuild ();
+			if (pad.state == ExLaunchPad.State.Building) {
+				if (GUILayout.Button ("Cancel Build", Styles.normal,
+									  GUILayout.ExpandWidth (true))) {
+					pad.CancelBuild ();
+				}
+			} else {
+				if (GUILayout.Button ("Restart Build", Styles.normal,
+									  GUILayout.ExpandWidth (true))) {
+					pad.UnCancelBuild ();
+				}
 			}
 			GUILayout.EndHorizontal ();
 		}

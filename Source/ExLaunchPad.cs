@@ -102,6 +102,13 @@ namespace ExLP {
 			}
 		}
 
+		public void UnCancelBuild ()
+		{
+			if (state == State.Canceling) {
+				state = State.Building;
+			}
+		}
+
 		public void PauseBuild ()
 		{
 			if (state == State.Building || state == State.Canceling) {

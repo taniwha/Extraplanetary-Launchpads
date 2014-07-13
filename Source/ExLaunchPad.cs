@@ -25,7 +25,7 @@ namespace ExLP {
 		public static bool use_resources;
 
 		public enum CraftType { VAB, SPH, SubAss };
-		public enum State { Idle, Planning, Building, Dewarping, Complete, Transfer };
+		public enum State { Idle, Planning, Building, Canceling, Dewarping, Complete, Transfer };
 
 		public CraftType craftType = CraftType.VAB;
 		public float spawnOffset = 0;
@@ -95,6 +95,12 @@ namespace ExLP {
 			return false;
 		}
 
+		public void CancelBuild ()
+		{
+			if (state == State.Building) {
+			}
+		}
+
 		public void PauseBuild ()
 		{
 			if (state == State.Building) {
@@ -147,7 +153,7 @@ namespace ExLP {
 			part.mass = base_mass + (float) mass;
 		}
 
-		public void DoWork (double kerbalHours)
+		private void DoWork_Build (double kerbalHours)
 		{
 			var required = builtStuff.required;
 
@@ -188,6 +194,19 @@ namespace ExLP {
 
 			if (count == 0) {
 				StartCoroutine (DewarpAndBuildCraft ());
+			}
+		}
+
+		private void DoWork_Cancel (double kerbalHours)
+		{
+		}
+
+		public void DoWork (double kerbalHours)
+		{
+			if (state == State.Building) {
+				DoWork_Build (kerbalHours);
+			} else if (state == State.Canceling) {
+				DoWork_Cancel (kerbalHours);
 			}
 		}
 

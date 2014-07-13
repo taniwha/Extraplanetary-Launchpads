@@ -585,6 +585,10 @@ namespace ExLP {
 					pad.PauseBuild ();
 				}
 			}
+			if (GUILayout.Button ("Cancel Build", Styles.normal,
+								  GUILayout.ExpandWidth (true))) {
+				pad.CancelBuild ();
+			}
 		}
 
 		void ReleaseButton ()

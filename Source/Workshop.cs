@@ -187,7 +187,6 @@ public class ExWorkshop : PartModule
 			return;
 		DiscoverWorkshops ();
 		DetermineProductivity ();
-		part.force_activate ();
 	}
 
 	private void Update ()
@@ -195,7 +194,7 @@ public class ExWorkshop : PartModule
 		VesselProductivity = master.vessel_productivity;
 	}
 
-	public override void OnFixedUpdate ()
+	public void FixedUpdate ()
 	{
 		if (this == master) {
 			double hours = 0;

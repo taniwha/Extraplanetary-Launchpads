@@ -22,7 +22,6 @@ namespace ExLP {
 		public static bool kethane_checked;
 		public static bool kethane_present;
 		public static bool force_resource_use;
-		public static bool use_resources;
 
 		public enum CraftType { VAB, SPH, SubAss };
 		public enum State { Idle, Planning, Building, Canceling, Dewarping, Complete, Transfer };
@@ -74,6 +73,9 @@ namespace ExLP {
 		public static bool useResources
 		{
 			get {
+				if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER) {
+					return true;
+				}
 				return kethane_present || force_resource_use;
 			}
 		}
@@ -588,9 +590,6 @@ namespace ExLP {
 			if (state == PartModule.StartState.None
 				|| state == PartModule.StartState.Editor) {
 				return;
-			}
-			if (force_resource_use || (kethane_present && !DebugPad)) {
-				use_resources = true;
 			}
 			part.force_activate ();
 			if (vesselInfo != null) {

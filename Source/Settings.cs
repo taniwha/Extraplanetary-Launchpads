@@ -106,7 +106,8 @@ namespace ExLP {
 		{
 			GUILayout.BeginVertical ();
 
-			if (!ExLaunchPad.kethane_present) {
+			if (!ExLaunchPad.kethane_present
+				&& HighLogic.CurrentGame.Mode != Game.Modes.CAREER) {
 				bool fru = ExLaunchPad.force_resource_use;
 				fru = GUILayout.Toggle (fru, "Always use resources");
 				ExLaunchPad.force_resource_use = fru;

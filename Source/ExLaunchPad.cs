@@ -591,7 +591,6 @@ namespace ExLP {
 				|| state == PartModule.StartState.Editor) {
 				return;
 			}
-			part.force_activate ();
 			if (vesselInfo != null) {
 				craftRoot = vessel[vesselInfo.rootPartUId];
 			}

@@ -10,9 +10,6 @@ namespace ExLP {
 	public class ExTarget : PartModule, ITargetable
 	{
 		[KSPField]
-		public float ProductivityFactor = 1.0f;
-
-		[KSPField]
 		public string TargetName = "Target";
 		[KSPField]
 		public string TargetTransform;

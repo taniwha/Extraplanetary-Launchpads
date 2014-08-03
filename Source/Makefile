@@ -20,6 +20,7 @@ EL_FILES := \
 	Settings.cs		\
 	ShipInfo.cs		\
 	StrutFixer.cs	\
+	SurveyStake.cs	\
 	Target.cs		\
 	VersionReport.cs\
 	Workshop.cs		\

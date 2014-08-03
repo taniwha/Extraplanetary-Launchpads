@@ -9,8 +9,6 @@ namespace ExLP {
 
 	public class ExLaunchPad : PartModule, ExWorkSink
 	{
-		[KSPField]
-		public bool DebugPad = false;
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
 		[KSPField (isPersistant = false)]

@@ -47,5 +47,11 @@ namespace ExLP {
 			bound = !bound;
 			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 		}
+
+		[KSPEvent (active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "Rename Stake")]
+		public void RenameVessel ()
+		{
+			vessel.RenameVessel ();
+		}
 	}
 }

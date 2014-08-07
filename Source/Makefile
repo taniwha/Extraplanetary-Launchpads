@@ -21,6 +21,7 @@ EL_FILES := \
 	ShipInfo.cs		\
 	StrutFixer.cs	\
 	SurveyStake.cs	\
+	SurveyTracker.cs\
 	Target.cs		\
 	VersionReport.cs\
 	Workshop.cs		\

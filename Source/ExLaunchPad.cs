@@ -280,7 +280,7 @@ namespace ExLP {
 			data.Get<List<ExWorkSink>> ("sinks").Add (this);
 		}
 
-		private Transform GetLanchTransform ()
+		private Transform GetLaunchTransform ()
 		{
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
@@ -422,7 +422,7 @@ namespace ExLP {
 			Game state = FlightDriver.FlightStateCache;
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
-			GetLanchTransform ();
+			GetLaunchTransform ();
 			ShipConstruction.PutShipToGround (nship, launchTransform);
 			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, state,
 												crew);

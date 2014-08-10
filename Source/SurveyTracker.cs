@@ -12,7 +12,7 @@ namespace ExLP {
 	{
 		static ExSurveyTracker instance;
 
-		class SurveySite
+		internal class SurveySite
 		{
 			List<Vessel> stakes;
 
@@ -41,13 +41,14 @@ namespace ExLP {
 				}
 			}
 
-			public bool isClose (Vessel vessel)
+			public bool isClose (Vessel vessel, double range = 200.0)
 			{
 				var pos = vessel.GetWorldPos3D ();
+				range *= range;
 				foreach (Vessel stake in stakes) {
 					var stake_pos = stake.GetWorldPos3D ();
 					var offs = pos - stake_pos;
-					if (Vector3d.Dot (offs, offs) < 200.0 * 200.0) {
+					if (Vector3d.Dot (offs, offs) < range) {
 						return true;
 					}
 				}
@@ -140,7 +141,7 @@ namespace ExLP {
 				}
 			}
 
-			internal IEnumerator<SurveySite> GetEnumerator ()
+			public IEnumerator<SurveySite> GetEnumerator ()
 			{
 				return sites.GetEnumerator ();
 			}
@@ -203,6 +204,11 @@ namespace ExLP {
 		{
 			Dictionary<string, SiteList> sites;
 
+			public IEnumerator<SiteList> GetEnumerator ()
+			{
+				return sites.Values.GetEnumerator ();
+			}
+
 			internal int Count
 			{
 				get {
@@ -247,6 +253,22 @@ namespace ExLP {
 
 		Dictionary<string, SiteBody> sites;
 
+		internal List<SurveySite> FindSites (Vessel vessel, double range)
+		{
+			var site_list = new List<SurveySite> ();
+			string bodyName = vessel.mainBody.bodyName;
+			if (sites.ContainsKey (bodyName)) {
+				foreach (var list in sites[bodyName]) {
+					foreach (var site in list) {
+						if (site.isClose (vessel, range)) {
+							site_list.Add (site);
+						}
+					}
+				}
+			}
+			return site_list;
+		}
+
 		void Clean ()
 		{
 			foreach (var site in sites.Keys) {
@@ -271,7 +293,7 @@ namespace ExLP {
 			if (vessel.Parts.Count != 1)
 				return false;
 
-			if (vessel[0].Modules.OfType<ExSurveyStake>().Count() < 1)
+			if (vessel[0].Modules.OfType<ExSurveyStake> ().Count () < 1)
 				return false;
 			return true;
 		}

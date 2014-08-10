@@ -128,6 +128,14 @@ namespace ExLP {
 			{
 				stakes = new List<Vessel> ();
 			}
+
+			public IEnumerator<ExSurveyStake> GetEnumerator ()
+			{
+				foreach (var stake in stakes) {
+					var m = stake[0].Modules.OfType<ExSurveyStake> ();
+					yield return m.FirstOrDefault ();
+				}
+			}
 		}
 
 		class SiteList

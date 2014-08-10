@@ -282,20 +282,28 @@ namespace ExLP {
 
 		private Transform GetLaunchTransform ()
 		{
+			if (launchTransform != null) {
+				return launchTransform;
+			}
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
-				//Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
-				//						  launchTransform, SpawnTransform));
-			} else {
+				Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
+										  launchTransform, SpawnTransform));
+			}
+			if (launchTransform == null) {
+				launchTransform = part.FindModelTransform ("EL launch pos");
+			}
+			if (launchTransform == null) {
 				Vector3 offset = Vector3.up * (SpawnHeightOffset + spawnOffset);
-				Transform t = this.part.transform;
-				GameObject launchPos = new GameObject ();
+				Transform t = part.transform;
+				GameObject launchPos = new GameObject ("EL launch pos");
+				launchPos.transform.parent = t;
 				launchPos.transform.position = t.position;
-				launchPos.transform.position += t.TransformDirection (offset);
 				launchPos.transform.rotation = t.rotation;
+				launchPos.transform.position += t.TransformDirection (offset);
 				launchTransform = launchPos.transform;
-				//Debug.Log (String.Format ("[EL] launchPos {0}",
-				//						  launchTransform));
+				Debug.Log (String.Format ("[EL] launchPos {0}",
+										  launchTransform));
 			}
 			return launchTransform;
 		}

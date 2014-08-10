@@ -15,6 +15,13 @@ namespace ExLP {
 		internal bool bound = false;
 		internal int use = 0;
 
+		internal string Name
+		{
+			get {
+				return vessel.vesselName;
+			}
+		}
+
 		public override string GetInfo ()
 		{
 			return "Survey Stake";

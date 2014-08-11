@@ -8,6 +8,14 @@ using KSPAPIExtensions;
 using KSP.IO;
 
 namespace ExLP {
+	[KSPScenario(ScenarioCreationOptions.AddToAllGames, new GameScenes[] {
+			GameScenes.SPACECENTER,
+			GameScenes.EDITOR,
+			GameScenes.FLIGHT,
+			GameScenes.TRACKSTATION,
+			GameScenes.SPH,
+		})
+	]
 	public class ExSettings : ScenarioModule
 	{
 		public static bool timed_builds = true;
@@ -153,35 +161,6 @@ namespace ExLP {
 										  windowpos, WindowGUI,
 										  name + " " + ver,
 										  GUILayout.Width (500));
-		}
-	}
-
-	// Fun magic to get a custom scenario into a game automatically.
-
-	public class ExSettingsCreator
-	{
-		public static ExSettingsCreator me;
-		void onGameStateCreated (Game game)
-		{
-			//Debug.Log (String.Format ("[EL] onGameStateCreated"));
-			ExSettings.CreateSettings (game);
-		}
-
-		public ExSettingsCreator ()
-		{
-			GameEvents.onGameStateCreated.Add (onGameStateCreated);
-		}
-	}
-
-	[KSPAddon(KSPAddon.Startup.Instantly, false)]
-	public class ExSettingsCreatorSpawn : MonoBehaviour
-	{
-
-		void Start ()
-		{
-			//Debug.Log (String.Format ("[EL] ExSettingsCreatorSpawn.Start"));
-			ExSettingsCreator.me = new ExSettingsCreator ();
-			enabled = false;
 		}
 	}
 }

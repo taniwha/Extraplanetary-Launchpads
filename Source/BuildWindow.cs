@@ -95,9 +95,9 @@ namespace ExLP {
 		static CraftBrowser craftlist = null;
 		static Vector2 resscroll;
 
-		List<ExLaunchPad> launchpads;
+		List<ExBuildControl> launchpads;
 		DropDownList pad_list;
-		ExLaunchPad pad;
+		ExBuildControl control;
 
 		public static void ToggleGUI ()
 		{
@@ -158,25 +158,28 @@ namespace ExLP {
 
 		void BuildPadList (Vessel v)
 		{
-			if (pad != null) {
-				pad.part.SetHighlightDefault ();
+			if (control != null) {
+				control.builder.part.SetHighlightDefault ();
 			}
 			launchpads = null;
 			pad_list = null;
-			pad = null;	//FIXME would be nice to not lose the active pad
-			var pads = new List<ExLaunchPad> ();
+			control = null;	//FIXME would be nice to not lose the active pad
+			var pads = new List<ExBuildControl.IBuilder> ();
 
 			foreach (var p in v.Parts) {
-				pads.AddRange (p.Modules.OfType<ExLaunchPad> ());
+				pads.AddRange (p.Modules.OfType<ExBuildControl.IBuilder> ());
 			}
 			if (pads.Count > 0) {
-				launchpads = pads;
-				pad = launchpads[0];
+				launchpads = new List<ExBuildControl> ();
+				foreach (var p in pads) {
+					launchpads.Add (p.control);
+				}
+				control = launchpads[0];
 				var pad_names = new List<string> ();
 				int ind = 0;
 				foreach (var p in launchpads) {
-					if (p.PadName != "") {
-						pad_names.Add (p.PadName);
+					if (p.builder.Name != "") {
+						pad_names.Add (p.builder.Name);
 					} else {
 						pad_names.Add ("pad-" + ind);
 					}
@@ -202,17 +205,17 @@ namespace ExLP {
 		void UpdateGUIState ()
 		{
 			enabled = !hide_ui && launchpads != null && gui_enabled;
-			if (pad != null) {
+			if (control != null) {
 				if (enabled && highlight_pad) {
-					pad.part.SetHighlightColor (XKCDColors.LightSeaGreen);
-					pad.part.SetHighlight (true);
+					control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
+					control.builder.part.SetHighlight (true);
 				} else {
-					pad.part.SetHighlightDefault ();
+					control.builder.part.SetHighlightDefault ();
 				}
 			}
 			if (launchpads != null) {
 				foreach (var p in launchpads) {
-					p.UpdateMenus (enabled && p == pad);
+					p.builder.UpdateMenus (enabled && p == control);
 				}
 			}
 		}
@@ -284,7 +287,7 @@ namespace ExLP {
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
 			if (available >= 0 && available < required) {
-				if (ExLaunchPad.timed_builds) {
+				if (ExSettings.timed_builds) {
 					requiredStyle = Styles.yellow;
 				} else {
 					requiredStyle = Styles.red;
@@ -315,7 +318,7 @@ namespace ExLP {
 		{
 			double fraction = (req.amount - br.amount) / req.amount;
 			double required = br.amount;
-			double available = pad.padResources.ResourceAmount (br.name);
+			double available = control.padResources.ResourceAmount (br.name);
 
 			GUILayout.BeginHorizontal ();
 
@@ -352,18 +355,18 @@ namespace ExLP {
 			pad_list.DrawBlockingSelector ();
 		}
 
-		public static void SelectPad (ExLaunchPad selected_pad)
+		public static void SelectPad (ExBuildControl selected_pad)
 		{
 			instance.Select_Pad (selected_pad);
 		}
 
-		void Select_Pad (ExLaunchPad selected_pad)
+		void Select_Pad (ExBuildControl selected_pad)
 		{
-			if (pad) {
-				pad.part.SetHighlightDefault ();
+			if (control != null) {
+				control.builder.part.SetHighlightDefault ();
 			}
-			pad = selected_pad;
-			pad_list.SelectItem (launchpads.IndexOf (pad));
+			control = selected_pad;
+			pad_list.SelectItem (launchpads.IndexOf (control));
 			UpdateGUIState ();
 		}
 
@@ -389,12 +392,12 @@ namespace ExLP {
 			GUILayout.BeginHorizontal ("box");
 			GUILayout.FlexibleSpace ();
 			// VAB / SPH selection
-			for (var t = ExLaunchPad.CraftType.VAB;
-				 t <= ExLaunchPad.CraftType.SubAss;
+			for (var t = ExBuildControl.CraftType.VAB;
+				 t <= ExBuildControl.CraftType.SubAss;
 				 t++) {
-				if (GUILayout.Toggle (pad.craftType == t, t.ToString (),
+				if (GUILayout.Toggle (control.craftType == t, t.ToString (),
 									  GUILayout.Width (80))) {
-					pad.craftType = t;
+					control.craftType = t;
 				}
 			}
 			GUILayout.FlexibleSpace ();
@@ -408,12 +411,12 @@ namespace ExLP {
 				string []dir = new string[] {"VAB", "SPH", "../Subassemblies"};
 				var diff = HighLogic.CurrentGame.Parameters.Difficulty;
 				bool stock = diff.AllowStockVessels;
-				if (pad.craftType == ExLaunchPad.CraftType.SubAss) {
+				if (control.craftType == ExBuildControl.CraftType.SubAss) {
 					diff.AllowStockVessels = false;
 				}
 				//GUILayout.Button is "true" when clicked
 				var clrect = new Rect (Screen.width / 2, 100, 350, 500);
-				craftlist = new CraftBrowser (clrect, dir[(int)pad.craftType],
+				craftlist = new CraftBrowser (clrect, dir[(int)control.craftType],
 											  strpath, "Select a ship to load",
 											  craftSelectComplete,
 											  craftSelectCancel,
@@ -421,10 +424,10 @@ namespace ExLP {
 											  EditorLogic.ShipFileImage, true);
 				diff.AllowStockVessels = stock;
 			}
-			GUI.enabled = pad.craftConfig != null;
+			GUI.enabled = control.craftConfig != null;
 			if (GUILayout.Button ("Clear", Styles.normal,
 								  GUILayout.ExpandWidth (false))) {
-				pad.UnloadCraft ();
+				control.UnloadCraft ();
 			}
 			GUI.enabled = true;
 			GUILayout.EndHorizontal ();
@@ -432,7 +435,7 @@ namespace ExLP {
 
 		void SelectedCraft ()
 		{
-			var ship_name = pad.craftConfig.GetValue ("ship");
+			var ship_name = control.craftConfig.GetValue ("ship");
 			GUILayout.Box ("Selected Craft:	" + ship_name, Styles.white);
 		}
 
@@ -471,11 +474,11 @@ namespace ExLP {
 			bool can_build = true;
 			GUILayout.Label ("Resources required to build:", Styles.label,
 							 GUILayout.ExpandWidth (true));
-			foreach (var br in pad.buildCost.required) {
+			foreach (var br in control.buildCost.required) {
 				double a = br.amount;
 				double available = -1;
 
-				available = pad.padResources.ResourceAmount (br.name);
+				available = control.padResources.ResourceAmount (br.name);
 				ResourceLine (br.name, br.name, 1.0f, a, a, available);
 				if (br.amount > available) {
 					can_build = false;
@@ -488,23 +491,23 @@ namespace ExLP {
 		{
 			if (GUILayout.Button ("Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
-				pad.BuildCraft ();
+				control.BuildCraft ();
 			}
 		}
 
 		void SpawnOffset ()
 		{
-			if (pad.vessel.situation == Vessel.Situations.LANDED) {
+			/*if (control.vessel.situation == Vessel.Situations.LANDED) {
 				GUILayout.BeginVertical();
 				GUILayout.Space(10.0f);
 				GUILayout.BeginHorizontal();
 				GUILayout.Box("Spawn Height Offset", Styles.white,
 							  GUILayout.Width(180), GUILayout.Height(40));
-				pad.spawnOffset = GUILayout.HorizontalSlider(pad.spawnOffset,
+				control.spawnOffset = GUILayout.HorizontalSlider(control.spawnOffset,
 					0.0F, 10.0F, Styles.slider, GUI.skin.horizontalSliderThumb,
 					GUILayout.Width(300), GUILayout.Height(40));
-				pad.spawnOffset = (float)Math.Round(pad.spawnOffset, 1);
-				GUILayout.Box(pad.spawnOffset.ToString() + "m",
+				control.spawnOffset = (float)Math.Round(control.spawnOffset, 1);
+				GUILayout.Box(control.spawnOffset.ToString() + "m",
 							  Styles.white, GUILayout.Width(75),
 							  GUILayout.Height(40));
 				GUILayout.FlexibleSpace();
@@ -512,15 +515,15 @@ namespace ExLP {
 				GUILayout.EndHorizontal();
 				GUILayout.EndVertical();
 			} else {
-				pad.SpawnHeightOffset = 0.0f;
-			}
+				control.SpawnHeightOffset = 0.0f;
+			}*/
 		}
 
 		void FinalizeButton ()
 		{
 			if (GUILayout.Button ("Finalize Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
-				pad.BuildAndLaunchCraft ();
+				control.BuildAndLaunchCraft ();
 			}
 		}
 
@@ -531,8 +534,8 @@ namespace ExLP {
 
 		void BuildProgress ()
 		{
-			foreach (var br in pad.builtStuff.required) {
-				var req = FindResource (pad.buildCost.required, br.name);
+			foreach (var br in control.builtStuff.required) {
+				var req = FindResource (control.buildCost.required, br.name);
 				ResourceProgress (br.name, br, req);
 			}
 		}
@@ -544,9 +547,9 @@ namespace ExLP {
 			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
 												 "Link LiquidFuel and "
 												 + "Oxidizer sliders");
-			foreach (var br in pad.buildCost.optional) {
-				double available = pad.padResources.ResourceAmount (br.name);
-				double maximum = pad.craftResources.ResourceCapacity(br.name);
+			foreach (var br in control.buildCost.optional) {
+				double available = control.padResources.ResourceAmount (br.name);
+				double maximum = control.craftResources.ResourceCapacity(br.name);
 				float frac = (float) (br.amount / maximum);
 				frac = ResourceLine (br.name, br.name, frac, 0,
 									 maximum, available);
@@ -558,9 +561,9 @@ namespace ExLP {
 					} else {
 						other = "LiquidFuel";
 					}
-					var or = FindResource (pad.buildCost.optional, other);
+					var or = FindResource (control.buildCost.optional, other);
 					if (or != null) {
-						double om = pad.craftResources.ResourceCapacity (other);
+						double om = control.craftResources.ResourceCapacity (other);
 						or.amount = om * frac;
 					}
 				}
@@ -577,28 +580,28 @@ namespace ExLP {
 		};
 		void PauseButton ()
 		{
-			int ind = pad.state == ExLaunchPad.State.Building ? 0 : 1;
+			int ind = control.state == ExBuildControl.State.Building ? 0 : 1;
 			GUILayout.BeginHorizontal ();
-			if (pad.paused) {
+			if (control.paused) {
 				if (GUILayout.Button ("Resume " + state_str[ind], Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
-					pad.ResumeBuild ();
+					control.ResumeBuild ();
 				}
 			} else {
 				if (GUILayout.Button ("Pause " + state_str[ind], Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
-					pad.PauseBuild ();
+					control.PauseBuild ();
 				}
 			}
-			if (pad.state == ExLaunchPad.State.Building) {
+			if (control.state == ExBuildControl.State.Building) {
 				if (GUILayout.Button ("Cancel Build", Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
-					pad.CancelBuild ();
+					control.CancelBuild ();
 				}
 			} else {
 				if (GUILayout.Button ("Restart Build", Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
-					pad.UnCancelBuild ();
+					control.UnCancelBuild ();
 				}
 			}
 			GUILayout.EndHorizontal ();
@@ -608,7 +611,7 @@ namespace ExLP {
 		{
 			if (GUILayout.Button ("Release", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
-				pad.ReleaseVessel ();
+				control.ReleaseVessel ();
 			}
 		}
 
@@ -632,12 +635,12 @@ namespace ExLP {
 			GUILayout.BeginVertical ();
 			SelectPad ();
 
-			if (ExLaunchPad.timed_builds) {
-				switch (pad.state) {
-				case ExLaunchPad.State.Idle:
+			if (ExSettings.timed_builds) {
+				switch (control.state) {
+				case ExBuildControl.State.Idle:
 					SelectCraft ();
 					break;
-				case ExLaunchPad.State.Planning:
+				case ExBuildControl.State.Planning:
 					SelectCraft ();
 					SelectedCraft ();
 					ResourceScroll_begin ();
@@ -645,25 +648,25 @@ namespace ExLP {
 					ResourceScroll_end ();
 					BuildButton ();
 					break;
-				case ExLaunchPad.State.Building:
+				case ExBuildControl.State.Building:
 					SelectedCraft ();
 					ResourceScroll_begin ();
 					BuildProgress ();
 					ResourceScroll_end ();
 					PauseButton ();
 					break;
-				case ExLaunchPad.State.Canceling:
+				case ExBuildControl.State.Canceling:
 					SelectedCraft ();
 					ResourceScroll_begin ();
 					BuildProgress ();
 					ResourceScroll_end ();
 					PauseButton ();
 					break;
-				case ExLaunchPad.State.Complete:
+				case ExBuildControl.State.Complete:
 					SpawnOffset ();
 					FinalizeButton ();
 					break;
-				case ExLaunchPad.State.Transfer:
+				case ExBuildControl.State.Transfer:
 					SelectedCraft ();
 					ResourceScroll_begin ();
 					OptionalResources ();
@@ -672,11 +675,11 @@ namespace ExLP {
 					break;
 				}
 			} else {
-				switch (pad.state) {
-				case ExLaunchPad.State.Idle:
+				switch (control.state) {
+				case ExBuildControl.State.Idle:
 					SelectCraft ();
 					break;
-				case ExLaunchPad.State.Planning:
+				case ExBuildControl.State.Planning:
 					SelectCraft ();
 					SelectedCraft ();
 					ResourceScroll_begin ();
@@ -684,15 +687,15 @@ namespace ExLP {
 					bool have_optional = OptionalResources ();
 					ResourceScroll_end ();
 					SpawnOffset ();
-					if (!ExLaunchPad.useResources
+					if (!ExBuildControl.useResources
 						|| (have_required && have_optional)) {
 						BuildButton ();
 					}
 					break;
-				case ExLaunchPad.State.Building:
+				case ExBuildControl.State.Building:
 					// shouldn't happen
 					break;
-				case ExLaunchPad.State.Complete:
+				case ExBuildControl.State.Complete:
 					SelectedCraft ();
 					ReleaseButton ();
 					break;
@@ -712,7 +715,7 @@ namespace ExLP {
 		private void craftSelectComplete (string filename, string flagname)
 		{
 			craftlist = null;
-			pad.LoadCraft (filename, flagname);
+			control.LoadCraft (filename, flagname);
 		}
 
 		private void craftSelectCancel ()
@@ -725,7 +728,7 @@ namespace ExLP {
 			GUI.skin = HighLogic.Skin;
 			string name = "Extraplanetary Launchpad";
 			string ver = ExSettings.GetVersion ();
-			string sit = pad.vessel.situation.ToString ();
+			string sit = control.builder.vessel.situation.ToString ();
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,
 										  name + " " + ver + ": " + sit,

@@ -10,6 +10,7 @@ TARGETS		:= Launchpad.dll LaunchpadToolbar.dll
 
 EL_FILES := \
     AssemblyInfo.cs	\
+	BuildControl.cs	\
 	BuildCost.cs	\
 	BuildWindow.cs	\
 	DropDownList.cs	\

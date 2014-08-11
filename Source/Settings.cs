@@ -10,6 +10,11 @@ using KSP.IO;
 namespace ExLP {
 	public class ExSettings : ScenarioModule
 	{
+		public static bool timed_builds = true;
+		public static bool kethane_checked;
+		public static bool kethane_present;
+		public static bool force_resource_use;
+
 		static string version = null;
 		static Rect windowpos;
 		public static string GetVersion ()
@@ -22,6 +27,16 @@ namespace ExLP {
 			version =  SystemUtils.GetAssemblyVersionString (asm);
 
 			return version;
+		}
+
+		internal static bool CheckForKethane ()
+		{
+			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "Kethane")) {
+				Debug.Log ("[EL] Kethane found");
+				return true;
+			}
+			Debug.Log ("[EL] Kethane not found");
+			return false;
 		}
 
 		public static ExSettings current
@@ -53,21 +68,21 @@ namespace ExLP {
 				}
 			}
 			if (!settings.HasValue ("ForceResourceUse")) {
-				var val = ExLaunchPad.force_resource_use;
+				var val = force_resource_use;
 				settings.AddValue ("ForceResourceUse", val);
 			}
 			if (!settings.HasValue ("TimedBuilds")) {
-				var val = ExLaunchPad.timed_builds;
+				var val = timed_builds;
 				settings.AddValue ("TimedBuilds", val);
 			}
 
-			ExLaunchPad.force_resource_use = false;
+			force_resource_use = false;
 			var fru = settings.GetValue ("ForceResourceUse");
-			bool.TryParse (fru, out ExLaunchPad.force_resource_use);
+			bool.TryParse (fru, out force_resource_use);
 
-			ExLaunchPad.timed_builds = true;
+			timed_builds = true;
 			var tb = settings.GetValue ("TimedBuilds");
-			bool.TryParse (tb, out ExLaunchPad.timed_builds);
+			bool.TryParse (tb, out timed_builds);
 
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
@@ -85,10 +100,10 @@ namespace ExLP {
 			//Debug.Log (String.Format ("[EL] Settings save: {0}", config));
 			var settings = new ConfigNode ("Settings");
 
-			bool fru = ExLaunchPad.force_resource_use;
+			bool fru = force_resource_use;
 			settings.AddValue ("ForceResourceUse", fru);
 
-			bool tb = ExLaunchPad.timed_builds;
+			bool tb = timed_builds;
 			settings.AddValue ("TimedBuilds", tb);
 
 			config.AddNode (settings);
@@ -106,16 +121,16 @@ namespace ExLP {
 		{
 			GUILayout.BeginVertical ();
 
-			if (!ExLaunchPad.kethane_present
+			if (!kethane_present
 				&& HighLogic.CurrentGame.Mode != Game.Modes.CAREER) {
-				bool fru = ExLaunchPad.force_resource_use;
+				bool fru = force_resource_use;
 				fru = GUILayout.Toggle (fru, "Always use resources");
-				ExLaunchPad.force_resource_use = fru;
+				force_resource_use = fru;
 			}
 
-			bool tb = ExLaunchPad.timed_builds;
+			bool tb = timed_builds;
 			tb = GUILayout.Toggle (tb, "Allow progressive builds");
-			ExLaunchPad.timed_builds = tb;
+			timed_builds = tb;
 
 			if (GUILayout.Button ("OK")) {
 				enabled = false;

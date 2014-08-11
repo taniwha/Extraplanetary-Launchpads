@@ -107,7 +107,7 @@ public class ExRecycler : PartModule
 
 		float mass = 0;
 		mass += ReclaimResource ("Kethane", 150, crew.name);
-		if (ExLaunchPad.kethane_present) {
+		if (ExSettings.kethane_present) {
 			mass += ReclaimResource ("Metal", 1, crew.name);
 		} else {
 			mass += ReclaimResource ("RocketParts", 1, crew.name);
@@ -123,7 +123,7 @@ public class ExRecycler : PartModule
 		string target_resource;
 
 		PartResourceDefinition rp_def;
-		if (ExLaunchPad.kethane_present) {
+		if (ExSettings.kethane_present) {
 			target_resource = "Metal";
 		} else {
 			target_resource = "RocketParts";

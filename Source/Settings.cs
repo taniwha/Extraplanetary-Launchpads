@@ -122,6 +122,11 @@ namespace ExLP {
 		
 		public override void OnAwake ()
 		{
+			if (!kethane_checked) {
+				kethane_present = CheckForKethane ();
+				kethane_checked = true;
+			}
+
 			enabled = false;
 		}
 

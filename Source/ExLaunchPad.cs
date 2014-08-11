@@ -92,11 +92,6 @@ namespace ExLP {
 
 		public override void OnAwake ()
 		{
-			if (!ExSettings.kethane_checked) {
-				ExSettings.kethane_present = ExSettings.CheckForKethane ();
-				ExSettings.kethane_checked = true;
-			}
-
 			control = new ExBuildControl (this);
 		}
 

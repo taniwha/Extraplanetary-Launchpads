@@ -227,12 +227,18 @@ namespace ExLP {
 				|| vessel.situation == Vessel.Situations.PRELAUNCH) {
 				StartCoroutine (WaitAndFindSites ());
 			}
+			ExSurveyTracker.onSiteAdded.Add (onSiteAdded);
+			ExSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
+			ExSurveyTracker.onSiteModified.Add (onSiteModified);
 		}
 
 		void OnDestroy ()
 		{
 			control.OnDestroy ();
 			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
+			ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
+			ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
+			ExSurveyTracker.onSiteModified.Remove (onSiteModified);
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
@@ -282,5 +288,19 @@ namespace ExLP {
 			}
 		}
 
+		void onSiteAdded (ExSurveyTracker.SurveySite s)
+		{
+		}
+
+		void onSiteRemoved (ExSurveyTracker.SurveySite s)
+		{
+			if (s == site) {
+				site = null;
+			}
+		}
+
+		void onSiteModified (ExSurveyTracker.SurveySite s)
+		{
+		}
 	}
 }

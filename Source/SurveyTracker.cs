@@ -10,6 +10,9 @@ namespace ExLP {
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ExSurveyTracker : MonoBehaviour
 	{
+		internal EventData<SurveySite> onSiteRemoved = new EventData<SurveySite> ("onSiteRemoved");
+		internal EventData<SurveySite> onSiteAdded = new EventData<SurveySite> ("onSiteAdded");
+		internal EventData<SurveySite> onSiteModified = new EventData<SurveySite> ("onSiteModified");
 		internal static ExSurveyTracker instance;
 
 		internal class SurveySite
@@ -33,29 +36,21 @@ namespace ExLP {
 
 			public CelestialBody Body
 			{
-				get {
-					if (stakes.Count < 1)
-						return null;
-					return stakes[0].mainBody;
-				}
+				get;
+				private set;
 			}
 
 			public string BodyName
 			{
 				get {
-					if (stakes.Count < 1)
-						return null;
-					return stakes[0].mainBody.bodyName;
+					return Body.bodyName;
 				}
 			}
 
 			public string SiteName
 			{
-				get {
-					if (stakes.Count < 1)
-						return null;
-					return stakes[0].vesselName;
-				}
+				get;
+				private set;
 			}
 
 			public bool isClose (Vessel vessel, double range = 200.0)
@@ -99,6 +94,7 @@ namespace ExLP {
 			public void AddStake (Vessel stake)
 			{
 				stakes.Add (stake);
+				onSiteModified.Fire (this);
 			}
 
 			public void RemoveStake (Vessel stake)
@@ -130,17 +126,26 @@ namespace ExLP {
 						break;
 					}
 				}
+				if (stakes.Count == 0) {
+					ExSurveyTracker.instance.RemoveSite (this);
+				} else {
+					onSiteModified.Fire (this);
+				}
 			}
 
 			public SurveySite (List<Vessel> stakes)
 			{
 				this.stakes = stakes;
+				Body = stakes[0].mainBody;
+				SiteName = stakes[0].vesselName;
 			}
 
 			public SurveySite (Vessel stake)
 			{
 				stakes = new List<Vessel> ();
 				stakes.Add (stake);
+				Body = stakes[0].mainBody;
+				SiteName = stakes[0].vesselName;
 			}
 
 			public SurveySite ()
@@ -192,17 +197,29 @@ namespace ExLP {
 						sites[i].Merge (site);
 						for (int j = i + 1; j < sites.Count; ) {
 							if (sites[i].isClose (sites[j])) {
+								var s = sites[j];
 								sites[i].Merge (sites[j]);
 								sites.RemoveAt (j);
+								onSiteRemoved.Fire (s);
 								continue;
 							}
 							j++;
 						}
+						onSiteModified.Fire (sites[i]);
 						return sites[i];
 					}
 				}
 				sites.Add (site);
 				return site;
+			}
+
+			internal void RemoveSite (SurveySite site)
+			{
+				for (int i = 0; i < sites.Count; i++) {
+					if (sites[i] == site) {
+						sites.RemoveAt (i);
+					}
+				}
 			}
 
 			internal void RemoveStake (Vessel stake)
@@ -212,17 +229,6 @@ namespace ExLP {
 						site.RemoveStake (stake);
 						return;
 					}
-				}
-			}
-
-			internal void Clean ()
-			{
-				for (int i = 0; i < sites.Count; ) {
-					if (sites[i].Count < 1) {
-						sites.RemoveAt (i);
-						continue;
-					}
-					i++;
 				}
 			}
 		}
@@ -268,12 +274,10 @@ namespace ExLP {
 				return sites[site.SiteName].AddSite (site);
 			}
 
-			internal void Clean ()
+			internal void RemoveSite (SurveySite site)
 			{
-				foreach (var site in sites.Keys) {
-					if (sites[site].Count < 1) {
-						sites.Remove (site);
-					}
+				if (sites.ContainsKey (site.SiteName)) {
+					sites[site.SiteName].RemoveSite (site);
 				}
 			}
 		}
@@ -296,23 +300,26 @@ namespace ExLP {
 			return site_list;
 		}
 
-		void Clean ()
-		{
-			foreach (var site in sites.Keys) {
-				if (sites[site].Count < 1) {
-					sites.Remove (site);
-				}
-			}
-		}
-
 		SurveySite AddSite (SurveySite site)
 		{
 			if (!sites.ContainsKey (site.BodyName)) {
 				sites[site.BodyName] = new SiteBody ();
 			}
-			site = sites[site.BodyName].AddSite (site);
-			Clean ();
-			return site;
+			var s = sites[site.BodyName].AddSite (site);
+			// if a different site is returned, the given site was merged into
+			// another site rather than added.
+			if (s == site) {
+				onSiteAdded.Fire (site);
+			}
+			return s;
+		}
+
+		void RemoveSite (SurveySite site)
+		{
+			if (sites.ContainsKey (site.BodyName)) {
+				sites[site.BodyName].RemoveSite (site);
+			}
+			onSiteRemoved.Fire (site);
 		}
 
 		bool isStake (Vessel vessel)
@@ -344,7 +351,6 @@ namespace ExLP {
 				return;
 			}
 			sites[bodyName][siteName].RemoveStake (vessel);
-			Clean ();
 		}
 
 		IEnumerator<YieldInstruction> WaitAndAddStake (Vessel vessel)

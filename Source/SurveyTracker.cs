@@ -10,9 +10,9 @@ namespace ExLP {
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ExSurveyTracker : MonoBehaviour
 	{
-		internal EventData<SurveySite> onSiteRemoved = new EventData<SurveySite> ("onSiteRemoved");
-		internal EventData<SurveySite> onSiteAdded = new EventData<SurveySite> ("onSiteAdded");
-		internal EventData<SurveySite> onSiteModified = new EventData<SurveySite> ("onSiteModified");
+		internal static EventData<SurveySite> onSiteRemoved = new EventData<SurveySite> ("onSiteRemoved");
+		internal static EventData<SurveySite> onSiteAdded = new EventData<SurveySite> ("onSiteAdded");
+		internal static EventData<SurveySite> onSiteModified = new EventData<SurveySite> ("onSiteModified");
 		internal static ExSurveyTracker instance;
 
 		internal class SurveySite

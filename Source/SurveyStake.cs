@@ -9,9 +9,9 @@ namespace ExLP {
 
 	public class ExSurveyStake : PartModule
 	{
-		static string[] StakeUses = { "Origin",
-									  "+X", "+Y", "+Z",
-									  "-X", "-Y", "-Z"};
+		internal static string[] StakeUses = { "Origin",
+											   "+X", "+Y", "+Z",
+											   "-X", "-Y", "-Z"};
 		internal bool bound = false;
 		internal int use = 0;
 

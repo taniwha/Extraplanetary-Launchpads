@@ -10,16 +10,33 @@ namespace ExLP {
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ExSurveyTracker : MonoBehaviour
 	{
-		static ExSurveyTracker instance;
+		internal static ExSurveyTracker instance;
 
 		internal class SurveySite
 		{
 			List<Vessel> stakes;
 
+			internal ExSurveyStake this[int index]
+			{
+				get {
+					var m = stakes[index][0].Modules.OfType<ExSurveyStake> ();
+					return m.FirstOrDefault ();
+				}
+			}
+
 			public int Count
 			{
 				get {
 					return stakes.Count;
+				}
+			}
+
+			public CelestialBody Body
+			{
+				get {
+					if (stakes.Count < 1)
+						return null;
+					return stakes[0].mainBody;
 				}
 			}
 
@@ -44,10 +61,12 @@ namespace ExLP {
 			public bool isClose (Vessel vessel, double range = 200.0)
 			{
 				var pos = vessel.GetWorldPos3D ();
+				Debug.Log (String.Format ("[EL ST] isClose {0}", range));
 				range *= range;
 				foreach (Vessel stake in stakes) {
 					var stake_pos = stake.GetWorldPos3D ();
 					var offs = pos - stake_pos;
+					Debug.Log (String.Format ("[EL ST] isClose {0} {1} {2} {3}", pos, stake_pos, Vector3d.Dot (offs, offs), range));
 					if (Vector3d.Dot (offs, offs) < range) {
 						return true;
 					}

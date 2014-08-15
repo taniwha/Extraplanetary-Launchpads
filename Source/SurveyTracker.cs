@@ -148,11 +148,6 @@ namespace ExLP {
 				SiteName = stakes[0].vesselName;
 			}
 
-			public SurveySite ()
-			{
-				stakes = new List<Vessel> ();
-			}
-
 			public IEnumerator<ExSurveyStake> GetEnumerator ()
 			{
 				foreach (var stake in stakes) {
@@ -335,8 +330,7 @@ namespace ExLP {
 		void AddStake (Vessel vessel)
 		{
 			Debug.Log (String.Format ("[EL ST] AddStake {0} {1}", vessel.vesselName, vessel.mainBody.bodyName));
-			SurveySite site = new SurveySite ();
-			site.AddStake (vessel);
+			SurveySite site = new SurveySite (vessel);
 			AddSite (site);
 		}
 
@@ -356,6 +350,9 @@ namespace ExLP {
 		IEnumerator<YieldInstruction> WaitAndAddStake (Vessel vessel)
 		{
 			while (vessel.vesselName == null || vessel.vesselName == "") {
+				yield return null;
+			}
+			while (vessel.mainBody == null) {
 				yield return null;
 			}
 			AddStake (vessel);

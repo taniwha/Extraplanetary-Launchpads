@@ -37,6 +37,11 @@ namespace ExLP {
 			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 		}
 
+		public void OnPartDie ()
+		{
+			ExSurveyTracker.instance.RemoveStake (vessel);
+		}
+
 		public void FixedUpdate ()
 		{
 		}

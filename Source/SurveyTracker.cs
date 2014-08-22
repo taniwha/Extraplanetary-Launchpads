@@ -334,7 +334,7 @@ namespace ExLP {
 			AddSite (site);
 		}
 
-		void RemoveStake (Vessel vessel)
+		internal void RemoveStake (Vessel vessel)
 		{
 			Debug.Log (String.Format ("[EL ST] RemoveStake {0} {1}", vessel.vesselName, vessel.mainBody.bodyName));
 			string bodyName = vessel.mainBody.bodyName;

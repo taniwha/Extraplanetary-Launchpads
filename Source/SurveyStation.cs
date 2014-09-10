@@ -126,7 +126,7 @@ namespace ExLP {
 				Vector3d u = Up ();
 				r = Vector3d.Normalize (r - Vector3d.Dot (r, u) * u);
 				f = Vector3d.Normalize (f - Vector3d.Dot (f, u) * u);
-				f = Vector3d.Normalize (f + Vector3d.Cross (u, r));
+				f = Vector3d.Normalize (f + Vector3d.Cross (r, u));
 				return Quaternion.LookRotation (f, u);
 			}
 
@@ -134,11 +134,11 @@ namespace ExLP {
 			{
 				// find a reference frame that is close to the given possibly
 				// non-orthogonal frame
-				u = u + Vector3d.Normalize (Vector3d.Cross (r, f));
+				u = u + Vector3d.Normalize (Vector3d.Cross (f, r));
 				u.Normalize ();
 				r = Vector3d.Normalize (r - Vector3d.Dot (r, u) * u);
 				f = Vector3d.Normalize (f - Vector3d.Dot (f, u) * u);
-				f = Vector3d.Normalize (f + Vector3d.Cross (u, r));
+				f = Vector3d.Normalize (f + Vector3d.Cross (r, u));
 				return Quaternion.LookRotation (f, u);
 			}
 		}
@@ -151,7 +151,7 @@ namespace ExLP {
 			Quaternion rot;
 			if (y.IsZero ()) {
 				if (z.IsZero () && x.IsZero ()) {
-					x = Vector3d.Cross (Vector3d.up, p.Up ());
+					x = Vector3d.Cross (p.Up (), Vector3d.up);
 					x.Normalize ();
 					z = Vector3d.Cross (x, p.Up ());
 				} else if (z.IsZero ()) {

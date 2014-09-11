@@ -13,6 +13,10 @@ namespace ExLP {
 		{
 			void UpdateMenus (bool visible);
 			Transform GetLaunchTransform ();
+			bool capture
+			{
+				get;
+			}
 			Vessel vessel
 			{
 				get;
@@ -426,15 +430,23 @@ namespace ExLP {
 			craftVessel = FlightVessels[FlightVessels.Count - 1];
 			offset = craftVessel.transform.position - launchTransform.position;
 			craftOffset = launchTransform.InverseTransformDirection (offset);
-			craftVessel.Splashed = craftVessel.Landed = false;
+			if (builder.capture) {
+				craftVessel.Splashed = craftVessel.Landed = false;
+			}
 			SetupCraftResources (craftVessel);
 
 			FlightGlobals.ForceSetActiveVessel (craftVessel);
 
 			Staging.beginFlight ();
 
-			FlightGlobals.overrideOrbit = true;
-			(builder as PartModule).StartCoroutine (CaptureCraft ());
+			if (builder.capture) {
+				FlightGlobals.overrideOrbit = true;
+				(builder as PartModule).StartCoroutine (CaptureCraft ());
+			} else {
+				if (ExSettings.timed_builds) {
+					state = State.Idle;
+				}
+			}
 		}
 
 		public void LoadCraft (string filename, string flagname)

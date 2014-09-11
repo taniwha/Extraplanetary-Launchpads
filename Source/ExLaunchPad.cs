@@ -19,6 +19,13 @@ namespace ExLP {
 		public float spawnOffset = 0;
 		Transform launchTransform;
 
+		public bool capture
+		{
+			get {
+				return true;
+			}
+		}
+
 		public ExBuildControl control
 		{
 			get;

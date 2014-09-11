@@ -14,6 +14,13 @@ namespace ExLP {
 
 		ExSurveyTracker.SurveySite site;
 
+		public bool capture
+		{
+			get {
+				return false;
+			}
+		}
+
 		public ExBuildControl control
 		{
 			get;
@@ -64,6 +71,8 @@ namespace ExLP {
 				Dictionary<string, int> counts = new Dictionary<string, int> ();
 				int count = 0;
 
+				points = new Dictionary<string, Vector3d> ();
+
 				body = site.Body;
 
 				center = Vector3d.zero;
@@ -84,8 +93,10 @@ namespace ExLP {
 					}
 				}
 				center /= (double) count;
-				foreach (var key in points.Keys) {
-					points[key] /= (double) counts[key];
+				foreach (var key in ExSurveyStake.StakeUses) {
+					if (points.ContainsKey (key)) {
+						points[key] /= (double) counts[key];
+					}
 				}
 				if (points.ContainsKey ("Origin")) {
 					center = points["Origin"];

@@ -415,12 +415,12 @@ namespace ExLP {
 			nship.Parts[0].transform.Translate (-offset);
 			string landedAt = "External Launchpad";
 			string flag = flagname;
-			Game state = FlightDriver.FlightStateCache;
+			Game game = FlightDriver.FlightStateCache;
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
 			launchTransform = builder.GetLaunchTransform ();
 			ShipConstruction.PutShipToGround (nship, launchTransform);
-			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, state,
+			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, game,
 												crew);
 			var FlightVessels = FlightGlobals.Vessels;
 			craftVessel = FlightVessels[FlightVessels.Count - 1];

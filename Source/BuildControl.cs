@@ -421,6 +421,7 @@ namespace ExLP {
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
 			launchTransform = builder.GetLaunchTransform ();
+			FloatingOrigin.SetOffset (launchTransform.position);
 			ShipConstruction.PutShipToGround (nship, launchTransform);
 			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, game,
 												crew);

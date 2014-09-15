@@ -426,14 +426,15 @@ namespace ExLP {
 												crew);
 			var FlightVessels = FlightGlobals.Vessels;
 			craftVessel = FlightVessels[FlightVessels.Count - 1];
+
+			FlightGlobals.ForceSetActiveVessel (craftVessel);
+
 			Vector3 offset = craftVessel.transform.position - launchTransform.position;
 			craftOffset = launchTransform.InverseTransformDirection (offset);
 			if (builder.capture) {
 				craftVessel.Splashed = craftVessel.Landed = false;
 			}
 			SetupCraftResources (craftVessel);
-
-			FlightGlobals.ForceSetActiveVessel (craftVessel);
 
 			Staging.beginFlight ();
 

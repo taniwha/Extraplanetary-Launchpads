@@ -415,8 +415,6 @@ namespace ExLP {
 
 			StrutFixer.HackStruts (nship, numParts);
 
-			Vector3 offset = nship.Parts[0].transform.localPosition;
-			nship.Parts[0].transform.Translate (-offset);
 			string landedAt = "External Launchpad";
 			string flag = flagname;
 			Game game = FlightDriver.FlightStateCache;
@@ -428,7 +426,7 @@ namespace ExLP {
 												crew);
 			var FlightVessels = FlightGlobals.Vessels;
 			craftVessel = FlightVessels[FlightVessels.Count - 1];
-			offset = craftVessel.transform.position - launchTransform.position;
+			Vector3 offset = craftVessel.transform.position - launchTransform.position;
 			craftOffset = launchTransform.InverseTransformDirection (offset);
 			if (builder.capture) {
 				craftVessel.Splashed = craftVessel.Landed = false;

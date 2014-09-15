@@ -9,10 +9,31 @@ namespace ExLP {
 
 	public class ExBuildControl : ExWorkSink
 	{
+		public class Box
+		{
+			public Vector3 min;
+			public Vector3 max;
+
+			public Box (Bounds b)
+			{
+				min = new Vector3 (b.min.x, b.min.y, b.min.z);
+				max = new Vector3 (b.max.x, b.max.y, b.max.z);
+			}
+
+			public void Add (Bounds b)
+			{
+				min.x = Mathf.Min (min.x, b.min.x);
+				min.y = Mathf.Min (min.y, b.min.y);
+				min.z = Mathf.Min (min.z, b.min.z);
+				max.x = Mathf.Max (max.x, b.max.x);
+				max.y = Mathf.Max (max.y, b.max.y);
+				max.z = Mathf.Max (max.z, b.max.z);
+			}
+		}
 		public interface IBuilder
 		{
 			void UpdateMenus (bool visible);
-			Transform GetLaunchTransform ();
+			Transform PlaceShip (ShipConstruct ship, Box vessel_bounds);
 			bool capture
 			{
 				get;
@@ -403,6 +424,49 @@ namespace ExLP {
 			}
 		}
 
+		Collider[] get_colliders (Part p)
+		{
+			var o = p.transform.FindChild("model");
+			return o.GetComponentsInChildren<Collider> ();
+		}
+
+		Box GetVesselBox (ShipConstruct ship)
+		{
+			PartHeightQuery phq = null;
+			Box box = null;
+			for (int i = 0; i < ship.parts.Count; i++) {
+				Part p = ship[i];
+				var colliders = get_colliders (p);
+				for (int j = 0; j < colliders.Length; j++) {
+					var col = colliders[j];
+					if (col.gameObject.layer != 21 && col.enabled) {
+						if (box == null) {
+							box = new Box (col.bounds);
+						} else {
+							box.Add (col.bounds);
+						}
+
+						float min_y = col.bounds.min.y;
+						if (phq == null) {
+							phq = new PartHeightQuery (min_y);
+						}
+						phq.lowestPoint = Mathf.Min (phq.lowestPoint, min_y);
+
+						if (!phq.lowestOnParts.ContainsKey (p)) {
+							phq.lowestOnParts.Add (p, min_y);
+						}
+						phq.lowestOnParts[p] = Mathf.Min (phq.lowestOnParts[p], min_y);
+					}
+				}
+			}
+			for (int i = 0; i < ship.parts.Count; i++) {
+				Part p = ship[i];
+				p.SendMessage ("OnPutToGround", phq,
+							   SendMessageOptions.DontRequireReceiver);
+			}
+			return box;
+		}
+
 		internal void BuildAndLaunchCraft ()
 		{
 			// build craft
@@ -420,9 +484,9 @@ namespace ExLP {
 			Game game = FlightDriver.FlightStateCache;
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
-			launchTransform = builder.GetLaunchTransform ();
-			FloatingOrigin.SetOffset (launchTransform.position);
-			ShipConstruction.PutShipToGround (nship, launchTransform);
+			Box vessel_bounds = GetVesselBox (nship);
+			launchTransform = builder.PlaceShip (nship, vessel_bounds);
+
 			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, game,
 												crew);
 			var FlightVessels = FlightGlobals.Vessels;

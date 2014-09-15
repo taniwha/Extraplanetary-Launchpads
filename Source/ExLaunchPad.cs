@@ -59,7 +59,7 @@ namespace ExLP {
 			data.Get<List<ExWorkSink>> ("sinks").Add (control);
 		}
 
-		public Transform GetLaunchTransform ()
+		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
 		{
 			if (launchTransform != null) {
 				return launchTransform;
@@ -84,6 +84,17 @@ namespace ExLP {
 				Debug.Log (String.Format ("[EL] launchPos {0}",
 										  launchTransform));
 			}
+
+			float angle;
+			Vector3 axis;
+			launchTransform.rotation.ToAngleAxis (out angle, out axis);
+
+			Vector3 pos = ship.parts[0].transform.position;
+			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
+			shift += launchTransform.position;
+			ship.parts[0].transform.Translate (shift, Space.World);
+			ship.parts[0].transform.RotateAround (launchTransform.position,
+												  axis, angle);
 			return launchTransform;
 		}
 

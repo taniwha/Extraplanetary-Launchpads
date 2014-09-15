@@ -190,7 +190,7 @@ namespace ExLP {
 			return rot;
 		}
 
-		public Transform GetLaunchTransform ()
+		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
 		{
 			if (site == null) {
 				return base.part.transform;

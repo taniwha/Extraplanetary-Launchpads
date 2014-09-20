@@ -493,12 +493,21 @@ namespace ExLP {
 			craftVessel = FlightVessels[FlightVessels.Count - 1];
 
 			FlightGlobals.ForceSetActiveVessel (craftVessel);
+			if (builder.capture) {
+				craftVessel.Splashed = craftVessel.Landed = false;
+			} else {
+				bool loaded = craftVessel.loaded;
+				bool packed = craftVessel.packed;
+				craftVessel.loaded = true;
+				craftVessel.packed = false;
+				craftVessel.GetHeightFromTerrain ();
+			Debug.Log (String.Format ("[EL] {0}", craftVessel.heightFromTerrain));
+				craftVessel.loaded = loaded;
+				craftVessel.packed = packed;
+			}
 
 			Vector3 offset = craftVessel.transform.position - launchTransform.position;
 			craftOffset = launchTransform.InverseTransformDirection (offset);
-			if (builder.capture) {
-				craftVessel.Splashed = craftVessel.Landed = false;
-			}
 			SetupCraftResources (craftVessel);
 
 			Staging.beginFlight ();

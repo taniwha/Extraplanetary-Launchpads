@@ -208,6 +208,17 @@ namespace ExLP {
 				xform = launchPos.transform;
 				Debug.Log (String.Format ("[EL] launchPos {0}", xform));
 			}
+
+			float angle;
+			Vector3 axis;
+			xform.rotation.ToAngleAxis (out angle, out axis);
+
+			Vector3 pos = ship.parts[0].transform.position;
+			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
+			shift += xform.position;
+			ship.parts[0].transform.Translate (shift, Space.World);
+			ship.parts[0].transform.RotateAround (xform.position,
+												  axis, angle);
 			return xform;
 		}
 

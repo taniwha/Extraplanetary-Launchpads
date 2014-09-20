@@ -1,5 +1,4 @@
 using KSPAPIExtensions;
-using KSPAPIExtensions.PartMessage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,25 +55,17 @@ namespace ExLP {
             parts_count++;
 		}
 
-        [PartMessageListener(typeof(PartMassChanged), relations: PartRelationship.Unknown, scenes: GameSceneFilter.AnyEditor)]
-        private void MassChanged(float mass)
-        {
-            RebuildList();
-        }
+		private IEnumerator<YieldInstruction> WaitAndRebuildList (ShipConstruct ship)
+		{
+			yield return null;
 
-        [PartMessageListener(typeof(PartHeirachyChanged), relations: PartRelationship.Unknown, scenes: GameSceneFilter.AnyEditor)]
-        [PartMessageListener(typeof(PartResourcesChanged), relations: PartRelationship.Unknown, scenes: GameSceneFilter.AnyEditor)]
-        public void RebuildList()
-        {
             buildCost = null;
             parts_count = 0;
-
-			var ship = EditorLogic.fetch.ship;
 
 			if (ship.parts.Count > 0) {
 				Part root = ship.parts[0];
 
-                buildCost = new BuildCost();
+                buildCost = new BuildCost ();
 				addPart (root);
 				foreach (Part p in root.GetComponentsInChildren<Part>()) {
 					if (p != root) {
@@ -82,11 +73,21 @@ namespace ExLP {
 					}
 				}
 			}
+		}
+
+        public void RebuildList(ShipConstruct ship)
+        {
+			StartCoroutine (WaitAndRebuildList (ship));
         }
 
 		void Awake ()
 		{
-            PartMessageService.Register<ExShipInfo>(this);
+			GameEvents.onEditorShipModified.Add (RebuildList);
+		}
+
+		void OnDestroy ()
+		{
+			GameEvents.onEditorShipModified.Remove (RebuildList);
 		}
 
 		void OnGUI ()

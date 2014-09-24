@@ -131,25 +131,12 @@ public class ExWorkshop : PartModule
 		Productivity = kh * ProductivityFactor;
 	}
 
-	void onCrewBoard (GameEvents.FromToAction<Part,Part> ft)
+	void onCrewTransferred (GameEvents.HostedFromToAction<ProtoCrewMember,Part> hft)
 	{
-		Part p = ft.to;
-
-		if (p != part)
+		if (hft.from != part && hft.to != part)
 			return;
-		//Debug.Log (String.Format ("[EL Workshop] board: {0} {1}",
-		//						  ft.from, ft.to));
-		DetermineProductivity ();
-	}
-
-	void onCrewEVA (GameEvents.FromToAction<Part,Part> ft)
-	{
-		Part p = ft.from;
-
-		if (p != part)
-			return;
-		//Debug.Log (String.Format ("[EL Workshop] EVA: {0} {1}",
-		//						  ft.from, ft.to));
+		Debug.Log (String.Format ("[EL Workshop] transfer: {0} {1} {2}",
+								  hft.host, hft.from, hft.to));
 		DetermineProductivity ();
 	}
 
@@ -157,8 +144,7 @@ public class ExWorkshop : PartModule
 	{
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
 			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
-				GameEvents.onCrewBoardVessel.Add (onCrewBoard);
-				GameEvents.onCrewOnEva.Add (onCrewEVA);
+				GameEvents.onCrewTransferred.Add (onCrewTransferred);
 				GameEvents.onVesselWasModified.Add (onVesselWasModified);
 				functional = true;
 			} else {
@@ -171,8 +157,7 @@ public class ExWorkshop : PartModule
 
 	void OnDestroy ()
 	{
-		GameEvents.onCrewBoardVessel.Remove (onCrewBoard);
-		GameEvents.onCrewOnEva.Remove (onCrewEVA);
+		GameEvents.onCrewTransferred.Remove (onCrewTransferred);
 		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 

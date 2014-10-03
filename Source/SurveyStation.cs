@@ -193,7 +193,7 @@ namespace ExLP {
 		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
 		{
 			if (site == null) {
-				return base.part.transform;
+				return part.transform;
 			}
 			Transform xform;
 			xform = part.FindModelTransform ("EL launch pos");
@@ -312,6 +312,7 @@ namespace ExLP {
 
 		void onSiteAdded (ExSurveyTracker.SurveySite s)
 		{
+			FindSites ();
 		}
 
 		void onSiteRemoved (ExSurveyTracker.SurveySite s)

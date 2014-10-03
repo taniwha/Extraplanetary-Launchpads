@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="BuildControl.cs" />
     <Compile Include="BuildCost.cs" />
     <Compile Include="BuildWindow.cs" />
     <Compile Include="DropDownList.cs" />
@@ -49,8 +50,14 @@
     <Compile Include="Settings.cs" />
     <Compile Include="ShipInfo.cs" />
     <Compile Include="StrutFixer.cs" />
+    <Compile Include="SurveyStake.cs" />
+    <Compile Include="SurveyStation.cs" />
+    <Compile Include="SurveyTracker.cs" />
     <Compile Include="Target.cs" />
-    <Compile Include="Workshop.cs" />
+    <Compile Include="Toolbar.cs" />
+    <Compile Include="ToolbarWrapper.cs" />
+    <Compile Include="VersionReport.cs" />
+	<Compile Include="Workshop.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

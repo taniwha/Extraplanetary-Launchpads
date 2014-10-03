@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Toolbar;
 
 namespace ExLP {
+	using Toolbar;
+
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ExToolbar_ShipInfo : MonoBehaviour
 	{

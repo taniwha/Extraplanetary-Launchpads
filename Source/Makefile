@@ -6,7 +6,7 @@ PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 TBGAMEDATA  := ${GAMEDATA}/000_Toolbar
 APIEXTDATA	:= ${PLUGINDIR}
 
-TARGETS		:= Launchpad.dll LaunchpadToolbar.dll
+TARGETS		:= Launchpad.dll
 
 EL_FILES := \
     AssemblyInfo.cs	\
@@ -25,13 +25,10 @@ EL_FILES := \
 	SurveyStation.cs\
 	SurveyTracker.cs\
 	Target.cs		\
+	Toolbar.cs		\
+	ToolbarWrapper.cs\
 	VersionReport.cs\
 	Workshop.cs		\
-	$e
-
-ELTB_FILES := \
-	AssemblyInfoToolbar.cs	\
-	Toolbar.cs				\
 	$e
 
 RESGEN2		:= resgen2
@@ -63,15 +60,8 @@ Launchpad.dll: ${EL_FILES}
 		-r:KSPAPIExtensions \
 		-out:$@ $^
 
-LaunchpadToolbar.dll: ${ELTB_FILES} Launchpad.dll
-	${GMCS} ${GMCSFLAGS} -t:library -lib:${TBGAMEDATA},${MANAGED} \
-		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
-		-r:Toolbar \
-		-r:Launchpad \
-		-out:$@ ${ELTB_FILES}
-
 clean:
-	rm -f ${TARGETS} AssemblyInfoToolbar.cs AssemblyInfo.cs
+	rm -f ${TARGETS} AssemblyInfo.cs
 
 install: all
 	mkdir -p ${PLUGINDIR}

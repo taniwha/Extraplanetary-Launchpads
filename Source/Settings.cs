@@ -56,15 +56,6 @@ namespace ExLP {
 			}
 		}
 
-		public static void CreateSettings (Game game)
-		{
-			if (!game.scenarios.Any (p => p.moduleName == typeof (ExSettings).Name)) {
-				//Debug.Log (String.Format ("[EL] Settings create"));
-				var proto = game.AddProtoScenarioModule (typeof (ExSettings), GameScenes.SPACECENTER, GameScenes.EDITOR, GameScenes.SPH, GameScenes.TRACKSTATION, GameScenes.FLIGHT);
-				proto.Load (ScenarioRunner.fetch);
-			}
-		}
-
 		public override void OnLoad (ConfigNode config)
 		{
 			//Debug.Log (String.Format ("[EL] Settings load"));

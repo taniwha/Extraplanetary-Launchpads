@@ -33,6 +33,7 @@ namespace ExLP {
 		public interface IBuilder
 		{
 			void UpdateMenus (bool visible);
+			void SetCraftMass (double craft_mass);
 			Transform PlaceShip (ShipConstruct ship, Box vessel_bounds);
 			bool capture
 			{
@@ -124,7 +125,6 @@ namespace ExLP {
 		Part craftRoot;
 		Vessel craftVessel;
 		Vector3 craftOffset;
-		float base_mass;
 
 		private static bool CheckForKethane ()
 		{
@@ -200,7 +200,7 @@ namespace ExLP {
 					mass += (cres.amount - bres.amount) * bres.density;
 				}
 			}
-			builder.part.mass = base_mass + (float) mass;
+			builder.SetCraftMass (mass);
 		}
 
 		private void DoWork_Build (double kerbalHours)
@@ -416,7 +416,7 @@ namespace ExLP {
 			SetCraftOrbit ();
 			craftVessel.GoOffRails ();
 
-			builder.part.mass = base_mass;
+			builder.SetCraftMass (0);
 
 			CoupleWithCraft ();
 			if (ExSettings.timed_builds) {
@@ -560,9 +560,6 @@ namespace ExLP {
 		public void Save (ConfigNode node)
 		{
 			node.AddValue ("flagname", flagname);
-			if (base_mass != 0) {
-				node.AddValue ("baseMass", base_mass);
-			}
 			if (craftConfig != null) {
 				craftConfig.name = "CraftConfig";
 				node.AddNode (craftConfig);
@@ -621,11 +618,6 @@ namespace ExLP {
 		public void Load (ConfigNode node)
 		{
 			flagname = node.GetValue ("flagname");
-			if (node.HasValue ("baseMass")) {
-				float.TryParse (node.GetValue ("baseMass"), out base_mass);
-			} else {
-				base_mass = builder.part.mass;
-			}
 			craftConfig = node.GetNode ("CraftConfig");
 			if (node.HasNode ("BuildCost")) {
 				var bc = node.GetNode ("BuildCost");

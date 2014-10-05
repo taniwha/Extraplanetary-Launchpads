@@ -18,6 +18,7 @@ namespace ExLP {
 
 		public float spawnOffset = 0;
 		Transform launchTransform;
+		float base_mass;
 
 		public bool capture
 		{
@@ -59,11 +60,13 @@ namespace ExLP {
 			data.Get<List<ExWorkSink>> ("sinks").Add (control);
 		}
 
+		public void SetCraftMass (double mass)
+		{
+			part.mass = base_mass + (float) mass;
+		}
+
 		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
 		{
-			if (launchTransform != null) {
-				return launchTransform;
-			}
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
 				Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
@@ -101,11 +104,19 @@ namespace ExLP {
 		public override void OnSave (ConfigNode node)
 		{
 			control.Save (node);
+			if (base_mass != 0) {
+				node.AddValue ("baseMass", base_mass);
+			}
 		}
 
 		public override void OnLoad (ConfigNode node)
 		{
 			control.Load (node);
+			if (node.HasValue ("baseMass")) {
+				float.TryParse (node.GetValue ("baseMass"), out base_mass);
+			} else {
+				base_mass = part.mass;
+			}
 		}
 
 		public override void OnAwake ()

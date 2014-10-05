@@ -13,6 +13,7 @@ namespace ExLP {
 		public string StationName = "";
 
 		ExSurveyTracker.SurveySite site;
+		float base_mass;
 
 		public bool capture
 		{
@@ -190,6 +191,11 @@ namespace ExLP {
 			return rot;
 		}
 
+		public void SetCraftMass (double mass)
+		{
+			part.mass = base_mass + (float) mass;
+		}
+
 		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
 		{
 			if (site == null) {
@@ -226,11 +232,19 @@ namespace ExLP {
 		public override void OnSave (ConfigNode node)
 		{
 			control.Save (node);
+			if (base_mass != 0) {
+				node.AddValue ("baseMass", base_mass);
+			}
 		}
 
 		public override void OnLoad (ConfigNode node)
 		{
 			control.Load (node);
+			if (node.HasValue ("baseMass")) {
+				float.TryParse (node.GetValue ("baseMass"), out base_mass);
+			} else {
+				base_mass = part.mass;
+			}
 		}
 
 		public override void OnAwake ()

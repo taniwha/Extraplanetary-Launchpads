@@ -9,26 +9,27 @@ APIEXTDATA	:= ${PLUGINDIR}
 TARGETS		:= Launchpad.dll
 
 EL_FILES := \
-    AssemblyInfo.cs	\
-	BuildControl.cs	\
-	BuildCost.cs	\
-	BuildWindow.cs	\
-	DropDownList.cs	\
-	ExLaunchPad.cs	\
-	ProgressBar.cs	\
-	Recycler.cs		\
-	Resources.cs	\
-	Settings.cs		\
-	ShipInfo.cs		\
-	StrutFixer.cs	\
-	SurveyStake.cs	\
-	SurveyStation.cs\
-	SurveyTracker.cs\
-	Target.cs		\
-	Toolbar.cs		\
-	ToolbarWrapper.cs\
-	VersionReport.cs\
-	Workshop.cs		\
+    AssemblyInfo.cs		\
+	BuildControl.cs		\
+	BuildCost.cs		\
+	BuildWindow.cs		\
+	DropDownList.cs		\
+	ExLaunchPad.cs		\
+	LaunchClamp.cs		\
+	ProgressBar.cs		\
+	Recycler.cs			\
+	Resources.cs		\
+	Settings.cs			\
+	ShipInfo.cs			\
+	StrutFixer.cs		\
+	SurveyStake.cs		\
+	SurveyStation.cs	\
+	SurveyTracker.cs	\
+	Target.cs			\
+	Toolbar.cs			\
+	ToolbarWrapper.cs	\
+	VersionReport.cs	\
+	Workshop.cs			\
 	$e
 
 RESGEN2		:= resgen2

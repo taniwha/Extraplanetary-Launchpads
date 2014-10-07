@@ -94,7 +94,7 @@ namespace ExLP {
 
 			Vector3 pos = ship.parts[0].transform.position;
 			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
-			shift += launchTransform.position;
+			shift = launchTransform.TransformPoint (shift);
 			ship.parts[0].transform.Translate (shift, Space.World);
 			ship.parts[0].transform.RotateAround (launchTransform.position,
 												  axis, angle);

@@ -214,6 +214,7 @@ namespace ExLP {
 				xform = launchPos.transform;
 				Debug.Log (String.Format ("[EL] launchPos {0}", xform));
 			}
+			Debug.Log (String.Format ("[EL] launchPos {0} {1}", xform.position, xform.rotation));
 
 			float angle;
 			Vector3 axis;

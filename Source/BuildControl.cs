@@ -459,6 +459,7 @@ namespace ExLP {
 					}
 				}
 			}
+			Debug.Log (String.Format ("[EL] GetVesselBox {0} {1}", box.min, box.max));
 			for (int i = 0; i < ship.parts.Count; i++) {
 				Part p = ship[i];
 				p.SendMessage ("OnPutToGround", phq,
@@ -501,7 +502,7 @@ namespace ExLP {
 				craftVessel.loaded = true;
 				craftVessel.packed = false;
 				craftVessel.GetHeightFromTerrain ();
-			Debug.Log (String.Format ("[EL] {0}", craftVessel.heightFromTerrain));
+				Debug.Log (String.Format ("[EL] {0}", craftVessel.heightFromTerrain));
 				craftVessel.loaded = loaded;
 				craftVessel.packed = packed;
 			}

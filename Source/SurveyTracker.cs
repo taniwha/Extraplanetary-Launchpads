@@ -319,11 +319,21 @@ namespace ExLP {
 
 		bool isStake (Vessel vessel)
 		{
-			if (vessel.Parts.Count != 1)
-				return false;
+			if (vessel.loaded) {
+				if (vessel.Parts.Count != 1)
+					return false;
 
-			if (vessel[0].Modules.OfType<ExSurveyStake> ().Count () < 1)
-				return false;
+				if (vessel[0].Modules.OfType<ExSurveyStake> ().Count () < 1)
+					return false;
+			} else {
+				var pvessel = vessel.protoVessel;
+				if (pvessel.protoPartSnapshots.Count != 1)
+					return false;
+				var ppart = pvessel.protoPartSnapshots[0];
+				if (ppart.modules.Where (m => m.moduleName == "ExSurveyStake").Count () < 1)
+					return false;
+				Debug.Log (String.Format ("[EL ST] stake on rails {0}", vessel.vesselName));
+			}
 			return true;
 		}
 

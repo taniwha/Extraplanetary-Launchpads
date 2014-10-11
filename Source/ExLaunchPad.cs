@@ -69,8 +69,8 @@ namespace ExLP {
 		{
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
-				Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
-										  launchTransform, SpawnTransform));
+				//Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
+				//						  launchTransform, SpawnTransform));
 			}
 			if (launchTransform == null) {
 				launchTransform = part.FindModelTransform ("EL launch pos");
@@ -84,8 +84,8 @@ namespace ExLP {
 				launchPos.transform.rotation = t.rotation;
 				launchPos.transform.position += t.TransformDirection (offset);
 				launchTransform = launchPos.transform;
-				Debug.Log (String.Format ("[EL] launchPos {0}",
-										  launchTransform));
+				//Debug.Log (String.Format ("[EL] launchPos {0}",
+				//						  launchTransform));
 			}
 
 			float angle;
@@ -94,7 +94,9 @@ namespace ExLP {
 
 			Vector3 pos = ship.parts[0].transform.position;
 			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
-			shift = launchTransform.TransformPoint (shift);
+			//Debug.Log (String.Format ("[EL] pos: {0} shift: {1}", pos, shift));
+			shift += launchTransform.position;
+			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
 			ship.parts[0].transform.Translate (shift, Space.World);
 			ship.parts[0].transform.RotateAround (launchTransform.position,
 												  axis, angle);

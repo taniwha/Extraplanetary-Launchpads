@@ -502,7 +502,7 @@ namespace ExLP {
 				craftVessel.loaded = true;
 				craftVessel.packed = false;
 				craftVessel.GetHeightFromTerrain ();
-				Debug.Log (String.Format ("[EL] {0}", craftVessel.heightFromTerrain));
+				Debug.Log (String.Format ("[EL] hft {0}", craftVessel.heightFromTerrain));
 				craftVessel.loaded = loaded;
 				craftVessel.packed = packed;
 			}
@@ -583,7 +583,7 @@ namespace ExLP {
 
 		internal static void dumpxform (Transform t, string n = "")
 		{
-			Debug.Log (String.Format ("[EL] {0}", n + t.name));
+			Debug.Log (String.Format ("[EL] xform: {0}", n + t.name));
 			foreach (Transform c in t)
 				dumpxform (c, n + t.name + ".");
 		}

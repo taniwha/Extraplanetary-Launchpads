@@ -43,7 +43,7 @@ public class ExRecycler : PartModule
 			|| col.gameObject.name == "MapOverlay collider")	// kethane
 			return;
 		Part p = col.attachedRigidbody.GetComponent<Part>();
-		//Debug.Log (String.Format ("[EL] {0}", p));
+		//Debug.Log (String.Format ("[EL] OnTriggerStay: {0}", p));
 		if (p != null && CanRecycle (p.vessel)) {
 			float mass;
 			if (p.vessel.isEVA) {

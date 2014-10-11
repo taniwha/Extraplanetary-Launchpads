@@ -12,7 +12,9 @@ namespace ExLP {
 		internal static string[] StakeUses = { "Origin",
 											   "+X", "+Y", "+Z",
 											   "-X", "-Y", "-Z"};
+		[KSPField (isPersistant = true)]
 		internal bool bound = false;
+		[KSPField (isPersistant = true)]
 		internal int use = 0;
 
 		internal string Name

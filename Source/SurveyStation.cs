@@ -222,7 +222,7 @@ namespace ExLP {
 
 			Vector3 pos = ship.parts[0].transform.position;
 			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
-			shift = xform.TransformPoint (shift);
+			shift += xform.position;
 			ship.parts[0].transform.Translate (shift, Space.World);
 			ship.parts[0].transform.RotateAround (xform.position,
 												  axis, angle);

@@ -13,6 +13,7 @@ EL_FILES := \
 	BuildControl.cs		\
 	BuildCost.cs		\
 	BuildWindow.cs		\
+	Checkers.cs			\
 	DropDownList.cs		\
 	ExLaunchPad.cs		\
 	LaunchClamp.cs		\

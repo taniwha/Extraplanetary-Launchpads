@@ -26,6 +26,9 @@ namespace ExLP {
 
 		public override string GetInfo ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				return "";
+			}
 			return "Survey Stake";
 		}
 
@@ -35,12 +38,20 @@ namespace ExLP {
 
 		public override void OnStart(StartState state)
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				Events["NextUse"].active = false;
+				//Events["ToggleBound"].active = false;
+				Events["RenameVessel"].active = false;
+			}
 			Events["NextUse"].guiName = StakeUses[use];
 			//Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 		}
 
 		public void OnPartDie ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				return;
+			}
 			ExSurveyTracker.instance.RemoveStake (vessel);
 		}
 

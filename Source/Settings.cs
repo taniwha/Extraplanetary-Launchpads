@@ -92,6 +92,10 @@ namespace ExLP {
 				var node = settings.GetNode ("BuildWindow");
 				ExBuildWindow.LoadSettings (node);
 			}
+
+			if (CompatibilityChecker.IsWin64 ()) {
+				enabled = false;
+			}
 		}
 
 		public override void OnSave(ConfigNode config)
@@ -113,6 +117,10 @@ namespace ExLP {
 		
 		public override void OnAwake ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				enabled = false;
+				return;
+			}
 			if (!kethane_checked) {
 				kethane_present = CheckForKethane ();
 				kethane_checked = true;

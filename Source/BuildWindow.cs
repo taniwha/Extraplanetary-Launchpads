@@ -234,6 +234,10 @@ namespace ExLP {
 
 		void Awake ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				enabled = false;
+				return;
+			}
 			instance = this;
 			GameEvents.onVesselChange.Add (onVesselChange);
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
@@ -725,6 +729,9 @@ namespace ExLP {
 
 		void OnGUI ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				return;
+			}
 			GUI.skin = HighLogic.Skin;
 			string name = "Extraplanetary Launchpad";
 			string ver = ExSettings.GetVersion ();

@@ -142,6 +142,9 @@ public class ExWorkshop : PartModule
 
 	public override void OnLoad (ConfigNode node)
 	{
+		if (CompatibilityChecker.IsWin64 ()) {
+			return;
+		}
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
 			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
 				GameEvents.onCrewTransferred.Add (onCrewTransferred);

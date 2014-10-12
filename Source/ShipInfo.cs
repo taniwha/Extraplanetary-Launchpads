@@ -82,6 +82,10 @@ namespace ExLP {
 
 		void Awake ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				enabled = false;
+				return;
+			}
 			GameEvents.onEditorShipModified.Add (RebuildList);
 		}
 

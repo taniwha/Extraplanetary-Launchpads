@@ -395,6 +395,10 @@ namespace ExLP {
 
 		void Awake ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				enabled = false;
+				return;
+			}
 			enabled = true;
 			instance = this;
 			sites = new Dictionary<string, SiteBody> ();
@@ -424,6 +428,9 @@ namespace ExLP {
 
 		void Start ()
 		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				return;
+			}
 			StartCoroutine (WaitAndLoadSites ());
 		}
 	}

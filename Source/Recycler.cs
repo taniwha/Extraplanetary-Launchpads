@@ -167,6 +167,12 @@ public class ExRecycler : PartModule
 
 	public override void OnLoad (ConfigNode node)
 	{
+		if (CompatibilityChecker.IsWin64 ()) {
+			Events["Activate"].active = false;
+			Events["Deactivate"].active = false;
+			recyclerActive = false;
+			return;
+		}
 		Deactivate ();
 	}
 

@@ -126,16 +126,6 @@ namespace ExLP {
 		Vessel craftVessel;
 		Vector3 craftOffset;
 
-		private static bool CheckForKethane ()
-		{
-			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "Kethane")) {
-				Debug.Log ("[EL] Kethane found");
-				return true;
-			}
-			Debug.Log ("[EL] Kethane not found");
-			return false;
-		}
-
 		public void CancelBuild ()
 		{
 			if (state == State.Building) {

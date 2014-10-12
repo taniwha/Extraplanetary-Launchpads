@@ -193,7 +193,7 @@ namespace ExLP {
 
 		public void SetCraftMass (double mass)
 		{
-			part.mass = base_mass + (float) mass;
+			base.part.mass = base_mass + (float) mass;
 		}
 
 		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
@@ -243,7 +243,7 @@ namespace ExLP {
 			if (node.HasValue ("baseMass")) {
 				float.TryParse (node.GetValue ("baseMass"), out base_mass);
 			} else {
-				base_mass = part.mass;
+				base_mass = base.part.mass;
 			}
 		}
 

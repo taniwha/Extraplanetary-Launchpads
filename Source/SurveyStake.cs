@@ -36,7 +36,7 @@ namespace ExLP {
 		public override void OnStart(StartState state)
 		{
 			Events["NextUse"].guiName = StakeUses[use];
-			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
+			//Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 		}
 
 		public void OnPartDie ()

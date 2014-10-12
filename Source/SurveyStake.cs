@@ -55,7 +55,7 @@ namespace ExLP {
 			Events["NextUse"].guiName = StakeUses[use];
 		}
 
-		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "")]
+		//[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "")]
 		public void ToggleBound()
 		{
 			bound = !bound;

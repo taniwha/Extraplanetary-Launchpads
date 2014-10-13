@@ -15,8 +15,8 @@ EL_FILES := \
 	BuildWindow.cs		\
 	Checkers.cs			\
 	DropDownList.cs		\
-	ExLaunchPad.cs		\
 	LaunchClamp.cs		\
+	Launchpad.cs		\
 	ProgressBar.cs		\
 	Recycler.cs			\
 	Resources.cs		\

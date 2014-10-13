@@ -47,10 +47,6 @@ ExtraplanetaryLaunchpads/Parts/smelter/part.cfg
 ExtraplanetaryLaunchpads/Parts/smelter/model002.mbm
 ExtraplanetaryLaunchpads/Parts/smelter/model000.mbm
 ExtraplanetaryLaunchpads/Parts/smelter/model001.mbm
-ExtraplanetaryLaunchpads/Parts/metalbin/model.mu
-ExtraplanetaryLaunchpads/Parts/metalbin/part.cfg
-ExtraplanetaryLaunchpads/Parts/metalbin/model000.mbm
-ExtraplanetaryLaunchpads/Parts/metalbin/Dirty_Texture_by_mcbadshoes.tga
 ExtraplanetaryLaunchpads/Parts/HexCanMetal/Small.cfg
 ExtraplanetaryLaunchpads/Parts/HexCanMetal/model.mu
 ExtraplanetaryLaunchpads/Parts/HexCanMetal/model000.png
@@ -61,10 +57,6 @@ ExtraplanetaryLaunchpads/Parts/launchpad2/model.mu
 ExtraplanetaryLaunchpads/Parts/launchpad2/pad.png
 ExtraplanetaryLaunchpads/Parts/launchpad2/part.cfg
 ExtraplanetaryLaunchpads/Parts/launchpad2/pad.tga
-ExtraplanetaryLaunchpads/Parts/orebin/model.mu
-ExtraplanetaryLaunchpads/Parts/orebin/part.cfg
-ExtraplanetaryLaunchpads/Parts/orebin/model000.mbm
-ExtraplanetaryLaunchpads/Parts/orebin/Dirty_Texture_by_mcbadshoes.tga
 ExtraplanetaryLaunchpads/Parts/Magnetometer/model.mu
 ExtraplanetaryLaunchpads/Parts/Magnetometer/Magnetometer.png
 ExtraplanetaryLaunchpads/Parts/Magnetometer/part.cfg

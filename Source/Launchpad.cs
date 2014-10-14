@@ -154,13 +154,13 @@ namespace ExLP {
 			control.OnDestroy ();
 		}
 
-		[KSPEvent (guiActive = false, guiName = "Hide UI", active = false)]
+		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
 			ExBuildWindow.HideGUI ();
 		}
 
-		[KSPEvent (guiActive = false, guiName = "Show UI", active = false)]
+		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
 			ExBuildWindow.ShowGUI ();

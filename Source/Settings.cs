@@ -158,6 +158,9 @@ namespace ExLP {
 			var dbase = GameDatabase.Instance;
 			var settings = dbase.GetConfigNode ("ELGlobalSettings");
 
+			if (settings == null) {
+				return;
+			}
 			if (settings.HasValue ("HullRecycleTarget")) {
 				string val = settings.GetValue ("HullRecycleTarget");
 				HullRecycleTarget = val;

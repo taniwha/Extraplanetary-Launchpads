@@ -18,10 +18,42 @@ namespace ExLP {
 	]
 	public class ExSettings : ScenarioModule
 	{
-		public static bool timed_builds = true;
-		public static bool kethane_checked;
-		public static bool kethane_present;
-		public static bool force_resource_use;
+		static bool kethane_checked;
+		public static bool kethane_present
+		{
+			get;
+			private set;
+		}
+		public static bool force_resource_use
+		{
+			get;
+			private set;
+		}
+		public static bool timed_builds
+		{
+			get;
+			private set;
+		}
+		public static string HullRecycleTarget
+		{
+			get;
+			private set;
+		}
+		public static string KerbalRecycleTarget
+		{
+			get;
+			private set;
+		}
+		public static double KerbalRecycleAmount
+		{
+			get;
+			private set;
+		}
+		public static bool AlwaysForceResourceUsage
+		{
+			get;
+			private set;
+		}
 
 		static string version = null;
 		static Rect windowpos;
@@ -75,13 +107,15 @@ namespace ExLP {
 				settings.AddValue ("TimedBuilds", val);
 			}
 
-			force_resource_use = false;
-			var fru = settings.GetValue ("ForceResourceUse");
-			bool.TryParse (fru, out force_resource_use);
+			var frus = settings.GetValue ("ForceResourceUse");
+			bool fru = false;
+			bool.TryParse (frus, out fru);
+			force_resource_use = fru;
 
-			timed_builds = true;
-			var tb = settings.GetValue ("TimedBuilds");
-			bool.TryParse (tb, out timed_builds);
+			var tbs = settings.GetValue ("TimedBuilds");
+			bool tb = true;;
+			bool.TryParse (tbs, out tb);
+			timed_builds = tb;
 
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
@@ -114,6 +148,37 @@ namespace ExLP {
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
 			ExBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
 		}
+
+		void LoadGlobalSettings ()
+		{
+			HullRecycleTarget = "Metal";
+			KerbalRecycleTarget = "Kethane";
+			KerbalRecycleAmount = 150.0;
+			AlwaysForceResourceUsage = false;
+			var dbase = GameDatabase.Instance;
+			var settings = dbase.GetConfigNode ("ELGlobalSettings");
+
+			if (settings.HasValue ("HullRecycleTarget")) {
+				string val = settings.GetValue ("HullRecycleTarget");
+				HullRecycleTarget = val;
+			}
+			if (settings.HasValue ("KerbalRecycleTarget")) {
+				string val = settings.GetValue ("KerbalRecycleTarget");
+				KerbalRecycleTarget = val;
+			}
+			if (settings.HasValue ("KerbalRecycleAmount")) {
+				string val = settings.GetValue ("KerbalRecycleAmount");
+				double kra;
+				double.TryParse (val, out kra);
+				KerbalRecycleAmount = kra;
+			}
+			if (settings.HasValue ("AlwaysForceResourceUsage")) {
+				string val = settings.GetValue ("AlwaysForceResourceUsage");
+				bool afru;
+				bool.TryParse (val, out afru);
+				AlwaysForceResourceUsage = afru;
+			}
+		}
 		
 		public override void OnAwake ()
 		{
@@ -121,6 +186,7 @@ namespace ExLP {
 				enabled = false;
 				return;
 			}
+			LoadGlobalSettings ();
 			if (!kethane_checked) {
 				kethane_present = CheckForKethane ();
 				kethane_checked = true;
@@ -133,7 +199,7 @@ namespace ExLP {
 		{
 			GUILayout.BeginVertical ();
 
-			if (!kethane_present
+			if (!AlwaysForceResourceUsage && !kethane_present
 				&& HighLogic.CurrentGame.Mode != Game.Modes.CAREER) {
 				bool fru = force_resource_use;
 				fru = GUILayout.Toggle (fru, "Always use resources");

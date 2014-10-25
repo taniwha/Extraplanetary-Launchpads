@@ -115,7 +115,8 @@ namespace ExLP {
 				if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER) {
 					return true;
 				}
-				return (ExSettings.kethane_present
+				return (ExSettings.AlwaysForceResourceUsage
+						|| ExSettings.kethane_present
 						|| ExSettings.force_resource_use);
 			}
 		}

@@ -7,6 +7,8 @@ using KSP.IO;
 
 namespace ExLP {
 
+using KerbalStats;
+
 public interface ExWorkSink
 {
 	void DoWork (double kerbalHours);
@@ -101,23 +103,51 @@ public class ExWorkshop : PartModule
 		data.Get<List<ExWorkshop>> ("sources").Add (this);
 	}
 
-	private float KerbalContribution (string name, float stupidity,
-									  float courage, bool isBadass)
+	private float Normal (float stupidity, float courage, float experience)
 	{
 		float s = stupidity;
 		float c = courage;
-		float contribution;
-		
-		if (isBadass) {
-			float a = -2;
-			float v = 2 * (1 - s);
-			float y = 1 - 2 * s;
-			contribution = y + (v + a * c / 2) * c;
-		} else {
-			contribution = 1 - s * (1 + c * c);
+		float e = experience;
+
+		float w = e / 3.6e5f * (1-0.8f*s);
+
+		return 1 - s * (1 + c * c) + (0.5f+s)*(1-Mathf.Exp(-w));
+	}
+
+	private float Baddass (float stupidity, float courage, float experience)
+	{
+		float s = stupidity;
+		float c = courage;
+		float e = experience;
+
+		float a = -2;
+		float v = 2 * (1 - s);
+		float y = 1 - 2 * s;
+		float w = e / 3.6e5f * (1-0.8f*s);
+
+		return y + (v + a * c / 2) * c + (1+2*s)*(1-Mathf.Exp(-w));
+	}
+
+	private float KerbalContribution (ProtoCrewMember crew, float stupidity,
+									  float courage, bool isBadass)
+	{
+		string expstr = KerbalExt.Get (crew, "experience:task=Workshop");
+		float experience = 0;
+		if (expstr != null) {
+			float.TryParse (expstr, out experience);
 		}
-		Debug.Log (String.Format ("[EL Workshop] Kerbal: {0} {1} {2} {3} {4}",
-								  name, s, c, isBadass, contribution));
+
+		float contribution;
+
+		if (isBadass) {
+			contribution = Baddass (stupidity, courage, experience);
+		} else {
+			contribution = Normal (stupidity, courage, experience);
+		}
+		Debug.Log (String.Format ("[EL Workshop] Kerbal: "
+								  + "{0} {1} {2} {3} {4}({5}) {6}",
+								  crew.name, stupidity, courage, isBadass,
+								  experience, expstr, contribution));
 		return contribution;
 	}
 
@@ -125,7 +155,7 @@ public class ExWorkshop : PartModule
 	{
 		float kh = 0;
 		foreach (var crew in part.protoModuleCrew) {
-			kh += KerbalContribution (crew.name, crew.stupidity, crew.courage,
+			kh += KerbalContribution (crew, crew.stupidity, crew.courage,
 									  crew.isBadass);
 		}
 		Productivity = kh * ProductivityFactor;
@@ -187,21 +217,24 @@ public class ExWorkshop : PartModule
 		if (this == master) {
 			double hours = 0;
 			vessel_productivity = 0;
-			foreach (var source in sources) {
+			for (int i = 0; i < sources.Count; i++) {
+				var source = sources[i];
 				hours += source.GetProductivity ();
 				vessel_productivity += source.Productivity;
 			}
 			//Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
 			//						  hours));
 			int num_sinks = 0;
-			foreach (var sink in sinks) {
+			for (int i = 0; i < sinks.Count; i++) {
+				var sink = sinks[i];
 				if (sink.isActive ()) {
 					num_sinks++;
 				}
 			}
 			if (num_sinks > 0) {
 				double work = hours / num_sinks;
-				foreach (var sink in sinks) {
+				for (int i = 0; i < sinks.Count; i++) {
+					var sink = sinks[i];
 					if (sink.isActive ()) {
 						sink.DoWork (work);
 					}

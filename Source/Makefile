@@ -15,6 +15,7 @@ EL_FILES := \
 	BuildWindow.cs		\
 	Checkers.cs			\
 	DropDownList.cs		\
+	KerbalStatsWrapper.cs	\
 	LaunchClamp.cs		\
 	Launchpad.cs		\
 	ProgressBar.cs		\

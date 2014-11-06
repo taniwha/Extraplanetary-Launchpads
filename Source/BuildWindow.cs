@@ -338,11 +338,19 @@ namespace ExLP {
 		}
 
 		void ResourceProgress (string label, BuildCost.BuildResource br,
-							   BuildCost.BuildResource req)
+			BuildCost.BuildResource req, bool forward)
 		{
 			double fraction = (req.amount - br.amount) / req.amount;
 			double required = br.amount;
 			double available = control.padResources.ResourceAmount (br.name);
+			double numberOfFramesLeft;
+			if (forward) {
+				numberOfFramesLeft = (br.amount / br.deltaAmount);
+			} else {
+				numberOfFramesLeft = ((req.amount-br.amount) / br.deltaAmount);
+			}
+			double numberOfSecondsLeft = numberOfFramesLeft * TimeWarp.fixedDeltaTime;
+			TimeSpan timeLeft = TimeSpan.FromSeconds (numberOfSecondsLeft);
 
 			GUILayout.BeginHorizontal ();
 
@@ -351,7 +359,7 @@ namespace ExLP {
 						   GUILayout.Height (40));
 
 			GUILayout.BeginVertical ();
-			var percent = (fraction * 100).ToString("G4") + "%";
+			string percent = (fraction * 100).ToString ("G4") + "% " + String.Format ("{0:D2}:{1:D2}:{2:D2}", timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
 			Styles.bar.Draw ((float) fraction, percent, 300);
 			GUILayout.EndVertical ();
 
@@ -557,11 +565,11 @@ namespace ExLP {
 			return reslist.Where(r => r.name == name).FirstOrDefault ();
 		}
 
-		void BuildProgress ()
+		void BuildProgress (bool forward)
 		{
 			foreach (var br in control.builtStuff.required) {
 				var req = FindResource (control.buildCost.required, br.name);
-				ResourceProgress (br.name, br, req);
+				ResourceProgress (br.name, br, req, forward);
 			}
 		}
 
@@ -676,14 +684,14 @@ namespace ExLP {
 				case ExBuildControl.State.Building:
 					SelectedCraft ();
 					ResourceScroll_begin ();
-					BuildProgress ();
+					BuildProgress (true);
 					ResourceScroll_end ();
 					PauseButton ();
 					break;
 				case ExBuildControl.State.Canceling:
 					SelectedCraft ();
 					ResourceScroll_begin ();
-					BuildProgress ();
+					BuildProgress (false);
 					ResourceScroll_end ();
 					PauseButton ();
 					break;

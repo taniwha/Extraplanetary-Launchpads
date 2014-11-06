@@ -27,6 +27,7 @@ namespace ExLP {
 		{
 			public string name;
 			public double amount;
+			public double deltaAmount = 0;
 			public double density;
 			public double mass;
 			public bool hull;

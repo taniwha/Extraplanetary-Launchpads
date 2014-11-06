@@ -244,6 +244,8 @@ namespace ExLP {
 					// of consumed resource
 					kerbalHours -= work * amount / base_amount;
 					res.amount -= amount;
+					//Debug.Log("add delta: "+amount);
+					res.deltaAmount = amount;
 					padResources.TransferResource (res.name, -amount);
 				}
 			} while (did_work && kerbalHours > 0);

@@ -37,6 +37,9 @@ public class ExWorkshop : PartModule
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
 
+	[KSPField(isPersistant=true, guiName="Last Updated", guiActive=true)]
+	public string lastUpdateTime = "0.0"; // can't be a double, or it won't automaticly persist, so save as string
+
 	[KSPField]
 	public bool IgnoreCrewCapacity = true;
 
@@ -103,9 +106,11 @@ public class ExWorkshop : PartModule
 		}
 	}
 
-	private double GetProductivity ()
+	private double GetProductivity (double lastUpdate, double currentTime)
 	{
-		return Productivity * TimeWarp.fixedDeltaTime / 3600;
+		double prod = (double)Productivity * (currentTime-lastUpdate) / 3600.0d;
+		//Debug.log ("GetProductivity: lastupdate = " + lastUpdate.ToString ("F3") + ", currentTime = " + currentTime.ToString ("F3") + ", --> " + prod.ToString ());
+		return prod;
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
@@ -231,12 +236,15 @@ public class ExWorkshop : PartModule
 
 	public void FixedUpdate ()
 	{
+		double currentTime = Planetarium.GetUniversalTime ();
+		double lastUpdate = double.Parse (lastUpdateTime);
+		//print ("last Update: " + lastUpdateTime + "/" + lastUpdate);
 		if (this == master) {
 			double hours = 0;
 			vessel_productivity = 0;
 			for (int i = 0; i < sources.Count; i++) {
 				var source = sources[i];
-				hours += source.GetProductivity ();
+				hours += source.GetProductivity (lastUpdate, currentTime);
 				vessel_productivity += source.Productivity;
 			}
 			//Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
@@ -251,13 +259,14 @@ public class ExWorkshop : PartModule
 			if (num_sinks > 0) {
 				double work = hours / num_sinks;
 				for (int i = 0; i < sinks.Count; i++) {
-					var sink = sinks[i];
+					var sink = sinks [i];
 					if (sink.isActive ()) {
 						sink.DoWork (work);
 					}
 				}
 			}
 		}
+		lastUpdateTime = currentTime.ToString ("F3");
 	}
 }
 

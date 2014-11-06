@@ -37,7 +37,7 @@ public class ExWorkshop : PartModule
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
 
-	[KSPField(isPersistant=true, guiName="Last Updated", guiActive=true)]
+	[KSPField(isPersistant=true, guiName="Last Updated", guiActive=false)]
 	public string lastUpdateTime = "0.0"; // can't be a double, or it won't automaticly persist, so save as string
 
 	[KSPField]
@@ -259,7 +259,7 @@ public class ExWorkshop : PartModule
 			if (num_sinks > 0) {
 				double work = hours / num_sinks;
 				for (int i = 0; i < sinks.Count; i++) {
-					var sink = sinks [i];
+					var sink = sinks[i];
 					if (sink.isActive ()) {
 						sink.DoWork (work);
 					}

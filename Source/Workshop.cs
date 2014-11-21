@@ -37,7 +37,7 @@ public class ExWorkshop : PartModule
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
 
-	[KSPField(isPersistant=true, guiName="Last Updated", guiActive=true)]
+	[KSPField(isPersistant=true, guiName="Last Updated", guiActive=false)]
 	public double lastUpdate = 0.0; // not automatically persisted because it's a double; see OnLoad/OnSave
 
 	[KSPField]
@@ -209,19 +209,13 @@ public class ExWorkshop : PartModule
 			}
 		}
 		if (node.HasValue ("lastUpdateString")) {
-			//Debug.Log("EPL loading lastUpdate:"+ node.GetValue("lastUpdateString"));
 			double.TryParse (node.GetValue ("lastUpdateString"), out lastUpdate);
-		} else {
-			lastUpdate = 0.0;
 		}
 	}
-	
+
 	public override void OnSave (ConfigNode node)
 	{
-		if (lastUpdate != 0) {
-			node.AddValue ("lastUpdateString", lastUpdate.ToString());
-			//Debug.Log("EPL saving lastUpdate:"+ lastUpdate.ToString());
-		}
+		node.AddValue ("lastUpdateString", lastUpdate.ToString ("G17"));
 	}
 
 	void OnDestroy ()

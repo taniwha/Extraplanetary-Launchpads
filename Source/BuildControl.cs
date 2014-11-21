@@ -305,6 +305,8 @@ namespace ExLP {
 					// of returned resource
 					kerbalHours -= work * amount / base_amount;
 					bres.amount += amount;
+					//Debug.Log("remove delta: "+amount);
+					bres.deltaAmount = amount;
 					padResources.TransferResource (bres.name, amount);
 				}
 			} while (did_work && kerbalHours > 0);

@@ -222,6 +222,9 @@ namespace ExLP {
 		void UpdateGUIState ()
 		{
 			enabled = !hide_ui && launchpads != null && gui_enabled;
+			if (!enabled) {
+				InputLockManager.RemoveControlLock ("EL_Build_window_lock");
+			}
 			if (control != null) {
 				if (enabled && highlight_pad) {
 					control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
@@ -757,6 +760,11 @@ namespace ExLP {
 										  windowpos, WindowGUI,
 										  name + " " + ver + ": " + sit,
 										  GUILayout.Width (640));
+			if (enabled && windowpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
+				InputLockManager.SetControlLock ("EL_Build_window_lock");
+			} else {
+				InputLockManager.RemoveControlLock ("EL_Build_window_lock");
+			}
 			if (craftlist != null) {
 				craftlist.OnGUI ();
 			}

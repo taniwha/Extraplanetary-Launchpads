@@ -35,6 +35,9 @@ namespace ExLP {
 		public static void ToggleGUI ()
 		{
 			showGUI = !showGUI;
+			if (!showGUI) {
+				InputLockManager.RemoveControlLock ("EL_ShipInfo_window_lock");
+			}
 		}
 
 		public static void LoadSettings (ConfigNode node)
@@ -126,6 +129,11 @@ namespace ExLP {
 			winpos = GUILayout.Window (GetInstanceID (), winpos, InfoWindow,
 									  "Build Resources: " + ver,
 									  GUILayout.MinWidth (200));
+			if (enabled && winpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
+				InputLockManager.SetControlLock ("EL_ShipInfo_window_lock");
+			} else {
+				InputLockManager.RemoveControlLock ("EL_ShipInfo_window_lock");
+			}
 		}
 
 		private void UnitLabel (string title, double amount, string units)

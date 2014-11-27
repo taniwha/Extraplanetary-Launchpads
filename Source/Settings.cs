@@ -232,6 +232,7 @@ namespace ExLP {
 
 			if (GUILayout.Button ("OK")) {
 				enabled = false;
+				InputLockManager.RemoveControlLock ("EL_Settings_window_lock");
 			}
 			GUILayout.EndVertical ();
 			GUI.DragWindow (new Rect (0, 0, 10000, 20));
@@ -251,6 +252,11 @@ namespace ExLP {
 										  windowpos, WindowGUI,
 										  name + " " + ver,
 										  GUILayout.Width (500));
+			if (enabled && windowpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
+				InputLockManager.SetControlLock ("EL_Settings_window_lock");
+			} else {
+				InputLockManager.RemoveControlLock ("EL_Settings_window_lock");
+			}
 		}
 	}
 }

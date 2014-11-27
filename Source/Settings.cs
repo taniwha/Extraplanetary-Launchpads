@@ -35,6 +35,7 @@ namespace ExLP {
 	]
 	public class ExSettings : ScenarioModule
 	{
+		static bool settings_loaded;
 		static bool kethane_checked;
 		public static bool kethane_present
 		{
@@ -168,10 +169,16 @@ namespace ExLP {
 
 		void LoadGlobalSettings ()
 		{
+			if (settings_loaded) {
+				return;
+			}
+			settings_loaded = true;
 			HullRecycleTarget = "Metal";
 			KerbalRecycleTarget = "Kethane";
 			KerbalRecycleAmount = 150.0;
 			AlwaysForceResourceUsage = false;
+			force_resource_use = true;
+			timed_builds = true;
 			var dbase = GameDatabase.Instance;
 			var settings = dbase.GetConfigNode ("ELGlobalSettings");
 
@@ -197,6 +204,20 @@ namespace ExLP {
 				bool afru;
 				bool.TryParse (val, out afru);
 				AlwaysForceResourceUsage = afru;
+			}
+			if (settings.HasValue ("ForceResourceUse")) {
+				string str = settings.GetValue ("ForceResourceUse");
+				bool val;
+				if (bool.TryParse (str, out val)) {
+					force_resource_use = val;
+				}
+			}
+			if (settings.HasValue ("TimedBuilds")) {
+				string str = settings.GetValue ("TimedBuilds");
+				bool val;
+				if (bool.TryParse (str, out val)) {
+					timed_builds = val;
+				}
 			}
 		}
 		

@@ -37,6 +37,8 @@ public class ExWorkshop : PartModule
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
 
+	public double lastUpdate = 0.0;
+
 	[KSPField]
 	public bool IgnoreCrewCapacity = true;
 
@@ -103,9 +105,11 @@ public class ExWorkshop : PartModule
 		}
 	}
 
-	private double GetProductivity ()
+	private double GetProductivity (double timeDelta)
 	{
-		return Productivity * TimeWarp.fixedDeltaTime / 3600;
+		double prod = Productivity * timeDelta / 3600.0;
+		//Debug.log ("GetProductivity: lastupdate = " + lastUpdate.ToString ("F3") + ", currentTime = " + currentTime.ToString ("F3") + ", --> " + prod.ToString ());
+		return prod;
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
@@ -203,6 +207,14 @@ public class ExWorkshop : PartModule
 				Fields["VesselProductivity"].guiActive = false;
 			}
 		}
+		if (node.HasValue ("lastUpdateString")) {
+			double.TryParse (node.GetValue ("lastUpdateString"), out lastUpdate);
+		}
+	}
+
+	public override void OnSave (ConfigNode node)
+	{
+		node.AddValue ("lastUpdateString", lastUpdate.ToString ("G17"));
 	}
 
 	void OnDestroy ()
@@ -231,12 +243,15 @@ public class ExWorkshop : PartModule
 
 	public void FixedUpdate ()
 	{
+		double currentTime = Planetarium.GetUniversalTime ();
+		double timeDelta = currentTime - lastUpdate;
+		//print ("last Update: " + lastUpdateTime + "/" + lastUpdate);
 		if (this == master) {
 			double hours = 0;
 			vessel_productivity = 0;
 			for (int i = 0; i < sources.Count; i++) {
 				var source = sources[i];
-				hours += source.GetProductivity ();
+				hours += source.GetProductivity (timeDelta);
 				vessel_productivity += source.Productivity;
 			}
 			//Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
@@ -258,6 +273,7 @@ public class ExWorkshop : PartModule
 				}
 			}
 		}
+		lastUpdate = currentTime;
 	}
 }
 

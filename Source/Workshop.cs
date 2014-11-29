@@ -37,8 +37,7 @@ public class ExWorkshop : PartModule
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
 
-	[KSPField(isPersistant=true, guiName="Last Updated", guiActive=false)]
-	public double lastUpdate = 0.0; // not automatically persisted because it's a double; see OnLoad/OnSave
+	public double lastUpdate = 0.0;
 
 	[KSPField]
 	public bool IgnoreCrewCapacity = true;

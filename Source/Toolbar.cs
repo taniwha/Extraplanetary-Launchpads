@@ -33,6 +33,9 @@ namespace ExLP {
 			if (CompatibilityChecker.IsWin64 ()) {
 				return;
 			}
+			if (ToolbarManager.Instance == null) {
+				return;
+			}
 			ExEditorButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExEditorButton");
 			ExEditorButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ExEditorButton.ToolTip = "EL Build Resources Display";
@@ -53,6 +56,9 @@ namespace ExLP {
 		public void Awake ()
 		{
 			if (CompatibilityChecker.IsWin64 ()) {
+				return;
+			}
+			if (ToolbarManager.Instance == null) {
 				return;
 			}
 			ExEditorButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExEditorButton");

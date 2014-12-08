@@ -30,7 +30,6 @@ namespace ExLP {
 			GameScenes.EDITOR,
 			GameScenes.FLIGHT,
 			GameScenes.TRACKSTATION,
-			GameScenes.SPH,
 		})
 	]
 	public class ExSettings : ScenarioModule

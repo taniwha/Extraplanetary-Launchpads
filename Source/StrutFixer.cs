@@ -65,7 +65,7 @@ namespace ExLP {
 				if (Physics.Raycast (castPos, castDir, out hitInfo,
 									 maxLength)) {
 					GameObject hit = hitInfo.collider.gameObject;
-					target = EditorLogic.GetComponentUpwards<Part>(hit);
+					target = Part.GetComponentUpwards<Part>(hit);
 				}
 				//Debug.Log (String.Format ("[EL] {0} {1} {2} {3}", target,
 				//						  targetName, xform.position,

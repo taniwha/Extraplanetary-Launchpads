@@ -228,7 +228,7 @@ namespace ExLP {
 			if (control != null) {
 				if (enabled && highlight_pad) {
 					control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
-					control.builder.part.SetHighlight (true);
+					control.builder.part.SetHighlight (true, false);
 				} else {
 					control.builder.part.SetHighlightDefault ();
 				}
@@ -440,8 +440,9 @@ namespace ExLP {
 				}
 				//GUILayout.Button is "true" when clicked
 				var clrect = new Rect (Screen.width / 2, 100, 350, 500);
-				craftlist = new CraftBrowser (clrect, dir[(int)control.craftType],
-											  strpath, "Select a ship to load",
+				craftlist = new CraftBrowser (clrect, EditorFacility.None,
+											  strpath + "/" + dir[(int)control.craftType],
+											  "Select a ship to load",
 											  craftSelectComplete,
 											  craftSelectCancel,
 											  HighLogic.Skin,

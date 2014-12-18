@@ -179,7 +179,7 @@ namespace ExLP {
 			force_resource_use = true;
 			timed_builds = true;
 			var dbase = GameDatabase.Instance;
-			var settings = dbase.GetConfigNode ("ELGlobalSettings");
+			var settings = dbase.GetConfigNodes ("ELGlobalSettings").LastOrDefault ();
 
 			if (settings == null) {
 				return;

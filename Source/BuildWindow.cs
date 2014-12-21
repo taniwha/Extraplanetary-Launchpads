@@ -22,6 +22,8 @@ using UnityEngine;
 
 using KSP.IO;
 
+using ExLP_KACWrapper;
+
 namespace ExLP {
 
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
@@ -116,6 +118,16 @@ namespace ExLP {
 		DropDownList pad_list;
 		ExBuildControl control;
 
+		internal void Start()
+		{
+			KACWrapper.InitKACWrapper();
+			if (KACWrapper.APIReady)
+			{
+				//All good to go
+				Debug.Log ("KACWrapper initialized");
+			}
+		}
+
 		public static void ToggleGUI ()
 		{
 			gui_enabled = !gui_enabled;
@@ -176,7 +188,7 @@ namespace ExLP {
 		void BuildPadList (Vessel v)
 		{
 			if (control != null) {
-				control.builder.part.SetHighlightDefault ();
+				//control.builder.part.SetHighlightDefault ();
 			}
 			launchpads = null;
 			pad_list = null;
@@ -227,10 +239,10 @@ namespace ExLP {
 			}
 			if (control != null) {
 				if (enabled && highlight_pad) {
-					control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
-					control.builder.part.SetHighlight (true, false);
+					//control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
+					//control.builder.part.SetHighlight (true, false);
 				} else {
-					control.builder.part.SetHighlightDefault ();
+					//control.builder.part.SetHighlightDefault ();
 				}
 			}
 			if (launchpads != null) {
@@ -343,14 +355,23 @@ namespace ExLP {
 			double fraction = (req.amount - br.amount) / req.amount;
 			double required = br.amount;
 			double available = control.padResources.ResourceAmount (br.name);
-			double numberOfFramesLeft;
-			if (forward) {
-				numberOfFramesLeft = (br.amount / br.deltaAmount);
+			double alarmTime;
+			string percent = (fraction * 100).ToString ("G4") + "% ";
+			if (control.paused) {
+				percent = percent + "[paused]";
+				alarmTime = 0; // need assignment or compiler complains about use of unassigned variable
 			} else {
-				numberOfFramesLeft = ((req.amount-br.amount) / br.deltaAmount);
+				double numberOfFramesLeft;
+				if (forward) {
+					numberOfFramesLeft = (br.amount / br.deltaAmount);
+				} else {
+					numberOfFramesLeft = ((req.amount-br.amount) / br.deltaAmount);
+				}
+				double numberOfSecondsLeft = numberOfFramesLeft * TimeWarp.fixedDeltaTime;
+				TimeSpan timeLeft = TimeSpan.FromSeconds (numberOfSecondsLeft);
+				percent = percent + String.Format ("{0:D2}:{1:D2}:{2:D2}", timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
+				alarmTime = Planetarium.GetUniversalTime () + timeLeft.TotalSeconds;
 			}
-			double numberOfSecondsLeft = numberOfFramesLeft * TimeWarp.fixedDeltaTime;
-			TimeSpan timeLeft = TimeSpan.FromSeconds (numberOfSecondsLeft);
 
 			GUILayout.BeginHorizontal ();
 
@@ -359,9 +380,60 @@ namespace ExLP {
 						   GUILayout.Height (40));
 
 			GUILayout.BeginVertical ();
-			string percent = (fraction * 100).ToString ("G4") + "% " + String.Format ("{0:D2}:{1:D2}:{2:D2}", timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
+
 			Styles.bar.Draw ((float) fraction, percent, 300);
 			GUILayout.EndVertical ();
+
+			if (KACWrapper.APIReady) {
+				if (control.paused) {
+					// It doesn't make sense to have an alarm for an event that will never happen
+					if (control.KACalarmID != "") {
+						KACWrapper.KAC.DeleteAlarm (control.KACalarmID);
+						control.KACalarmID = "";
+					}
+				} else {
+					// Find the existing alarm, if it exists
+					KACWrapper.KACAPI.KACAlarmList alarmList = KACWrapper.KAC.Alarms;
+					KACWrapper.KACAPI.KACAlarm a = null;
+					if ((alarmList != null) && (control.KACalarmID!="")) {
+						//Debug.Log ("Searching for alarm with ID [" + control.KACalarmID + "]");
+						a = alarmList.First(z=>z.ID==control.KACalarmID);
+					}
+
+					// set up the strings for the alarm
+					string builderShipName = FlightGlobals.ActiveVessel.vesselName;
+					string newCraftName = "SHIPNAME"; // how to get name of ship being built?
+
+					string alarmMessage = "[EPL] build: \"" + newCraftName + "\"";
+					string alarmNotes = "Completion of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
+					if (!forward) { // teardown messages
+						alarmMessage = "[EPL] teardown: \"" + newCraftName + "\"";
+						alarmNotes = "Teardown of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
+					}
+
+					if (a == null) {
+						// no existing alarm, make a new alarm
+						control.KACalarmID = KACWrapper.KAC.CreateAlarm (KACWrapper.KACAPI.AlarmTypeEnum.Raw, alarmMessage, alarmTime);
+						//Debug.Log ("new alarm ID: [" + control.KACalarmID + "]");
+
+						if (control.KACalarmID != "") {
+							a = KACWrapper.KAC.Alarms.First (z => z.ID == control.KACalarmID);
+							if (a != null) {
+								a.AlarmAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp; //FIXME: should be configurable in EPL options
+								a.AlarmMargin = 0;
+								a.VesselID = FlightGlobals.ActiveVessel.id.ToString ();
+							}
+						}
+					}
+					if (a != null) {
+						// Whether we created an alarm or found an existing one, now update it
+						a.AlarmTime = alarmTime;
+						a.Notes = alarmNotes;
+						a.Name = alarmMessage;
+					}
+				}
+
+			}
 
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
@@ -395,7 +467,7 @@ namespace ExLP {
 		void Select_Pad (ExBuildControl selected_pad)
 		{
 			if (control != null) {
-				control.builder.part.SetHighlightDefault ();
+				//control.builder.part.SetHighlightDefault ();
 			}
 			control = selected_pad;
 			pad_list.SelectItem (launchpads.IndexOf (control));
@@ -440,7 +512,7 @@ namespace ExLP {
 			GUILayout.BeginHorizontal ();
 			if (GUILayout.Button ("Select Craft", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
-				string []dir = new string[] {"VAB", "SPH", "../Subassemblies"};
+				//string []dir = new string[] {"VAB", "SPH", "../Subassemblies"};
 				var diff = HighLogic.CurrentGame.Parameters.Difficulty;
 				bool stock = diff.AllowStockVessels;
 				if (control.craftType == ExBuildControl.CraftType.SubAss) {
@@ -449,7 +521,7 @@ namespace ExLP {
 				//GUILayout.Button is "true" when clicked
 				var clrect = new Rect (Screen.width / 2, 100, 350, 500);
 				craftlist = new CraftBrowser (clrect, EditorFacility.None,
-											  strpath + "/" + dir[(int)control.craftType],
+											  strpath,
 											  "Select a ship to load",
 											  craftSelectComplete,
 											  craftSelectCancel,

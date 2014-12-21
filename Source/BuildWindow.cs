@@ -402,7 +402,7 @@ namespace ExLP {
 
 					// set up the strings for the alarm
 					string builderShipName = FlightGlobals.ActiveVessel.vesselName;
-					string newCraftName = "SHIPNAME"; // how to get name of ship being built?
+					string newCraftName = control.craftConfig.GetValue ("ship");
 
 					string alarmMessage = "[EPL] build: \"" + newCraftName + "\"";
 					string alarmNotes = "Completion of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";

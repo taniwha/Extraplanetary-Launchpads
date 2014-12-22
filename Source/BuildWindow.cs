@@ -393,11 +393,12 @@ namespace ExLP {
 					}
 				} else {
 					// Find the existing alarm, if it exists
+					// Note that we might have created an alarm, and then the user deleted it!
 					KACWrapper.KACAPI.KACAlarmList alarmList = KACWrapper.KAC.Alarms;
 					KACWrapper.KACAPI.KACAlarm a = null;
 					if ((alarmList != null) && (control.KACalarmID!="")) {
 						//Debug.Log ("Searching for alarm with ID [" + control.KACalarmID + "]");
-						a = alarmList.First(z=>z.ID==control.KACalarmID);
+						a = alarmList.FirstOrDefault(z=>z.ID==control.KACalarmID);
 					}
 
 					// set up the strings for the alarm
@@ -417,7 +418,7 @@ namespace ExLP {
 						//Debug.Log ("new alarm ID: [" + control.KACalarmID + "]");
 
 						if (control.KACalarmID != "") {
-							a = KACWrapper.KAC.Alarms.First (z => z.ID == control.KACalarmID);
+							a = KACWrapper.KAC.Alarms.FirstOrDefault(z => z.ID == control.KACalarmID);
 							if (a != null) {
 								a.AlarmAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp; //FIXME: should be configurable in EPL options
 								a.AlarmMargin = 0;

@@ -472,8 +472,10 @@ namespace ExLP {
 
 		void SelectedCraft ()
 		{
-			var ship_name = control.craftConfig.GetValue ("ship");
-			GUILayout.Box ("Selected Craft:	" + ship_name, Styles.white);
+			if (control.craftConfig != null) {
+				var ship_name = control.craftConfig.GetValue ("ship");
+				GUILayout.Box ("Selected Craft:	" + ship_name, Styles.white);
+			}
 		}
 
 		void ResourceHeader ()

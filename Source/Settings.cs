@@ -51,6 +51,16 @@ namespace ExLP {
 			get;
 			private set;
 		}
+		public static bool use_KAC
+		{
+			get;
+			private set;
+		}
+		public static ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum KACAction
+		{
+			get;
+			private set;
+		}
 		public static string HullRecycleTarget
 		{
 			get;
@@ -75,6 +85,7 @@ namespace ExLP {
 		static string version = null;
 		static Rect windowpos;
 		private static bool gui_enabled;
+		private static string[] alarmactions = new string[] {"Kill Warp+Message", "Kill Warp only", "Message Only", "Pause Game"};
 		public static string GetVersion ()
 		{
 			if (version != null) {
@@ -102,6 +113,7 @@ namespace ExLP {
 			get {
 				var game = HighLogic.CurrentGame;
 				return game.scenarios.Select (s => s.moduleRef).OfType<ExSettings> ().SingleOrDefault ();
+
 			}
 		}
 
@@ -121,6 +133,14 @@ namespace ExLP {
 				var val = timed_builds;
 				settings.AddValue ("TimedBuilds", val);
 			}
+			if (!settings.HasValue ("UseKAC")) {
+				var val = use_KAC;
+				settings.AddValue ("UseKAC", val);
+			}
+			if (!settings.HasValue ("KACAction")) {
+				var val = KACAction.ToString();
+				settings.AddValue ("KACAction", val);
+			}
 
 			var frus = settings.GetValue ("ForceResourceUse");
 			bool fru = false;
@@ -131,6 +151,30 @@ namespace ExLP {
 			bool tb = true;
 			bool.TryParse (tbs, out tb);
 			timed_builds = tb;
+
+			var uks = settings.GetValue ("UseKAC");
+			bool uk = true;
+			bool.TryParse (uks, out uk);
+			timed_builds = uk;
+
+			string str = settings.GetValue ("KACAction");
+			switch (str){
+			case ("KillWarp"):
+				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+				break;
+			case ("KillWarpOnly"):
+				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
+				break;
+			case ("MessageOnly"):
+				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
+				break;
+			case ("PauseGame"):
+				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
+				break;
+			default:
+				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+				break;
+			};
 
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
@@ -162,6 +206,12 @@ namespace ExLP {
 			bool tb = timed_builds;
 			settings.AddValue ("TimedBuilds", tb);
 
+			bool uk = use_KAC;
+			settings.AddValue ("UseKAC", uk);
+
+			string ka = KACAction.ToString ();
+			settings.AddValue ("KACAction", ka);
+
 			config.AddNode (settings);
 
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
@@ -180,6 +230,8 @@ namespace ExLP {
 			AlwaysForceResourceUsage = false;
 			force_resource_use = true;
 			timed_builds = true;
+			use_KAC = true;
+			KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 			var dbase = GameDatabase.Instance;
 			var settings = dbase.GetConfigNodes ("ELGlobalSettings").LastOrDefault ();
 
@@ -220,6 +272,33 @@ namespace ExLP {
 					timed_builds = val;
 				}
 			}
+			if (settings.HasValue ("UseKAC")) {
+				string str = settings.GetValue ("UseKAC");
+				bool val;
+				if (bool.TryParse (str, out val)) {
+					use_KAC = val;
+				}
+			}
+			if (settings.HasValue ("KACAction")) {
+				string str = settings.GetValue ("KACAction");
+				switch (str){
+				case ("KillWarp"):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					break;
+				case ("KillWarpOnly"):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
+					break;
+				case ("MessageOnly"):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
+					break;
+				case ("PauseGame"):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
+					break;
+				default:
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					break;
+				};
+			}
 		}
 		
 		public override void OnAwake ()
@@ -256,6 +335,57 @@ namespace ExLP {
 			bool tb = timed_builds;
 			tb = GUILayout.Toggle (tb, "Allow progressive builds");
 			timed_builds = tb;
+
+			bool uk = use_KAC;
+			uk = GUILayout.Toggle (uk, "Create alarms in Kerbal Alarm Clock");
+			use_KAC = uk;
+
+			if (uk) {
+				int actionint;
+				switch (KACAction){
+				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp):
+					actionint = 0;
+					break;
+				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly):
+					actionint = 1;
+					break;
+				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly):
+					actionint = 2;
+					break;
+				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame):
+					actionint = 3;
+					break;
+				default:
+					actionint = 0;
+					break;
+				};
+
+				//GUIStyle gridStyle = new GUIStyle ();
+
+				GUILayout.BeginHorizontal ();
+				GUILayout.Label ("Alarm type: ");
+				actionint = GUILayout.SelectionGrid (actionint, alarmactions, 2);
+				GUILayout.EndHorizontal ();
+
+				switch (actionint){
+				case (0):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					break;
+				case (1):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
+					break;
+				case (2):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
+					break;
+				case (3):
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
+					break;
+				default:
+					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					break;
+				};
+
+			}
 
 			if (GUILayout.Button ("OK")) {
 				gui_enabled = false;

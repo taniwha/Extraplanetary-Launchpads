@@ -74,6 +74,7 @@ namespace ExLP {
 
 		static string version = null;
 		static Rect windowpos;
+		private static bool gui_enabled;
 		public static string GetVersion ()
 		{
 			if (version != null) {
@@ -101,7 +102,6 @@ namespace ExLP {
 			get {
 				var game = HighLogic.CurrentGame;
 				return game.scenarios.Select (s => s.moduleRef).OfType<ExSettings> ().SingleOrDefault ();
-				
 			}
 		}
 
@@ -111,9 +111,7 @@ namespace ExLP {
 			var settings = config.GetNode ("Settings");
 			if (settings == null) {
 				settings = new ConfigNode ("Settings");
-				if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
-					enabled = true;
-				}
+				gui_enabled = true; // Show settings window on first startup
 			}
 			if (!settings.HasValue ("ForceResourceUse")) {
 				var val = force_resource_use;
@@ -130,7 +128,7 @@ namespace ExLP {
 			force_resource_use = fru;
 
 			var tbs = settings.GetValue ("TimedBuilds");
-			bool tb = true;;
+			bool tb = true;
 			bool.TryParse (tbs, out tb);
 			timed_builds = tb;
 
@@ -146,6 +144,10 @@ namespace ExLP {
 
 			if (CompatibilityChecker.IsWin64 ()) {
 				enabled = false;
+			} else {
+				if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
+					enabled = true;
+				}
 			}
 		}
 
@@ -235,6 +237,11 @@ namespace ExLP {
 			enabled = false;
 		}
 
+		public static void ToggleGUI ()
+		{
+			gui_enabled = !gui_enabled;
+		}
+
 		void WindowGUI (int windowID)
 		{
 			GUILayout.BeginVertical ();
@@ -251,7 +258,7 @@ namespace ExLP {
 			timed_builds = tb;
 
 			if (GUILayout.Button ("OK")) {
-				enabled = false;
+				gui_enabled = false;
 				InputLockManager.RemoveControlLock ("EL_Settings_window_lock");
 			}
 			GUILayout.EndVertical ();
@@ -260,22 +267,27 @@ namespace ExLP {
 
 		void OnGUI ()
 		{
-			GUI.skin = HighLogic.Skin;
-
-			string name = "Extraplanetary Launchpad";
-			string ver = ExSettings.GetVersion ();
-			if (windowpos.x == 0) {
-				windowpos = new Rect (Screen.width / 2 - 250,
-								  Screen.height / 2 - 30, 0, 0);
-			}
-			windowpos = GUILayout.Window (GetInstanceID (),
-										  windowpos, WindowGUI,
-										  name + " " + ver,
-										  GUILayout.Width (500));
-			if (enabled && windowpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
-				InputLockManager.SetControlLock ("EL_Settings_window_lock");
-			} else {
-				InputLockManager.RemoveControlLock ("EL_Settings_window_lock");
+			if (enabled) { // don't do any work at all unless we're enabled
+				if (gui_enabled) { // don't create windows unless we're going to show them
+					GUI.skin = HighLogic.Skin;
+					if (windowpos.x == 0) {
+						windowpos = new Rect (Screen.width / 2 - 250,
+							Screen.height / 2 - 30, 0, 0);
+					}
+					string name = "Extraplanetary Launchpad";
+					string ver = ExSettings.GetVersion ();
+					windowpos = GUILayout.Window (GetInstanceID (),
+						windowpos, WindowGUI,
+						name + " " + ver,
+						GUILayout.Width (500));
+					if (windowpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
+						InputLockManager.SetControlLock ("EL_Settings_window_lock");
+					} else {
+						InputLockManager.RemoveControlLock ("EL_Settings_window_lock");
+					}
+				} else {
+					InputLockManager.RemoveControlLock ("EL_Settings_window_lock");
+				}
 			}
 		}
 	}

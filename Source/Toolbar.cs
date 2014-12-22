@@ -72,4 +72,29 @@ namespace ExLP {
 			ExEditorButton.Destroy ();
 		}
 	}
+
+	[KSPAddon (KSPAddon.Startup.SpaceCentre, false)]
+	public class ExToolbar_SettingsWindow : MonoBehaviour
+	{
+		private IButton ExSettingsButton;
+
+		public void Awake ()
+		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				return;
+			}
+			if (ToolbarManager.Instance == null) {
+				return;
+			}
+			ExSettingsButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExSettingsButton");
+			ExSettingsButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
+			ExSettingsButton.ToolTip = "EL Settings Window";
+			ExSettingsButton.OnClick += (e) => ExSettings.ToggleGUI ();
+		}
+
+		void OnDestroy()
+		{
+			ExSettingsButton.Destroy ();
+		}
+	}
 }

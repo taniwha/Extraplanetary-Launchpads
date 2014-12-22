@@ -267,16 +267,15 @@ namespace ExLP {
 
 		void OnGUI ()
 		{
-			GUI.skin = HighLogic.Skin;
-
-			string name = "Extraplanetary Launchpad";
-			string ver = ExSettings.GetVersion ();
-			if (windowpos.x == 0) {
-				windowpos = new Rect (Screen.width / 2 - 250,
-								  Screen.height / 2 - 30, 0, 0);
-			}
-			if (enabled) {
-				if (gui_enabled) {
+			if (enabled) { // don't do any work at all unless we're enabled
+				if (gui_enabled) { // don't create windows unless we're going to show them
+					GUI.skin = HighLogic.Skin;
+					if (windowpos.x == 0) {
+						windowpos = new Rect (Screen.width / 2 - 250,
+							Screen.height / 2 - 30, 0, 0);
+					}
+					string name = "Extraplanetary Launchpad";
+					string ver = ExSettings.GetVersion ();
 					windowpos = GUILayout.Window (GetInstanceID (),
 						windowpos, WindowGUI,
 						name + " " + ver,

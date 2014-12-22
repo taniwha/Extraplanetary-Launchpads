@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -188,7 +189,7 @@ namespace ExLP {
 		void BuildPadList (Vessel v)
 		{
 			if (control != null) {
-				//control.builder.part.SetHighlightDefault ();
+				control.builder.part.SetHighlightDefault ();
 			}
 			launchpads = null;
 			pad_list = null;
@@ -239,10 +240,10 @@ namespace ExLP {
 			}
 			if (control != null) {
 				if (enabled && highlight_pad) {
-					//control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
-					//control.builder.part.SetHighlight (true, false);
+					control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
+					control.builder.part.SetHighlight (true, false);
 				} else {
-					//control.builder.part.SetHighlightDefault ();
+					control.builder.part.SetHighlightDefault ();
 				}
 			}
 			if (launchpads != null) {
@@ -427,7 +428,7 @@ namespace ExLP {
 		void Select_Pad (ExBuildControl selected_pad)
 		{
 			if (control != null) {
-				//control.builder.part.SetHighlightDefault ();
+				control.builder.part.SetHighlightDefault ();
 			}
 			control = selected_pad;
 			pad_list.SelectItem (launchpads.IndexOf (control));
@@ -472,7 +473,12 @@ namespace ExLP {
 			GUILayout.BeginHorizontal ();
 			if (GUILayout.Button ("Select Craft", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
-				//string []dir = new string[] {"VAB", "SPH", "../Subassemblies"};
+
+				EditorFacility []facility = new EditorFacility[] {
+					EditorFacility.VAB,
+					EditorFacility.SPH,
+					EditorFacility.None,
+				};
 				var diff = HighLogic.CurrentGame.Parameters.Difficulty;
 				bool stock = diff.AllowStockVessels;
 				if (control.craftType == ExBuildControl.CraftType.SubAss) {
@@ -480,13 +486,20 @@ namespace ExLP {
 				}
 				//GUILayout.Button is "true" when clicked
 				var clrect = new Rect (Screen.width / 2, 100, 350, 500);
-				craftlist = new CraftBrowser (clrect, EditorFacility.None,
+				craftlist = new CraftBrowser (clrect, facility[(int)control.craftType],
 											  strpath,
 											  "Select a ship to load",
 											  craftSelectComplete,
 											  craftSelectCancel,
 											  HighLogic.Skin,
 											  EditorLogic.ShipFileImage, true);
+				if (control.craftType == ExBuildControl.CraftType.SubAss) {
+					craftlist.craftSubfolder = "../Subassemblies";
+					MethodInfo buildCraftList = typeof(CraftBrowser).GetMethod ("buildCraftList", BindingFlags.NonPublic | BindingFlags.Instance);
+					if (buildCraftList != null) {
+						buildCraftList.Invoke (craftlist, null);
+					}
+				}
 				diff.AllowStockVessels = stock;
 			}
 			GUI.enabled = control.craftConfig != null;
@@ -500,8 +513,10 @@ namespace ExLP {
 
 		void SelectedCraft ()
 		{
-			var ship_name = control.craftConfig.GetValue ("ship");
-			GUILayout.Box ("Selected Craft:	" + ship_name, Styles.white);
+			if (control.craftConfig != null) {
+				var ship_name = control.craftConfig.GetValue ("ship");
+				GUILayout.Box ("Selected Craft:	" + ship_name, Styles.white);
+			}
 		}
 
 		void ResourceHeader ()

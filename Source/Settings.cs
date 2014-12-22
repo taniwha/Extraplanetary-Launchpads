@@ -155,7 +155,7 @@ namespace ExLP {
 			var uks = settings.GetValue ("UseKAC");
 			bool uk = true;
 			bool.TryParse (uks, out uk);
-			timed_builds = uk;
+			use_KAC = uk;
 
 			string str = settings.GetValue ("KACAction");
 			switch (str){

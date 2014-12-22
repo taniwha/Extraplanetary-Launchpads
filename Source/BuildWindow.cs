@@ -349,7 +349,7 @@ namespace ExLP {
 			return fraction;
 		}
 
-		void ResourceProgress (string label, BuildCost.BuildResource br,
+		double ResourceProgress (string label, BuildCost.BuildResource br,
 			BuildCost.BuildResource req, bool forward)
 		{
 			double fraction = (req.amount - br.amount) / req.amount;
@@ -362,15 +362,25 @@ namespace ExLP {
 				alarmTime = 0; // need assignment or compiler complains about use of unassigned variable
 			} else {
 				double numberOfFramesLeft;
-				if (forward) {
-					numberOfFramesLeft = (br.amount / br.deltaAmount);
-				} else {
-					numberOfFramesLeft = ((req.amount-br.amount) / br.deltaAmount);
+				TimeSpan timeLeft;
+				try {
+					if (forward) {
+						numberOfFramesLeft = (br.amount / br.deltaAmount);
+					} else {
+						numberOfFramesLeft = ((req.amount-br.amount) / br.deltaAmount);
+					}
+					double numberOfSecondsLeft = numberOfFramesLeft * TimeWarp.fixedDeltaTime;
+					timeLeft = TimeSpan.FromSeconds (numberOfSecondsLeft);
+					alarmTime = Planetarium.GetUniversalTime () + timeLeft.TotalSeconds;
 				}
-				double numberOfSecondsLeft = numberOfFramesLeft * TimeWarp.fixedDeltaTime;
-				TimeSpan timeLeft = TimeSpan.FromSeconds (numberOfSecondsLeft);
+				catch {
+					// catch overflows or any other math errors, and just give a value
+					// it will be overwritten the next time
+					timeLeft = TimeSpan.FromSeconds(0);
+					alarmTime=0;
+				}
 				percent = percent + String.Format ("{0:D2}:{1:D2}:{2:D2}", timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
-				alarmTime = Planetarium.GetUniversalTime () + timeLeft.TotalSeconds;
+
 			}
 
 			GUILayout.BeginHorizontal ();
@@ -383,58 +393,6 @@ namespace ExLP {
 
 			Styles.bar.Draw ((float) fraction, percent, 300);
 			GUILayout.EndVertical ();
-
-			if (KACWrapper.APIReady) {
-				if (control.paused) {
-					// It doesn't make sense to have an alarm for an event that will never happen
-					if (control.KACalarmID != "") {
-						KACWrapper.KAC.DeleteAlarm (control.KACalarmID);
-						control.KACalarmID = "";
-					}
-				} else {
-					// Find the existing alarm, if it exists
-					// Note that we might have created an alarm, and then the user deleted it!
-					KACWrapper.KACAPI.KACAlarmList alarmList = KACWrapper.KAC.Alarms;
-					KACWrapper.KACAPI.KACAlarm a = null;
-					if ((alarmList != null) && (control.KACalarmID!="")) {
-						//Debug.Log ("Searching for alarm with ID [" + control.KACalarmID + "]");
-						a = alarmList.FirstOrDefault(z=>z.ID==control.KACalarmID);
-					}
-
-					// set up the strings for the alarm
-					string builderShipName = FlightGlobals.ActiveVessel.vesselName;
-					string newCraftName = control.craftConfig.GetValue ("ship");
-
-					string alarmMessage = "[EPL] build: \"" + newCraftName + "\"";
-					string alarmNotes = "Completion of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
-					if (!forward) { // teardown messages
-						alarmMessage = "[EPL] teardown: \"" + newCraftName + "\"";
-						alarmNotes = "Teardown of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
-					}
-
-					if (a == null) {
-						// no existing alarm, make a new alarm
-						control.KACalarmID = KACWrapper.KAC.CreateAlarm (KACWrapper.KACAPI.AlarmTypeEnum.Raw, alarmMessage, alarmTime);
-						//Debug.Log ("new alarm ID: [" + control.KACalarmID + "]");
-
-						if (control.KACalarmID != "") {
-							a = KACWrapper.KAC.Alarms.FirstOrDefault(z => z.ID == control.KACalarmID);
-							if (a != null) {
-								a.AlarmAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp; //FIXME: should be configurable in EPL options
-								a.AlarmMargin = 0;
-								a.VesselID = FlightGlobals.ActiveVessel.id.ToString ();
-							}
-						}
-					}
-					if (a != null) {
-						// Whether we created an alarm or found an existing one, now update it
-						a.AlarmTime = alarmTime;
-						a.Notes = alarmNotes;
-						a.Name = alarmMessage;
-					}
-				}
-
-			}
 
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
@@ -451,6 +409,7 @@ namespace ExLP {
 			GUILayout.FlexibleSpace ();
 
 			GUILayout.EndHorizontal ();
+			return alarmTime;
 		}
 
 		void SelectPad_start ()
@@ -640,10 +599,70 @@ namespace ExLP {
 
 		void BuildProgress (bool forward)
 		{
+			double mostFutureAlarmTime = 0;
 			foreach (var br in control.builtStuff.required) {
 				var req = FindResource (control.buildCost.required, br.name);
-				ResourceProgress (br.name, br, req, forward);
+				double alarmTime = ResourceProgress (br.name, br, req, forward);
+				if (alarmTime > mostFutureAlarmTime) {
+					mostFutureAlarmTime = alarmTime;
+				}
 			}
+			if (KACWrapper.APIReady && ExLP.ExSettings.use_KAC) {
+				if (control.paused) {
+					// It doesn't make sense to have an alarm for an event that will never happen
+					if (control.KACalarmID != "") {
+						try {
+							KACWrapper.KAC.DeleteAlarm (control.KACalarmID);
+						}
+						catch {
+							// Don't crash if there was some problem deleting the alarm
+						}
+						control.KACalarmID = "";
+					}
+				} else if (mostFutureAlarmTime>0) {
+					// Find the existing alarm, if it exists
+					// Note that we might have created an alarm, and then the user deleted it!
+					KACWrapper.KACAPI.KACAlarmList alarmList = KACWrapper.KAC.Alarms;
+					KACWrapper.KACAPI.KACAlarm a = null;
+					if ((alarmList != null) && (control.KACalarmID != "")) {
+						//Debug.Log ("Searching for alarm with ID [" + control.KACalarmID + "]");
+						a = alarmList.FirstOrDefault (z => z.ID == control.KACalarmID);
+					}
+
+					// set up the strings for the alarm
+					string builderShipName = FlightGlobals.ActiveVessel.vesselName;
+					string newCraftName = control.craftConfig.GetValue ("ship");
+
+					string alarmMessage = "[EPL] build: \"" + newCraftName + "\"";
+					string alarmNotes = "Completion of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
+					if (!forward) { // teardown messages
+						alarmMessage = "[EPL] teardown: \"" + newCraftName + "\"";
+						alarmNotes = "Teardown of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
+					}
+
+					if (a == null) {
+						// no existing alarm, make a new alarm
+						control.KACalarmID = KACWrapper.KAC.CreateAlarm (KACWrapper.KACAPI.AlarmTypeEnum.Raw, alarmMessage, mostFutureAlarmTime);
+						//Debug.Log ("new alarm ID: [" + control.KACalarmID + "]");
+
+						if (control.KACalarmID != "") {
+							a = KACWrapper.KAC.Alarms.FirstOrDefault (z => z.ID == control.KACalarmID);
+							if (a != null) {
+								a.AlarmAction = ExSettings.KACAction;
+								a.AlarmMargin = 0;
+								a.VesselID = FlightGlobals.ActiveVessel.id.ToString ();
+							}
+						}
+					}
+					if (a != null) {
+						// Whether we created an alarm or found an existing one, now update it
+						a.AlarmTime = mostFutureAlarmTime;
+						a.Notes = alarmNotes;
+						a.Name = alarmMessage;
+					}
+				}
+			}
+
 		}
 
 		bool OptionalResources ()

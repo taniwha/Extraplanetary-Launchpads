@@ -486,8 +486,6 @@ namespace ExLP {
 			if (craftType != CraftType.SubAss)
 				numParts = 0;
 
-			StrutFixer.HackStruts (nship, numParts);
-
 			string landedAt = "External Launchpad";
 			string flag = flagname;
 			Game game = FlightDriver.FlightStateCache;

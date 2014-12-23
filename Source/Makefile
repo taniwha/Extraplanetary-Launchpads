@@ -23,7 +23,6 @@ EL_FILES := \
 	Resources.cs		\
 	Settings.cs			\
 	ShipInfo.cs			\
-	StrutFixer.cs		\
 	SurveyStake.cs		\
 	SurveyStation.cs	\
 	SurveyTracker.cs	\

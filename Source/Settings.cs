@@ -81,7 +81,8 @@ namespace ExLP {
 			if (settings == null) {
 				settings = new ConfigNode ("Settings");
 				if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
-					enabled = true;
+					//XXX enable again when there are settings to tweak.
+					//enabled = true;
 				}
 			}
 

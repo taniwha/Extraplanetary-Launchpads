@@ -126,18 +126,6 @@ namespace ExLP {
 			private set;
 		}
 
-		public static bool useResources
-		{
-			get {
-				if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER) {
-					return true;
-				}
-				return (ExSettings.AlwaysForceResourceUsage
-						|| ExSettings.kethane_present
-						|| ExSettings.force_resource_use);
-			}
-		}
-
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
 		Part craftRoot;
@@ -337,15 +325,10 @@ namespace ExLP {
 		private void TransferResources ()
 		{
 			foreach (var br in buildCost.optional) {
-				if (useResources) {
-					var a = padResources.TransferResource (br.name,
-														   -br.amount);
-					a += br.amount;
-					var b = craftResources.TransferResource (br.name, a);
-					padResources.TransferResource (br.name, b);
-				} else {
-					craftResources.TransferResource (br.name, br.amount);
-				}
+				var a = padResources.TransferResource (br.name, -br.amount);
+				a += br.amount;
+				var b = craftResources.TransferResource (br.name, a);
+				padResources.TransferResource (br.name, b);
 			}
 		}
 

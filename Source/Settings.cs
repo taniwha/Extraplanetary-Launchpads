@@ -35,17 +35,6 @@ namespace ExLP {
 	public class ExSettings : ScenarioModule
 	{
 		static bool settings_loaded;
-		static bool kethane_checked;
-		public static bool kethane_present
-		{
-			get;
-			private set;
-		}
-		public static bool force_resource_use
-		{
-			get;
-			private set;
-		}
 		public static string HullRecycleTarget
 		{
 			get;
@@ -57,11 +46,6 @@ namespace ExLP {
 			private set;
 		}
 		public static double KerbalRecycleAmount
-		{
-			get;
-			private set;
-		}
-		public static bool AlwaysForceResourceUsage
 		{
 			get;
 			private set;
@@ -79,16 +63,6 @@ namespace ExLP {
 			version =  SystemUtils.GetAssemblyVersionString (asm);
 
 			return version;
-		}
-
-		internal static bool CheckForKethane ()
-		{
-			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "Kethane")) {
-				Debug.Log ("[EL] Kethane found");
-				return true;
-			}
-			Debug.Log ("[EL] Kethane not found");
-			return false;
 		}
 
 		public static ExSettings current
@@ -110,15 +84,6 @@ namespace ExLP {
 					enabled = true;
 				}
 			}
-			if (!settings.HasValue ("ForceResourceUse")) {
-				var val = force_resource_use;
-				settings.AddValue ("ForceResourceUse", val);
-			}
-
-			var frus = settings.GetValue ("ForceResourceUse");
-			bool fru = false;
-			bool.TryParse (frus, out fru);
-			force_resource_use = fru;
 
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
@@ -140,9 +105,6 @@ namespace ExLP {
 			//Debug.Log (String.Format ("[EL] Settings save: {0}", config));
 			var settings = new ConfigNode ("Settings");
 
-			bool fru = force_resource_use;
-			settings.AddValue ("ForceResourceUse", fru);
-
 			config.AddNode (settings);
 
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
@@ -158,8 +120,6 @@ namespace ExLP {
 			HullRecycleTarget = "Metal";
 			KerbalRecycleTarget = "Kethane";
 			KerbalRecycleAmount = 150.0;
-			AlwaysForceResourceUsage = false;
-			force_resource_use = true;
 			var dbase = GameDatabase.Instance;
 			var settings = dbase.GetConfigNodes ("ELGlobalSettings").LastOrDefault ();
 
@@ -180,19 +140,6 @@ namespace ExLP {
 				double.TryParse (val, out kra);
 				KerbalRecycleAmount = kra;
 			}
-			if (settings.HasValue ("AlwaysForceResourceUsage")) {
-				string val = settings.GetValue ("AlwaysForceResourceUsage");
-				bool afru;
-				bool.TryParse (val, out afru);
-				AlwaysForceResourceUsage = afru;
-			}
-			if (settings.HasValue ("ForceResourceUse")) {
-				string str = settings.GetValue ("ForceResourceUse");
-				bool val;
-				if (bool.TryParse (str, out val)) {
-					force_resource_use = val;
-				}
-			}
 		}
 		
 		public override void OnAwake ()
@@ -202,10 +149,6 @@ namespace ExLP {
 				return;
 			}
 			LoadGlobalSettings ();
-			if (!kethane_checked) {
-				kethane_present = CheckForKethane ();
-				kethane_checked = true;
-			}
 
 			enabled = false;
 		}
@@ -213,13 +156,6 @@ namespace ExLP {
 		void WindowGUI (int windowID)
 		{
 			GUILayout.BeginVertical ();
-
-			if (!AlwaysForceResourceUsage && !kethane_present
-				&& HighLogic.CurrentGame.Mode != Game.Modes.CAREER) {
-				bool fru = force_resource_use;
-				fru = GUILayout.Toggle (fru, "Always use resources");
-				force_resource_use = fru;
-			}
 
 			if (GUILayout.Button ("OK")) {
 				enabled = false;

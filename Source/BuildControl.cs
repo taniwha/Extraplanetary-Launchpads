@@ -190,10 +190,6 @@ namespace ExLP {
 				}
 			}
 			state = State.Complete;
-			if (!ExSettings.timed_builds) {
-				BuildAndLaunchCraft ();
-				TransferResources ();
-			}
 		}
 
 		void SetPadMass ()
@@ -427,9 +423,7 @@ namespace ExLP {
 			builder.SetCraftMass (0);
 
 			CoupleWithCraft ();
-			if (ExSettings.timed_builds) {
-				state = State.Transfer;
-			}
+			state = State.Transfer;
 		}
 
 		Collider[] get_colliders (Part p)
@@ -523,9 +517,7 @@ namespace ExLP {
 				FlightGlobals.overrideOrbit = true;
 				(builder as PartModule).StartCoroutine (CaptureCraft ());
 			} else {
-				if (ExSettings.timed_builds) {
-					state = State.Idle;
-				}
+				state = State.Idle;
 			}
 		}
 
@@ -549,18 +541,8 @@ namespace ExLP {
 		{
 			if (craftConfig != null) {
 				builtStuff = getBuildCost (craftConfig);
-				if (ExSettings.timed_builds) {
-					state = State.Building;
-					paused = false;
-				} else {
-					if (useResources) {
-						foreach (var res in builtStuff.required) {
-							padResources.TransferResource (res.name,
-														   -res.amount);
-						}
-					}
-					(builder as PartModule).StartCoroutine (DewarpAndBuildCraft ());
-				}
+				state = State.Building;
+				paused = false;
 			}
 		}
 
@@ -675,9 +657,7 @@ namespace ExLP {
 
 		public void ReleaseVessel ()
 		{
-			if (ExSettings.timed_builds) {
-				TransferResources ();
-			}
+			TransferResources ();
 			if (craftRoot != null) {
 				craftRoot.Undock (vesselInfo);
 				var vesselCount = FlightGlobals.Vessels.Count;

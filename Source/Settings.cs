@@ -46,11 +46,6 @@ namespace ExLP {
 			get;
 			private set;
 		}
-		public static bool timed_builds
-		{
-			get;
-			private set;
-		}
 		public static string HullRecycleTarget
 		{
 			get;
@@ -119,20 +114,11 @@ namespace ExLP {
 				var val = force_resource_use;
 				settings.AddValue ("ForceResourceUse", val);
 			}
-			if (!settings.HasValue ("TimedBuilds")) {
-				var val = timed_builds;
-				settings.AddValue ("TimedBuilds", val);
-			}
 
 			var frus = settings.GetValue ("ForceResourceUse");
 			bool fru = false;
 			bool.TryParse (frus, out fru);
 			force_resource_use = fru;
-
-			var tbs = settings.GetValue ("TimedBuilds");
-			bool tb = true;;
-			bool.TryParse (tbs, out tb);
-			timed_builds = tb;
 
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
@@ -157,9 +143,6 @@ namespace ExLP {
 			bool fru = force_resource_use;
 			settings.AddValue ("ForceResourceUse", fru);
 
-			bool tb = timed_builds;
-			settings.AddValue ("TimedBuilds", tb);
-
 			config.AddNode (settings);
 
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
@@ -177,7 +160,6 @@ namespace ExLP {
 			KerbalRecycleAmount = 150.0;
 			AlwaysForceResourceUsage = false;
 			force_resource_use = true;
-			timed_builds = true;
 			var dbase = GameDatabase.Instance;
 			var settings = dbase.GetConfigNodes ("ELGlobalSettings").LastOrDefault ();
 
@@ -211,13 +193,6 @@ namespace ExLP {
 					force_resource_use = val;
 				}
 			}
-			if (settings.HasValue ("TimedBuilds")) {
-				string str = settings.GetValue ("TimedBuilds");
-				bool val;
-				if (bool.TryParse (str, out val)) {
-					timed_builds = val;
-				}
-			}
 		}
 		
 		public override void OnAwake ()
@@ -245,10 +220,6 @@ namespace ExLP {
 				fru = GUILayout.Toggle (fru, "Always use resources");
 				force_resource_use = fru;
 			}
-
-			bool tb = timed_builds;
-			tb = GUILayout.Toggle (tb, "Allow progressive builds");
-			timed_builds = tb;
 
 			if (GUILayout.Button ("OK")) {
 				enabled = false;

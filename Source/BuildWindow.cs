@@ -313,11 +313,7 @@ namespace ExLP {
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
 			if (available >= 0 && available < required) {
-				if (ExSettings.timed_builds) {
-					requiredStyle = Styles.yellow;
-				} else {
-					requiredStyle = Styles.red;
-				}
+				requiredStyle = Styles.yellow;
 			}
 			// Required and Available
 			GUILayout.Box ((Math.Round (required, 2)).ToString (),
@@ -678,71 +674,43 @@ namespace ExLP {
 			GUILayout.BeginVertical ();
 			SelectPad ();
 
-			if (ExSettings.timed_builds) {
-				switch (control.state) {
-				case ExBuildControl.State.Idle:
-					SelectCraft ();
-					break;
-				case ExBuildControl.State.Planning:
-					SelectCraft ();
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					RequiredResources ();
-					ResourceScroll_end ();
-					BuildButton ();
-					break;
-				case ExBuildControl.State.Building:
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					BuildProgress ();
-					ResourceScroll_end ();
-					PauseButton ();
-					break;
-				case ExBuildControl.State.Canceling:
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					BuildProgress ();
-					ResourceScroll_end ();
-					PauseButton ();
-					break;
-				case ExBuildControl.State.Complete:
-					SpawnOffset ();
-					FinalizeButton ();
-					break;
-				case ExBuildControl.State.Transfer:
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					OptionalResources ();
-					ResourceScroll_end ();
-					ReleaseButton ();
-					break;
-				}
-			} else {
-				switch (control.state) {
-				case ExBuildControl.State.Idle:
-					SelectCraft ();
-					break;
-				case ExBuildControl.State.Planning:
-					SelectCraft ();
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					bool have_required = RequiredResources ();
-					bool have_optional = OptionalResources ();
-					ResourceScroll_end ();
-					SpawnOffset ();
-					if (!ExBuildControl.useResources
-						|| (have_required && have_optional)) {
-						BuildButton ();
-					}
-					break;
-				case ExBuildControl.State.Building:
-					// shouldn't happen
-					break;
-				case ExBuildControl.State.Complete:
-					SelectedCraft ();
-					ReleaseButton ();
-					break;
-				}
+			switch (control.state) {
+			case ExBuildControl.State.Idle:
+				SelectCraft ();
+				break;
+			case ExBuildControl.State.Planning:
+				SelectCraft ();
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				RequiredResources ();
+				ResourceScroll_end ();
+				BuildButton ();
+				break;
+			case ExBuildControl.State.Building:
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				BuildProgress ();
+				ResourceScroll_end ();
+				PauseButton ();
+				break;
+			case ExBuildControl.State.Canceling:
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				BuildProgress ();
+				ResourceScroll_end ();
+				PauseButton ();
+				break;
+			case ExBuildControl.State.Complete:
+				SpawnOffset ();
+				FinalizeButton ();
+				break;
+			case ExBuildControl.State.Transfer:
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				OptionalResources ();
+				ResourceScroll_end ();
+				ReleaseButton ();
+				break;
 			}
 
 			GUILayout.EndVertical ();

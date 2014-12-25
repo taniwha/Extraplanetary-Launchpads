@@ -14,6 +14,7 @@ EL_FILES := \
 	BuildCost.cs		\
 	BuildWindow.cs		\
 	Checkers.cs			\
+	ConstructionSkill.cs	\
 	DropDownList.cs		\
 	KerbalStatsWrapper.cs	\
 	LaunchClamp.cs		\

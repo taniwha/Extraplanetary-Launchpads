@@ -25,14 +25,17 @@ using Experience;
 
 namespace ExLP {
 
+using KerbalStats;
+
 	public class ExConstructionSkill : ExperienceEffect
 	{
 		static string [] skills = new string [] {
-			"Can work in a fully equipped workshop.",
-			"Can work in any workshop.",
-			"Is always productive in a fully equipped workshop.",
-			"Is always productive in any workshop.",
-			"Enable unskilled workers in a fully equipped workshop.",
+			" can work in a fully equipped workshop.",
+			" can work in any workshop.",
+			" is always productive in a fully equipped workshop.",
+			" is always productive in any workshop.",
+			" enables skilled workers in any workshop.",
+			" enables unskilled workers in a fully equipped workshop.",
 		};
 
 		protected override float GetDefaultValue ()
@@ -42,13 +45,21 @@ namespace ExLP {
 
 		protected override string GetDescription ()
 		{
-			int exp = Parent.CrewMemberExperienceLevel (5);
-			return skills[exp];
+			ProtoCrewMember crew = Parent.CrewMember;
+			string gender = KerbalExt.Get (crew, "gender");
+			string pronoun = "This kerbal";
+			if (gender == "F") {
+				pronoun = "She";
+			} else if (gender == "M") {
+				pronoun = "He";
+			}
+			int exp = Parent.CrewMemberExperienceLevel (6);
+			return pronoun + skills[exp];
 		}
 
 		public int GetValue ()
 		{
-			return Parent.CrewMemberExperienceLevel (5);
+			return Parent.CrewMemberExperienceLevel (6);
 		}
 
 		protected override void OnRegister (Part part)

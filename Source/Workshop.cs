@@ -54,6 +54,7 @@ public class ExWorkshop : PartModule
 	private List<ExWorkSink> sinks;
 	private bool functional;
 	private float vessel_productivity;
+	private bool enableSkilled;
 	private bool enableUnskilled;
 
 	public override string GetInfo ()
@@ -151,13 +152,13 @@ public class ExWorkshop : PartModule
 		return y + (v + a * c / 2) * c + (1+2*s)*(1-Mathf.Exp(-w));
 	}
 
-	private int ExperienceLevel (ProtoCrewMember crew)
+	private bool HasConstructionSkill (ProtoCrewMember crew)
 	{
 		ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is ExConstructionSkill).FirstOrDefault ();
 		if (skill == null) {
-			return -1;
+			return false;
 		}
-		return crew.experienceLevel;
+		return true;
 	}
 
 	private float HyperCurve (float x)
@@ -181,16 +182,19 @@ public class ExWorkshop : PartModule
 		} else {
 			contribution = Normal (stupidity, courage, experience);
 		}
-		int level = ExperienceLevel (crew);
-		if (level < 0) {
+		if (!HasConstructionSkill (crew)) {
 			if (!enableUnskilled) {
 				// can't work here, but may not know to keep out of the way.
 				contribution = Mathf.Min (contribution, 0);
 			}
+			if (crew.experienceLevel >= 3) {
+				// can resist "ooh, what does this button do?"
+				contribution = Mathf.Max (contribution, 0);
+			}
 		} else {
-			switch (level) {
+			switch (crew.experienceLevel) {
 			case 0:
-				if (ProductivityFactor < 1.0f) {
+				if (!enableSkilled && ProductivityFactor < 1.0f) {
 					// can't work here, but knows to keep out of the way.
 					contribution = 0;
 				}
@@ -219,10 +223,16 @@ public class ExWorkshop : PartModule
 	private void DetermineProductivity ()
 	{
 		float kh = 0;
+		enableSkilled = false;
 		enableUnskilled = false;
 		foreach (var crew in part.protoModuleCrew) {
-			if (ExperienceLevel (crew) >= 4) {
-				enableUnskilled = true;
+			if (HasConstructionSkill (crew)) {
+				if (crew.experienceLevel >= 4) {
+					enableSkilled = true;
+				}
+				if (crew.experienceLevel >= 5) {
+					enableUnskilled = true;
+				}
 			}
 		}
 		foreach (var crew in part.protoModuleCrew) {

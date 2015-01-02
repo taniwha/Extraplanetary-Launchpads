@@ -221,6 +221,10 @@ namespace ExLP {
 			}
 		}
 
+		static public void updateCurrentPads() {
+			instance.BuildPadList (FlightGlobals.ActiveVessel);
+		}
+
 		void UpdateGUIState ()
 		{
 			enabled = !hide_ui && launchpads != null && gui_enabled;

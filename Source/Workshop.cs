@@ -21,6 +21,7 @@ using System.Linq;
 using UnityEngine;
 
 using KSP.IO;
+using Experience;
 
 namespace ExLP {
 
@@ -53,6 +54,8 @@ public class ExWorkshop : PartModule
 	private List<ExWorkSink> sinks;
 	private bool functional;
 	private float vessel_productivity;
+	private bool enableSkilled;
+	private bool enableUnskilled;
 
 	public override string GetInfo ()
 	{
@@ -149,6 +152,20 @@ public class ExWorkshop : PartModule
 		return y + (v + a * c / 2) * c + (1+2*s)*(1-Mathf.Exp(-w));
 	}
 
+	private bool HasConstructionSkill (ProtoCrewMember crew)
+	{
+		ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is ExConstructionSkill).FirstOrDefault ();
+		if (skill == null) {
+			return false;
+		}
+		return true;
+	}
+
+	private float HyperCurve (float x)
+	{
+		return (Mathf.Sqrt (x * x + 1) + x) / 2;
+	}
+
 	private float KerbalContribution (ProtoCrewMember crew, float stupidity,
 									  float courage, bool isBadass)
 	{
@@ -165,6 +182,37 @@ public class ExWorkshop : PartModule
 		} else {
 			contribution = Normal (stupidity, courage, experience);
 		}
+		if (!HasConstructionSkill (crew)) {
+			if (!enableUnskilled) {
+				// can't work here, but may not know to keep out of the way.
+				contribution = Mathf.Min (contribution, 0);
+			}
+			if (crew.experienceLevel >= 3) {
+				// can resist "ooh, what does this button do?"
+				contribution = Mathf.Max (contribution, 0);
+			}
+		} else {
+			switch (crew.experienceLevel) {
+			case 0:
+				if (!enableSkilled && ProductivityFactor < 1.0f) {
+					// can't work here, but knows to keep out of the way.
+					contribution = 0;
+				}
+				break;
+			case 1:
+				break;
+			case 2:
+				if (ProductivityFactor >= 1.0f) {
+					// He's learned the ropes.
+					contribution = HyperCurve (contribution);
+				}
+				break;
+			default:
+				// He's learned the ropes very well.
+				contribution = HyperCurve (contribution);
+				break;
+			}
+		}
 		Debug.Log (String.Format ("[EL Workshop] Kerbal: "
 								  + "{0} {1} {2} {3} {4}({5}) {6}",
 								  crew.name, stupidity, courage, isBadass,
@@ -175,6 +223,18 @@ public class ExWorkshop : PartModule
 	private void DetermineProductivity ()
 	{
 		float kh = 0;
+		enableSkilled = false;
+		enableUnskilled = false;
+		foreach (var crew in part.protoModuleCrew) {
+			if (HasConstructionSkill (crew)) {
+				if (crew.experienceLevel >= 4) {
+					enableSkilled = true;
+				}
+				if (crew.experienceLevel >= 5) {
+					enableUnskilled = true;
+				}
+			}
+		}
 		foreach (var crew in part.protoModuleCrew) {
 			kh += KerbalContribution (crew, crew.stupidity, crew.courage,
 									  crew.isBadass);

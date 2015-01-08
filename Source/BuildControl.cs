@@ -127,18 +127,6 @@ namespace ExLP {
 		}
 		public string KACalarmID = "";
 
-		public static bool useResources
-		{
-			get {
-				if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER) {
-					return true;
-				}
-				return (ExSettings.AlwaysForceResourceUsage
-						|| ExSettings.kethane_present
-						|| ExSettings.force_resource_use);
-			}
-		}
-
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
 		Part craftRoot;
@@ -191,10 +179,6 @@ namespace ExLP {
 				}
 			}
 			state = State.Complete;
-			if (!ExSettings.timed_builds) {
-				BuildAndLaunchCraft ();
-				TransferResources ();
-			}
 		}
 
 		void SetPadMass ()
@@ -348,15 +332,10 @@ namespace ExLP {
 		private void TransferResources ()
 		{
 			foreach (var br in buildCost.optional) {
-				if (useResources) {
-					var a = padResources.TransferResource (br.name,
-														   -br.amount);
-					a += br.amount;
-					var b = craftResources.TransferResource (br.name, a);
-					padResources.TransferResource (br.name, b);
-				} else {
-					craftResources.TransferResource (br.name, br.amount);
-				}
+				var a = padResources.TransferResource (br.name, -br.amount);
+				a += br.amount;
+				var b = craftResources.TransferResource (br.name, a);
+				padResources.TransferResource (br.name, b);
 			}
 		}
 
@@ -434,9 +413,7 @@ namespace ExLP {
 			builder.SetCraftMass (0);
 
 			CoupleWithCraft ();
-			if (ExSettings.timed_builds) {
-				state = State.Transfer;
-			}
+			state = State.Transfer;
 		}
 
 		Collider[] get_colliders (Part p)
@@ -493,8 +470,6 @@ namespace ExLP {
 			if (craftType != CraftType.SubAss)
 				numParts = 0;
 
-			StrutFixer.HackStruts (nship, numParts);
-
 			string landedAt = "External Launchpad";
 			string flag = flagname;
 			Game game = FlightDriver.FlightStateCache;
@@ -532,9 +507,7 @@ namespace ExLP {
 				FlightGlobals.overrideOrbit = true;
 				(builder as PartModule).StartCoroutine (CaptureCraft ());
 			} else {
-				if (ExSettings.timed_builds) {
-					state = State.Idle;
-				}
+				state = State.Idle;
 			}
 		}
 
@@ -558,18 +531,8 @@ namespace ExLP {
 		{
 			if (craftConfig != null) {
 				builtStuff = getBuildCost (craftConfig);
-				if (ExSettings.timed_builds) {
-					state = State.Building;
-					paused = false;
-				} else {
-					if (useResources) {
-						foreach (var res in builtStuff.required) {
-							padResources.TransferResource (res.name,
-														   -res.amount);
-						}
-					}
-					(builder as PartModule).StartCoroutine (DewarpAndBuildCraft ());
-				}
+				state = State.Building;
+				paused = false;
 			}
 		}
 
@@ -686,9 +649,7 @@ namespace ExLP {
 
 		public void ReleaseVessel ()
 		{
-			if (ExSettings.timed_builds) {
-				TransferResources ();
-			}
+			TransferResources ();
 			if (craftRoot != null) {
 				craftRoot.Undock (vesselInfo);
 				var vesselCount = FlightGlobals.Vessels.Count;

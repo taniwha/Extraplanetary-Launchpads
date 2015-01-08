@@ -111,6 +111,7 @@ namespace ExLP {
 		static Rect windowpos;
 		static bool highlight_pad = true;
 		static bool link_lfo_sliders = true;
+		static MethodInfo buildCraftList = typeof(CraftBrowser).GetMethod ("buildCraftList", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		static CraftBrowser craftlist = null;
 		static Vector2 resscroll;
@@ -232,6 +233,10 @@ namespace ExLP {
 			}
 		}
 
+		static public void updateCurrentPads() {
+			instance.BuildPadList (FlightGlobals.ActiveVessel);
+		}
+
 		void UpdateGUIState ()
 		{
 			enabled = !hide_ui && launchpads != null && gui_enabled;
@@ -324,11 +329,7 @@ namespace ExLP {
 			// Calculate if we have enough resources to build
 			GUIStyle requiredStyle = Styles.green;
 			if (available >= 0 && available < required) {
-				if (ExSettings.timed_builds) {
-					requiredStyle = Styles.yellow;
-				} else {
-					requiredStyle = Styles.red;
-				}
+				requiredStyle = Styles.yellow;
 			}
 			// Required and Available
 			GUILayout.Box ((Math.Round (required, 2)).ToString (),
@@ -456,10 +457,15 @@ namespace ExLP {
 		{
 			GUILayout.BeginHorizontal ("box");
 			GUILayout.FlexibleSpace ();
-			// VAB / SPH selection
-			for (var t = ExBuildControl.CraftType.VAB;
-				 t <= ExBuildControl.CraftType.SubAss;
-				 t++) {
+			// VAB / SPH / Subassembly selection
+			ExBuildControl.CraftType maxType = ExBuildControl.CraftType.SubAss;
+			if (buildCraftList == null) {
+				maxType = ExBuildControl.CraftType.SPH;
+				if (control.craftType == ExBuildControl.CraftType.SubAss) {
+					control.craftType = ExBuildControl.CraftType.VAB;
+				}
+			}
+			for (var t = ExBuildControl.CraftType.VAB; t <= maxType; t++) {
 				if (GUILayout.Toggle (control.craftType == t, t.ToString (),
 									  GUILayout.Width (80))) {
 					control.craftType = t;
@@ -493,12 +499,10 @@ namespace ExLP {
 											  craftSelectCancel,
 											  HighLogic.Skin,
 											  EditorLogic.ShipFileImage, true);
-				if (control.craftType == ExBuildControl.CraftType.SubAss) {
+				if (buildCraftList != null
+					&& control.craftType == ExBuildControl.CraftType.SubAss) {
 					craftlist.craftSubfolder = "../Subassemblies";
-					MethodInfo buildCraftList = typeof(CraftBrowser).GetMethod ("buildCraftList", BindingFlags.NonPublic | BindingFlags.Instance);
-					if (buildCraftList != null) {
-						buildCraftList.Invoke (craftlist, null);
-					}
+					buildCraftList.Invoke (craftlist, null);
 				}
 				diff.AllowStockVessels = stock;
 			}
@@ -775,71 +779,43 @@ namespace ExLP {
 			GUILayout.BeginVertical ();
 			SelectPad ();
 
-			if (ExSettings.timed_builds) {
-				switch (control.state) {
-				case ExBuildControl.State.Idle:
-					SelectCraft ();
-					break;
-				case ExBuildControl.State.Planning:
-					SelectCraft ();
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					RequiredResources ();
-					ResourceScroll_end ();
-					BuildButton ();
-					break;
-				case ExBuildControl.State.Building:
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					BuildProgress (true);
-					ResourceScroll_end ();
-					PauseButton ();
-					break;
-				case ExBuildControl.State.Canceling:
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					BuildProgress (false);
-					ResourceScroll_end ();
-					PauseButton ();
-					break;
-				case ExBuildControl.State.Complete:
-					SpawnOffset ();
-					FinalizeButton ();
-					break;
-				case ExBuildControl.State.Transfer:
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					OptionalResources ();
-					ResourceScroll_end ();
-					ReleaseButton ();
-					break;
-				}
-			} else {
-				switch (control.state) {
-				case ExBuildControl.State.Idle:
-					SelectCraft ();
-					break;
-				case ExBuildControl.State.Planning:
-					SelectCraft ();
-					SelectedCraft ();
-					ResourceScroll_begin ();
-					bool have_required = RequiredResources ();
-					bool have_optional = OptionalResources ();
-					ResourceScroll_end ();
-					SpawnOffset ();
-					if (!ExBuildControl.useResources
-						|| (have_required && have_optional)) {
-						BuildButton ();
-					}
-					break;
-				case ExBuildControl.State.Building:
-					// shouldn't happen
-					break;
-				case ExBuildControl.State.Complete:
-					SelectedCraft ();
-					ReleaseButton ();
-					break;
-				}
+			switch (control.state) {
+			case ExBuildControl.State.Idle:
+				SelectCraft ();
+				break;
+			case ExBuildControl.State.Planning:
+				SelectCraft ();
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				RequiredResources ();
+				ResourceScroll_end ();
+				BuildButton ();
+				break;
+			case ExBuildControl.State.Building:
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				BuildProgress (true);
+				ResourceScroll_end ();
+				PauseButton ();
+				break;
+			case ExBuildControl.State.Canceling:
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				BuildProgress (false);
+				ResourceScroll_end ();
+				PauseButton ();
+				break;
+			case ExBuildControl.State.Complete:
+				SpawnOffset ();
+				FinalizeButton ();
+				break;
+			case ExBuildControl.State.Transfer:
+				SelectedCraft ();
+				ResourceScroll_begin ();
+				OptionalResources ();
+				ResourceScroll_end ();
+				ReleaseButton ();
+				break;
 			}
 
 			GUILayout.EndVertical ();

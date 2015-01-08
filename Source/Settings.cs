@@ -35,22 +35,6 @@ namespace ExLP {
 	public class ExSettings : ScenarioModule
 	{
 		static bool settings_loaded;
-		static bool kethane_checked;
-		public static bool kethane_present
-		{
-			get;
-			private set;
-		}
-		public static bool force_resource_use
-		{
-			get;
-			private set;
-		}
-		public static bool timed_builds
-		{
-			get;
-			private set;
-		}
 		public static bool use_KAC
 		{
 			get;
@@ -76,11 +60,6 @@ namespace ExLP {
 			get;
 			private set;
 		}
-		public static bool AlwaysForceResourceUsage
-		{
-			get;
-			private set;
-		}
 
 		static string version = null;
 		static Rect windowpos;
@@ -96,16 +75,6 @@ namespace ExLP {
 			version =  SystemUtils.GetAssemblyVersionString (asm);
 
 			return version;
-		}
-
-		internal static bool CheckForKethane ()
-		{
-			if (AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name == "Kethane")) {
-				Debug.Log ("[EL] Kethane found");
-				return true;
-			}
-			Debug.Log ("[EL] Kethane not found");
-			return false;
 		}
 
 		public static ExSettings current
@@ -125,14 +94,6 @@ namespace ExLP {
 				settings = new ConfigNode ("Settings");
 				gui_enabled = true; // Show settings window on first startup
 			}
-			if (!settings.HasValue ("ForceResourceUse")) {
-				var val = force_resource_use;
-				settings.AddValue ("ForceResourceUse", val);
-			}
-			if (!settings.HasValue ("TimedBuilds")) {
-				var val = timed_builds;
-				settings.AddValue ("TimedBuilds", val);
-			}
 			if (!settings.HasValue ("UseKAC")) {
 				var val = use_KAC;
 				settings.AddValue ("UseKAC", val);
@@ -141,16 +102,6 @@ namespace ExLP {
 				var val = KACAction.ToString();
 				settings.AddValue ("KACAction", val);
 			}
-
-			var frus = settings.GetValue ("ForceResourceUse");
-			bool fru = false;
-			bool.TryParse (frus, out fru);
-			force_resource_use = fru;
-
-			var tbs = settings.GetValue ("TimedBuilds");
-			bool tb = true;
-			bool.TryParse (tbs, out tb);
-			timed_builds = tb;
 
 			var uks = settings.GetValue ("UseKAC");
 			bool uk = true;
@@ -200,12 +151,6 @@ namespace ExLP {
 			//Debug.Log (String.Format ("[EL] Settings save: {0}", config));
 			var settings = new ConfigNode ("Settings");
 
-			bool fru = force_resource_use;
-			settings.AddValue ("ForceResourceUse", fru);
-
-			bool tb = timed_builds;
-			settings.AddValue ("TimedBuilds", tb);
-
 			bool uk = use_KAC;
 			settings.AddValue ("UseKAC", uk);
 
@@ -227,9 +172,6 @@ namespace ExLP {
 			HullRecycleTarget = "Metal";
 			KerbalRecycleTarget = "Kethane";
 			KerbalRecycleAmount = 150.0;
-			AlwaysForceResourceUsage = false;
-			force_resource_use = true;
-			timed_builds = true;
 			use_KAC = true;
 			KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 			var dbase = GameDatabase.Instance;
@@ -251,26 +193,6 @@ namespace ExLP {
 				double kra;
 				double.TryParse (val, out kra);
 				KerbalRecycleAmount = kra;
-			}
-			if (settings.HasValue ("AlwaysForceResourceUsage")) {
-				string val = settings.GetValue ("AlwaysForceResourceUsage");
-				bool afru;
-				bool.TryParse (val, out afru);
-				AlwaysForceResourceUsage = afru;
-			}
-			if (settings.HasValue ("ForceResourceUse")) {
-				string str = settings.GetValue ("ForceResourceUse");
-				bool val;
-				if (bool.TryParse (str, out val)) {
-					force_resource_use = val;
-				}
-			}
-			if (settings.HasValue ("TimedBuilds")) {
-				string str = settings.GetValue ("TimedBuilds");
-				bool val;
-				if (bool.TryParse (str, out val)) {
-					timed_builds = val;
-				}
 			}
 			if (settings.HasValue ("UseKAC")) {
 				string str = settings.GetValue ("UseKAC");
@@ -308,10 +230,6 @@ namespace ExLP {
 				return;
 			}
 			LoadGlobalSettings ();
-			if (!kethane_checked) {
-				kethane_present = CheckForKethane ();
-				kethane_checked = true;
-			}
 
 			enabled = false;
 		}
@@ -324,17 +242,6 @@ namespace ExLP {
 		void WindowGUI (int windowID)
 		{
 			GUILayout.BeginVertical ();
-
-			if (!AlwaysForceResourceUsage && !kethane_present
-				&& HighLogic.CurrentGame.Mode != Game.Modes.CAREER) {
-				bool fru = force_resource_use;
-				fru = GUILayout.Toggle (fru, "Always use resources");
-				force_resource_use = fru;
-			}
-
-			bool tb = timed_builds;
-			tb = GUILayout.Toggle (tb, "Allow progressive builds");
-			timed_builds = tb;
 
 			bool uk = use_KAC;
 			uk = GUILayout.Toggle (uk, "Create alarms in Kerbal Alarm Clock");

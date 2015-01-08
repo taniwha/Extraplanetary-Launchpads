@@ -14,6 +14,7 @@ EL_FILES := \
 	BuildCost.cs		\
 	BuildWindow.cs		\
 	Checkers.cs			\
+	ConstructionSkill.cs	\
 	DropDownList.cs		\
 	KerbalStatsWrapper.cs	\
 	LaunchClamp.cs		\
@@ -23,7 +24,6 @@ EL_FILES := \
 	Resources.cs		\
 	Settings.cs			\
 	ShipInfo.cs			\
-	StrutFixer.cs		\
 	SurveyStake.cs		\
 	SurveyStation.cs	\
 	SurveyTracker.cs	\

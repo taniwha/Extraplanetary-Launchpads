@@ -82,7 +82,6 @@ namespace ExLP {
 			get {
 				var game = HighLogic.CurrentGame;
 				return game.scenarios.Select (s => s.moduleRef).OfType<ExSettings> ().SingleOrDefault ();
-
 			}
 		}
 

@@ -125,6 +125,7 @@ namespace ExLP {
 			get;
 			private set;
 		}
+		public string KACalarmID = "";
 
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
@@ -228,6 +229,8 @@ namespace ExLP {
 					// of consumed resource
 					kerbalHours -= work * amount / base_amount;
 					res.amount -= amount;
+					//Debug.Log("add delta: "+amount);
+					res.deltaAmount = amount;
 					padResources.TransferResource (res.name, -amount);
 				}
 			} while (did_work && kerbalHours > 0);
@@ -236,6 +239,7 @@ namespace ExLP {
 
 			if (count == 0) {
 				(builder as PartModule).StartCoroutine (DewarpAndBuildCraft ());
+				KACalarmID = "";
 			}
 		}
 
@@ -287,6 +291,8 @@ namespace ExLP {
 					// of returned resource
 					kerbalHours -= work * amount / base_amount;
 					bres.amount += amount;
+					//Debug.Log("remove delta: "+amount);
+					bres.deltaAmount = amount;
 					padResources.TransferResource (bres.name, amount);
 				}
 			} while (did_work && kerbalHours > 0);
@@ -295,6 +301,7 @@ namespace ExLP {
 
 			if (count == 0) {
 				state = State.Planning;
+				KACalarmID = "";
 			}
 		}
 
@@ -546,6 +553,7 @@ namespace ExLP {
 			}
 			node.AddValue ("state", state);
 			node.AddValue ("paused", paused);
+			node.AddValue ("KACalarmID", KACalarmID);
 			if (vesselInfo != null) {
 				ConfigNode vi = node.AddNode ("DockedVesselInfo");
 				vesselInfo.Save (vi);
@@ -611,6 +619,7 @@ namespace ExLP {
 				bool.TryParse (s, out p);
 				paused = p;
 			}
+			KACalarmID = node.GetValue ("KACalarmID");
 			if (node.HasNode ("DockedVesselInfo")) {
 				ConfigNode vi = node.GetNode ("DockedVesselInfo");
 				vesselInfo = new DockedVesselInfo ();

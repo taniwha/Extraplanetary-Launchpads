@@ -16,6 +16,7 @@ EL_FILES := \
 	Checkers.cs			\
 	ConstructionSkill.cs	\
 	DropDownList.cs		\
+	KACWrapper.cs			\
 	KerbalStatsWrapper.cs	\
 	LaunchClamp.cs		\
 	Launchpad.cs		\

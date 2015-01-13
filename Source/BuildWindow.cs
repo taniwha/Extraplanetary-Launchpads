@@ -852,11 +852,6 @@ namespace ExLP {
 										  windowpos, WindowGUI,
 										  name + " " + ver + ": " + sit,
 										  GUILayout.Width (640));
-			if (enabled && windowpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
-				InputLockManager.SetControlLock ("EL_Build_window_lock");
-			} else {
-				InputLockManager.RemoveControlLock ("EL_Build_window_lock");
-			}
 			if (craftlist != null) {
 				craftlist.OnGUI ();
 			}

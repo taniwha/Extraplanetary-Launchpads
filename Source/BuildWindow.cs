@@ -523,6 +523,11 @@ namespace ExLP {
 			}
 		}
 
+		void LockedParts ()
+		{
+			GUILayout.Label ("Not all of the blueprints for this vessel can be found.");
+		}
+
 		void ResourceHeader ()
 		{
 			var width120 = GUILayout.Width (120);
@@ -786,10 +791,14 @@ namespace ExLP {
 			case ExBuildControl.State.Planning:
 				SelectCraft ();
 				SelectedCraft ();
-				ResourceScroll_begin ();
-				RequiredResources ();
-				ResourceScroll_end ();
-				BuildButton ();
+				if (control.lockedParts) {
+					LockedParts ();
+				} else {
+					ResourceScroll_begin ();
+					RequiredResources ();
+					ResourceScroll_end ();
+					BuildButton ();
+				}
 				break;
 			case ExBuildControl.State.Building:
 				SelectedCraft ();

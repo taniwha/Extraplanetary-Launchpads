@@ -90,6 +90,11 @@ namespace ExLP {
 			get;
 			private set;
 		}
+		public bool lockedParts
+		{
+			get;
+			private set;
+		}
 		public ConfigNode craftConfig
 		{
 			get;
@@ -665,8 +670,14 @@ namespace ExLP {
 
 		public BuildCost.CostReport getBuildCost (ConfigNode craft)
 		{
+			lockedParts = false;
 			ShipConstruct ship = new ShipConstruct ();
-			ship.LoadShip (craft);
+			if (!ship.LoadShip (craft)) {
+				return null;
+			}
+			if (!ship.shipPartsUnlocked) {
+				lockedParts = true;
+			}
 			GameObject ro = ship.parts[0].localRoot.gameObject;
 			Vessel dummy = ro.AddComponent<Vessel>();
 			dummy.Initialize (true);

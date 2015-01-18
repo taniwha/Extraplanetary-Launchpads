@@ -56,6 +56,7 @@ public class ExWorkshop : PartModule
 	private float vessel_productivity;
 	private bool enableSkilled;
 	private bool enableUnskilled;
+	private bool useSkill;
 
 	public override string GetInfo ()
 	{
@@ -182,35 +183,37 @@ public class ExWorkshop : PartModule
 		} else {
 			contribution = Normal (stupidity, courage, experience);
 		}
-		if (!HasConstructionSkill (crew)) {
-			if (!enableUnskilled) {
-				// can't work here, but may not know to keep out of the way.
-				contribution = Mathf.Min (contribution, 0);
-			}
-			if (crew.experienceLevel >= 3) {
-				// can resist "ooh, what does this button do?"
-				contribution = Mathf.Max (contribution, 0);
-			}
-		} else {
-			switch (crew.experienceLevel) {
-			case 0:
-				if (!enableSkilled && ProductivityFactor < 1.0f) {
-					// can't work here, but knows to keep out of the way.
-					contribution = 0;
+		if (useSkill) {
+			if (!HasConstructionSkill (crew)) {
+				if (!enableUnskilled) {
+					// can't work here, but may not know to keep out of the way.
+					contribution = Mathf.Min (contribution, 0);
 				}
-				break;
-			case 1:
-				break;
-			case 2:
-				if (ProductivityFactor >= 1.0f) {
-					// He's learned the ropes.
+				if (crew.experienceLevel >= 3) {
+					// can resist "ooh, what does this button do?"
+					contribution = Mathf.Max (contribution, 0);
+				}
+			} else {
+				switch (crew.experienceLevel) {
+				case 0:
+					if (!enableSkilled && ProductivityFactor < 1.0f) {
+						// can't work here, but knows to keep out of the way.
+						contribution = 0;
+					}
+					break;
+				case 1:
+					break;
+				case 2:
+					if (ProductivityFactor >= 1.0f) {
+						// He's learned the ropes.
+						contribution = HyperCurve (contribution);
+					}
+					break;
+				default:
+					// He's learned the ropes very well.
 					contribution = HyperCurve (contribution);
+					break;
 				}
-				break;
-			default:
-				// He's learned the ropes very well.
-				contribution = HyperCurve (contribution);
-				break;
 			}
 		}
 		Debug.Log (String.Format ("[EL Workshop] Kerbal: "
@@ -225,13 +228,15 @@ public class ExWorkshop : PartModule
 		float kh = 0;
 		enableSkilled = false;
 		enableUnskilled = false;
-		foreach (var crew in part.protoModuleCrew) {
-			if (HasConstructionSkill (crew)) {
-				if (crew.experienceLevel >= 4) {
-					enableSkilled = true;
-				}
-				if (crew.experienceLevel >= 5) {
-					enableUnskilled = true;
+		if (useSkill) {
+			foreach (var crew in part.protoModuleCrew) {
+				if (HasConstructionSkill (crew)) {
+					if (crew.experienceLevel >= 4) {
+						enableSkilled = true;
+					}
+					if (crew.experienceLevel >= 5) {
+						enableUnskilled = true;
+					}
 				}
 			}
 		}
@@ -293,6 +298,7 @@ public class ExWorkshop : PartModule
 			|| state == PartModule.StartState.Editor)
 			return;
 		DiscoverWorkshops ();
+		useSkill = HighLogic.CurrentGame.Mode == Game.Modes.CAREER;
 		DetermineProductivity ();
 	}
 

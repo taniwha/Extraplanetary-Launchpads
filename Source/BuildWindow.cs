@@ -657,10 +657,10 @@ namespace ExLP {
 					string builderShipName = FlightGlobals.ActiveVessel.vesselName;
 					string newCraftName = control.craftConfig.GetValue ("ship");
 
-					string alarmMessage = "[EPL] build: \"" + newCraftName + "\"";
+					string alarmMessage = "[EL] build: \"" + newCraftName + "\"";
 					string alarmNotes = "Completion of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
 					if (!forward) { // teardown messages
-						alarmMessage = "[EPL] teardown: \"" + newCraftName + "\"";
+						alarmMessage = "[EL] teardown: \"" + newCraftName + "\"";
 						alarmNotes = "Teardown of Extraplanetary Launchpad build of \"" + newCraftName + "\" on \"" + builderShipName + "\"";
 					}
 

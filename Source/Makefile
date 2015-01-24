@@ -22,6 +22,7 @@ EL_FILES := \
 	Launchpad.cs		\
 	ProgressBar.cs		\
 	Recycler.cs			\
+	RenameWindow.cs		\
 	Resources.cs		\
 	Settings.cs			\
 	ShipInfo.cs			\

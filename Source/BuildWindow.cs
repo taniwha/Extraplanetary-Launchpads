@@ -189,34 +189,38 @@ namespace ExLP {
 
 		void BuildPadList (Vessel v)
 		{
-			if (control != null) {
-				control.builder.part.SetHighlightDefault ();
-			}
 			launchpads = null;
 			pad_list = null;
-			control = null;	//FIXME would be nice to not lose the active pad
 			var pads = new List<ExBuildControl.IBuilder> ();
 
-			foreach (var p in v.Parts) {
+			for (int i = 0; i < v.Parts.Count; i++) {
+				var p = v.Parts[i];
 				pads.AddRange (p.Modules.OfType<ExBuildControl.IBuilder> ());
 			}
 			if (pads.Count > 0) {
 				launchpads = new List<ExBuildControl> ();
-				foreach (var p in pads) {
-					launchpads.Add (p.control);
+				int control_index = -1;
+				for (int i = 0; i < pads.Count; i++) {
+					launchpads.Add (pads[i].control);
+					if (control == pads[i].control) {
+						control_index = i;
+					}
 				}
-				control = launchpads[0];
+				if (control_index < 0) {
+					control_index = 0;
+				}
 				var pad_names = new List<string> ();
-				int ind = 0;
-				foreach (var p in launchpads) {
+				for (int ind = 0; ind < launchpads.Count; ind++) {
+					var p = launchpads[ind];
 					if (p.builder.Name != "") {
 						pad_names.Add (p.builder.Name);
 					} else {
 						pad_names.Add ("pad-" + ind);
 					}
-					ind++;
 				}
 				pad_list = new DropDownList (pad_names);
+
+				Select_Pad (launchpads[control_index]);
 			}
 		}
 
@@ -244,15 +248,11 @@ namespace ExLP {
 				InputLockManager.RemoveControlLock ("EL_Build_window_lock");
 			}
 			if (control != null) {
-				if (enabled && highlight_pad) {
-					control.builder.part.SetHighlightColor (XKCDColors.LightSeaGreen);
-					control.builder.part.SetHighlight (true, false);
-				} else {
-					control.builder.part.SetHighlightDefault ();
-				}
+				control.builder.Highlight (enabled && highlight_pad);
 			}
 			if (launchpads != null) {
-				foreach (var p in launchpads) {
+				for (int i = 0; i < launchpads.Count; i++) {
+					var p = launchpads[i];
 					p.builder.UpdateMenus (enabled && p == control);
 				}
 			}
@@ -428,8 +428,8 @@ namespace ExLP {
 
 		void Select_Pad (ExBuildControl selected_pad)
 		{
-			if (control != null) {
-				control.builder.part.SetHighlightDefault ();
+			if (control != null && control != selected_pad) {
+				control.builder.Highlight (false);
 			}
 			control = selected_pad;
 			pad_list.SelectItem (launchpads.IndexOf (control));

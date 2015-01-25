@@ -72,6 +72,15 @@ namespace ExLP {
 			}
 		}
 
+		public void Highlight (bool on)
+		{
+			if (site != null) {
+				foreach (var stake in site) {
+					stake.Highlight (on);
+				}
+			}
+		}
+
 		[KSPEvent (guiActive=false, active = true)]
 		void ExDiscoverWorkshops (BaseEventData data)
 		{

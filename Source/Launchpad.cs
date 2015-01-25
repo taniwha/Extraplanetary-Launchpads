@@ -71,6 +71,16 @@ namespace ExLP {
 			}
 		}
 
+		public void Highlight (bool on)
+		{
+			if (on) {
+				part.SetHighlightColor (XKCDColors.LightSeaGreen);
+				part.SetHighlight (true, false);
+			} else {
+				part.SetHighlightDefault ();
+			}
+		}
+
 		[KSPEvent (guiActive=false, active = true)]
 		void ExDiscoverWorkshops (BaseEventData data)
 		{

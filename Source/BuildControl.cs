@@ -49,6 +49,7 @@ namespace ExLP {
 		}
 		public interface IBuilder
 		{
+			void Highlight (bool on);
 			void UpdateMenus (bool visible);
 			void SetCraftMass (double craft_mass);
 			Transform PlaceShip (ShipConstruct ship, Box vessel_bounds);

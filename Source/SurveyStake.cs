@@ -21,6 +21,7 @@ using System.Linq;
 using UnityEngine;
 
 using KSP.IO;
+using HighlightingSystem;
 
 namespace ExLP {
 
@@ -33,6 +34,8 @@ namespace ExLP {
 		internal bool bound = false;
 		[KSPField (isPersistant = true)]
 		internal int use = 0;
+
+		Highlighter highlighter;
 
 		internal string Name
 		{
@@ -94,6 +97,26 @@ namespace ExLP {
 		public void RenameVessel ()
 		{
 			vessel.RenameVessel ();
+		}
+
+		public void Highlight (bool on)
+		{
+			if (on) {
+				if (highlighter == null) {
+					var color = XKCDColors.LightSeaGreen;
+					var model = part.FindModelTransform("model");
+					highlighter = model.gameObject.AddComponent<Highlighter>();
+					highlighter.ConstantOn (color);
+					part.SetHighlightColor (color);
+					part.SetHighlight (true, false);
+				}
+			} else {
+				if (highlighter != null) {
+					part.SetHighlightDefault ();
+					DestroyImmediate (highlighter);
+					highlighter = null;
+				}
+			}
 		}
 	}
 }

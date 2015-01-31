@@ -301,6 +301,7 @@ namespace ExLP {
 			control.OnStart ();
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
 			if (vessel.situation == Vessel.Situations.LANDED
+				|| vessel.situation == Vessel.Situations.SPLASHED
 				|| vessel.situation == Vessel.Situations.PRELAUNCH) {
 				StartCoroutine (WaitAndFindSites ());
 			}

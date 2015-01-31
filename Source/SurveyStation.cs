@@ -98,7 +98,12 @@ namespace ExLP {
 		{
 			if (site_list == null) {
 				GUILayout.BeginHorizontal ();
-				GUILayout.Label ("Where do you want it, boss?");
+				if (control.state == ExBuildControl.State.Complete) {
+					GUILayout.Label ("Where do you want it, boss?",
+									 ExBuildWindow.Styles.yellow);
+				} else {
+					GUILayout.Label ("No sites found.");
+				}
 				GUILayout.EndHorizontal ();
 			} else {
 				GUILayout.BeginHorizontal ();

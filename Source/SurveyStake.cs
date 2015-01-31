@@ -35,6 +35,15 @@ namespace ExLP {
 		[KSPField (isPersistant = true)]
 		internal int use = 0;
 
+		internal static Color[] StakeColors = {
+			XKCDColors.LightSeaGreen,
+			XKCDColors.CherryRed,
+			XKCDColors.FluorescentGreen,
+			XKCDColors.BrightSkyBlue,
+			XKCDColors.RustyOrange,
+			XKCDColors.MossGreen,
+			XKCDColors.DeepSkyBlue,
+		};
 		Highlighter highlighter;
 
 		internal string Name
@@ -103,7 +112,7 @@ namespace ExLP {
 		{
 			if (on) {
 				if (highlighter == null) {
-					var color = XKCDColors.LightSeaGreen;
+					var color = StakeColors[use];
 					var model = part.FindModelTransform("model");
 					highlighter = model.gameObject.AddComponent<Highlighter>();
 					highlighter.ConstantOn (color);

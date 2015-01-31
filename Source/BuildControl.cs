@@ -618,6 +618,12 @@ namespace ExLP {
 			if (node.HasValue ("state")) {
 				var s = node.GetValue ("state");
 				state = (State) Enum.Parse (typeof (State), s);
+				if (state == State.Dewarping) {
+					// The game got saved while the Dewarping state was still
+					// active. Rather than restarting the dewarp coroutine,
+					// Just jump straight to the Complete state.
+					state = State.Complete;
+				}
 			}
 			if (node.HasValue ("paused")) {
 				var s = node.GetValue ("paused");

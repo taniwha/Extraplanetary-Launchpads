@@ -419,6 +419,7 @@ namespace ExLP {
 			pad_list.styleListItem = Styles.listItem;
 			pad_list.styleListBox = Styles.listBox;
 			pad_list.DrawBlockingSelector ();
+			control.builder.PadSelection_start ();
 		}
 
 		public static void SelectPad (ExBuildControl selected_pad)
@@ -443,6 +444,7 @@ namespace ExLP {
 			highlight_pad = GUILayout.Toggle (highlight_pad, "Highlight Pad");
 			Select_Pad (launchpads[pad_list.SelectedIndex]);
 			GUILayout.EndHorizontal ();
+			control.builder.PadSelection ();
 		}
 
 		void SelectPad_end ()
@@ -450,6 +452,7 @@ namespace ExLP {
 			if (pad_list != null) {
 				pad_list.DrawDropDown();
 				pad_list.CloseOnOutsideClick();
+				control.builder.PadSelection_end ();
 			}
 		}
 

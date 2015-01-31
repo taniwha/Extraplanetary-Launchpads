@@ -71,6 +71,18 @@ namespace ExLP {
 			}
 		}
 
+		public void PadSelection_start ()
+		{
+		}
+
+		public void PadSelection ()
+		{
+		}
+
+		public void PadSelection_end ()
+		{
+		}
+
 		public void Highlight (bool on)
 		{
 			if (on) {

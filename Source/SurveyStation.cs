@@ -29,6 +29,8 @@ namespace ExLP {
 		[KSPField (isPersistant = true)]
 		public string StationName = "";
 
+		DropDownList site_list;
+		List<ExSurveyTracker.SurveySite> available_sites;
 		ExSurveyTracker.SurveySite site;
 		float base_mass;
 
@@ -69,6 +71,48 @@ namespace ExLP {
 		{
 			get {
 				return StationName;
+			}
+		}
+
+		public void PadSelection_start ()
+		{
+			if (site_list == null) {
+				return;
+			}
+			site_list.styleListItem = ExBuildWindow.Styles.listItem;
+			site_list.styleListBox = ExBuildWindow.Styles.listBox;
+			site_list.DrawBlockingSelector ();
+		}
+
+		void Select_Site (ExSurveyTracker.SurveySite selected_site)
+		{
+			if (site != selected_site) {
+				Highlight (false);
+			}
+			site = selected_site;
+			site_list.SelectItem (available_sites.IndexOf (site));
+			// The build window will take care of turning on highlighting
+		}
+
+		public void PadSelection ()
+		{
+			if (site_list == null) {
+				GUILayout.BeginHorizontal ();
+				GUILayout.Label ("Where do you want it, boss?");
+				GUILayout.EndHorizontal ();
+			} else {
+				GUILayout.BeginHorizontal ();
+				site_list.DrawButton ();
+				Select_Site (available_sites[site_list.SelectedIndex]);
+				GUILayout.EndHorizontal ();
+			}
+		}
+
+		public void PadSelection_end ()
+		{
+			if (site_list != null) {
+				site_list.DrawDropDown();
+				site_list.CloseOnOutsideClick();
 			}
 		}
 
@@ -340,7 +384,22 @@ namespace ExLP {
 
 		void FindSites ()
 		{
-			site = ExSurveyTracker.instance.FindSites (vessel, 100.0).FirstOrDefault();
+			available_sites = ExSurveyTracker.instance.FindSites (vessel, 100.0);
+			if (available_sites == null || available_sites.Count < 1) {
+				Highlight (false);
+				site = null;
+				site_list = null;
+			} else {
+				var slist = new List<string> ();
+				for (int ind = 0; ind < available_sites.Count; ind++) {
+					slist.Add (available_sites[ind].SiteName);
+				}
+				if (!available_sites.Contains (site)) {
+					Highlight (false);
+					site = available_sites[0];
+				}
+				site_list = new DropDownList (slist);
+			}
 			Debug.Log (String.Format ("[EL SS] {0}", site));
 		}
 

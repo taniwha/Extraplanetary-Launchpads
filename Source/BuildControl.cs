@@ -53,6 +53,9 @@ namespace ExLP {
 			void UpdateMenus (bool visible);
 			void SetCraftMass (double craft_mass);
 			Transform PlaceShip (ShipConstruct ship, Box vessel_bounds);
+			void PadSelection_start ();
+			void PadSelection ();
+			void PadSelection_end ();
 			bool capture
 			{
 				get;

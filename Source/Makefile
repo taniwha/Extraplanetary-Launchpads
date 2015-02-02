@@ -16,6 +16,7 @@ EL_FILES := \
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/CostReport.cs				\
+	Recipes/Recipes.cs					\
 	Resources/IResourceContainer.cs		\
 	Resources/KISResourceContainer.cs	\
 	Resources/PartResourceContainer.cs	\

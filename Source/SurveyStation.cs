@@ -509,6 +509,7 @@ namespace ExLP {
 
 		void onSiteModified (ExSurveyTracker.SurveySite s)
 		{
+			FindSites ();
 		}
 	}
 }

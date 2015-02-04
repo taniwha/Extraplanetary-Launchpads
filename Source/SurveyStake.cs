@@ -73,7 +73,7 @@ namespace ExLP {
 				Events["RenameVessel"].active = false;
 			}
 			Events["NextUse"].guiName = StakeUses[use];
-			//Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
+			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 		}
 
 		public void OnPartDie ()
@@ -95,7 +95,7 @@ namespace ExLP {
 			Events["NextUse"].guiName = StakeUses[use];
 		}
 
-		//[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "")]
+		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "")]
 		public void ToggleBound()
 		{
 			bound = !bound;
@@ -115,7 +115,12 @@ namespace ExLP {
 					var color = StakeColors[use];
 					var model = part.FindModelTransform("model");
 					highlighter = model.gameObject.AddComponent<Highlighter>();
-					highlighter.ConstantOn (color);
+					if (bound) {
+						var color2 = XKCDColors.LightGreyBlue;
+						highlighter.FlashingOn (color, color2, 1.0f);
+					} else {
+						highlighter.ConstantOn (color);
+					}
 					part.SetHighlightColor (color);
 					part.SetHighlight (true, false);
 				}

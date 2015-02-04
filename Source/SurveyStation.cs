@@ -139,33 +139,44 @@ namespace ExLP {
 		class Points
 		{
 			Dictionary<string, Vector3d> points;
+			Dictionary<string, Vector3d> bounds;
 			CelestialBody body;
 			public Vector3d center;
 
 			public Points (ExSurveyTracker.SurveySite site)
 			{
 				Dictionary<string, int> counts = new Dictionary<string, int> ();
+				Dictionary<string, int> bcounts = new Dictionary<string, int> ();
 				int count = 0;
 
 				points = new Dictionary<string, Vector3d> ();
+				bounds = new Dictionary<string, Vector3d> ();
 
 				body = site.Body;
 
 				center = Vector3d.zero;
 				foreach (var stake in site) {
 					string key = ExSurveyStake.StakeUses[stake.use];
-					if (stake.bound) {
-						key = key + "!";
-					}
 					var pos = stake.vessel.GetWorldPos3D ();
 					center += pos;
 					count++;
-					if (points.ContainsKey (key)) {
-						points[key] += pos;
-						counts[key] += 1;
+
+					Dictionary<string, Vector3d> pd;
+					Dictionary<string, int> cd;
+					if (stake.bound) {
+						pd = bounds;
+						cd = bcounts;
 					} else {
-						points[key] = pos;
-						counts[key] = 1;
+						pd = points;
+						cd = counts;
+					}
+
+					if (pd.ContainsKey (key)) {
+						pd[key] += pos;
+						cd[key] += 1;
+					} else {
+						pd[key] = pos;
+						cd[key] = 1;
 					}
 				}
 				center /= (double) count;
@@ -176,6 +187,12 @@ namespace ExLP {
 				}
 				if (points.ContainsKey ("Origin")) {
 					center = points["Origin"];
+				}
+				foreach (var key in ExSurveyStake.StakeUses) {
+					if (bounds.ContainsKey (key)) {
+						bounds[key] /= (double) bcounts[key];
+						bounds[key] -= center;
+					}
 				}
 			}
 
@@ -228,6 +245,56 @@ namespace ExLP {
 				f = Vector3d.Normalize (f + Vector3d.Cross (r, u));
 				return Quaternion.LookRotation (f, u);
 			}
+
+			public Vector3 ShiftBounds (Transform frame, Vector3 pos,
+										ExBuildControl.Box box)
+			{
+				Vector3 shift = new Vector3 (-pos.x, -box.min.y, -pos.z);
+				Vector3 mins = box.min - pos;
+				Vector3 maxs = box.max - pos;
+				Vector3 mid = (mins + maxs) / 2;
+
+				if (bounds.ContainsKey ("+X")) {
+					float max_x = Vector3.Dot (frame.right, bounds["+X"]);
+					if (bounds.ContainsKey ("-X")) {
+						float min_x = Vector3.Dot (frame.right, bounds["-X"]);
+						shift.x += (max_x + min_x) / 2 - mid.x;
+					} else {
+						shift.x += max_x - maxs.x;
+					}
+				} else if (bounds.ContainsKey ("-X")) {
+					float min_x = Vector3.Dot (frame.right, bounds["-X"]);
+					shift.x += min_x - mins.x;
+				}
+				if (bounds.ContainsKey ("+Y")) {
+					shift.y = -pos.y;
+					float max_y = Vector3.Dot (frame.up, bounds["+Y"]);
+					if (bounds.ContainsKey ("-Y")) {
+						float min_y = Vector3.Dot (frame.up, bounds["-Y"]);
+						shift.y += (max_y + min_y) / 2 - mid.y;
+					} else {
+						shift.y += max_y - maxs.y;
+					}
+				} else if (bounds.ContainsKey ("-Y")) {
+					shift.y = -pos.y;
+					float min_y = Vector3.Dot (frame.up, bounds["-Y"]);
+					shift.y += min_y - mins.y;
+				}
+				if (bounds.ContainsKey ("+Z")) {
+					float max_z = Vector3.Dot (frame.forward, bounds["+Z"]);
+					if (bounds.ContainsKey ("-Z")) {
+						float min_z = Vector3.Dot (frame.forward, bounds["-Z"]);
+						shift.z += (max_z + min_z) / 2 - mid.z;
+					} else {
+						shift.z += max_z - maxs.z;
+					}
+				} else if (bounds.ContainsKey ("-Z")) {
+					float min_z = Vector3.Dot (frame.forward, bounds["-Z"]);
+					shift.z += min_z - mins.z;
+				}
+
+				return shift;
+			}
 		}
 
 		Quaternion GetOrientation (Points p)
@@ -278,17 +345,15 @@ namespace ExLP {
 			}
 			Transform xform;
 			xform = part.FindModelTransform ("EL launch pos");
-			if (xform == null) {
-				var p = new Points (site);
-				Transform t = part.transform;
-				GameObject launchPos = new GameObject ("EL launch pos");
-				launchPos.transform.parent = t;
-				launchPos.transform.position = t.position;
-				launchPos.transform.position += p.center - part.vessel.GetWorldPos3D ();
-				launchPos.transform.rotation = GetOrientation (p);
-				xform = launchPos.transform;
-				Debug.Log (String.Format ("[EL] launchPos {0}", xform));
-			}
+
+			var points = new Points (site);
+			Transform t = part.transform;
+			GameObject launchPos = new GameObject ("EL launch pos");
+			launchPos.transform.parent = t;
+			launchPos.transform.position = t.position;
+			launchPos.transform.position += points.center - part.vessel.GetWorldPos3D ();
+			launchPos.transform.rotation = GetOrientation (points);
+			xform = launchPos.transform;
 			Debug.Log (String.Format ("[EL] launchPos {0} {1}", xform.position, xform.rotation));
 
 			float angle;
@@ -296,7 +361,7 @@ namespace ExLP {
 			xform.rotation.ToAngleAxis (out angle, out axis);
 
 			Vector3 pos = ship.parts[0].transform.position;
-			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
+			Vector3 shift = points.ShiftBounds (xform, pos, vessel_bounds);
 			shift += xform.position;
 			ship.parts[0].transform.Translate (shift, Space.World);
 			ship.parts[0].transform.RotateAround (xform.position,

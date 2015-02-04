@@ -163,7 +163,7 @@ namespace ExLP {
 
 					Dictionary<string, Vector3d> pd;
 					Dictionary<string, int> cd;
-					if (stake.bound) {
+					if (stake.bound && key != "Origin") {
 						pd = bounds;
 						cd = bcounts;
 					} else {

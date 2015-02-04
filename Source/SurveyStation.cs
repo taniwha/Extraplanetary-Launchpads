@@ -505,6 +505,7 @@ namespace ExLP {
 			if (s == site) {
 				site = null;
 			}
+			FindSites ();
 		}
 
 		void onSiteModified (ExSurveyTracker.SurveySite s)

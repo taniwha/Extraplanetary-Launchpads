@@ -197,7 +197,9 @@ namespace ExLP {
 				var p = v.Parts[i];
 				pads.AddRange (p.Modules.OfType<ExBuildControl.IBuilder> ());
 			}
-			if (pads.Count > 0) {
+			if (pads.Count < 1) {
+				control = null;
+			} else {
 				launchpads = new List<ExBuildControl> ();
 				int control_index = -1;
 				for (int i = 0; i < pads.Count; i++) {

@@ -246,9 +246,6 @@ namespace ExLP {
 		void UpdateGUIState ()
 		{
 			enabled = !hide_ui && launchpads != null && gui_enabled;
-			if (!enabled) {
-				InputLockManager.RemoveControlLock ("EL_Build_window_lock");
-			}
 			if (control != null) {
 				control.builder.Highlight (enabled && highlight_pad);
 			}

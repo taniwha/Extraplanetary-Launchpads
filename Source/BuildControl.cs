@@ -18,6 +18,7 @@ along with Extraplanetary Launchpads.  If not, see
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 using KSP.IO;
@@ -678,6 +679,46 @@ namespace ExLP {
 			state = State.Idle;
 		}
 
+		bool InitializeB9Wings (Vessel v)
+		{
+			bool called = false;
+			for (int i = 0; i < v.parts.Count; i++) {
+				Part p = v.parts[i];
+				PartModule moduleB9W;
+				if (p.Modules.Contains ("WingProcedural")) {
+					moduleB9W = p.Modules["WingProcedural"];
+				} else {
+					continue;
+				}
+				Type typeB9W = moduleB9W.GetType ();
+				MethodInfo methodB9W = typeB9W.GetMethod ("CalculateAerodynamicValues");
+				methodB9W.Invoke (moduleB9W, null);
+				called = true;
+			}
+			return called;
+		}
+
+		bool InitializeFARSurfaces (Vessel v)
+		{
+			bool called = false;
+			for (int i = 0; i < v.parts.Count; i++) {
+				Part p = v.parts[i];
+				PartModule moduleFAR;
+				if (p.Modules.Contains ("FARControllableSurface")) {
+					moduleFAR = p.Modules["FARControllableSurface"];
+				} else if (p.Modules.Contains ("FARWingAerodynamicModel")) {
+					moduleFAR = p.Modules["FARWingAerodynamicModel"];
+				} else {
+					continue;
+				}
+				Type typeFAR = moduleFAR.GetType ();
+				MethodInfo methodFAR = typeFAR.GetMethod ("StartInitialization");
+				methodFAR.Invoke (moduleFAR, null);
+				called = true;
+			}
+			return called;
+		}
+
 		public BuildCost.CostReport getBuildCost (ConfigNode craft)
 		{
 			lockedParts = false;
@@ -691,6 +732,13 @@ namespace ExLP {
 			GameObject ro = ship.parts[0].localRoot.gameObject;
 			Vessel dummy = ro.AddComponent<Vessel>();
 			dummy.Initialize (true);
+			if (ExSettings.B9Wings_Present) {
+				if (!InitializeB9Wings (dummy) && ExSettings.FAR_Present) {
+					InitializeFARSurfaces (dummy);
+				}
+			} else if (ExSettings.FAR_Present) {
+				InitializeFARSurfaces (dummy);
+			}
 
 			craftResources = new VesselResources (dummy);
 

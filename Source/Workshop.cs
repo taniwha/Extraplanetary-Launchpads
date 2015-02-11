@@ -49,6 +49,7 @@ public class ExWorkshop : PartModule
 	[KSPField (guiName = "Vessel Productivity", guiActive = true)]
 	public float VesselProductivity;
 
+	private bool workshop_started;
 	private ExWorkshop master;
 	private List<ExWorkshop> sources;
 	private List<ExWorkSink> sinks;
@@ -288,8 +289,15 @@ public class ExWorkshop : PartModule
 		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 
+	private IEnumerator<YieldInstruction> WaitAndStartWorkshop ()
+	{
+		yield return null;
+		workshop_started = true;
+	}
+
 	public override void OnStart (PartModule.StartState state)
 	{
+		workshop_started = false;
 		if (!functional) {
 			enabled = false;
 			return;
@@ -300,6 +308,7 @@ public class ExWorkshop : PartModule
 		DiscoverWorkshops ();
 		useSkill = HighLogic.CurrentGame.Mode == Game.Modes.CAREER;
 		DetermineProductivity ();
+		StartCoroutine (WaitAndStartWorkshop ());
 	}
 
 	private void Update ()
@@ -309,6 +318,9 @@ public class ExWorkshop : PartModule
 
 	public void FixedUpdate ()
 	{
+		if (!workshop_started) {
+			return;
+		}
 		double currentTime = Planetarium.GetUniversalTime ();
 		double timeDelta = currentTime - lastUpdate;
 		//print ("last Update: " + lastUpdateTime + "/" + lastUpdate);

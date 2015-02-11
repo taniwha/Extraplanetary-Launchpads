@@ -719,6 +719,26 @@ namespace ExLP {
 			return called;
 		}
 
+		bool InitializeKASContainers (Vessel v)
+		{
+			bool called = false;
+			for (int i = 0; i < v.parts.Count; i++) {
+				Part p = v.parts[i];
+				PartModule module;
+				if (p.Modules.Contains ("KASModuleContainer")) {
+					module = p.Modules["KASModuleContainer"];
+				} else {
+					continue;
+				}
+				Type type = module.GetType ();
+				type.GetField ("orgMass", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (module, p.partInfo.partPrefab.mass);
+				MethodInfo method = type.GetMethod ("RefreshTotalSize", BindingFlags.NonPublic | BindingFlags.Instance);
+				method.Invoke (module, null);
+				called = true;
+			}
+			return called;
+		}
+
 		public BuildCost.CostReport getBuildCost (ConfigNode craft)
 		{
 			lockedParts = false;
@@ -738,6 +758,9 @@ namespace ExLP {
 				}
 			} else if (ExSettings.FAR_Present) {
 				InitializeFARSurfaces (dummy);
+			}
+			if (ExSettings.KAS_Present) {
+				InitializeKASContainers (dummy);
 			}
 
 			craftResources = new VesselResources (dummy);

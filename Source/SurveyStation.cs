@@ -50,9 +50,6 @@ namespace ExLP {
 		public new Vessel vessel
 		{
 			get {
-				if (site != null) {
-					return site[0].part.vessel;
-				}
 				return base.vessel;
 			}
 		}

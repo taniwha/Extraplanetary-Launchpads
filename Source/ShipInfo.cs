@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ExShipInfo : MonoBehaviour
 	{

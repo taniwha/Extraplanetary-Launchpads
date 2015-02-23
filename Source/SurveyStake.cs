@@ -23,7 +23,7 @@ using UnityEngine;
 using KSP.IO;
 using HighlightingSystem;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 
 	public class ExSurveyStake : PartModule
 	{

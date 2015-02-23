@@ -30,7 +30,7 @@ using System.Reflection;
 using UnityEngine;
 
 
-namespace ExLP.Toolbar
+namespace ExtraplanetaryLaunchpads.Toolbar
 {
 
 

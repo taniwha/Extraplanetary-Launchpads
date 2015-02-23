@@ -24,7 +24,9 @@ using KSPAPIExtensions;
 
 using KSP.IO;
 
-namespace ExLP {
+using ExtraplanetaryLaunchpads_KACWrapper;
+
+namespace ExtraplanetaryLaunchpads {
 	[KSPScenario(ScenarioCreationOptions.AddToAllGames, new GameScenes[] {
 			GameScenes.SPACECENTER,
 			GameScenes.EDITOR,
@@ -55,7 +57,7 @@ namespace ExLP {
 			get;
 			private set;
 		}
-		public static ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum KACAction
+		public static KACWrapper.KACAPI.AlarmActionEnum KACAction
 		{
 			get;
 			private set;
@@ -125,19 +127,19 @@ namespace ExLP {
 			string str = settings.GetValue ("KACAction");
 			switch (str){
 			case ("KillWarp"):
-				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+				KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 				break;
 			case ("KillWarpOnly"):
-				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
+				KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
 				break;
 			case ("MessageOnly"):
-				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
+				KACAction = KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
 				break;
 			case ("PauseGame"):
-				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
+				KACAction = KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
 				break;
 			default:
-				KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+				KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 				break;
 			};
 
@@ -187,7 +189,7 @@ namespace ExLP {
 			KerbalRecycleTarget = "Kethane";
 			KerbalRecycleAmount = 150.0;
 			use_KAC = true;
-			KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+			KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 			var dbase = GameDatabase.Instance;
 			var settings = dbase.GetConfigNodes ("ELGlobalSettings").LastOrDefault ();
 
@@ -219,19 +221,19 @@ namespace ExLP {
 				string str = settings.GetValue ("KACAction");
 				switch (str){
 				case ("KillWarp"):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 					break;
 				case ("KillWarpOnly"):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
 					break;
 				case ("MessageOnly"):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
 					break;
 				case ("PauseGame"):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
 					break;
 				default:
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 					break;
 				};
 			}
@@ -268,16 +270,16 @@ namespace ExLP {
 			if (uk) {
 				int actionint;
 				switch (KACAction){
-				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp):
+				case (KACWrapper.KACAPI.AlarmActionEnum.KillWarp):
 					actionint = 0;
 					break;
-				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly):
+				case (KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly):
 					actionint = 1;
 					break;
-				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly):
+				case (KACWrapper.KACAPI.AlarmActionEnum.MessageOnly):
 					actionint = 2;
 					break;
-				case (ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame):
+				case (KACWrapper.KACAPI.AlarmActionEnum.PauseGame):
 					actionint = 3;
 					break;
 				default:
@@ -294,19 +296,19 @@ namespace ExLP {
 
 				switch (actionint){
 				case (0):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 					break;
 				case (1):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
 					break;
 				case (2):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
 					break;
 				case (3):
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
 					break;
 				default:
-					KACAction = ExLP_KACWrapper.KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
+					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 					break;
 				};
 

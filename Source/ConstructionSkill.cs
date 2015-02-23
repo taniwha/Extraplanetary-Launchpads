@@ -23,7 +23,7 @@ using UnityEngine;
 using KSP.IO;
 using Experience;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 
 using KerbalStats;
 

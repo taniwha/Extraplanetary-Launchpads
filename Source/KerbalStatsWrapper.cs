@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-namespace ExLP.KerbalStats {
+namespace ExtraplanetaryLaunchpads.KerbalStats {
 	public class KerbalExt
 	{
 		static MethodInfo GetMethod;

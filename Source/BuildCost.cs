@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 	public class BuildCost
 	{
 		public class BuildResource: IComparable<BuildResource>, IConfigNode

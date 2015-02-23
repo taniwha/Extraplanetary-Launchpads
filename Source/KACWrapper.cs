@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace ExLP_KACWrapper
+namespace ExtraplanetaryLaunchpads_KACWrapper
 {
 
     ///////////////////////////////////////////////////////////////////////////////////////////

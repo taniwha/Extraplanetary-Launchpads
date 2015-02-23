@@ -22,7 +22,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 	// Thanks to Taranis Elsu and his Fuel Balancer mod for the inspiration.
 	public class ResourcePartMap {
 		public PartResource resource;

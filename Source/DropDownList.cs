@@ -23,7 +23,7 @@ using System.Text;
 using KSP;
 using UnityEngine;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 
 	// Take from TriggerAu's plugin framework
 

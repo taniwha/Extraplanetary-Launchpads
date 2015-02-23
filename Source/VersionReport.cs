@@ -21,7 +21,7 @@ using System.Reflection;
 
 using KSP.IO;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 
 	[KSPAddon(KSPAddon.Startup.Instantly, true)]
 	public class ExVersionReport : MonoBehaviour

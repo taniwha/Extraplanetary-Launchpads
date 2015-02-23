@@ -22,7 +22,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 
 	public class ExSurveyStation : PartModule, ExBuildControl.IBuilder
 	{
@@ -487,6 +487,7 @@ namespace ExLP {
 				return;
 			}
 			if (vessel.situation == Vessel.Situations.LANDED
+				|| vessel.situation == Vessel.Situations.SPLASHED
 				|| vessel.situation == Vessel.Situations.PRELAUNCH) {
 				StartCoroutine (WaitAndFindSites ());
 			}

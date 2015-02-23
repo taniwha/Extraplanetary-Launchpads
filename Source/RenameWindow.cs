@@ -22,7 +22,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ExRenameWindow: MonoBehaviour

@@ -23,9 +23,9 @@ using UnityEngine;
 
 using KSP.IO;
 
-using ExLP_KACWrapper;
+using ExtraplanetaryLaunchpads_KACWrapper;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ExBuildWindow : MonoBehaviour
@@ -633,7 +633,7 @@ namespace ExLP {
 					mostFutureAlarmTime = alarmTime;
 				}
 			}
-			if (KACWrapper.APIReady && ExLP.ExSettings.use_KAC) {
+			if (KACWrapper.APIReady && ExSettings.use_KAC) {
 				if (control.paused) {
 					// It doesn't make sense to have an alarm for an event that will never happen
 					if (control.KACalarmID != "") {

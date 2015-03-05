@@ -69,6 +69,9 @@ namespace ExtraplanetaryLaunchpads {
 			get {
 				return PadName;
 			}
+			set {
+				PadName = value;
+			}
 		}
 
 		public void PadSelection_start ()

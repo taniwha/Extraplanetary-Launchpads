@@ -69,6 +69,9 @@ namespace ExtraplanetaryLaunchpads {
 			get {
 				return StationName;
 			}
+			set {
+				StationName = value;
+			}
 		}
 
 		public void PadSelection_start ()
@@ -441,6 +444,12 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			ExBuildWindow.ShowGUI ();
 			ExBuildWindow.SelectPad (control);
+		}
+
+		[KSPEvent (guiActive = true, guiName = "Rename", active = true)]
+		public void ShowRenameUI ()
+		{
+			ExRenameWindow.ShowGUI (this);
 		}
 
 		public void UpdateMenus (bool visible)

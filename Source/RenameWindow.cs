@@ -27,11 +27,11 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ExRenameWindow: MonoBehaviour
 	{
-		private static ExLaunchPad padInstance = null;
+		private static ExBuildControl.IBuilder padInstance = null;
 		private static ExRenameWindow windowInstance = null;
 		private static bool gui_enabled = false;
 		private static Rect windowpos = new Rect(Screen.width * 0.35f,Screen.height * 0.1f,1,1);
-		private static string newPadName;
+		private static string newName;
 
 		void Awake ()
 		{
@@ -45,10 +45,10 @@ namespace ExtraplanetaryLaunchpads {
 			gui_enabled = false;
 		}
 
-		public static void ShowGUI (ExLaunchPad pad)
+		public static void ShowGUI (ExBuildControl.IBuilder pad)
 		{
 			padInstance = pad;
-			newPadName = pad.PadName;
+			newName = pad.Name;
 			gui_enabled = true;
 			if (windowInstance != null) {
 				windowInstance.enabled = true;
@@ -61,13 +61,13 @@ namespace ExtraplanetaryLaunchpads {
 
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Rename launchpad: ");
-			newPadName = GUILayout.TextField (newPadName, 20);
+			newName = GUILayout.TextField (newName, 20);
 			GUILayout.EndHorizontal ();
 
 			GUILayout.BeginHorizontal ();
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("OK")) {
-				padInstance.PadName = newPadName;
+				padInstance.Name = newName;
 				gui_enabled = false;
 				ExBuildWindow.updateCurrentPads ();
 			}

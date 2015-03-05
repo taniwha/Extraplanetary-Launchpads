@@ -76,6 +76,7 @@ namespace ExtraplanetaryLaunchpads {
 			string Name
 			{
 				get;
+				set;
 			}
 		}
 

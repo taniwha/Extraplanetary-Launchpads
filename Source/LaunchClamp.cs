@@ -110,6 +110,31 @@ namespace ExtraplanetaryLaunchpads {
 			height = baseHeight + dist;
 			Debug.Log (String.Format ("[EL ELC] {0} {1}", baseHeight, height));
 		}
+
+		void ShutdownGenerator ()
+		{
+			foreach (var mod in part.Modules.OfType<ModuleGenerator> ()) {
+				ModuleGenerator gen = mod as ModuleGenerator;
+				gen.isAlwaysActive = true;
+				gen.generatorIsActive = false;
+				gen.Events["Shutdown"].active = false;
+				gen.Events["Activate"].active = false;
+				gen.Fields["efficiency"].guiActive = false;
+				gen.inputList.Clear ();
+				gen.outputList.Clear ();
+			}
+		}
+
+		internal IEnumerator<YieldInstruction> WaitAndShutdownGenerator ()
+		{
+			yield return null;
+			if (part == null || part.Modules == null) {
+				// the part may have been destroyed (build cost calculation)
+				yield break;
+			}
+			ShutdownGenerator ();
+		}
+
 		public override void OnStart (PartModule.StartState state)
 		{
 			if (CompatibilityChecker.IsWin64 ()) {
@@ -121,6 +146,15 @@ namespace ExtraplanetaryLaunchpads {
 				ExtendTower ();
 			}
 			base.OnStart (state);
+			if (HighLogic.LoadedSceneIsFlight) {
+				if ((state & StartState.Landed) == StartState.None
+					  || (!vessel.landedAt.Equals ("LaunchPad")
+						  && !vessel.landedAt.Equals ("Runway"))) {
+					ShutdownGenerator ();
+					// do it again next frame just in case
+					StartCoroutine (WaitAndShutdownGenerator ());
+				}
+			}
 		}
 	}
 }

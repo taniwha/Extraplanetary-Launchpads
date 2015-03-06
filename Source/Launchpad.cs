@@ -134,14 +134,15 @@ namespace ExtraplanetaryLaunchpads {
 			Vector3 axis;
 			launchTransform.rotation.ToAngleAxis (out angle, out axis);
 
-			Vector3 pos = ship.parts[0].transform.position;
+			Part rootPart = ship.parts[0].localRoot;
+			Vector3 pos = rootPart.transform.position;
 			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
 			//Debug.Log (String.Format ("[EL] pos: {0} shift: {1}", pos, shift));
 			shift += launchTransform.position;
 			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
-			ship.parts[0].transform.Translate (shift, Space.World);
-			ship.parts[0].transform.RotateAround (launchTransform.position,
-												  axis, angle);
+			rootPart.transform.Translate (shift, Space.World);
+			rootPart.transform.RotateAround (launchTransform.position, axis,
+											 angle);
 			return launchTransform;
 		}
 

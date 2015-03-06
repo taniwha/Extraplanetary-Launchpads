@@ -360,11 +360,12 @@ namespace ExtraplanetaryLaunchpads {
 			Vector3 axis;
 			xform.rotation.ToAngleAxis (out angle, out axis);
 
-			Vector3 pos = ship.parts[0].transform.position;
+			Part rootPart = ship.parts[0].localRoot;
+			Vector3 pos = rootPart.transform.position;
 			Vector3 shift = points.ShiftBounds (xform, pos, vessel_bounds);
 			shift += xform.position;
-			ship.parts[0].transform.Translate (shift, Space.World);
-			ship.parts[0].transform.RotateAround (xform.position,
+			rootPart.transform.Translate (shift, Space.World);
+			rootPart.transform.RotateAround (xform.position,
 												  axis, angle);
 			return xform;
 		}

@@ -83,7 +83,7 @@ namespace ExtraplanetaryLaunchpads {
             parts_count = 0;
 
 			if (ship.parts.Count > 0) {
-				Part root = ship.parts[0];
+				Part root = ship.parts[0].localRoot;
 
                 buildCost = new BuildCost ();
 				addPart (root);

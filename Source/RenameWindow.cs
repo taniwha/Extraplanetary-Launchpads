@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	[KSPAddon (KSPAddon.Startup.Flight, false)]
+	[KSPAddon (KSPAddon.Startup.EveryScene, false)]
 	public class ExRenameWindow: MonoBehaviour
 	{
 		private static ExBuildControl.IBuilder padInstance = null;
@@ -35,6 +35,11 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Awake ()
 		{
+			if (!HighLogic.LoadedSceneIsEditor
+				&& !HighLogic.LoadedSceneIsFlight) {
+				Destroy (this);
+				return;
+			}
 			windowInstance = this;
 			enabled = true;
 			gui_enabled = false;

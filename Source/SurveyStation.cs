@@ -447,7 +447,8 @@ namespace ExtraplanetaryLaunchpads {
 			ExBuildWindow.SelectPad (control);
 		}
 
-		[KSPEvent (guiActive = true, guiName = "Rename", active = true)]
+		[KSPEvent (guiActive = true, guiActiveEditor = true,
+				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
 			ExRenameWindow.ShowGUI (this);

@@ -619,10 +619,16 @@ namespace ExtraplanetaryLaunchpads {
 
 		void FinalizeButton ()
 		{
+			GUILayout.BeginHorizontal ();
 			if (GUILayout.Button ("Finalize Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.BuildAndLaunchCraft ();
 			}
+			if (GUILayout.Button ("Teardown Build", Styles.normal,
+								  GUILayout.ExpandWidth (true))) {
+				control.CancelBuild ();
+			}
+			GUILayout.EndHorizontal ();
 		}
 
 		internal static BuildCost.BuildResource FindResource (List<BuildCost.BuildResource> reslist, string name)

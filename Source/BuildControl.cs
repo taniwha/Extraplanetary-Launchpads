@@ -146,7 +146,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void CancelBuild ()
 		{
-			if (state == State.Building) {
+			if (state == State.Building || state == State.Complete) {
 				state = State.Canceling;
 			}
 		}

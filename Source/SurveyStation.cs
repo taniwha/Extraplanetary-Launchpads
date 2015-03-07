@@ -123,6 +123,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Highlight (bool on)
 		{
+			if (on) {
+				part.SetHighlightColor (XKCDColors.LightSeaGreen);
+				part.SetHighlight (true, false);
+			} else {
+				part.SetHighlightDefault ();
+			}
 			if (site != null) {
 				foreach (var stake in site) {
 					stake.Highlight (on);

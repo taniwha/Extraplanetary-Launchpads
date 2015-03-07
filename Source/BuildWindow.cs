@@ -436,6 +436,13 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateGUIState ();
 		}
 
+		void VesselName ()
+		{
+			GUILayout.BeginHorizontal ();
+			GUILayout.Label (control.builder.vessel.vesselName);
+			GUILayout.EndHorizontal ();
+		}
+
 		void SelectPad ()
 		{
 			GUILayout.BeginHorizontal ();
@@ -784,6 +791,7 @@ namespace ExtraplanetaryLaunchpads {
 			SelectPad_start ();
 
 			GUILayout.BeginVertical ();
+			VesselName ();
 			SelectPad ();
 
 			switch (control.state) {

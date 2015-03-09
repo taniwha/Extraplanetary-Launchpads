@@ -44,7 +44,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy()
 		{
-			ExEditorButton.Destroy ();
+			if (ExEditorButton != null) {
+				ExEditorButton.Destroy ();
+			}
 		}
 	}
 
@@ -69,7 +71,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy()
 		{
-			ExEditorButton.Destroy ();
+			if (ExEditorButton != null) {
+				ExEditorButton.Destroy ();
+			}
 		}
 	}
 
@@ -94,7 +98,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy()
 		{
-			ExSettingsButton.Destroy ();
+			if (ExSettingsButton != null) {
+				ExSettingsButton.Destroy ();
+			}
 		}
 	}
 }

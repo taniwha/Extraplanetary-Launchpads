@@ -53,7 +53,7 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ExToolbar_BuildWindow : MonoBehaviour
 	{
-		private IButton ExEditorButton;
+		private IButton ExBuildWindowButton;
 
 		public void Awake ()
 		{
@@ -63,16 +63,16 @@ namespace ExtraplanetaryLaunchpads {
 			if (ToolbarManager.Instance == null) {
 				return;
 			}
-			ExEditorButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExEditorButton");
-			ExEditorButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
-			ExEditorButton.ToolTip = "EL Build Window";
-			ExEditorButton.OnClick += (e) => ExBuildWindow.ToggleGUI ();
+			ExBuildWindowButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExBuildWindowButton");
+			ExBuildWindowButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
+			ExBuildWindowButton.ToolTip = "EL Build Window";
+			ExBuildWindowButton.OnClick += (e) => ExBuildWindow.ToggleGUI ();
 		}
 
 		void OnDestroy()
 		{
-			if (ExEditorButton != null) {
-				ExEditorButton.Destroy ();
+			if (ExBuildWindowButton != null) {
+				ExBuildWindowButton.Destroy ();
 			}
 		}
 	}

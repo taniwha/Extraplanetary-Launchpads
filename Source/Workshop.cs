@@ -313,7 +313,9 @@ public class ExWorkshop : PartModule
 
 	private void Update ()
 	{
-		VesselProductivity = master.vessel_productivity;
+		if (master != null) {
+			VesselProductivity = master.vessel_productivity;
+		}
 	}
 
 	public void FixedUpdate ()

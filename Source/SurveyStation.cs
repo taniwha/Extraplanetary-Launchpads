@@ -99,8 +99,8 @@ namespace ExtraplanetaryLaunchpads {
 			if (site_list == null) {
 				GUILayout.BeginHorizontal ();
 				if (control.state == ExBuildControl.State.Complete) {
-					GUILayout.Label ("Where do you want it, boss?",
-									 ExBuildWindow.Styles.yellow);
+					GUILayout.Label ("No sites found. Explosions likely.",
+									 ExBuildWindow.Styles.red);
 				} else {
 					GUILayout.Label ("No sites found.");
 				}

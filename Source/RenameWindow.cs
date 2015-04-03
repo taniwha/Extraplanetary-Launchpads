@@ -66,7 +66,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Rename launchpad: ");
-			newName = GUILayout.TextField (newName, 20);
+			newName = GUILayout.TextField (newName);
 			GUILayout.EndHorizontal ();
 
 			GUILayout.BeginHorizontal ();

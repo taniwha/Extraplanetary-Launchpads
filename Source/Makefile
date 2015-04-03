@@ -38,7 +38,7 @@ EL_FILES := \
 
 RESGEN2		:= resgen2
 GMCS		:= gmcs
-GMCSFLAGS	:= -optimize -warnaserror
+GMCSFLAGS	:= -optimize -warnaserror -debug
 GIT			:= git
 TAR			:= tar
 ZIP			:= zip

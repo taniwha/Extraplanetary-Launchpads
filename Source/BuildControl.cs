@@ -57,6 +57,11 @@ namespace ExtraplanetaryLaunchpads {
 			void PadSelection_start ();
 			void PadSelection ();
 			void PadSelection_end ();
+
+			bool canBuild
+			{
+				get;
+			}
 			bool capture
 			{
 				get;

@@ -620,10 +620,12 @@ namespace ExtraplanetaryLaunchpads {
 		void FinalizeButton ()
 		{
 			GUILayout.BeginHorizontal ();
+			GUI.enabled = control.builder.canBuild;
 			if (GUILayout.Button ("Finalize Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.BuildAndLaunchCraft ();
 			}
+			GUI.enabled = true;
 			if (GUILayout.Button ("Teardown Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.CancelBuild ();

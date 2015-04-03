@@ -34,6 +34,18 @@ namespace ExtraplanetaryLaunchpads {
 		ExSurveyTracker.SurveySite site;
 		float base_mass;
 
+		public bool canBuild
+		{
+			get {
+				if (vessel.situation == Vessel.Situations.LANDED
+					|| vessel.situation == Vessel.Situations.SPLASHED
+					|| vessel.situation == Vessel.Situations.PRELAUNCH) {
+					return true;
+				}
+				return false;
+			}
+		}
+
 		public bool capture
 		{
 			get {
@@ -421,9 +433,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			control.OnStart ();
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
-			if (vessel.situation == Vessel.Situations.LANDED
-				|| vessel.situation == Vessel.Situations.SPLASHED
-				|| vessel.situation == Vessel.Situations.PRELAUNCH) {
+			if (canBuild) {
 				StartCoroutine (WaitAndFindSites ());
 			}
 			ExSurveyTracker.onSiteAdded.Add (onSiteAdded);

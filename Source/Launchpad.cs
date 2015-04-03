@@ -37,6 +37,13 @@ namespace ExtraplanetaryLaunchpads {
 		Transform launchTransform;
 		float base_mass;
 
+		public bool canBuild
+		{
+			get {
+				return true;
+			}
+		}
+
 		public bool capture
 		{
 			get {

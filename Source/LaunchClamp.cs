@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -122,6 +123,13 @@ namespace ExtraplanetaryLaunchpads {
 				gen.Fields["efficiency"].guiActive = false;
 				gen.inputList.Clear ();
 				gen.outputList.Clear ();
+				Type genType = gen.GetType ();
+				FieldInfo [] fields = genType.GetFields (BindingFlags.NonPublic | BindingFlags.Instance);
+				foreach (var f in fields) {
+					if (f.FieldType == typeof (int)) {
+						f.SetValue (gen, 0);
+					}
+				}
 			}
 		}
 

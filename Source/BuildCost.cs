@@ -169,16 +169,6 @@ namespace ExtraplanetaryLaunchpads {
 			resources = new VesselResources ();
 		}
 
-		public void addPartMassless (Part part)
-		{
-			resources.AddPart (part);
-		}
-
-		public void removePartMassless (Part part)
-		{
-			resources.RemovePart (part);
-		}
-
 		public void addPart (Part part)
 		{
 			resources.AddPart (part);

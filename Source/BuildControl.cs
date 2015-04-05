@@ -227,8 +227,7 @@ namespace ExtraplanetaryLaunchpads {
 				double work = kerbalHours / count;
 				did_work = false;
 				foreach (var res in required.Where (r => r.amount > 0)) {
-					double mass = work / 5;	//FIXME not hard-coded (5Kh/t)
-					double amount = mass / res.density;
+					double amount = work / res.kerbalHours;
 					double base_amount = amount;
 
 					if (amount > res.amount)
@@ -287,8 +286,7 @@ namespace ExtraplanetaryLaunchpads {
 					if (remaining < 0) {
 						continue;
 					}
-					double mass = work / 5;	//FIXME not hard-coded (5Kh/t)
-					double amount = mass / bres.density;
+					double amount = work / bres.kerbalHours;
 					double base_amount = amount;
 
 					if (amount > remaining) {

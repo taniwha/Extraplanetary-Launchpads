@@ -48,10 +48,16 @@ namespace ExtraplanetaryLaunchpads {
 				return false;
 			}
 
-			private static double KerbalHours (double mass)
+			private double KerbalHours ()
 			{
-				// 5 Kerbal-hours/ton
-				return mass * 5;
+				if (mass > 0) {
+					// 5 Kerbal-hours/ton
+					//FIXME per resource
+					return mass * 5;
+				} else {
+					//FIXME per resource
+					return 0.125;
+				}
 			}
 
 			public BuildResource ()
@@ -73,7 +79,7 @@ namespace ExtraplanetaryLaunchpads {
 					mass = 0;
 				}
 				hull = isHullResource (res_def);
-				kerbalHours = KerbalHours (mass);
+				kerbalHours = KerbalHours ();
 			}
 
 			public BuildResource (string name, double amount)
@@ -85,7 +91,7 @@ namespace ExtraplanetaryLaunchpads {
 				density = res_def.density;
 				mass = amount * density;
 				hull = isHullResource (res_def);
-				kerbalHours = KerbalHours (mass);
+				kerbalHours = KerbalHours ();
 			}
 
 			public void Load (ConfigNode node)
@@ -102,7 +108,7 @@ namespace ExtraplanetaryLaunchpads {
 				density = res_def.density;
 				mass = amount * density;
 				hull = isHullResource (res_def);
-				kerbalHours = KerbalHours (mass);
+				kerbalHours = KerbalHours ();
 			}
 
 			public void Save (ConfigNode node)

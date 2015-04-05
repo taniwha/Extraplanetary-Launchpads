@@ -181,7 +181,7 @@ namespace ExtraplanetaryLaunchpads {
 			double kerbalHours = 0;
 
 			foreach (var res in cost.required) {
-				kerbalHours += res.kerbalHours;
+				kerbalHours += res.kerbalHours * res.amount;
 				required_mass += res.mass;
 			}
 			kerbalHours = Math.Round (kerbalHours, 4);

@@ -26,12 +26,12 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 	public class KISWrapper {
-		public static MethodInfo GetResources;
-		public static MethodInfo SetResource;
-		public static FieldInfo items;
-		public static FieldInfo resourceName;
-		public static FieldInfo amount;
-		public static FieldInfo maxAmount;
+		public static MethodInfo kis_GetResources;
+		public static MethodInfo kis_SetResource;
+		public static FieldInfo kis_items;
+		public static FieldInfo kis_resourceName;
+		public static FieldInfo kis_amount;
+		public static FieldInfo kis_maxAmount;
 
 		public static Dictionary<int,object> Items (PartModule mod)
 		{
@@ -39,8 +39,8 @@ namespace ExtraplanetaryLaunchpads {
 				return null;
 			}
 			var dict = new Dictionary<int,object> ();
-			var kis_items = (IDictionary) items.GetValue (mod);
-			foreach (DictionaryEntry de in kis_items) {
+			var items = (IDictionary) kis_items.GetValue (mod);
+			foreach (DictionaryEntry de in items) {
 				dict.Add ((int) de.Key, de.Value);
 			}
 			return dict;
@@ -50,15 +50,42 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var KISasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ().assembly;
 			var InventoryModule = KISasm.GetTypes().Where (t => t.Name.Equals ("ModuleKISInventory")).FirstOrDefault ();
-			items = InventoryModule.GetField ("items");
+			kis_items = InventoryModule.GetField ("items");
 			var ItemClass = KISasm.GetTypes().Where (t => t.Name.Equals ("KIS_Item")).FirstOrDefault ();
-			GetResources = ItemClass.GetMethod ("GetResources");
-			SetResource = ItemClass.GetMethod ("SetResource");
+			kis_GetResources = ItemClass.GetMethod ("GetResources");
+			kis_SetResource = ItemClass.GetMethod ("SetResource");
 
 			var ResourceInfoClass = KISasm.GetTypes().Where (t => t.Name.Equals ("ResourceInfo")).FirstOrDefault ();
-			resourceName = ResourceInfoClass.GetField ("resourceName");
-			maxAmount = ResourceInfoClass.GetField ("maxAmount");
-			amount = ResourceInfoClass.GetField ("amount");
+			kis_resourceName = ResourceInfoClass.GetField ("resourceName");
+			kis_maxAmount = ResourceInfoClass.GetField ("maxAmount");
+			kis_amount = ResourceInfoClass.GetField ("amount");
+		}
+
+		static void GetResources (PartModule mod, Dictionary<string, ResourceInfo> resources)
+		{
+			var items = KISWrapper.Items (mod);
+			foreach (var item in items.Values) {
+				var kis_resources = (IList) kis_GetResources.Invoke (item, null);
+				ResourceInfo resourceInfo;
+				foreach (var res in kis_resources) {
+					var resourceName = (string) kis_resourceName.GetValue (res);
+					if (!resources.ContainsKey (resourceName)) {
+						resourceInfo = new ResourceInfo ();
+						resources[resourceName] = resourceInfo;
+					}
+					resourceInfo = resources[resourceName];
+					resourceInfo.containers.Add (new KISResourceContainer (mod.part, res));
+				}
+			}
+		}
+
+		public static void GetResources (Part part, Dictionary<string, ResourceInfo> resources)
+		{
+			foreach (PartModule mod in part.Modules) {
+				if (mod.moduleName == "ModuleKISInventory") {
+					GetResources (mod, resources);
+				}
+			}
 		}
 	}
 }

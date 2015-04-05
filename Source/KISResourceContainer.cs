@@ -32,20 +32,20 @@ namespace ExtraplanetaryLaunchpads {
 		public double maxAmount
 		{
 			get {
-				return (double) KISWrapper.maxAmount.GetValue (resource);
+				return (double) KISWrapper.kis_maxAmount.GetValue (resource);
 			}
 			set {
-				KISWrapper.maxAmount.SetValue (resource, value);
+				KISWrapper.kis_maxAmount.SetValue (resource, value);
 			}
 		}
 
 		public double amount
 		{
 			get {
-				return (double) KISWrapper.amount.GetValue (resource);
+				return (double) KISWrapper.kis_amount.GetValue (resource);
 			}
 			set {
-				KISWrapper.amount.SetValue (resource, value);
+				KISWrapper.kis_amount.SetValue (resource, value);
 			}
 		}
 
@@ -60,33 +60,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			kis_part = part;
 			resource = res;
-		}
-
-		static void GetResources (PartModule mod, Dictionary<string, ResourceInfo> resources)
-		{
-			var items = KISWrapper.Items (mod);
-			foreach (var item in items.Values) {
-				var kis_resources = (IList) KISWrapper.GetResources.Invoke (item, null);
-				ResourceInfo resourceInfo;
-				foreach (var res in kis_resources) {
-					var resourceName = (string) KISWrapper.resourceName.GetValue (res);
-					if (!resources.ContainsKey (resourceName)) {
-						resourceInfo = new ResourceInfo ();
-						resources[resourceName] = resourceInfo;
-					}
-					resourceInfo = resources[resourceName];
-					resourceInfo.containers.Add (new KISResourceContainer (mod.part, res));
-				}
-			}
-		}
-
-		public static void GetResources (Part part, Dictionary<string, ResourceInfo> resources)
-		{
-			foreach (PartModule mod in part.Modules) {
-				if (mod.moduleName == "ModuleKISInventory") {
-					GetResources (mod, resources);
-				}
-			}
 		}
 	}
 }

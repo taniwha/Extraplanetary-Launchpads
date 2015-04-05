@@ -16,10 +16,12 @@ EL_FILES := \
 	Checkers.cs			\
 	ConstructionSkill.cs	\
 	DropDownList.cs		\
+	IResourceContainer.cs	\
 	KACWrapper.cs			\
 	KerbalStatsWrapper.cs	\
 	LaunchClamp.cs		\
 	Launchpad.cs		\
+	PartResourceContainer.cs	\
 	ProgressBar.cs		\
 	Recycler.cs			\
 	RenameWindow.cs		\

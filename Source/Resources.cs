@@ -24,19 +24,8 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 	// Thanks to Taranis Elsu and his Fuel Balancer mod for the inspiration.
-	public class ResourcePartMap {
-		public PartResource resource;
-		public Part part;
-
-		public ResourcePartMap (PartResource resource, Part part)
-		{
-			this.resource = resource;
-			this.part = part;
-		}
-	}
-
 	public class ResourceInfo {
-		public List<ResourcePartMap> parts = new List<ResourcePartMap>();
+		public List<IResourceContainer> containers = new List<IResourceContainer>();
 	}
 
 	public class VesselResources {
@@ -51,7 +40,7 @@ namespace ExtraplanetaryLaunchpads {
 					resources[resource.resourceName] = resourceInfo;
 				}
 				resourceInfo = resources[resource.resourceName];
-				resourceInfo.parts.Add (new ResourcePartMap (resource, part));
+				resourceInfo.containers.Add (new PartResourceContainer (resource));
 			}
 		}
 
@@ -61,13 +50,13 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (var resinfo in resources) {
 				string resource = resinfo.Key;
 				ResourceInfo resourceInfo = resinfo.Value;
-				foreach (var pm in resourceInfo.parts) {
-					if (pm.part == part) {
-						resourceInfo.parts.Remove (pm);
-						break;
+				for (int i = resourceInfo.containers.Count; i >= 0; i--) {
+					var container = resourceInfo.containers[i];
+					if (container.part == part) {
+						resourceInfo.containers.Remove (container);
 					}
 				}
-				if (resourceInfo.parts.Count == 0) {
+				if (resourceInfo.containers.Count == 0) {
 					remove_list.Add (resource);
 				}
 			}
@@ -104,8 +93,8 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				ResourceInfo resourceInfo = pair.Value;
-				foreach (ResourcePartMap partInfo in resourceInfo.parts) {
-					partInfo.resource.amount = 0.0;
+				foreach (var container in resourceInfo.containers) {
+					container.amount = 0.0;
 				}
 			}
 		}
@@ -118,8 +107,8 @@ namespace ExtraplanetaryLaunchpads {
 				return 0.0;
 			ResourceInfo resourceInfo = resources[resource];
 			double capacity = 0.0;
-			foreach (ResourcePartMap partInfo in resourceInfo.parts) {
-				capacity += partInfo.resource.maxAmount;
+			foreach (var container in resourceInfo.containers) {
+				capacity += container.maxAmount;
 			}
 			return capacity;
 		}
@@ -132,8 +121,8 @@ namespace ExtraplanetaryLaunchpads {
 				return 0.0;
 			ResourceInfo resourceInfo = resources[resource];
 			double amount = 0.0;
-			foreach (ResourcePartMap partInfo in resourceInfo.parts) {
-				amount += partInfo.resource.amount;
+			foreach (var container in resourceInfo.containers) {
+				amount += container.amount;
 			}
 			return amount;
 		}
@@ -150,18 +139,18 @@ namespace ExtraplanetaryLaunchpads {
 			if (!resources.ContainsKey (resource))
 				return amount;
 			ResourceInfo resourceInfo = resources[resource];
-			foreach (ResourcePartMap partInfo in resourceInfo.parts) {
-				PartResource res = partInfo.resource;
+			foreach (var container in resourceInfo.containers) {
 				double adjust = amount;
-				if (adjust < 0  && -adjust > res.amount) {
+				double space = container.maxAmount - container.amount;
+				if (adjust < 0  && -adjust > container.amount) {
 					// Ensure the resource amount never goes negative
-					adjust = -res.amount;
+					adjust = -container.amount;
 				} else if (adjust > 0
-						   && adjust > (res.maxAmount - res.amount)) {
+						   && adjust > space) {
 					// ensure the resource amount never excees the maximum
-					adjust = res.maxAmount - res.amount;
+					adjust = container.maxAmount - container.amount;
 				}
-				partInfo.resource.amount += adjust;
+				container.amount += adjust;
 				amount -= adjust;
 			}
 			return amount;

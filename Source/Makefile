@@ -17,6 +17,8 @@ EL_FILES := \
 	ConstructionSkill.cs	\
 	DropDownList.cs		\
 	IResourceContainer.cs	\
+	KISResourceContainer.cs	\
+	KISWrapper.cs			\
 	KACWrapper.cs			\
 	KerbalStatsWrapper.cs	\
 	LaunchClamp.cs		\

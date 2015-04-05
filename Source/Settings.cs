@@ -37,6 +37,11 @@ namespace ExtraplanetaryLaunchpads {
 	public class ExSettings : ScenarioModule
 	{
 		static bool settings_loaded;
+		public static bool KIS_Present
+		{
+			get;
+			private set;
+		}
 		public static bool KAS_Present
 		{
 			get;
@@ -245,6 +250,7 @@ namespace ExtraplanetaryLaunchpads {
 				enabled = false;
 				return;
 			}
+			KIS_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase));
 			KAS_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase));
 			B9Wings_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("B9_Aerospace_WingStuff", StringComparison.InvariantCultureIgnoreCase));
 			FAR_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));

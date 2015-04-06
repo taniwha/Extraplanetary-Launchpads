@@ -145,10 +145,9 @@ namespace ExtraplanetaryLaunchpads {
 				if (adjust < 0  && -adjust > container.amount) {
 					// Ensure the resource amount never goes negative
 					adjust = -container.amount;
-				} else if (adjust > 0
-						   && adjust > space) {
+				} else if (adjust > 0 && adjust > space) {
 					// ensure the resource amount never excees the maximum
-					adjust = container.maxAmount - container.amount;
+					adjust = space;
 				}
 				container.amount += adjust;
 				amount -= adjust;

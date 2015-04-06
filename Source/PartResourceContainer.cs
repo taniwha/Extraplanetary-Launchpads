@@ -39,10 +39,10 @@ namespace ExtraplanetaryLaunchpads {
 		public double amount
 		{
 			get {
-				return partResource.maxAmount;
+				return partResource.amount;
 			}
 			set {
-				partResource.maxAmount = value;
+				partResource.amount = value;
 			}
 		}
 		public Part part

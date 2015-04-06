@@ -3,3 +3,4 @@ obj
 *.pidb
 AssemblyInfo.cs
 AssemblyInfoToolbar.cs
+EL.version

@@ -70,10 +70,10 @@ Launchpad.dll: ${EL_FILES}
 		-out:$@ $^
 
 clean:
-	rm -f ${TARGETS} AssemblyInfo.cs
+	rm -f ${TARGETS} AssemblyInfo.cs EL.version
 
 install: all
 	mkdir -p ${PLUGINDIR}
-	cp ${TARGETS} ${PLUGINDIR}
+	cp ${TARGETS} EL.version ${PLUGINDIR}
 
 .PHONY: all clean install

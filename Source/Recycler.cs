@@ -152,7 +152,7 @@ public class ExRecycler : PartModule
 		}
 		float hull_mass = v.GetTotalMass ();
 		amount = hull_mass * ConversionEfficiency / rp_def.density;
-		mass += ReclaimResource (target_resource, amount, v.name, "hull");
+		mass += ReclaimResource (target_resource, amount, v.name, String.Format ("hull({0})", target_resource));
 		v.Die ();
 		return mass;
 	}

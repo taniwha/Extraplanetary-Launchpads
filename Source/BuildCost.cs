@@ -50,10 +50,10 @@ namespace ExtraplanetaryLaunchpads {
 
 			private double KerbalHours ()
 			{
-				if (mass > 0) {
+				if (density > 0) {
 					// 5 Kerbal-hours/ton
 					//FIXME per resource
-					return mass * 5;
+					return 5 * density;
 				} else {
 					//FIXME per resource
 					return 0.125;

@@ -9,6 +9,8 @@ APIEXTDATA	:= ${PLUGINDIR}
 TARGETS		:= Launchpad.dll
 
 EL_FILES := \
+	Recipes/BuildResource.cs	\
+	Recipes/CostReport.cs		\
     AssemblyInfo.cs		\
 	BuildControl.cs		\
 	BuildCost.cs		\

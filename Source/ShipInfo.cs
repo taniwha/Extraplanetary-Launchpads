@@ -155,7 +155,7 @@ namespace ExtraplanetaryLaunchpads {
         }
 
 		private Vector2 ResourcePanel (string title,
-									   List<BuildCost.BuildResource> resources,
+									   List<BuildResource> resources,
 									   Vector2 scrollPos)
 		{
 			GUILayout.Label (title + ":");

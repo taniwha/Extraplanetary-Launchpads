@@ -121,12 +121,12 @@ namespace ExtraplanetaryLaunchpads {
 			get;
 			private set;
 		}
-		public BuildCost.CostReport buildCost
+		public CostReport buildCost
 		{
 			get;
 			private set;
 		}
-		public BuildCost.CostReport builtStuff
+		public CostReport builtStuff
 		{
 			get;
 			private set;
@@ -615,12 +615,12 @@ namespace ExtraplanetaryLaunchpads {
 			craftConfig = node.GetNode ("CraftConfig");
 			if (node.HasNode ("BuildCost")) {
 				var bc = node.GetNode ("BuildCost");
-				buildCost = new BuildCost.CostReport ();
+				buildCost = new CostReport ();
 				buildCost.Load (bc);
 			}
 			if (node.HasNode ("BuiltStuff")) {
 				var bs = node.GetNode ("BuiltStuff");
-				builtStuff = new BuildCost.CostReport ();
+				builtStuff = new CostReport ();
 				builtStuff.Load (bs);
 			}
 			if (node.HasValue ("state")) {
@@ -743,7 +743,7 @@ namespace ExtraplanetaryLaunchpads {
 			return called;
 		}
 
-		public BuildCost.CostReport getBuildCost (ConfigNode craft)
+		public CostReport getBuildCost (ConfigNode craft)
 		{
 			lockedParts = false;
 			ShipConstruct ship = new ShipConstruct ();

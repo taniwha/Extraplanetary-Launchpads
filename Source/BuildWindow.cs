@@ -350,8 +350,8 @@ namespace ExtraplanetaryLaunchpads {
 			return fraction;
 		}
 
-		double ResourceProgress (string label, BuildCost.BuildResource br,
-			BuildCost.BuildResource req, bool forward)
+		double ResourceProgress (string label, BuildResource br,
+			BuildResource req, bool forward)
 		{
 			double fraction = (req.amount - br.amount) / req.amount;
 			double required = br.amount;
@@ -633,7 +633,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.EndHorizontal ();
 		}
 
-		internal static BuildCost.BuildResource FindResource (List<BuildCost.BuildResource> reslist, string name)
+		internal static BuildResource FindResource (List<BuildResource> reslist, string name)
 		{
 			return reslist.Where(r => r.name == name).FirstOrDefault ();
 		}

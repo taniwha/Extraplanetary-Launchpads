@@ -21,45 +21,45 @@ using System.Linq;
 using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
-		public class CostReport : IConfigNode
+	public class CostReport : IConfigNode
+	{
+		public List<BuildResource> required;
+		public List<BuildResource> optional;
+
+		public CostReport ()
 		{
-			public List<BuildResource> required;
-			public List<BuildResource> optional;
+			required = new List<BuildResource> ();
+			optional = new List<BuildResource> ();
+		}
 
-			public CostReport ()
-			{
-				required = new List<BuildResource> ();
-				optional = new List<BuildResource> ();
+		public void Load (ConfigNode node)
+		{
+			var req = node.GetNode ("Required");
+			foreach (var r in req.GetNodes ("BuildResrouce")) {
+				var res = new BuildResource ();
+				res.Load (r);
+				required.Add (res);
 			}
-
-			public void Load (ConfigNode node)
-			{
-				var req = node.GetNode ("Required");
-				foreach (var r in req.GetNodes ("BuildResrouce")) {
-					var res = new BuildResource ();
-					res.Load (r);
-					required.Add (res);
-				}
-				var opt = node.GetNode ("Optional");
-				foreach (var r in opt.GetNodes ("BuildResrouce")) {
-					var res = new BuildResource ();
-					res.Load (r);
-					optional.Add (res);
-				}
-			}
-
-			public void Save (ConfigNode node)
-			{
-				var req = node.AddNode ("Required");
-				foreach (var res in required) {
-					var r = req.AddNode ("BuildResrouce");
-					res.Save (r);
-				}
-				var opt = node.AddNode ("Optional");
-				foreach (var res in optional) {
-					var r = opt.AddNode ("BuildResrouce");
-					res.Save (r);
-				}
+			var opt = node.GetNode ("Optional");
+			foreach (var r in opt.GetNodes ("BuildResrouce")) {
+				var res = new BuildResource ();
+				res.Load (r);
+				optional.Add (res);
 			}
 		}
+
+		public void Save (ConfigNode node)
+		{
+			var req = node.AddNode ("Required");
+			foreach (var res in required) {
+				var r = req.AddNode ("BuildResrouce");
+				res.Save (r);
+			}
+			var opt = node.AddNode ("Optional");
+			foreach (var res in optional) {
+				var r = opt.AddNode ("BuildResrouce");
+				res.Save (r);
+			}
+		}
+	}
 }

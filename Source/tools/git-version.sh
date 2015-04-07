@@ -1,20 +1,21 @@
 #! /bin/sh
 
-full_version=`./git-version-gen --prefix v .tarball-version`
+full_version=`./tools/git-version-gen --prefix v .tarball-version`
 version=`echo $full_version | sed -e 's/-/\t/' | cut -f 1`
 
-sed -e "s/@FULL_VERSION@/$full_version/" -e "s/@VERSION@/$version/" AssemblyInfo.in > AssemblyInfo.cs-
+sed -e "s/@FULL_VERSION@/$full_version/" -e "s/@VERSION@/$version/" assembly/AssemblyInfo.in > assembly/AssemblyInfo.cs-
 
-cmp -s AssemblyInfo.cs AssemblyInfo.cs- || mv AssemblyInfo.cs- AssemblyInfo.cs
+cmp -s assembly/AssemblyInfo.cs assembly/AssemblyInfo.cs- || mv assembly/AssemblyInfo.cs- assembly/AssemblyInfo.cs
 
-rm -f *.cs-
+rm -f assembly/*.cs-
 
 MAJOR=`echo $full_version | cut -f 1 -d .`
 MINOR=`echo $full_version | cut -f 2 -d .`
 PATCH=`echo $full_version | cut -f 3 -d .`
 BUILD=`echo $full_version | cut -f 4 -d . | cut -f 1 -d '-'`
 
-cat > EL.version <<EOF
+mkdir -p bin
+cat > bin/EL.version <<EOF
 {
 	"NAME":"Extraplanetary Launchpads",
 	"URL":"http://taniwha.org/~bill/EL.version",

@@ -6,40 +6,40 @@ PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 TBGAMEDATA  := ${GAMEDATA}/000_Toolbar
 APIEXTDATA	:= ${PLUGINDIR}
 
-TARGETS		:= Launchpad.dll
+TARGETS		:= bin/Launchpad.dll
 
 EL_FILES := \
-	Recipes/BuildResource.cs	\
-	Recipes/CostReport.cs		\
-    AssemblyInfo.cs		\
-	BuildControl.cs		\
-	BuildCost.cs		\
-	BuildWindow.cs		\
-	Checkers.cs			\
-	ConstructionSkill.cs	\
-	DropDownList.cs		\
-	IResourceContainer.cs	\
-	KISResourceContainer.cs	\
-	KISWrapper.cs			\
-	KACWrapper.cs			\
-	KerbalStatsWrapper.cs	\
-	LaunchClamp.cs		\
-	Launchpad.cs		\
-	PartResourceContainer.cs	\
-	ProgressBar.cs		\
-	Recycler.cs			\
-	RenameWindow.cs		\
-	Resources.cs		\
-	Settings.cs			\
-	ShipInfo.cs			\
-	SurveyStake.cs		\
-	SurveyStation.cs	\
-	SurveyTracker.cs	\
-	Target.cs			\
-	Toolbar.cs			\
-	ToolbarWrapper.cs	\
-	VersionReport.cs	\
-	Workshop.cs			\
+	Recipes/BuildCost.cs				\
+	Recipes/BuildResource.cs			\
+	Recipes/CostReport.cs				\
+	Resources/IResourceContainer.cs		\
+	Resources/KISResourceContainer.cs	\
+	Resources/PartResourceContainer.cs	\
+	Resources/Resources.cs				\
+	Survey/SurveyStake.cs				\
+	Survey/SurveyStation.cs				\
+	Survey/SurveyTracker.cs				\
+    assembly/AssemblyInfo.cs			\
+	assembly/Checkers.cs				\
+	assembly/VersionReport.cs			\
+	GUI/BuildWindow.cs					\
+	GUI/DropDownList.cs					\
+	GUI/RenameWindow.cs					\
+	GUI/ShipInfo.cs						\
+	GUI/ProgressBar.cs					\
+	LaunchClamp/LaunchClamp.cs						\
+	Pad/Launchpad.cs						\
+	Recycler/Recycler.cs							\
+	Target/Target.cs							\
+	Workshop/ConstructionSkill.cs		\
+	Workshop/Workshop.cs				\
+	lib/KISWrapper.cs					\
+	lib/KACWrapper.cs					\
+	lib/KerbalStatsWrapper.cs			\
+	toolbar/Toolbar.cs					\
+	toolbar/ToolbarWrapper.cs			\
+	BuildControl.cs						\
+	Settings.cs							\
 	$e
 
 RESGEN2		:= resgen2
@@ -53,7 +53,7 @@ all: version ${TARGETS}
 
 .PHONY: version
 version:
-	@./git-version.sh
+	@./tools/git-version.sh
 
 info:
 	@echo "Extraplanetary Launchpads Build Information"
@@ -65,17 +65,19 @@ info:
 	@echo "    zip:        ${ZIP}"
 	@echo "    KSP Data:   ${KSPDIR}"
 
-Launchpad.dll: ${EL_FILES}
+bin/Launchpad.dll: ${EL_FILES}
+	@mkdir -p bin
 	${GMCS} ${GMCSFLAGS} -t:library -lib:${APIEXTDATA},${MANAGED} \
 		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
 		-r:KSPAPIExtensions \
 		-out:$@ $^
 
 clean:
-	rm -f ${TARGETS} AssemblyInfo.cs EL.version
+	rm -f ${TARGETS}* assembly/AssemblyInfo.cs bin/EL.version
+	test -d bin && rmdir bin || true
 
 install: all
 	mkdir -p ${PLUGINDIR}
-	cp ${TARGETS} EL.version ${PLUGINDIR}
+	cp ${TARGETS} bin/EL.version ${PLUGINDIR}
 
 .PHONY: all clean install

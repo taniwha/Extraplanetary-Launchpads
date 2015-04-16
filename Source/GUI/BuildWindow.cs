@@ -507,7 +507,8 @@ namespace ExtraplanetaryLaunchpads {
 											  craftSelectComplete,
 											  craftSelectCancel,
 											  HighLogic.Skin,
-											  EditorLogic.ShipFileImage, true);
+											  EditorLogic.ShipFileImage, true,
+											  false);
 				if (buildCraftList != null
 					&& control.craftType == ExBuildControl.CraftType.SubAss) {
 					craftlist.craftSubfolder = "../Subassemblies";
@@ -855,7 +856,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		}
 
-		private void craftSelectComplete (string filename, string flagname)
+		private void craftSelectComplete (string filename, string flagname,
+										  CraftBrowser.LoadType lt)
 		{
 			craftlist = null;
 			control.LoadCraft (filename, flagname);

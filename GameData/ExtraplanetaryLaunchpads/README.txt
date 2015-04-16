@@ -12,7 +12,7 @@ Usage:
 To build a craft, you need the RocketParts resource plus any Fuel etc the craft contains.
 Partial fuel fills are allowed.
 
-RocketParts, Metal and Ore containers are included, courtesy of Grey's HexCans.
+RocketParts, Metal and MetalOre containers are included, courtesy of Grey's HexCans.
 
 Please report all issues at https://github.com/skykooler/Extraplanetary-Launchpads/issues
 

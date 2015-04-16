@@ -218,9 +218,12 @@ public class ExWorkshop : PartModule
 			}
 		}
 		Debug.Log (String.Format ("[EL Workshop] Kerbal: "
-								  + "{0} {1} {2} {3} {4}({5}) {6}",
+								  + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
 								  crew.name, stupidity, courage, isBadass,
-								  experience, expstr, contribution));
+								  experience, expstr, contribution,
+								  HasConstructionSkill (crew),
+								  crew.experienceLevel,
+								  enableSkilled, ProductivityFactor));
 		return contribution;
 	}
 

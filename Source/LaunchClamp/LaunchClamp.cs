@@ -93,6 +93,7 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < 4; i++) {
 				RaycastHit hit;
 				var start = anchor.TransformPoint (points[i]);
+				start += anchor.up * 5;
 				if (Physics.Raycast (start, -anchor.up, out hit, 100, 32768)) {
 					if (dist < 0 || i == 0) {
 						dist = hit.distance;
@@ -108,7 +109,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			var tower = part.FindModelTransform (trf_towerStretch_name);
 			var baseHeight = Vector3.Distance (anchor.position, tower.position);
-			height = baseHeight + dist;
+			height = baseHeight + dist - 5;
 			Debug.Log (String.Format ("[EL ELC] {0} {1}", baseHeight, height));
 		}
 
@@ -143,7 +144,20 @@ namespace ExtraplanetaryLaunchpads {
 			ShutdownGenerator ();
 		}
 
-		public override void OnStart (PartModule.StartState state)
+		internal IEnumerator<YieldInstruction> WaitAndExtendTower (StartState state)
+		{
+			for (int i = 0; i < 74; i++) {
+				yield return null;
+			}
+			if (part == null || part.Modules == null) {
+				// the part may have been destroyed (build cost calculation)
+				yield break;
+			}
+			ExtendTower ();
+			base.OnStart (state);
+		}
+
+		public override void OnStart (StartState state)
 		{
 			if (CompatibilityChecker.IsWin64 ()) {
 				base.OnStart (state);
@@ -151,7 +165,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			Debug.Log (String.Format ("[EL ELC] OnStart: {0} {1}", HighLogic.LoadedSceneIsFlight, points));
 			if (HighLogic.LoadedSceneIsFlight) {
-				ExtendTower ();
+				StartCoroutine (WaitAndExtendTower (state));
 			}
 			base.OnStart (state);
 			if (HighLogic.LoadedSceneIsFlight) {

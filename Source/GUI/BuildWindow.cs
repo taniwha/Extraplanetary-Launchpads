@@ -501,13 +501,14 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				//GUILayout.Button is "true" when clicked
 				var clrect = new Rect (Screen.width / 2, 100, 350, 500);
+				Texture2D fileicon = Instantiate(AssetBase.GetTexture("craftThumbGeneric")) as Texture2D;
 				craftlist = new CraftBrowser (clrect, facility[(int)control.craftType],
 											  strpath,
 											  "Select a ship to load",
 											  craftSelectComplete,
 											  craftSelectCancel,
 											  HighLogic.Skin,
-											  EditorLogic.ShipFileImage, true,
+											  fileicon, true,
 											  false);
 				if (buildCraftList != null
 					&& control.craftType == ExBuildControl.CraftType.SubAss) {

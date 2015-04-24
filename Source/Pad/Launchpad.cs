@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExLaunchPad : PartModule, ExBuildControl.IBuilder
+	public class ExLaunchPad : PartModule, IModuleInfo, ExBuildControl.IBuilder
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -36,6 +36,26 @@ namespace ExtraplanetaryLaunchpads {
 		public float spawnOffset = 0;
 		Transform launchTransform;
 		float base_mass;
+
+		public override string GetInfo ()
+		{
+			return "Launchpad";
+		}
+
+		public string GetPrimaryField ()
+		{
+			return null;
+		}
+
+		public string GetModuleTitle ()
+		{
+			return "EL Launchpad";
+		}
+
+		public Callback<Rect> GetDrawModulePanelCallback ()
+		{
+			return null;
+		}
 
 		public bool canBuild
 		{

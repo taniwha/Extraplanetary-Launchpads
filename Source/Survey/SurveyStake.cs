@@ -25,7 +25,7 @@ using HighlightingSystem;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExSurveyStake : PartModule
+	public class ExSurveyStake : PartModule, IModuleInfo
 	{
 		internal static string[] StakeUses = { "Origin",
 											   "+X", "+Y", "+Z",
@@ -59,6 +59,21 @@ namespace ExtraplanetaryLaunchpads {
 				return "";
 			}
 			return "Survey Stake";
+		}
+
+		public string GetPrimaryField ()
+		{
+			return null;
+		}
+
+		public string GetModuleTitle ()
+		{
+			return "EL Survey Stake";
+		}
+
+		public Callback<Rect> GetDrawModulePanelCallback ()
+		{
+			return null;
 		}
 
 		public override void OnLoad (ConfigNode node)

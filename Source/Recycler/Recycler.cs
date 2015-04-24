@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class ExRecycler : PartModule
+public class ExRecycler : PartModule, IModuleInfo
 {
 	double busyTime;
 	bool recyclerActive;
@@ -33,7 +33,22 @@ public class ExRecycler : PartModule
 
 	public override string GetInfo ()
 	{
-		return "Recycler:\n" + String.Format ("rate: {0}t/s", RecycleRate);
+		return "Recycler:\n" + String.Format ("rate: {0:G2}t/s", RecycleRate);
+	}
+
+	public string GetPrimaryField ()
+	{
+		return String.Format ("Recycling Rate: {0:G2}t/s", RecycleRate);
+	}
+
+	public string GetModuleTitle ()
+	{
+		return "EL Recycler";
+	}
+
+	public Callback<Rect> GetDrawModulePanelCallback ()
+	{
+		return null;
 	}
 
 	public bool CanRecycle (Vessel vsl)

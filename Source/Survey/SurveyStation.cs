@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExSurveyStation : PartModule, ExBuildControl.IBuilder
+	public class ExSurveyStation : PartModule, IModuleInfo, ExBuildControl.IBuilder
 	{
 		[KSPField (isPersistant = true)]
 		public string StationName = "";
@@ -33,6 +33,29 @@ namespace ExtraplanetaryLaunchpads {
 		List<ExSurveyTracker.SurveySite> available_sites;
 		ExSurveyTracker.SurveySite site;
 		float base_mass;
+
+		public override string GetInfo ()
+		{
+			if (CompatibilityChecker.IsWin64 ()) {
+				return "";
+			}
+			return "Survey Station";
+		}
+
+		public string GetPrimaryField ()
+		{
+			return null;
+		}
+
+		public string GetModuleTitle ()
+		{
+			return "EL Survey Station";
+		}
+
+		public Callback<Rect> GetDrawModulePanelCallback ()
+		{
+			return null;
+		}
 
 		public bool canBuild
 		{

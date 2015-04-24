@@ -27,10 +27,10 @@ EL_FILES := \
 	GUI/RenameWindow.cs					\
 	GUI/ShipInfo.cs						\
 	GUI/ProgressBar.cs					\
-	LaunchClamp/LaunchClamp.cs						\
-	Pad/Launchpad.cs						\
-	Recycler/Recycler.cs							\
-	Target/Target.cs							\
+	LaunchClamp/LaunchClamp.cs			\
+	Pad/Launchpad.cs					\
+	Recycler/Recycler.cs				\
+	Target/Target.cs					\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/Workshop.cs				\
 	lib/KISWrapper.cs					\

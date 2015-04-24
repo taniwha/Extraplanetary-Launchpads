@@ -33,7 +33,7 @@ public interface ExWorkSink
 	bool isActive ();
 }
 
-public class ExWorkshop : PartModule
+public class ExWorkshop : PartModule, IModuleInfo
 {
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
@@ -61,7 +61,22 @@ public class ExWorkshop : PartModule
 
 	public override string GetInfo ()
 	{
-		return "Workshop";
+		return String.Format ("Workshop: productivity factor {0:G2}", ProductivityFactor);
+	}
+
+	public string GetPrimaryField ()
+	{
+		return String.Format ("Productivity Factor: {0:G2}", ProductivityFactor);
+	}
+
+	public string GetModuleTitle ()
+	{
+		return "EL Workshop";
+	}
+
+	public Callback<Rect> GetDrawModulePanelCallback ()
+	{
+		return null;
 	}
 
 	private static ExWorkshop findFirstWorkshop (Part part)

@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExTarget : PartModule, ITargetable
+	public class ExTarget : PartModule, IModuleInfo, ITargetable
 	{
 		[KSPField]
 		public string TargetName = "Target";
@@ -35,6 +35,21 @@ namespace ExtraplanetaryLaunchpads {
 		public override string GetInfo ()
 		{
 			return "Targetable";
+		}
+
+		public string GetPrimaryField ()
+		{
+			return null;
+		}
+
+		public string GetModuleTitle ()
+		{
+			return "EL Target";
+		}
+
+		public Callback<Rect> GetDrawModulePanelCallback ()
+		{
+			return null;
 		}
 
 		// ITargetable interface

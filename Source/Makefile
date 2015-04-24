@@ -24,6 +24,7 @@ EL_FILES := \
 	assembly/VersionReport.cs			\
 	GUI/BuildWindow.cs					\
 	GUI/DropDownList.cs					\
+	GUI/EditorToolbar.cs				\
 	GUI/RenameWindow.cs					\
 	GUI/ShipInfo.cs						\
 	GUI/ProgressBar.cs					\

@@ -46,11 +46,10 @@ using KerbalStats;
 		protected override string GetDescription ()
 		{
 			ProtoCrewMember crew = Parent.CrewMember;
-			string gender = KerbalExt.Get (crew, "gender");
-			string pronoun = "This kerbal";
-			if (gender == "F") {
+			string pronoun;
+			if (crew.gender == ProtoCrewMember.Gender.Female) {
 				pronoun = "She";
-			} else if (gender == "M") {
+			} else {
 				pronoun = "He";
 			}
 			int exp = Parent.CrewMemberExperienceLevel (6);

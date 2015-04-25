@@ -37,8 +37,7 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (var subcat in cat.subcategories) {
 				Debug.Log (subcat.button.categoryName);
 				if (subcat.button.categoryName.StartsWith ("EL ")) {
-					subcat.button.icon = icon;
-					subcat.button.UpdateIconState ();
+					subcat.button.SetIcon (icon);
 				}
 			}
 		}

@@ -9,6 +9,7 @@ APIEXTDATA	:= ${PLUGINDIR}
 TARGETS		:= bin/Launchpad.dll
 
 EL_FILES := \
+	Converter/Converter.cs				\
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/CostReport.cs				\

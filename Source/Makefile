@@ -10,6 +10,10 @@ TARGETS		:= bin/Launchpad.dll
 
 EL_FILES := \
 	Converter/Converter.cs				\
+	Converter/Harvester.cs				\
+	Converter/IResourceProvider.cs		\
+	Converter/KethaneResourceProvider.cs\
+	Converter/StockResourceProvider.cs	\
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/CostReport.cs				\

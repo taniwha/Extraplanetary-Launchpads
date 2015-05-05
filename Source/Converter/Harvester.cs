@@ -7,7 +7,7 @@ using System.Text;
 using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
-	public class ExHavester: BaseDrill, IResourceConsumer//, IModuleInfo
+	public class ExHarvester: BaseDrill, IResourceConsumer//, IModuleInfo
 	{
 		[KSPField(guiName = "", guiActive = true, guiActiveEditor = false)]
 		public string ResourceStatus = "n/a";
@@ -46,7 +46,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		protected override float GetHeatMultiplier(ConverterResults result, double deltaTime)
 		{
-			return 1 / (float)this.heat * this.HeatThrottle;
+			return 1 / (float)heat * HeatThrottle;
 		}
 
 		public override string GetInfo()
@@ -54,13 +54,18 @@ namespace ExtraplanetaryLaunchpads {
 			return "";
 		}
 
+		public override bool IsSituationValid()
+		{
+			return true;
+		}
+
 		ConversionRecipe LoadRecipe(double rate)
 		{
 			ConversionRecipe recipe = new ConversionRecipe();
-			recipe.Inputs.AddRange(this.inputList);
+			recipe.Inputs.AddRange(inputList);
 			bool dumpExcess = false;
 			recipe.Outputs.Add(new ResourceRatio {
-				ResourceName = this.ResourceName,
+				ResourceName = ResourceName,
 				Ratio = rate,
 				DumpExcess = dumpExcess
 			});
@@ -90,7 +95,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (!HighLogic.LoadedSceneIsFlight) {
 				return;
 			}
-			if (resource_providers != null) {
+			if (resource_providers == null) {
 				resource_providers = new List<IResourceProvider> ();
 				resource_providers.Add (StockResourceProvider.Create ());
 				var kethane = KethaneResourceProvider.Create ();
@@ -100,7 +105,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			resource_amounts = new double[resource_providers.Count];
 			FindTransforms ();
-			base.Fields["ResourceStatus"].guiName = ResourceName + " rate";
+			Fields["ResourceStatus"].guiName = ResourceName + " rate";
 			base.OnStart(state);
 		}
 
@@ -115,18 +120,18 @@ namespace ExtraplanetaryLaunchpads {
 
 		protected override void PostUpdateCleanup()
 		{
-			if (this.IsActivated) {
-				this.ResourceStatus = string.Format("{0:0.000000}/sec", heat);
+			if (IsActivated) {
+				ResourceStatus = string.Format("{0:0.000000}/sec", heat);
 			}
 			else {
-				this.ResourceStatus = "n/a";
+				ResourceStatus = "n/a";
 			}
 		}
 
 		protected override ConversionRecipe PrepareRecipe(double deltaTime)
 		{
 			RaycastHit hit;
-
+Debug.Log("PrepareRecipe");
 			if (!raycastGround (out hit)) {
 				status = "no ground contact";
 				return null;

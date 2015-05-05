@@ -17,6 +17,9 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField]
 		public string ResourceName = "";
 
+		[KSPField]
+		public float Rate;
+
 		[KSPField(isPersistant = false)]
 		public string HeadTransform;
 
@@ -27,6 +30,8 @@ namespace ExtraplanetaryLaunchpads {
 		Transform tailTransform;
 
 		static List<IResourceProvider> resource_providers;
+		double[] resource_amounts;
+		RPLocation location;
 
 		public List<PartResourceDefinition> GetConsumedResources()
 		{
@@ -93,6 +98,7 @@ namespace ExtraplanetaryLaunchpads {
 					resource_providers.Add (kethane);
 				}
 			}
+			resource_amounts = new double[resource_providers.Count];
 			FindTransforms ();
 			base.Fields["ResourceStatus"].guiName = ResourceName + " rate";
 			base.OnStart(state);
@@ -100,6 +106,11 @@ namespace ExtraplanetaryLaunchpads {
 
 		protected override void PostProcess(ConverterResults result, double deltaTime)
 		{
+			double factor = Math.Min (1, result.TimeFactor / deltaTime);
+			for (int i = 0; i < resource_amounts.Length; i++) {
+				double amount = resource_amounts[i] * factor;
+				resource_providers[i].ExtractResource (ResourceName, location, amount);
+			}
 		}
 
 		protected override void PostUpdateCleanup()
@@ -120,9 +131,11 @@ namespace ExtraplanetaryLaunchpads {
 				status = "no ground contact";
 				return null;
 			}
-			float abundance = 0;
+			location = new RPLocation (vessel.mainBody, hit.point);
+			double abundance = 0;
 			for (int i = 0; i < resource_providers.Count; i++) {
-				abundance += resource_providers[i].GetAbundance (ResourceName, vessel, hit.point);
+				resource_amounts[i] = resource_providers[i].GetAbundance (ResourceName, location, Rate);
+				abundance += resource_amounts[i];
 			}
 			if (abundance < 1e-6f) {
 				status = "insufficient abundance";
@@ -133,9 +146,9 @@ namespace ExtraplanetaryLaunchpads {
 				status = "Inactive";
 				return null;
 			}
-			float rate = abundance * this.Efficiency * this.HeatThrottle;
-			heat = (double) rate;
-			return LoadRecipe((double) rate);
+			double rate = abundance * Efficiency * HeatThrottle;
+			heat = rate;
+			return LoadRecipe(rate);
 		}
 	}
 }

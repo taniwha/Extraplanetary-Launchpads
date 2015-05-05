@@ -9,24 +9,30 @@ using UnityEngine;
 namespace ExtraplanetaryLaunchpads {
 	public class StockResourceProvider:IResourceProvider
 	{
-		public float GetAbundance (string ResourceName, Vessel vessel, Vector3 location)
+		public double GetAbundance (string ResourceName, RPLocation location, double rate)
 		{
-			var latitude = vessel.mainBody.GetLatitude(location);;
-			var longitude = vessel.mainBody.GetLongitude(location);;
 			AbundanceRequest request = new AbundanceRequest {
-				Altitude = vessel.altitude,
-				BodyId = FlightGlobals.currentMainBody.flightGlobalsIndex,
+				Altitude = location.altitude,
+				BodyId = location.bodyIndex,
 				CheckForLock = false,
-				Latitude = latitude,
-				Longitude = longitude,
+				Latitude = location.latitude,
+				Longitude = location.longitude,
 				ResourceType = 0,
 				ResourceName = ResourceName
 			};
-			return ResourceMap.Instance.GetAbundance(request);
+			return ResourceMap.Instance.GetAbundance(request) * rate;
 		}
 
-		public void ExtractResource (string ResourceName, Vessel vessel, Vector3 location, float amount)
+		public void ExtractResource (string ResourceName, RPLocation location, double amount)
 		{
+//			if (CausesDepletion) {
+//				float factor = (float)Math.Min(1, result.TimeFactor / deltaTime);
+//				Vector2 depletionNode = ResourceMap.Instance.GetDepletionNode(location.latitude, location.longitude);
+//				float depletionNodeValue = ResourceMap.Instance.GetDepletionNodeValue(location.bodyIndex, ResourceName, (int)depletionNode.x, (int)depletionNode.y);
+//				float depletionAmount = DepletionRate * factor;
+//				float value = depletionNodeValue - depletionNodeValue * depletionAmount;
+//				ResourceMap.Instance.SetDepletionNodeValue(location.bodyIndex, ResourceName, (int)depletionNode.x, (int)depletionNode.y, value);
+//			}
 		}
 
 		public static StockResourceProvider Create ()

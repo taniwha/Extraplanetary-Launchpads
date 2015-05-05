@@ -21,21 +21,21 @@ namespace ExtraplanetaryLaunchpads {
 		static PropertyInfo KDCurrent;
 		static PropertyInfo KDIndexer;
 
-		public float GetAbundance (string ResourceName, Vessel vessel, Vector3 location)
+		public double GetAbundance (string ResourceName, RPLocation location, double rate)
 		{
-			var cell = GetCellUnder.Invoke (null, new object[] { vessel.mainBody, location});
+			var cell = GetCellUnder.Invoke (null, new object[] { location.body, location.location});
 			var kd = KDCurrent.GetValue (null, null);
 			var bodyResources = KDIndexer.GetValue (kd, new object[] {ResourceName});
 			var deposit = (double?) GetQuantity.Invoke (bodyResources, new object[] {cell});
 			if (deposit == null) {
 				return 0;
 			}
-			return deposit.Value > 0 ? 1 : 0;
+			return (float) Math.Min(rate, deposit.Value);
 		}
 
-		public void ExtractResource (string ResourceName, Vessel vessel, Vector3 location, float amount)
+		public void ExtractResource (string ResourceName, RPLocation location, double amount)
 		{
-			var cell = GetCellUnder.Invoke (null, new object[] { vessel.mainBody, location});
+			var cell = GetCellUnder.Invoke (null, new object[] { location.body, location.location});
 			var kd = KDCurrent.GetValue (null, null);
 			var bodyResources = KDIndexer.GetValue (kd, new object[] {ResourceName});
 			Extract.Invoke (bodyResources, new object[] {cell, amount});

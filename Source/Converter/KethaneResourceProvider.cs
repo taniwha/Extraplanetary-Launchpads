@@ -27,14 +27,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		public double GetAbundance (string ResourceName, RPLocation location, double rate)
 		{
-			Debug.Log ("[EL KethaneResourceProvider] Cell");
 			var cell = GetCellUnder.Invoke (null, new object[] { location.body, location.location});
 			var kd = KDCurrent.GetValue (null, null);
 			var rd = KDIndexer.GetValue (kd, new object[] {ResourceName});
 			var brd = RDIndexer.GetValue (rd, new object[] {location.body});
 			var bodyResources = BRDResources.GetValue (brd, null);
 			GetQuantity = bodyResources.GetType().GetMethod ("GetQuantity");
-			Debug.Log ("[EL KethaneResourceProvider] deposit " + bodyResources.GetType() + " " + GetQuantity);
 			var deposit = (double?) GetQuantity.Invoke (bodyResources, new object[] {cell});
 			if (deposit == null) {
 				return 0;

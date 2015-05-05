@@ -111,10 +111,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		protected override void PostProcess(ConverterResults result, double deltaTime)
 		{
-			double factor = Math.Min (1, result.TimeFactor / deltaTime);
 			for (int i = 0; i < resource_amounts.Length; i++) {
-				double amount = resource_amounts[i] * factor;
+				double amount = resource_amounts[i] * result.TimeFactor;
 				resource_providers[i].ExtractResource (ResourceName, location, amount);
+			}
+			if (result.TimeFactor < 1E-09) {
+				status = "stalled";
 			}
 		}
 
@@ -122,8 +124,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (IsActivated) {
 				ResourceStatus = string.Format("{0:0.000000}/sec", heat);
-			}
-			else {
+			} else {
 				ResourceStatus = "n/a";
 			}
 		}
@@ -131,7 +132,7 @@ namespace ExtraplanetaryLaunchpads {
 		protected override ConversionRecipe PrepareRecipe(double deltaTime)
 		{
 			RaycastHit hit;
-Debug.Log("PrepareRecipe");
+
 			if (!raycastGround (out hit)) {
 				status = "no ground contact";
 				return null;

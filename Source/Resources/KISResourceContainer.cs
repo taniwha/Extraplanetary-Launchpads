@@ -26,26 +26,26 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 	public class KISResourceContainer : IResourceContainer {
-		object resource;
+		KIS.KIS_Item.ResourceInfo resource;
 		Part kis_part;
 
 		public double maxAmount
 		{
 			get {
-				return (double) KISWrapper.kis_maxAmount.GetValue (resource);
+				return resource.maxAmount;
 			}
 			set {
-				KISWrapper.kis_maxAmount.SetValue (resource, value);
+				resource.maxAmount = value;
 			}
 		}
 
 		public double amount
 		{
 			get {
-				return (double) KISWrapper.kis_amount.GetValue (resource);
+				return resource.amount;
 			}
 			set {
-				KISWrapper.kis_amount.SetValue (resource, value);
+				resource.amount = value;
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public KISResourceContainer (Part part, object res)
+		public KISResourceContainer (Part part, KIS.KIS_Item.ResourceInfo res)
 		{
 			kis_part = part;
 			resource = res;

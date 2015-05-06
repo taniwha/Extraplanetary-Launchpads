@@ -250,10 +250,7 @@ namespace ExtraplanetaryLaunchpads {
 				enabled = false;
 				return;
 			}
-			KIS_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase));
-			if (KIS_Present) {
-				KISWrapper.Initialize ();
-			}
+			KIS_Present = KIS.KISWrapper.Initialize ();
 			KAS_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase));
 			B9Wings_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("B9_Aerospace_WingStuff", StringComparison.InvariantCultureIgnoreCase));
 			FAR_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));

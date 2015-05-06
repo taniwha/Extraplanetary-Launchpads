@@ -35,7 +35,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var cat = PartCategorizer.Instance.filters.Where (c => c.button.categoryName == "Filter by Module").FirstOrDefault ();
 			foreach (var subcat in cat.subcategories) {
-				Debug.Log (subcat.button.categoryName);
 				if (subcat.button.categoryName.StartsWith ("EL ")) {
 					subcat.button.SetIcon (icon);
 				}

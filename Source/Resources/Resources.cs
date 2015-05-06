@@ -154,5 +154,20 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			return amount;
 		}
+
+		public double ResourceMass ()
+		{
+			double mass = 0;
+			foreach (KeyValuePair<string, ResourceInfo> pair in resources) {
+				string resource = pair.Key;
+				var def = PartResourceLibrary.Instance.GetDefinition (resource);
+				float density = def.density;
+				ResourceInfo resourceInfo = pair.Value;
+				foreach (var container in resourceInfo.containers) {
+					mass += density * container.amount;
+				}
+			}
+			return mass;
+		}
 	}
 }

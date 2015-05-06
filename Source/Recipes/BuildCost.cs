@@ -24,42 +24,58 @@ namespace ExtraplanetaryLaunchpads {
 	public class BuildCost
 	{
 		VesselResources resources;
+		VesselResources container;
 		public double mass;
 
 		public BuildCost ()
 		{
 			resources = new VesselResources ();
+			container = new VesselResources ();
 		}
 
 		public void addPart (Part part)
 		{
+			if (ExSettings.KIS_Present) {
+				KIS.KISWrapper.GetResources (part, container.resources);
+			}
 			resources.AddPart (part);
 			mass += part.mass;
 		}
 
 		public void removePart (Part part)
 		{
+			if (ExSettings.KIS_Present) {
+				container.RemovePart (part);
+			}
 			resources.RemovePart (part);
 			mass -= part.mass;
+		}
+
+		double ProcessResources (VesselResources resources, List<BuildResource> report_resources)
+		{
+			double hullMass = 0;
+			var reslist = resources.resources.Keys.ToList ();
+			foreach (string res in reslist) {
+				double amount = resources.ResourceAmount (res);
+				var br = new BuildResource (res, amount);
+
+				if (br.hull) {
+					//FIXME better hull resources check
+					hullMass += br.mass;
+				} else {
+					report_resources.Add (br);
+				}
+			}
+			return hullMass;
 		}
 
 		public CostReport cost
 		{
 			get {
 				var report = new CostReport ();
-				double hullMass = mass;
-				var reslist = resources.resources.Keys.ToList ();
-				foreach (string res in reslist) {
-					double amount = resources.ResourceAmount (res);
-					var br = new BuildResource (res, amount);
-
-					if (br.hull) {
-						//FIXME better hull resources check
-						hullMass += br.mass;
-					} else {
-						report.optional.Add (br);
-					}
-				}
+				double hullMass = mass - container.ResourceMass ();
+				hullMass += ProcessResources (resources, report.optional);
+				hullMass += ProcessResources (container, report.required);
 				var parts = new BuildResource ("RocketParts", (float) hullMass);
 				report.required.Add (parts);
 				return report;

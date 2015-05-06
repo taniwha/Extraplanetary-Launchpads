@@ -51,9 +51,14 @@ namespace ExtraplanetaryLaunchpads {
 			if (density > 0) {
 				// 5 Kerbal-hours/ton
 				//FIXME per resource
-				return 5 * density;
+				if (name == "RocketParts") {
+					return 5 * density;
+				} else {
+					return 0.5 * density;
+				}
 			} else {
 				//FIXME per resource
+				// this is probably ElectricCharge
 				return 0.125;
 			}
 		}

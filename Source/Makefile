@@ -3,7 +3,6 @@ MANAGED		:= ${KSPDIR}/KSP_Data/Managed
 GAMEDATA	:= ${KSPDIR}/GameData
 ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
 PLUGINDIR	:= ${ELGAMEDATA}/Plugins
-TBGAMEDATA  := ${GAMEDATA}/000_Toolbar
 APIEXTDATA	:= ${PLUGINDIR}
 
 TARGETS		:= bin/Launchpad.dll

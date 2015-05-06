@@ -2,7 +2,7 @@ KSPDIR		:= ${HOME}/ksp/KSP_linux
 MANAGED		:= ${KSPDIR}/KSP_Data/Managed
 GAMEDATA	:= ${KSPDIR}/GameData
 ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
-PLUGINDIR	:= ${MODGAMEDATA}/Plugins
+PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 APIEXTDATA	:= ${PLUGINDIR}
 
 RESGEN2	:= resgen2

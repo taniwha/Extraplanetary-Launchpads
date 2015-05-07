@@ -154,14 +154,14 @@ namespace ExtraplanetaryLaunchpads.KIS {
 
 		public static bool Initialize ()
 		{
-			var KISasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ().assembly;
+			var KISasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ();
 			if (KISasm == null) {
 				return false;
 			}
 
-			ModuleKISInventory.Initialize (KISasm);
-			KIS_Item.Initialize (KISasm);
-			KIS_Item.ResourceInfo.Initialize (KISasm);
+			ModuleKISInventory.Initialize (KISasm.assembly);
+			KIS_Item.Initialize (KISasm.assembly);
+			KIS_Item.ResourceInfo.Initialize (KISasm.assembly);
 			return true;
 		}
 

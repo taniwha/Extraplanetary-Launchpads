@@ -143,6 +143,12 @@ namespace ExtraplanetaryLaunchpads {
 				resource_amounts[i] = resource_providers[i].GetAmount (ResourceName, location, Rate);
 				amount += resource_amounts[i];
 			}
+			if (amount > Rate) {
+				for (int i = 0; i < resource_providers.Count; i++) {
+					resource_amounts[i] = (resource_amounts[i] * Rate) / amount;
+				}
+				amount = Rate;
+			}
 			if (amount < 1e-6f) {
 				status = "insufficient abundance";
 				IsActivated = false;

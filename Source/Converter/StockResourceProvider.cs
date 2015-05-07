@@ -9,7 +9,7 @@ using UnityEngine;
 namespace ExtraplanetaryLaunchpads {
 	public class StockResourceProvider:IResourceProvider
 	{
-		public double GetAbundance (string ResourceName, RPLocation location, double rate)
+		public double GetAmount (string ResourceName, RPLocation location, double rate)
 		{
 			AbundanceRequest request = new AbundanceRequest {
 				Altitude = location.altitude,

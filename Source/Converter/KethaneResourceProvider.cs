@@ -25,7 +25,7 @@ namespace ExtraplanetaryLaunchpads {
 		static Type BodyResourceData;
 		static PropertyInfo BRDResources;
 
-		public double GetAbundance (string ResourceName, RPLocation location, double rate)
+		public double GetAmount (string ResourceName, RPLocation location, double rate)
 		{
 			var cell = GetCellUnder.Invoke (null, new object[] { location.body, location.location});
 			var kd = KDCurrent.GetValue (null, null);

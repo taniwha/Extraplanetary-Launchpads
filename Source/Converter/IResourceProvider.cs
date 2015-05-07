@@ -43,7 +43,7 @@ namespace ExtraplanetaryLaunchpads {
 
 	public interface IResourceProvider
 	{
-		double GetAbundance (string ResourceName, RPLocation location, double rate);
+		double GetAmount (string ResourceName, RPLocation location, double rate);
 		void ExtractResource (string ResourceName, RPLocation location, double amount);
 	}
 }

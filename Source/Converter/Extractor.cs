@@ -12,7 +12,7 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField(guiName = "", guiActive = true, guiActiveEditor = false)]
 		public string ResourceStatus = "n/a";
 
-		double heat;
+		double rate;
 
 		[KSPField]
 		public string ResourceName = "";
@@ -46,7 +46,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		protected override float GetHeatMultiplier(ConverterResults result, double deltaTime)
 		{
-			return 1 / (float)heat * HeatThrottle;
+			return 1 / (float)rate * HeatThrottle;
 		}
 
 		public override string GetInfo()
@@ -123,7 +123,7 @@ namespace ExtraplanetaryLaunchpads {
 		protected override void PostUpdateCleanup()
 		{
 			if (IsActivated) {
-				ResourceStatus = string.Format("{0:0.000000}/sec", heat);
+				ResourceStatus = string.Format("{0:0.000000}/sec", rate);
 			} else {
 				ResourceStatus = "n/a";
 			}
@@ -138,12 +138,12 @@ namespace ExtraplanetaryLaunchpads {
 				return null;
 			}
 			location = new RPLocation (vessel.mainBody, hit.point);
-			double abundance = 0;
+			double amount = 0;
 			for (int i = 0; i < resource_providers.Count; i++) {
-				resource_amounts[i] = resource_providers[i].GetAbundance (ResourceName, location, Rate);
-				abundance += resource_amounts[i];
+				resource_amounts[i] = resource_providers[i].GetAmount (ResourceName, location, Rate);
+				amount += resource_amounts[i];
 			}
-			if (abundance < 1e-6f) {
+			if (amount < 1e-6f) {
 				status = "insufficient abundance";
 				IsActivated = false;
 				return null;
@@ -152,8 +152,7 @@ namespace ExtraplanetaryLaunchpads {
 				status = "Inactive";
 				return null;
 			}
-			double rate = abundance * Efficiency * HeatThrottle;
-			heat = rate;
+			rate = amount * Efficiency * HeatThrottle;
 			return LoadRecipe(rate);
 		}
 	}

@@ -50,7 +50,7 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (var resinfo in resources) {
 				string resource = resinfo.Key;
 				ResourceInfo resourceInfo = resinfo.Value;
-				for (int i = resourceInfo.containers.Count; i >= 0; i--) {
+				for (int i = resourceInfo.containers.Count - 1; i >= 0; i--) {
 					var container = resourceInfo.containers[i];
 					if (container.part == part) {
 						resourceInfo.containers.Remove (container);

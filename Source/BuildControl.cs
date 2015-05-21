@@ -215,6 +215,7 @@ namespace ExtraplanetaryLaunchpads {
 		private void DoWork_Build (double kerbalHours)
 		{
 			var required = builtStuff.required;
+			var base_kerbalHours = kerbalHours;
 
 			//Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
 			//						  kerbalHours));
@@ -235,9 +236,9 @@ namespace ExtraplanetaryLaunchpads {
 					double avail = padResources.ResourceAmount (res.name);
 					if (amount > avail)
 						amount = avail;
-					//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}",
-					//						  res.amount, avail, amount));
-					if (amount <= 0)
+					//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}:{3}:{4}",
+					//						  res.name, res.kerbalHours, res.amount, avail, amount));
+					if (amount / base_amount < 1e-10)
 						break;
 					did_work = true;
 					// do only the work required to process the actual amount
@@ -248,7 +249,9 @@ namespace ExtraplanetaryLaunchpads {
 					res.deltaAmount = amount;
 					padResources.TransferResource (res.name, -amount);
 				}
-			} while (did_work && kerbalHours > 0);
+				//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}",
+				//						  did_work, kerbalHours, kerbalHours/base_kerbalHours));
+			} while (did_work && kerbalHours / base_kerbalHours > 1e-10);
 
 			SetPadMass ();
 

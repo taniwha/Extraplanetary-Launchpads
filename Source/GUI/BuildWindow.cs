@@ -518,6 +518,10 @@ namespace ExtraplanetaryLaunchpads {
 				diff.AllowStockVessels = stock;
 			}
 			GUI.enabled = control.craftConfig != null;
+			if (GUILayout.Button ("Reload", Styles.normal,
+								  GUILayout.ExpandWidth (false))) {
+				control.LoadCraft (control.filename, control.flagname);
+			}
 			if (GUILayout.Button ("Clear", Styles.normal,
 								  GUILayout.ExpandWidth (false))) {
 				control.UnloadCraft ();

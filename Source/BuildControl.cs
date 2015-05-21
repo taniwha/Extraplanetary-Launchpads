@@ -96,6 +96,11 @@ namespace ExtraplanetaryLaunchpads {
 
 		public CraftType craftType = CraftType.VAB;
 
+		public string filename
+		{
+			get;
+			private set;
+		}
 		public string flagname
 		{
 			get;
@@ -530,6 +535,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void LoadCraft (string filename, string flagname)
 		{
+			this.filename = filename;
 			this.flagname = flagname;
 			ConfigNode craft = ConfigNode.Load (filename);
 			if ((buildCost = getBuildCost (craft)) != null) {
@@ -555,6 +561,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Save (ConfigNode node)
 		{
+			node.AddValue ("filename", filename);
 			node.AddValue ("flagname", flagname);
 			if (craftConfig != null) {
 				craftConfig.name = "CraftConfig";
@@ -614,6 +621,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Load (ConfigNode node)
 		{
+			filename = node.GetValue ("filename");
 			flagname = node.GetValue ("flagname");
 			craftConfig = node.GetNode ("CraftConfig");
 			if (node.HasNode ("BuildCost")) {

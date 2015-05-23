@@ -270,6 +270,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var built = builtStuff.required;
 			var cost = buildCost.required;
+			var base_kerbalHours = kerbalHours;
 
 			bool did_work;
 			int count;
@@ -305,7 +306,7 @@ namespace ExtraplanetaryLaunchpads {
 					if (amount > capacity) {
 						amount = capacity;
 					}
-					if (amount <= 0)
+					if (amount / base_amount <= 1e-10)
 						break;
 					count++;
 					did_work = true;
@@ -317,7 +318,7 @@ namespace ExtraplanetaryLaunchpads {
 					bres.deltaAmount = amount;
 					padResources.TransferResource (bres.name, amount);
 				}
-			} while (did_work && kerbalHours > 0);
+			} while (did_work && kerbalHours / base_kerbalHours > 1e-10);
 
 			SetPadMass ();
 

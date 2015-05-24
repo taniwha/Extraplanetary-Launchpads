@@ -43,6 +43,7 @@ EL_FILES := \
 	lib/KerbalStatsWrapper.cs			\
 	toolbar/Toolbar.cs					\
 	toolbar/ToolbarWrapper.cs			\
+	AirstreamShield.cs					\
 	BuildControl.cs						\
 	Settings.cs							\
 	$e

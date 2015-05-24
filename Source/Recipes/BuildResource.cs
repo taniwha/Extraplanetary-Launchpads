@@ -59,7 +59,7 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				//FIXME per resource
 				// this is probably ElectricCharge
-				return 0.125;
+				return 1.0 / 3600;	// 1Ks/u
 			}
 		}
 

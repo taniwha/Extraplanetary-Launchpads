@@ -244,7 +244,7 @@ namespace ExtraplanetaryLaunchpads {
 					//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}:{3}:{4}",
 					//						  res.name, res.kerbalHours, res.amount, avail, amount));
 					if (amount / base_amount < 1e-10)
-						break;
+						continue;
 					did_work = true;
 					// do only the work required to process the actual amount
 					// of consumed resource
@@ -307,7 +307,7 @@ namespace ExtraplanetaryLaunchpads {
 						amount = capacity;
 					}
 					if (amount / base_amount <= 1e-10)
-						break;
+						continue;
 					count++;
 					did_work = true;
 					// do only the work required to process the actual amount

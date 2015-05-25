@@ -29,7 +29,10 @@ public class ExRecycler : PartModule, IModuleInfo
 	double busyTime;
 	bool recyclerActive;
 	[KSPField] public float RecycleRate = 1.0f;
+	[KSPField] public string RecycleField_name = "RecycleField";
 	[KSPField (guiName = "State", guiActive = true)] public string status;
+
+	Collider RecycleField;
 
 	public override string GetInfo ()
 	{
@@ -189,6 +192,15 @@ public class ExRecycler : PartModule, IModuleInfo
 		Events["Deactivate"].active = false;
 	}
 
+	public override void OnStart (StartState state)
+	{
+		RecycleField = part.FindModelComponent<Collider> (RecycleField_name);
+		Debug.Log (String.Format ("[EL Recycler] OnStart: {0}", RecycleField));
+		if (RecycleField != null) {
+			RecycleField.enabled = recyclerActive;
+		}
+	}
+
 	public override void OnLoad (ConfigNode node)
 	{
 		if (CompatibilityChecker.IsWin64 ()) {
@@ -208,6 +220,9 @@ public class ExRecycler : PartModule, IModuleInfo
 			status = "Active";
 		} else {
 			status = "Inactive";
+		}
+		if (RecycleField != null) {
+			RecycleField.enabled = recyclerActive;
 		}
 	}
 }

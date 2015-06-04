@@ -324,7 +324,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			|| state == PartModule.StartState.Editor)
 			return;
 		DiscoverWorkshops ();
-		useSkill = HighLogic.CurrentGame.Mode == Game.Modes.CAREER;
+		useSkill = true;
 		DetermineProductivity ();
 		StartCoroutine (WaitAndStartWorkshop ());
 	}

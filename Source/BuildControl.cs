@@ -220,7 +220,7 @@ namespace ExtraplanetaryLaunchpads {
 		private void DoWork_Build (double kerbalHours)
 		{
 			var required = builtStuff.required;
-			var base_kerbalHours = kerbalHours;
+			var base_kerbalHours = Math.Abs (kerbalHours);
 
 			//Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
 			//						  kerbalHours));
@@ -234,7 +234,7 @@ namespace ExtraplanetaryLaunchpads {
 				did_work = false;
 				foreach (var res in required.Where (r => r.amount > 0)) {
 					double amount = work / res.kerbalHours;
-					double base_amount = amount;
+					double base_amount = Math.Abs (amount);
 
 					if (amount > res.amount)
 						amount = res.amount;
@@ -270,7 +270,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var built = builtStuff.required;
 			var cost = buildCost.required;
-			var base_kerbalHours = kerbalHours;
+			var base_kerbalHours = Math.Abs (kerbalHours);
 
 			bool did_work;
 			int count;
@@ -296,7 +296,7 @@ namespace ExtraplanetaryLaunchpads {
 						continue;
 					}
 					double amount = work / bres.kerbalHours;
-					double base_amount = amount;
+					double base_amount = Math.Abs (amount);
 
 					if (amount > remaining) {
 						amount = remaining;

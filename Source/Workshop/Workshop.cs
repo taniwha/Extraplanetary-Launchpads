@@ -242,13 +242,30 @@ public class ExWorkshop : PartModule, IModuleInfo
 		return contribution;
 	}
 
+	List<ProtoCrewMember> GetCrewList ()
+	{
+		if (part.CrewCapacity > 0) {
+			return part.protoModuleCrew;
+		} else {
+			var crew = new List<ProtoCrewMember> ();
+			var seats = part.FindModulesImplementing<KerbalSeat> ();
+			foreach (var s in seats) {
+				if (s.Occupant != null) {
+					crew.Add (s.Occupant.protoModuleCrew[0]);
+				}
+			}
+			return crew;
+		}
+	}
+
 	private void DetermineProductivity ()
 	{
 		float kh = 0;
 		enableSkilled = false;
 		enableUnskilled = false;
+		var crewList = GetCrewList ();
 		if (useSkill) {
-			foreach (var crew in part.protoModuleCrew) {
+			foreach (var crew in crewList) {
 				if (HasConstructionSkill (crew)) {
 					if (crew.experienceLevel >= 4) {
 						enableSkilled = true;
@@ -259,7 +276,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 				}
 			}
 		}
-		foreach (var crew in part.protoModuleCrew) {
+		foreach (var crew in crewList) {
 			kh += KerbalContribution (crew, crew.stupidity, crew.courage,
 									  crew.isBadass);
 		}
@@ -275,14 +292,46 @@ public class ExWorkshop : PartModule, IModuleInfo
 		DetermineProductivity ();
 	}
 
+	private IEnumerator<YieldInstruction> WaitAndDetermineProductivity ()
+	{
+		yield return null;
+		DetermineProductivity ();
+	}
+
+	void onPartCouple (GameEvents.FromToAction<Part,Part> hft)
+	{
+		Debug.Log (String.Format ("[EL Workshop] couple: {0} {1}",
+								  hft.from, hft.to));
+		if (hft.to != part)
+			return;
+		StartCoroutine (WaitAndDetermineProductivity ());
+	}
+
+	void onPartUndock (Part p)
+	{
+		Debug.Log (String.Format ("[EL Workshop] undock: {0} {1}",
+								  p, p.parent));
+		if (p.parent != part)
+			return;
+		StartCoroutine (WaitAndDetermineProductivity ());
+	}
+
 	public override void OnLoad (ConfigNode node)
 	{
 		if (CompatibilityChecker.IsWin64 ()) {
 			return;
 		}
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
+			Debug.Log (String.Format ("[EL Workshop] {0} cap: {1} seats: {2}",
+					  part, part.CrewCapacity,
+					  part.FindModulesImplementing<KerbalSeat> ().Count));
 			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
 				GameEvents.onCrewTransferred.Add (onCrewTransferred);
+				GameEvents.onVesselWasModified.Add (onVesselWasModified);
+				functional = true;
+			} else if (part.FindModulesImplementing<KerbalSeat> ().Count > 0) {
+				GameEvents.onPartCouple.Add (onPartCouple);
+				GameEvents.onPartUndock.Add (onPartUndock);
 				GameEvents.onVesselWasModified.Add (onVesselWasModified);
 				functional = true;
 			} else {
@@ -304,11 +353,14 @@ public class ExWorkshop : PartModule, IModuleInfo
 	void OnDestroy ()
 	{
 		GameEvents.onCrewTransferred.Remove (onCrewTransferred);
+		GameEvents.onPartCouple.Remove (onPartCouple);
+		GameEvents.onPartUndock.Remove (onPartUndock);
 		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 
 	private IEnumerator<YieldInstruction> WaitAndStartWorkshop ()
 	{
+		yield return null;
 		yield return null;
 		workshop_started = true;
 	}
@@ -325,7 +377,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			return;
 		DiscoverWorkshops ();
 		useSkill = true;
-		DetermineProductivity ();
+		StartCoroutine (WaitAndDetermineProductivity ());
 		StartCoroutine (WaitAndStartWorkshop ());
 	}
 

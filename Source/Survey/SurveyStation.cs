@@ -30,8 +30,8 @@ namespace ExtraplanetaryLaunchpads {
 		public string StationName = "";
 
 		DropDownList site_list;
-		List<ExSurveyTracker.SurveySite> available_sites;
-		ExSurveyTracker.SurveySite site;
+		List<SurveySite> available_sites;
+		SurveySite site;
 		float base_mass;
 
 		public override string GetInfo ()
@@ -119,7 +119,7 @@ namespace ExtraplanetaryLaunchpads {
 			site_list.DrawBlockingSelector ();
 		}
 
-		void Select_Site (ExSurveyTracker.SurveySite selected_site)
+		void Select_Site (SurveySite selected_site)
 		{
 			if (site != selected_site) {
 				Highlight (false);
@@ -184,7 +184,7 @@ namespace ExtraplanetaryLaunchpads {
 			CelestialBody body;
 			public Vector3d center;
 
-			public Points (ExSurveyTracker.SurveySite site)
+			public Points (SurveySite site)
 			{
 				Dictionary<string, int> counts = new Dictionary<string, int> ();
 				Dictionary<string, int> bcounts = new Dictionary<string, int> ();
@@ -543,12 +543,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void onSiteAdded (ExSurveyTracker.SurveySite s)
+		void onSiteAdded (SurveySite s)
 		{
 			FindSites ();
 		}
 
-		void onSiteRemoved (ExSurveyTracker.SurveySite s)
+		void onSiteRemoved (SurveySite s)
 		{
 			if (s == site) {
 				site = null;
@@ -556,7 +556,7 @@ namespace ExtraplanetaryLaunchpads {
 			FindSites ();
 		}
 
-		void onSiteModified (ExSurveyTracker.SurveySite s)
+		void onSiteModified (SurveySite s)
 		{
 			FindSites ();
 		}

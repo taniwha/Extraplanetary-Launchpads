@@ -20,6 +20,9 @@ EL_FILES := \
 	Resources/KISResourceContainer.cs	\
 	Resources/PartResourceContainer.cs	\
 	Resources/Resources.cs				\
+	Survey/SiteBody.cs					\
+	Survey/SiteList.cs					\
+	Survey/SurveySite.cs				\
 	Survey/SurveyStake.cs				\
 	Survey/SurveyStation.cs				\
 	Survey/SurveyTracker.cs				\

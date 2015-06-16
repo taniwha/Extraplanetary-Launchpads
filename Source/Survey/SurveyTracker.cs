@@ -169,24 +169,11 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselRename.Remove (onVesselRename);
 		}
 
-		IEnumerator<YieldInstruction> WaitAndLoadSites ()
-		{
-			while (!FlightGlobals.ready) {
-				yield return null;
-			}
-			foreach (var vessel in FlightGlobals.Vessels) {
-				if (isStake (vessel)) {
-					AddStake (vessel);
-				}
-			}
-		}
-
 		void Start ()
 		{
 			if (CompatibilityChecker.IsWin64 ()) {
 				return;
 			}
-			StartCoroutine (WaitAndLoadSites ());
 		}
 	}
 }

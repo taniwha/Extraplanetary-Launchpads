@@ -30,10 +30,6 @@ namespace ExtraplanetaryLaunchpads {
 		internal ExSurveyStake this[int index]
 		{
 			get {
-				Debug.Log (String.Format ("[EL ST SS] :{0}: {1}", this, index));
-				Debug.Log (String.Format ("[EL ST SS] {0}", stakes));
-				Debug.Log (String.Format ("[EL ST SS] {0}", stakes[index]));
-				Debug.Log (String.Format ("[EL ST SS] {0}", stakes[index][0]));
 				var m = stakes[index][0].Modules.OfType<ExSurveyStake> ();
 				return m.FirstOrDefault ();
 			}

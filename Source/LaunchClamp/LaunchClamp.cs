@@ -33,9 +33,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		Collider FindCollider (Transform xform)
 		{
-			if (!xform) {
-				return null;
-			}
 			var col = xform.GetComponent<Collider>();
 			if (!col) {
 				foreach (Transform x in xform) {
@@ -57,11 +54,6 @@ namespace ExtraplanetaryLaunchpads {
 			base.OnPutToGround (qr);
 			if (CompatibilityChecker.IsWin64 ()) {
 				return;
-			}
-			if (anchor == null) {
-				// Under certain circumstances, OnPutToGround can be called
-				// before OnStart.
-				FindTransforms ();
 			}
 			Debug.Log (String.Format ("[EL ELC] OnPutToGround qr: {0}", qr.lowestPoint));
 			foreach (var p in qr.lowestOnParts) {
@@ -178,8 +170,8 @@ namespace ExtraplanetaryLaunchpads {
 				base.OnStart (state);
 				return;
 			}
+			Debug.Log (String.Format ("[EL ELC] OnStart: {0} {1}", HighLogic.LoadedSceneIsFlight, points));
 			FindTransforms ();
-			Debug.Log (String.Format ("[EL ELC] OnStart: {0} '{1}' '{2}'", HighLogic.LoadedSceneIsFlight, points, anchor));
 			if (HighLogic.LoadedSceneIsFlight) {
 				StartCoroutine (WaitAndExtendTower (state));
 			}

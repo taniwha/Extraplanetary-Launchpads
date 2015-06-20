@@ -26,8 +26,6 @@ using KSP.IO;
 namespace ExtraplanetaryLaunchpads {
 	public class ExtendingLaunchClamp : LaunchClamp
 	{
-		//Transform pivot;
-		//Transform stretch;
 		Transform anchor;
 		Vector3 [] points = null;
 
@@ -59,6 +57,7 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (var p in qr.lowestOnParts) {
 				Debug.Log (String.Format ("[EL ELC] OnPutToGround qr.lop: {0}", p));
 			}
+			anchor = part.FindModelTransform (trf_anchor_name);
 			var col = FindCollider (anchor);
 			if (col) {
 				var min = col.bounds.min;
@@ -155,13 +154,7 @@ namespace ExtraplanetaryLaunchpads {
 				yield break;
 			}
 			ExtendTower ();
-		}
-
-		void FindTransforms ()
-		{
-			//pivot = part.FindModelTransform (trf_towerPivot_name);
-			//stretch = part.FindModelTransform (trf_towerStretch_name);
-			anchor = part.FindModelTransform (trf_anchor_name);
+			base.OnStart (state);
 		}
 
 		public override void OnStart (StartState state)
@@ -171,7 +164,6 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			Debug.Log (String.Format ("[EL ELC] OnStart: {0} {1}", HighLogic.LoadedSceneIsFlight, points));
-			FindTransforms ();
 			if (HighLogic.LoadedSceneIsFlight) {
 				StartCoroutine (WaitAndExtendTower (state));
 			}

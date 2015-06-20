@@ -497,6 +497,17 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void EnableExtendingLaunchClamps (ShipConstruct ship)
+		{
+			for (int i = 0; i < ship.parts.Count; i++) {
+				var p = ship.parts[i];
+				var elc = p.FindModulesImplementing<ExtendingLaunchClamp> ();
+				for (int j = 0; j < elc.Count; j++) {
+					(elc[j] as ExtendingLaunchClamp).EnableExtension ();
+				}
+			}
+		}
+
 		internal void BuildAndLaunchCraft ()
 		{
 			// build craft
@@ -515,6 +526,7 @@ namespace ExtraplanetaryLaunchpads {
 			Box vessel_bounds = GetVesselBox (nship);
 			launchTransform = builder.PlaceShip (nship, vessel_bounds);
 
+			EnableExtendingLaunchClamps (nship);
 			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, game,
 												crew);
 			var FlightVessels = FlightGlobals.Vessels;

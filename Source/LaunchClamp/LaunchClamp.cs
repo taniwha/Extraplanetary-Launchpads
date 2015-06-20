@@ -28,6 +28,12 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		Transform anchor;
 		Vector3 [] points = null;
+		bool extension_enabled = false;
+
+		public void EnableExtension ()
+		{
+			extension_enabled = true;
+		}
 
 		Collider FindCollider (Transform xform)
 		{
@@ -150,7 +156,7 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			Debug.Log (String.Format ("[EL ELC] OnStart: {0} {1}", HighLogic.LoadedSceneIsFlight, points));
-			if (HighLogic.LoadedSceneIsFlight) {
+			if (HighLogic.LoadedSceneIsFlight && extension_enabled) {
 				ExtendTower ();
 			}
 			base.OnStart (state);

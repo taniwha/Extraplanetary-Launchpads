@@ -98,14 +98,16 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void FixedUpdate ()
+		public void Update ()
 		{
-			if (FlightGlobals.fetch.VesselTarget == this as ITargetable) {
-				Events["SetAsTarget"].active = false;
-				Events["UnsetTarget"].active = true;
-			} else {
-				Events["SetAsTarget"].active = true;
-				Events["UnsetTarget"].active = false;
+			if (FlightGlobals.fetch != null) {
+				if (FlightGlobals.fetch.VesselTarget == this as ITargetable) {
+					Events["SetAsTarget"].active = false;
+					Events["UnsetTarget"].active = true;
+				} else {
+					Events["SetAsTarget"].active = true;
+					Events["UnsetTarget"].active = false;
+				}
 			}
 		}
 

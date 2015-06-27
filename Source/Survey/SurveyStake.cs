@@ -126,24 +126,27 @@ namespace ExtraplanetaryLaunchpads {
 		public void Highlight (bool on)
 		{
 			if (on) {
+				var color = StakeColors[use];
+				var model = part.FindModelTransform("model");
 				if (highlighter == null) {
-					var color = StakeColors[use];
-					var model = part.FindModelTransform("model");
-					highlighter = model.gameObject.AddComponent<Highlighter>();
-					if (bound) {
-						var color2 = XKCDColors.LightGreyBlue;
-						highlighter.FlashingOn (color, color2, 1.0f);
-					} else {
-						highlighter.ConstantOn (color);
+					var go = model.gameObject;
+					highlighter = go.GetComponent<Highlighter>();
+					if (highlighter == null) {
+						highlighter = go.AddComponent<Highlighter>();
 					}
-					part.SetHighlightColor (color);
-					part.SetHighlight (true, false);
 				}
+				if (bound) {
+					var color2 = XKCDColors.LightGreyBlue;
+					highlighter.FlashingOn (color, color2, 1.0f);
+				} else {
+					highlighter.ConstantOn (color);
+				}
+				part.SetHighlightColor (color);
+				part.SetHighlight (true, false);
 			} else {
 				if (highlighter != null) {
 					part.SetHighlightDefault ();
-					DestroyImmediate (highlighter);
-					highlighter = null;
+					highlighter.Off ();
 				}
 			}
 		}

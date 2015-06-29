@@ -301,6 +301,15 @@ namespace ExtraplanetaryLaunchpads {
 					if (amount > remaining) {
 						amount = remaining;
 					}
+					count++;
+					did_work = true;
+					// do only the work required to process the actual amount
+					// of returned or disposed resource
+					kerbalHours -= work * amount / base_amount;
+					bres.amount += amount;
+					//Debug.Log("remove delta: "+amount);
+					bres.deltaAmount = amount;
+
 					double capacity = padResources.ResourceCapacity (bres.name)
 									- padResources.ResourceAmount (bres.name);
 					if (amount > capacity) {
@@ -308,14 +317,6 @@ namespace ExtraplanetaryLaunchpads {
 					}
 					if (amount / base_amount <= 1e-10)
 						continue;
-					count++;
-					did_work = true;
-					// do only the work required to process the actual amount
-					// of returned resource
-					kerbalHours -= work * amount / base_amount;
-					bres.amount += amount;
-					//Debug.Log("remove delta: "+amount);
-					bres.deltaAmount = amount;
 					padResources.TransferResource (bres.name, amount);
 				}
 			} while (did_work && kerbalHours / base_kerbalHours > 1e-10);

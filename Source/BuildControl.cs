@@ -707,8 +707,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void ReleaseVessel ()
 		{
-			TransferResources ();
 			if (craftRoot != null) {
+				TransferResources ();
 				craftRoot.Undock (vesselInfo);
 				var vesselCount = FlightGlobals.Vessels.Count;
 				Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];

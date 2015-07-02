@@ -25,13 +25,13 @@ using KSP.IO;
 namespace ExLP {
 	public class Ingredient
 	{
-		public string resource;
+		public string name;
 		public double ratio;
 
-		public Ingredient (string res, double rat)
+		public Ingredient (string name, double ratio)
 		{
-			resource = res;
-			ratio = rat;
+			this.name = name;
+			this.ratio = ratio;
 		}
 	}
 }

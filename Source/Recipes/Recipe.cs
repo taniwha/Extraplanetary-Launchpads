@@ -25,18 +25,6 @@ using KSP.IO;
 namespace ExLP {
 	public class ExRecipe
 	{
-		public class Ingredient
-		{
-			public string resource;
-			public double ratio;
-
-			public Ingredient (string res, double rat)
-			{
-				resource = res;
-				ratio = rat;
-			}
-		}
-
 		public List<Ingredient> ingredients;
 
 		public ExRecipe (ConfigNode node)

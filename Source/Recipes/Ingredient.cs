@@ -23,15 +23,15 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExLP {
-		public class Ingredient
-		{
-			public string resource;
-			public double ratio;
+	public class Ingredient
+	{
+		public string resource;
+		public double ratio;
 
-			public Ingredient (string res, double rat)
-			{
-				resource = res;
-				ratio = rat;
-			}
+		public Ingredient (string res, double rat)
+		{
+			resource = res;
+			ratio = rat;
 		}
+	}
 }

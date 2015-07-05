@@ -27,9 +27,15 @@ namespace ExLP {
 	public class ExRecipeDatabase: MonoBehaviour
 	{
 		public static Dictionary<string, ExPartRecipe> part_recipes;
+		public static Dictionary<string, Recipe> module_recipes;
+		public static Recipe default_structure_recipe;
+
 		void Awake ()
 		{
 			part_recipes = new Dictionary<string, ExPartRecipe> ();
+			module_recipes = new Dictionary<string, Recipe> ();
+			default_structure_recipe = new Recipe ("{ RocketParts = 5 }");
+
 			List<LoadingSystem> list = LoadingScreen.Instance.loaders;
 			if (list != null) {
 				for (int i = 0; i < list.Count; i++) {

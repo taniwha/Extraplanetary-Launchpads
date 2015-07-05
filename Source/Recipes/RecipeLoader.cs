@@ -42,17 +42,30 @@ namespace ExLP {
 			done = true;
 		}
 
-		public override bool IsReady()
+		void LoadDefautStructureRecipe ()
+		{
+			var dbase = GameDatabase.Instance;
+			var node_list = dbase.GetConfigNodes ("EL_DefaultStructureRecipe");
+			var node = node_list.LastOrDefault ();
+			if (node != null) {
+				var recipe = new Recipe (node);
+				if (recipe.ingredients.Count > 0) {
+					ExRecipeDatabase.default_structure_recipe = recipe;
+				}
+			}
+		}
+
+		public override bool IsReady ()
 		{
 			return done;
 		}
 
-		public override float ProgressFraction()
+		public override float ProgressFraction ()
 		{
 			return 0;
 		}
 
-		public override string ProgressTitle()
+		public override string ProgressTitle ()
 		{
 			return  "Extraplanetary Launchpads Recipes";
 		}
@@ -60,8 +73,8 @@ namespace ExLP {
 		public override void StartLoad()
 		{
 			done = false;
-			StartCoroutine (ScanParts());
+			LoadDefautStructureRecipe ();
+			StartCoroutine (ScanParts ());
 		}
-
 	}
 }

@@ -18,6 +18,7 @@ along with Extraplanetary Launchpads.  If not, see
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 using KSP.IO;
@@ -42,6 +43,10 @@ namespace ExLP {
 				}
 			}
 			ingredients = new List<Ingredient> (resdict.Values);
+		}
+
+		public Recipe (string recipe) : this (ConfigNode.Parse (recipe))
+		{
 		}
 	}
 }

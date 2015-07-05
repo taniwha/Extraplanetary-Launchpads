@@ -36,7 +36,7 @@ namespace ExLP {
 				var pnode = c.config;
 				string pname = pnode.GetValue("name");
 				print("[EL Recipes] " + pname);
-				ExRecipeDatabase.part_recipes[pname] = new ExRecipe (pnode);
+				ExRecipeDatabase.part_recipes[pname] = new ExPartRecipe (pnode);
 				yield return null;
 			}
 			done = true;

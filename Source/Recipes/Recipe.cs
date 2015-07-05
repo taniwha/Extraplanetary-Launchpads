@@ -23,44 +23,23 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExLP {
-	public class ExRecipe
+	public class Recipe
 	{
 		public List<Ingredient> ingredients;
 
-		public ExRecipe (ConfigNode node)
+		public Recipe (ConfigNode recipe)
 		{
 			var resdict = new Dictionary<string,Ingredient>();
-			if (node.HasNode ("ExRecipe")) {
-				var reslib = PartResourceLibrary.Instance;
-				var recipe = node.GetNode ("ExRecipe");
-				double rp_ratio = 0;
-				foreach (ConfigNode.Value res in recipe.values) {
-					string resname = res.name;
-					double ratio;
-					if (!double.TryParse (res.value, out ratio)) {
-						continue;
-					}
-					var resdef = reslib.GetDefinition(resname);
-					if (resdef == null) {
-						rp_ratio += ratio;
-						continue;
-					}
-					if (resdict.ContainsKey (resname)) {
-						resdict[resname].ratio += ratio;
-					} else {
-						resdict[resname] = new Ingredient (resname, ratio);
-					}
+			foreach (ConfigNode.Value res in recipe.values) {
+				var ingredient = new Ingredient (res);
+				if (ingredient.ratio <= 0) {
+					continue;
 				}
-				if (rp_ratio != 0) {
-					if (resdict.ContainsKey ("RocketParts")) {
-						resdict["RocketParts"].ratio += rp_ratio;
-					} else {
-						resdict["RocketParts"] = new Ingredient("RocketParts", rp_ratio);
-					}
+				if (resdict.ContainsKey (ingredient.name)) {
+					resdict[ingredient.name].ratio += ingredient.ratio;
+				} else {
+					resdict[ingredient.name] = ingredient;
 				}
-			}
-			if (resdict.Count == 0) {
-				resdict["RocketParts"] = new Ingredient("RocketParts", 1);
 			}
 			ingredients = new List<Ingredient> (resdict.Values);
 		}

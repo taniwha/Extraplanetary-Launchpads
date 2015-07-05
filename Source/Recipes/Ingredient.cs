@@ -33,5 +33,12 @@ namespace ExLP {
 			this.name = name;
 			this.ratio = ratio;
 		}
+		public Ingredient (ConfigNode.Value ingredient)
+		{
+			name = ingredient.name;
+			if (!double.TryParse (ingredient.value, out ratio)) {
+				ratio = 0;
+			}
+		}
 	}
 }

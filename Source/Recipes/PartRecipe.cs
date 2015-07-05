@@ -23,30 +23,10 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExLP {
-	[KSPAddon (KSPAddon.Startup.Instantly, false)]
-	public class ExRecipeDatabase: MonoBehaviour
+	public class ExPartRecipe
 	{
-		public static Dictionary<string, ExPartRecipe> part_recipes;
-		void Awake ()
+		public ExPartRecipe (ConfigNode recipe)
 		{
-			part_recipes = new Dictionary<string, ExPartRecipe> ();
-			List<LoadingSystem> list = LoadingScreen.Instance.loaders;
-			if (list != null) {
-				for (int i = 0; i < list.Count; i++) {
-					if (list[i] is ExRecipeLoader) {
-						print("[EL Recipes] found ExRecipeLoader: " + i);
-						(list[i] as ExRecipeLoader).done = false;
-						break;
-					}
-					if (list[i] is PartLoader) {
-						print("[EL Recipes] found PartLoader: " + i);
-						GameObject go = new GameObject();
-						ExRecipeLoader scanner = go.AddComponent<ExRecipeLoader>();
-						list.Insert (i, scanner);
-						break;
-					}
-				}
-			}
 		}
 	}
 }

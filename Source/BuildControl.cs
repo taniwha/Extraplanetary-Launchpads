@@ -690,12 +690,16 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			this.builder = builder;
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			GameEvents.onPartDie.Add (onPartDie);
 		}
 
 		internal void OnStart ()
 		{
 			if (vesselInfo != null) {
 				craftRoot = builder.vessel[vesselInfo.rootPartUId];
+				if (craftRoot == null) {
+					CleaupAfterRelease ();
+				}
 			}
 			FindVesselResources ();
 			SetPadMass ();
@@ -704,23 +708,29 @@ namespace ExtraplanetaryLaunchpads {
 		internal void OnDestroy ()
 		{
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
+			GameEvents.onPartDie.Remove (onPartDie);
 		}
 
-		public void ReleaseVessel ()
+		void CleaupAfterRelease ()
 		{
-			if (craftRoot != null) {
-				TransferResources ();
-				craftRoot.Undock (vesselInfo);
-				var vesselCount = FlightGlobals.Vessels.Count;
-				Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
-				FlightGlobals.ForceSetActiveVessel (vsl);
-				builder.part.StartCoroutine (FixAirstreamShielding (vsl));
-			}
+			craftRoot = null;
 			craftConfig = null;
 			vesselInfo = null;
 			buildCost = null;
 			builtStuff = null;
 			state = State.Idle;
+		}
+
+		public void ReleaseVessel ()
+		{
+			TransferResources ();
+			craftRoot.Undock (vesselInfo);
+			var vesselCount = FlightGlobals.Vessels.Count;
+			Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
+			FlightGlobals.ForceSetActiveVessel (vsl);
+			builder.part.StartCoroutine (FixAirstreamShielding (vsl));
+
+			CleaupAfterRelease ();
 		}
 
 		bool InitializeB9Wings (Vessel v)
@@ -819,13 +829,19 @@ namespace ExtraplanetaryLaunchpads {
 			return resources.cost;
 		}
 
+		void onPartDie (Part p)
+		{
+			if (p == craftRoot) {
+				CleaupAfterRelease ();
+			}
+		}
+
 		void onVesselWasModified (Vessel v)
 		{
 			if (v == builder.vessel) {
 				padResources = new VesselResources (builder.vessel);
 				if (craftRoot != null && craftRoot.vessel != builder.vessel) {
-					craftRoot = null;
-					ReleaseVessel ();
+					CleaupAfterRelease ();
 				}
 			}
 		}

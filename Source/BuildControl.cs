@@ -689,12 +689,12 @@ namespace ExtraplanetaryLaunchpads {
 		public ExBuildControl (IBuilder builder)
 		{
 			this.builder = builder;
-			GameEvents.onVesselWasModified.Add (onVesselWasModified);
-			GameEvents.onPartDie.Add (onPartDie);
 		}
 
 		internal void OnStart ()
 		{
+			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			GameEvents.onPartDie.Add (onPartDie);
 			if (vesselInfo != null) {
 				craftRoot = builder.vessel[vesselInfo.rootPartUId];
 				if (craftRoot == null) {

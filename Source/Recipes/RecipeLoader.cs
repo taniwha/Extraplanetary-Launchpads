@@ -27,21 +27,6 @@ namespace ExLP {
 	{
 		public bool done;
 
-		IEnumerator<YieldInstruction> ScanParts()
-		{
-			print ("[EL Recipes] ScanParts");
-			var dbase = GameDatabase.Instance;
-			var configurls = dbase.GetConfigs("PART");
-			foreach (var c in configurls) {
-				var pnode = c.config;
-				string pname = pnode.GetValue("name");
-				print("[EL Recipes] " + pname);
-				ExRecipeDatabase.part_recipes[pname] = new ExPartRecipe (pnode);
-				yield return null;
-			}
-			done = true;
-		}
-
 		void LoadDefautStructureRecipe ()
 		{
 			var dbase = GameDatabase.Instance;
@@ -53,6 +38,57 @@ namespace ExLP {
 					ExRecipeDatabase.default_structure_recipe = recipe;
 				}
 			}
+		}
+
+		IEnumerator<YieldInstruction> LoadModuleRecipes ()
+		{
+			var dbase = GameDatabase.Instance;
+			var node_list = dbase.GetConfigNodes ("EL_ModuleRecipe");
+			for (int i = 0; i < node_list.Length; i++) {
+				var node = node_list[i];
+				string name = node.GetValue ("name");
+
+				Type mod;
+				mod = AssemblyLoader.GetClassByName(typeof(PartModule), name);
+				if (mod != null) {
+					var recipe_node = node.GetNode ("Resources");
+					var recipe = new Recipe (recipe_node);
+					print ("[EL ModuleRecipe] " + name);
+					ExRecipeDatabase.module_recipes[name] = recipe;
+				} else {
+					print ("[EL ModuleRecipe] no such module: " + name);
+				}
+				yield return null;
+			}
+		}
+
+		IEnumerator<YieldInstruction> LoadPartRecipes()
+		{
+			print ("[EL Recipes] LoadPartRecipes");
+			var dbase = GameDatabase.Instance;
+			var configurls = dbase.GetConfigs("PART");
+			foreach (var c in configurls) {
+				var node = c.config;
+				string name = node.GetValue("name");
+				print("[EL Recipes] " + name);
+				if (node.HasNode ("EL_Recipe")) {
+					var recipe_node = node.GetNode ("EL_Recipe");
+					var recipe = new PartRecipe (recipe_node);
+					ExRecipeDatabase.part_recipes[name] = recipe;
+				} else {
+					var recipe = new PartRecipe ();
+					ExRecipeDatabase.part_recipes[name] = recipe;
+				}
+				yield return null;
+			}
+			done = true;
+		}
+
+		IEnumerator<YieldInstruction> LoadRecipes()
+		{
+			LoadDefautStructureRecipe ();
+			yield return StartCoroutine (LoadModuleRecipes ());
+			yield return StartCoroutine (LoadPartRecipes ());
 		}
 
 		public override bool IsReady ()
@@ -73,8 +109,7 @@ namespace ExLP {
 		public override void StartLoad()
 		{
 			done = false;
-			LoadDefautStructureRecipe ();
-			StartCoroutine (ScanParts ());
+			StartCoroutine (LoadRecipes ());
 		}
 	}
 }

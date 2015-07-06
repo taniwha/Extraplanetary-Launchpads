@@ -23,10 +23,29 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExLP {
-	public class ExPartRecipe
+	public class PartRecipe
 	{
-		public ExPartRecipe (ConfigNode recipe)
+		public Recipe part_recipe;
+		public Recipe structure_recipe;
+
+		public PartRecipe (ConfigNode recipe)
 		{
+			part_recipe = new Recipe (recipe);
+			if (!part_recipe.HasIngredient ("structure")) {
+				part_recipe.AddIngredient (new Ingredient ("structure", 5));
+			}
+			if (recipe.HasNode ("Resources")) {
+				structure_recipe = new Recipe (recipe.GetNode ("Resources"));
+			} else {
+				structure_recipe = ExRecipeDatabase.default_structure_recipe;
+			}
+		}
+
+		public PartRecipe ()
+		{
+			part_recipe = new Recipe ();
+			part_recipe.AddIngredient (new Ingredient ("structure", 5));
+			structure_recipe = ExRecipeDatabase.default_structure_recipe;
 		}
 	}
 }

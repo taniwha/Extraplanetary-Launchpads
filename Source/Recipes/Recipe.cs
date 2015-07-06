@@ -28,6 +28,11 @@ namespace ExLP {
 	{
 		public List<Ingredient> ingredients;
 
+		public Recipe ()
+		{
+			ingredients = new List<Ingredient> ();
+		}
+
 		public Recipe (ConfigNode recipe)
 		{
 			var resdict = new Dictionary<string,Ingredient>();
@@ -47,6 +52,27 @@ namespace ExLP {
 
 		public Recipe (string recipe) : this (ConfigNode.Parse (recipe))
 		{
+		}
+
+		public bool HasIngredient (string ingredient)
+		{
+			for (int i = 0; i < ingredients.Count; i++) {
+				if (ingredients[i].name == ingredient) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void AddIngredient (Ingredient ingredient)
+		{
+			for (int i = 0; i < ingredients.Count; i++) {
+				if (ingredients[i].name == ingredient.name) {
+					ingredients[i].ratio += ingredient.ratio;
+					return;
+				}
+			}
+			ingredients.Add (ingredient);
 		}
 	}
 }

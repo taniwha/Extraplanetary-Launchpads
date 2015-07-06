@@ -26,13 +26,13 @@ namespace ExLP {
 	[KSPAddon (KSPAddon.Startup.Instantly, false)]
 	public class ExRecipeDatabase: MonoBehaviour
 	{
-		public static Dictionary<string, ExPartRecipe> part_recipes;
+		public static Dictionary<string, PartRecipe> part_recipes;
 		public static Dictionary<string, Recipe> module_recipes;
 		public static Recipe default_structure_recipe;
 
 		void Awake ()
 		{
-			part_recipes = new Dictionary<string, ExPartRecipe> ();
+			part_recipes = new Dictionary<string, PartRecipe> ();
 			module_recipes = new Dictionary<string, Recipe> ();
 			default_structure_recipe = new Recipe ("{ RocketParts = 5 }");
 

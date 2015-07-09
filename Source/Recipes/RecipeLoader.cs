@@ -67,6 +67,7 @@ namespace ExLP {
 			print ("[EL Recipes] LoadPartRecipes");
 			var dbase = GameDatabase.Instance;
 			var configurls = dbase.GetConfigs("PART");
+			var module_recipes = ExRecipeDatabase.module_recipes;
 			foreach (var c in configurls) {
 				var node = c.config;
 				string name = node.GetValue("name");
@@ -77,6 +78,15 @@ namespace ExLP {
 					ExRecipeDatabase.part_recipes[name] = recipe;
 				} else {
 					var recipe = new PartRecipe ();
+					var modules = node.GetNodes ("MODULE");
+					for (int i = 0; i < modules.Length; i++) {
+						var mod_name = modules[i].GetValue ("name");
+						if (module_recipes.ContainsKey (mod_name)) {
+							print ("[EL Recipes] adding module " + mod_name);
+							var mod_ingredient = new Ingredient (mod_name, 1);
+							recipe.part_recipe.AddIngredient (mod_ingredient);
+						}
+					}
 					ExRecipeDatabase.part_recipes[name] = recipe;
 				}
 				yield return null;

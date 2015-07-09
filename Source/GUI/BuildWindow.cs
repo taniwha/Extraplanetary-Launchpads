@@ -809,6 +809,7 @@ namespace ExtraplanetaryLaunchpads {
 				} else {
 					ResourceScroll_begin ();
 					RequiredResources ();
+					OptionalResources ();
 					ResourceScroll_end ();
 					BuildButton ();
 				}

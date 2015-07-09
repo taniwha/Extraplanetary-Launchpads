@@ -34,7 +34,7 @@ namespace ExLP {
 		{
 			part_recipes = new Dictionary<string, PartRecipe> ();
 			module_recipes = new Dictionary<string, Recipe> ();
-			default_structure_recipe = new Recipe ("{ RocketParts = 5 }");
+			default_structure_recipe = new Recipe ("{ RocketParts = 1 }");
 
 			List<LoadingSystem> list = LoadingScreen.Instance.loaders;
 			if (list != null) {

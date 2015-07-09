@@ -573,9 +573,8 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.EndScrollView ();
 		}
 
-		bool RequiredResources ()
+		void RequiredResources ()
 		{
-			bool can_build = true;
 			GUILayout.Label ("Resources required to build:", Styles.label,
 							 GUILayout.ExpandWidth (true));
 			foreach (var br in control.buildCost.required) {
@@ -584,11 +583,7 @@ namespace ExtraplanetaryLaunchpads {
 
 				available = control.padResources.ResourceAmount (br.name);
 				ResourceLine (br.name, br.name, 1.0f, a, a, available);
-				if (br.amount > available) {
-					can_build = false;
-				}
 			}
-			return can_build;
 		}
 
 		void BuildButton ()
@@ -712,10 +707,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		}
 
-		bool OptionalResources ()
+		void OptionalResources ()
 		{
-			bool can_build = true;
-
 			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
 												 "Link LiquidFuel and "
 												 + "Oxidizer sliders");
@@ -740,11 +733,7 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 				br.amount = maximum * frac;
-				if (br.amount > available) {
-					can_build = false;
-				}
 			}
-			return can_build;
 		}
 
 		static string[] state_str = {

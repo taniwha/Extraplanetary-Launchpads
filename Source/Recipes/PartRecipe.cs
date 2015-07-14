@@ -22,7 +22,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 	public class PartRecipe
 	{
 		public Recipe part_recipe;

@@ -23,7 +23,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 	public class Recipe
 	{
 		public List<Ingredient> ingredients;

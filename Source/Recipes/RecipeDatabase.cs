@@ -22,7 +22,7 @@ using UnityEngine;
 
 using KSP.IO;
 
-namespace ExLP {
+namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.Instantly, false)]
 	public class ExRecipeDatabase: MonoBehaviour
 	{

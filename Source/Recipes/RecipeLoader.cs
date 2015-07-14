@@ -70,7 +70,7 @@ namespace ExtraplanetaryLaunchpads {
 			var module_recipes = ExRecipeDatabase.module_recipes;
 			foreach (var c in configurls) {
 				var node = c.config;
-				string name = node.GetValue("name");
+				string name = node.GetValue("name").Replace('_', '.');
 				print("[EL Recipes] " + name);
 				if (node.HasNode ("EL_Recipe")) {
 					var recipe_node = node.GetNode ("EL_Recipe");

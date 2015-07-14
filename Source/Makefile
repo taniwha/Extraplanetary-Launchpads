@@ -19,6 +19,7 @@ EL_FILES := \
 	Recipes/Ingredient.cs				\
 	Recipes/PartRecipe.cs				\
 	Recipes/Recipe.cs					\
+	Recipes/RecipeResourceContainer.cs	\
 	Recipes/RecipeDatabase.cs			\
 	Recipes/RecipeLoader.cs				\
 	Resources/IResourceContainer.cs		\

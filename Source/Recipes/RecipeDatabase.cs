@@ -30,11 +30,35 @@ namespace ExtraplanetaryLaunchpads {
 		public static Dictionary<string, Recipe> module_recipes;
 		public static Recipe default_structure_recipe;
 
+		public static double ResourceDensity (string name)
+		{
+			PartResourceDefinition res_def;
+			res_def = PartResourceLibrary.Instance.GetDefinition (name);
+			return res_def.density;
+		}
+
+		public static void ProcessPart (Part part, Dictionary<string, ResourceInfo> resources)
+		{
+			var recipe = part_recipes[part.name].Bake (part.mass);
+			for (int i = 0; i < recipe.ingredients.Count; i++) {
+				var ingredient = recipe.ingredients[i];
+				ingredient.ratio /= ResourceDensity (ingredient.name);
+
+				ResourceInfo resourceInfo;
+				if (!resources.ContainsKey (ingredient.name)) {
+					resourceInfo = new ResourceInfo ();
+					resources[ingredient.name] = resourceInfo;
+				}
+				resourceInfo = resources[ingredient.name];
+				resourceInfo.containers.Add (new RecipeResourceContainer (part, ingredient));
+			}
+		}
+
 		void Awake ()
 		{
 			part_recipes = new Dictionary<string, PartRecipe> ();
 			module_recipes = new Dictionary<string, Recipe> ();
-			default_structure_recipe = new Recipe ("{ RocketParts = 1 }");
+			default_structure_recipe = new Recipe ("RocketParts = 1");
 
 			List<LoadingSystem> list = LoadingScreen.Instance.loaders;
 			if (list != null) {

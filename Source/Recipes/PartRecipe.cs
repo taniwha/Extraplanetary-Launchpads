@@ -47,5 +47,26 @@ namespace ExtraplanetaryLaunchpads {
 			part_recipe.AddIngredient (new Ingredient ("structure", 5));
 			structure_recipe = ExRecipeDatabase.default_structure_recipe;
 		}
+
+		public Recipe Bake (double mass)
+		{
+			var recipe = new Recipe ();
+			var prec = part_recipe.Bake (mass);
+			for (int i = 0; i < prec.ingredients.Count; i++) {
+				var pi = prec.ingredients[i];
+				Recipe rec;
+				if (pi.name == "structure") {
+					rec = structure_recipe;
+				} else {
+					rec = ExRecipeDatabase.module_recipes[pi.name];
+				}
+				var subr = rec.Bake (pi.ratio);
+				for (int j = 0; j < subr.ingredients.Count; j++) {
+					var si = subr.ingredients[j];
+					recipe.AddIngredient (subr.ingredients[j]);
+				}
+			}
+			return recipe;
+		}
 	}
 }

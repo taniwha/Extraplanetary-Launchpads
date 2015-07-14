@@ -74,5 +74,22 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			ingredients.Add (ingredient);
 		}
+
+		public Recipe Bake (double mass)
+		{
+			double total = 0;
+			for (int i = 0; i < ingredients.Count; i++) {
+				total += ingredients[i].ratio;
+			}
+
+			Recipe bake = new Recipe ();
+			for (int i = 0; i < ingredients.Count; i++) {
+				var name = ingredients[i].name;
+				var ratio = mass * ingredients[i].ratio / total;
+				var ingredient = new Ingredient (name, ratio);
+				bake.ingredients.Add (ingredient);
+			}
+			return bake;
+		}
 	}
 }

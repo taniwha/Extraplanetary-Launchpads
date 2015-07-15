@@ -40,6 +40,22 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		IEnumerator<YieldInstruction> LoadResourceRecipes ()
+		{
+			var dbase = GameDatabase.Instance;
+			var node_list = dbase.GetConfigNodes ("EL_ResourceRecipe");
+			for (int i = 0; i < node_list.Length; i++) {
+				var node = node_list[i];
+				string name = node.GetValue ("name");
+
+				var recipe_node = node.GetNode ("Resources");
+				var recipe = new Recipe (recipe_node);
+				print ("[EL ResourceRecipe] " + name);
+				ExRecipeDatabase.resource_recipes[name] = recipe;
+				yield return null;
+			}
+		}
+
 		IEnumerator<YieldInstruction> LoadModuleRecipes ()
 		{
 			var dbase = GameDatabase.Instance;
@@ -97,6 +113,7 @@ namespace ExtraplanetaryLaunchpads {
 		IEnumerator<YieldInstruction> LoadRecipes()
 		{
 			LoadDefautStructureRecipe ();
+			yield return StartCoroutine (LoadResourceRecipes ());
 			yield return StartCoroutine (LoadModuleRecipes ());
 			yield return StartCoroutine (LoadPartRecipes ());
 		}

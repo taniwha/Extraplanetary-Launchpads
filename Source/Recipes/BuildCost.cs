@@ -55,7 +55,7 @@ namespace ExtraplanetaryLaunchpads {
 			mass -= part.mass;
 		}
 
-		void ProcessResources (VesselResources resources, List<BuildResource> report_resources, List<BuildResource> required_resources = null)
+		void ProcessResources (VesselResources resources, Dictionary<string, BuildResource> report_resources, Dictionary<string, BuildResource> required_resources = null)
 		{
 			var reslist = resources.resources.Keys.ToList ();
 			foreach (string res in reslist) {
@@ -68,15 +68,23 @@ namespace ExtraplanetaryLaunchpads {
 					recipe = recipe.Bake (mass);
 					foreach (var ingredient in recipe.ingredients) {
 						var br = new BuildResource (ingredient);
+						var resset = report_resources;
 						if (required_resources != null)  {
-							required_resources.Add (br);
+							resset = required_resources;
+						}
+						if (resset.ContainsKey (br.name)) {
+							resset[br.name].Merge (br);
 						} else {
-							report_resources.Add (br);
+							resset[br.name] = br;
 						}
 					}
 				} else {
 					var br = new BuildResource (res, amount);
-					report_resources.Add (br);
+					if (report_resources.ContainsKey (br.name)) {
+						report_resources[br.name].Merge (br);
+					} else {
+						report_resources[br.name] = br;
+					}
 				}
 			}
 		}
@@ -84,10 +92,12 @@ namespace ExtraplanetaryLaunchpads {
 		public CostReport cost
 		{
 			get {
-				var report = new CostReport ();
-				ProcessResources (resources, report.optional, report.required);
-				ProcessResources (container, report.required);
-				ProcessResources (hullResoures, report.required);
+				var required = new Dictionary<string, BuildResource> ();
+				var optional = new Dictionary<string, BuildResource> ();
+				ProcessResources (resources, optional, required);
+				ProcessResources (container, required);
+				ProcessResources (hullResoures, required);
+				var report = new CostReport (required, optional);
 				return report;
 			}
 		}

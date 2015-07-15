@@ -38,6 +38,14 @@ namespace ExtraplanetaryLaunchpads {
 			return res_def.density;
 		}
 
+		public static Recipe ResourceRecipe (string name)
+		{
+			if (resource_recipes.ContainsKey (name)) {
+				return resource_recipes[name];
+			}
+			return null;
+		}
+
 		public static void ProcessPart (Part part, Dictionary<string, ResourceInfo> resources)
 		{
 			var recipe = part_recipes[part.name].Bake (part.mass);

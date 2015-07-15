@@ -55,16 +55,27 @@ namespace ExtraplanetaryLaunchpads {
 			mass -= part.mass;
 		}
 
-		void ProcessResources (VesselResources resources, List<BuildResource> report_resources)
+		void ProcessResources (VesselResources resources, List<BuildResource> report_resources, List<BuildResource> required_resources = null)
 		{
 			var reslist = resources.resources.Keys.ToList ();
 			foreach (string res in reslist) {
 				double amount = resources.ResourceAmount (res);
-				var br = new BuildResource (res, amount);
+				var recipe = ExRecipeDatabase.ResourceRecipe (res);
 
-				if (br.hull) {
-					//FIXME better hull resources check
+				if (recipe != null) {
+					double density = ExRecipeDatabase.ResourceDensity (res);
+					double mass = amount * density;
+					recipe = recipe.Bake (mass);
+					foreach (var ingredient in recipe.ingredients) {
+						var br = new BuildResource (ingredient);
+						if (required_resources != null)  {
+							required_resources.Add (br);
+						} else {
+							report_resources.Add (br);
+						}
+					}
 				} else {
+					var br = new BuildResource (res, amount);
 					report_resources.Add (br);
 				}
 			}
@@ -74,7 +85,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			get {
 				var report = new CostReport ();
-				ProcessResources (resources, report.optional);
+				ProcessResources (resources, report.optional, report.required);
 				ProcessResources (container, report.required);
 				ProcessResources (hullResoures, report.required);
 				return report;

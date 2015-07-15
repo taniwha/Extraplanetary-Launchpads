@@ -81,7 +81,23 @@ namespace ExtraplanetaryLaunchpads {
 				amount = mass;
 				mass = 0;
 			}
-			hull = isHullResource (res_def);
+			kerbalHours = KerbalHours ();
+		}
+
+		public BuildResource (Ingredient ingredient)
+		{
+			this.name = ingredient.name;
+			this.mass = ingredient.ratio;
+
+			PartResourceDefinition res_def;
+			res_def = PartResourceLibrary.Instance.GetDefinition (name);
+			density = res_def.density;
+			if (density > 0) {
+				amount = mass / density;
+			} else {
+				amount = mass;
+				mass = 0;
+			}
 			kerbalHours = KerbalHours ();
 		}
 
@@ -93,7 +109,6 @@ namespace ExtraplanetaryLaunchpads {
 			res_def = PartResourceLibrary.Instance.GetDefinition (name);
 			density = res_def.density;
 			mass = amount * density;
-			hull = isHullResource (res_def);
 			kerbalHours = KerbalHours ();
 		}
 
@@ -110,7 +125,6 @@ namespace ExtraplanetaryLaunchpads {
 			res_def = PartResourceLibrary.Instance.GetDefinition (name);
 			density = res_def.density;
 			mass = amount * density;
-			hull = isHullResource (res_def);
 			kerbalHours = KerbalHours ();
 		}
 

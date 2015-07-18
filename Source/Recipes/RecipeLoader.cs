@@ -56,6 +56,22 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		IEnumerator<YieldInstruction> LoadRecycleRecipes ()
+		{
+			var dbase = GameDatabase.Instance;
+			var node_list = dbase.GetConfigNodes ("EL_RecycleRecipe");
+			for (int i = 0; i < node_list.Length; i++) {
+				var node = node_list[i];
+				string name = node.GetValue ("name");
+
+				var recipe_node = node.GetNode ("Resources");
+				var recipe = new Recipe (recipe_node);
+				print ("[EL RecycleRecipe] " + name);
+				ExRecipeDatabase.recycle_recipes[name] = recipe;
+				yield return null;
+			}
+		}
+
 		IEnumerator<YieldInstruction> LoadModuleRecipes ()
 		{
 			var dbase = GameDatabase.Instance;

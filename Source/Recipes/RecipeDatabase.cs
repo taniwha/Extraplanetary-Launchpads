@@ -29,6 +29,7 @@ namespace ExtraplanetaryLaunchpads {
 		public static Dictionary<string, PartRecipe> part_recipes;
 		public static Dictionary<string, Recipe> module_recipes;
 		public static Dictionary<string, Recipe> resource_recipes;
+		public static Dictionary<string, Recipe> recycle_recipes;
 		public static Recipe default_structure_recipe;
 
 		public static double ResourceDensity (string name)
@@ -42,6 +43,14 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (resource_recipes.ContainsKey (name)) {
 				return resource_recipes[name];
+			}
+			return null;
+		}
+
+		public static Recipe RecycleRecipe (string name)
+		{
+			if (recycle_recipes.ContainsKey (name)) {
+				return recycle_recipes[name];
 			}
 			return null;
 		}
@@ -68,6 +77,7 @@ namespace ExtraplanetaryLaunchpads {
 			part_recipes = new Dictionary<string, PartRecipe> ();
 			module_recipes = new Dictionary<string, Recipe> ();
 			resource_recipes = new Dictionary<string, Recipe> ();
+			recycle_recipes = new Dictionary<string, Recipe> ();
 			default_structure_recipe = new Recipe ("RocketParts = 1");
 
 			List<LoadingSystem> list = LoadingScreen.Instance.loaders;

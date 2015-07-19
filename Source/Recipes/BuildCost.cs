@@ -23,9 +23,9 @@ using UnityEngine;
 namespace ExtraplanetaryLaunchpads {
 	public class BuildCost
 	{
-		VesselResources resources;
-		VesselResources container;
-		VesselResources hullResoures;
+		public VesselResources resources;
+		public VesselResources container;
+		public VesselResources hullResoures;
 		public double mass;
 
 		public BuildCost ()

@@ -30,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class VesselResources {
 		public Dictionary<string, ResourceInfo> resources;
+		public delegate void ResourceProcessor (VesselResources vr, string resource);
 
 		public void AddPart (Part part)
 		{
@@ -81,6 +82,16 @@ namespace ExtraplanetaryLaunchpads {
 			resources = new Dictionary<string, ResourceInfo>();
 			foreach (Part part in vessel.parts) {
 				AddPart (part);
+			}
+		}
+
+		public VesselResources (Vessel vessel, HashSet<uint> blacklist)
+		{
+			resources = new Dictionary<string, ResourceInfo>();
+			foreach (Part part in vessel.parts) {
+				if (!blacklist.Contains (part.flightID)) {
+					AddPart (part);
+				}
 			}
 		}
 
@@ -168,6 +179,13 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			return mass;
+		}
+
+		public void Process (ResourceProcessor resProc)
+		{
+			foreach (var resource in resources.Keys) {
+				resProc (this, resource);
+			}
 		}
 	}
 }

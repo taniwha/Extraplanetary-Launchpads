@@ -55,7 +55,7 @@ namespace ExtraplanetaryLaunchpads {
 			mass -= part.mass;
 		}
 
-		void ProcessResources (VesselResources resources, Dictionary<string, BuildResource> report_resources, Dictionary<string, BuildResource> required_resources = null)
+		void ProcessResources (VesselResources resources, BuildResourceSet report_resources, BuildResourceSet required_resources = null)
 		{
 			var reslist = resources.resources.Keys.ToList ();
 			foreach (string res in reslist) {
@@ -72,19 +72,11 @@ namespace ExtraplanetaryLaunchpads {
 						if (required_resources != null)  {
 							resset = required_resources;
 						}
-						if (resset.ContainsKey (br.name)) {
-							resset[br.name].Merge (br);
-						} else {
-							resset[br.name] = br;
-						}
+						resset.Add (br);
 					}
 				} else {
 					var br = new BuildResource (res, amount);
-					if (report_resources.ContainsKey (br.name)) {
-						report_resources[br.name].Merge (br);
-					} else {
-						report_resources[br.name] = br;
-					}
+					report_resources.Add (br);
 				}
 			}
 		}
@@ -92,8 +84,8 @@ namespace ExtraplanetaryLaunchpads {
 		public CostReport cost
 		{
 			get {
-				var required = new Dictionary<string, BuildResource> ();
-				var optional = new Dictionary<string, BuildResource> ();
+				var required = new BuildResourceSet ();
+				var optional = new BuildResourceSet ();
 				ProcessResources (resources, optional, required);
 				ProcessResources (container, required);
 				ProcessResources (hullResoures, required);

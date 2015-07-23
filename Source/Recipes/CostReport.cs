@@ -32,10 +32,10 @@ namespace ExtraplanetaryLaunchpads {
 			optional = new List<BuildResource> ();
 		}
 
-		public CostReport (Dictionary<string, BuildResource> req, Dictionary<string, BuildResource> opt)
+		public CostReport (BuildResourceSet req, BuildResourceSet opt)
 		{
-			required = req.Values.ToList ();
-			optional = opt.Values.ToList ();
+			required = req.Values;
+			optional = opt.Values;
 		}
 
 		public void Load (ConfigNode node)

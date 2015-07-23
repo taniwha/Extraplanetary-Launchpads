@@ -162,16 +162,7 @@ public class ExRecycler : PartModule, IModuleInfo
 		return p;
 	}
 
-	void AddResource (Dictionary <string, BuildResource> rd, BuildResource br)
-	{
-		if (rd.ContainsKey (br.name)) {
-			rd[br.name].Merge (br);
-		} else {
-			rd[br.name] = br;
-		}
-	}
-
-	void ProcessResource (VesselResources vr, string res, Dictionary <string, BuildResource> rd)
+	void ProcessResource (VesselResources vr, string res, BuildResourceSet rd)
 	{
 		var amount = vr.ResourceAmount (res);
 		var recipe = ExRecipeDatabase.RecycleRecipe (res);
@@ -181,13 +172,13 @@ public class ExRecycler : PartModule, IModuleInfo
 			recipe = recipe.Bake (br.mass);
 			foreach (var ingredient in recipe.ingredients) {
 				br = new BuildResource (ingredient);
-				AddResource (rd, br);
+				rd.Add (br);
 			}
 		} else {
 			if (ExRecipeDatabase.ResourceRecipe (res) != null) {
 			} else {
 				var br = new BuildResource (res, amount);
-				AddResource (rd, br);
+				rd.Add (br);
 			}
 		}
 	}
@@ -196,12 +187,12 @@ public class ExRecycler : PartModule, IModuleInfo
 	{
 		var bc = new BuildCost ();
 		bc.addPart (p);
-		var rd = new Dictionary <string, BuildResource> ();
+		var rd = new BuildResourceSet ();
 		VesselResources.ResourceProcessor process = delegate (VesselResources vr, string res) {
 			ProcessResource (vr, res, rd);
 		};
 		bc.resources.Process (process);
-		var reslist = new List<BuildResource> (rd.Values);
+		var reslist = rd.Values;
 		rd.Clear ();
 		bc.container.Process (process);
 		reslist.AddRange (rd.Values);

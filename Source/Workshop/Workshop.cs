@@ -54,7 +54,11 @@ public class ExWorkshop : PartModule, IModuleInfo
 	private List<ExWorkshop> sources;
 	private List<ExWorkSink> sinks;
 	private bool functional;
-	private float vessel_productivity;
+	public float vessel_productivity
+	{
+		get;
+		private set;
+	}
 	private bool enableSkilled;
 	private bool enableUnskilled;
 	private bool useSkill;
@@ -178,7 +182,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		return true;
 	}
 
-	private float HyperCurve (float x)
+	public static float HyperCurve (float x)
 	{
 		return (Mathf.Sqrt (x * x + 1) + x) / 2;
 	}

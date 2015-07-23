@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -186,7 +187,7 @@ namespace ExtraplanetaryLaunchpads {
 					&& !paused);
 		}
 
-		private IEnumerator<YieldInstruction> DewarpAndBuildCraft ()
+		private IEnumerator DewarpAndBuildCraft ()
 		{
 			state = State.Dewarping;
 			Debug.Log (String.Format ("[EL Launchpad] dewarp"));
@@ -410,7 +411,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		private IEnumerator<YieldInstruction> CaptureCraft ()
+		private IEnumerator CaptureCraft ()
 		{
 			Vector3 pos;
 			while (true) {
@@ -484,7 +485,7 @@ namespace ExtraplanetaryLaunchpads {
 			return box;
 		}
 
-		IEnumerator<YieldInstruction> FixAirstreamShielding (Vessel v)
+		IEnumerator FixAirstreamShielding (Vessel v)
 		{
 			yield return null;
 			int num_parts = v.parts.Count;

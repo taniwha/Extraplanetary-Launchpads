@@ -82,6 +82,10 @@ namespace ExtraplanetaryLaunchpads {
             buildCost = null;
             parts_count = 0;
 
+			if (ship == null || ship.parts == null) {
+				yield break;
+			}
+
 			if (ship.parts.Count > 0) {
 				Part root = ship.parts[0].localRoot;
 

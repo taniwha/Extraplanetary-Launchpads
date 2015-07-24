@@ -301,6 +301,15 @@ namespace ExtraplanetaryLaunchpads {
 					if (amount > remaining) {
 						amount = remaining;
 					}
+					count++;
+					did_work = true;
+					// do only the work required to process the actual amount
+					// of returned or disposed resource
+					kerbalHours -= work * amount / base_amount;
+					bres.amount += amount;
+					//Debug.Log("remove delta: "+amount);
+					bres.deltaAmount = amount;
+
 					double capacity = padResources.ResourceCapacity (bres.name)
 									- padResources.ResourceAmount (bres.name);
 					if (amount > capacity) {
@@ -308,14 +317,6 @@ namespace ExtraplanetaryLaunchpads {
 					}
 					if (amount / base_amount <= 1e-10)
 						continue;
-					count++;
-					did_work = true;
-					// do only the work required to process the actual amount
-					// of returned resource
-					kerbalHours -= work * amount / base_amount;
-					bres.amount += amount;
-					//Debug.Log("remove delta: "+amount);
-					bres.deltaAmount = amount;
 					padResources.TransferResource (bres.name, amount);
 				}
 			} while (did_work && kerbalHours / base_kerbalHours > 1e-10);
@@ -688,13 +689,17 @@ namespace ExtraplanetaryLaunchpads {
 		public ExBuildControl (IBuilder builder)
 		{
 			this.builder = builder;
-			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 		}
 
 		internal void OnStart ()
 		{
+			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			GameEvents.onPartDie.Add (onPartDie);
 			if (vesselInfo != null) {
 				craftRoot = builder.vessel[vesselInfo.rootPartUId];
+				if (craftRoot == null) {
+					CleaupAfterRelease ();
+				}
 			}
 			FindVesselResources ();
 			SetPadMass ();
@@ -703,23 +708,29 @@ namespace ExtraplanetaryLaunchpads {
 		internal void OnDestroy ()
 		{
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
+			GameEvents.onPartDie.Remove (onPartDie);
 		}
 
-		public void ReleaseVessel ()
+		void CleaupAfterRelease ()
 		{
-			TransferResources ();
-			if (craftRoot != null) {
-				craftRoot.Undock (vesselInfo);
-				var vesselCount = FlightGlobals.Vessels.Count;
-				Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
-				FlightGlobals.ForceSetActiveVessel (vsl);
-				builder.part.StartCoroutine (FixAirstreamShielding (vsl));
-			}
+			craftRoot = null;
 			craftConfig = null;
 			vesselInfo = null;
 			buildCost = null;
 			builtStuff = null;
 			state = State.Idle;
+		}
+
+		public void ReleaseVessel ()
+		{
+			TransferResources ();
+			craftRoot.Undock (vesselInfo);
+			var vesselCount = FlightGlobals.Vessels.Count;
+			Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
+			FlightGlobals.ForceSetActiveVessel (vsl);
+			builder.part.StartCoroutine (FixAirstreamShielding (vsl));
+
+			CleaupAfterRelease ();
 		}
 
 		bool InitializeB9Wings (Vessel v)
@@ -762,26 +773,6 @@ namespace ExtraplanetaryLaunchpads {
 			return called;
 		}
 
-		bool InitializeKASContainers (Vessel v)
-		{
-			bool called = false;
-			for (int i = 0; i < v.parts.Count; i++) {
-				Part p = v.parts[i];
-				PartModule module;
-				if (p.Modules.Contains ("KASModuleContainer")) {
-					module = p.Modules["KASModuleContainer"];
-				} else {
-					continue;
-				}
-				Type type = module.GetType ();
-				type.GetField ("orgMass", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (module, p.partInfo.partPrefab.mass);
-				MethodInfo method = type.GetMethod ("RefreshTotalSize", BindingFlags.NonPublic | BindingFlags.Instance);
-				method.Invoke (module, null);
-				called = true;
-			}
-			return called;
-		}
-
 		public CostReport getBuildCost (ConfigNode craft)
 		{
 			lockedParts = false;
@@ -802,9 +793,6 @@ namespace ExtraplanetaryLaunchpads {
 			} else if (ExSettings.FAR_Present) {
 				InitializeFARSurfaces (dummy);
 			}
-			if (ExSettings.KAS_Present) {
-				InitializeKASContainers (dummy);
-			}
 
 			craftResources = new VesselResources (dummy);
 
@@ -818,13 +806,19 @@ namespace ExtraplanetaryLaunchpads {
 			return resources.cost;
 		}
 
+		void onPartDie (Part p)
+		{
+			if (p == craftRoot) {
+				CleaupAfterRelease ();
+			}
+		}
+
 		void onVesselWasModified (Vessel v)
 		{
 			if (v == builder.vessel) {
 				padResources = new VesselResources (builder.vessel);
 				if (craftRoot != null && craftRoot.vessel != builder.vessel) {
-					craftRoot = null;
-					ReleaseVessel ();
+					CleaupAfterRelease ();
 				}
 			}
 		}

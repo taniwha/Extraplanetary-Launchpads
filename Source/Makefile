@@ -45,6 +45,7 @@ EL_FILES := \
 	LaunchClamp/LaunchClamp.cs			\
 	Pad/Launchpad.cs					\
 	Recycler/Recycler.cs				\
+	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/Workshop.cs				\

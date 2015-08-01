@@ -27,17 +27,12 @@ namespace ExtraplanetaryLaunchpads {
 
 public class ExRecycler : PartModule, IModuleInfo
 {
-	bool recyclerActive;
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField] public string RecycleField_name = "RecycleField";
 	[KSPField (guiName = "State", guiActive = true)] public string status;
 
 	Collider RecycleField;
-
-	VesselResources recycler;
-	HashSet<uint> recycle_parts;
-	ExWorkshop master;
-	List<BuildResource> part_resources;
+	RecyclerFSM sm;
 
 	public override string GetInfo ()
 	{
@@ -75,14 +70,6 @@ public class ExRecycler : PartModule, IModuleInfo
 		return true;
 	}
 
-	void CollectParts (Vessel v)
-	{
-		recycle_parts.Clear ();
-		foreach (var p in v.parts) {
-			recycle_parts.Add (p.flightID);
-		}
-	}
-
 	public void OnTriggerStay (Collider col)
 	{
 		if (!col.CompareTag ("Untagged")
@@ -91,7 +78,7 @@ public class ExRecycler : PartModule, IModuleInfo
 		Part p = col.attachedRigidbody.GetComponent<Part>();
 		//Debug.Log (String.Format ("[EL] OnTriggerStay: {0}", p));
 		if (p != null && CanRecycle (p.vessel)) {
-			CollectParts (p.vessel);
+			sm.CollectParts (p.vessel);
 			p.Couple (part);
 		}
 	}
@@ -99,7 +86,6 @@ public class ExRecycler : PartModule, IModuleInfo
 	[KSPEvent (guiActive = true, guiName = "Activate Recycler", active = true)]
 	public void Activate ()
 	{
-		recyclerActive = true;
 		Events["Activate"].active = false;
 		Events["Deactivate"].active = true;
 		status = "Active";
@@ -109,150 +95,9 @@ public class ExRecycler : PartModule, IModuleInfo
 	 active = false)]
 	public void Deactivate ()
 	{
-		recyclerActive = false;
 		Events["Activate"].active = true;
 		Events["Deactivate"].active = false;
 		status = "Inactive";
-	}
-
-	bool RecyclerActive ()
-	{
-		return recyclerActive && recycle_parts.Count == 0;
-	}
-
-	public bool isActive ()
-	{
-		return recyclerActive && recycle_parts.Count != 0;
-	}
-
-	double RecycleResources (List<BuildResource> resources, double deltat)
-	{
-		recycler.TransferResource ("", 0);
-		return deltat;
-	}
-
-	static float random (float min, float max)
-	{
-		return UnityEngine.Random.Range (min, max);
-	}
-
-	static int random (int min, int max)
-	{
-		return UnityEngine.Random.Range (min, max);
-	}
-
-	Part SelectPart ()
-	{
-		var count = recycle_parts.Count;
-		if (count < 1) {
-			return null;
-		}
-		float prod = 0;
-		if (master != null) {
-			prod = ExWorkshop.HyperCurve (master.vessel_productivity);
-		}
-		var id = recycle_parts.ToArray ()[random (0, recycle_parts.Count)];
-		Part p = vessel[id];
-		while (p.children.Count > 0) {
-			if (prod < 1 && random (0, 1f) < 1 - prod) {
-				break;
-			}
-			p = p.children[random (0, p.children.Count)];
-		}
-		return p;
-	}
-
-	void ProcessResource (VesselResources vr, string res, BuildResourceSet rd)
-	{
-		var amount = vr.ResourceAmount (res);
-		var recipe = ExRecipeDatabase.RecycleRecipe (res);
-
-		if (recipe != null) {
-			var br = new BuildResource (res, amount);
-			recipe = recipe.Bake (br.mass);
-			foreach (var ingredient in recipe.ingredients) {
-				br = new BuildResource (ingredient);
-				rd.Add (br);
-			}
-		} else {
-			if (ExRecipeDatabase.ResourceRecipe (res) != null) {
-			} else {
-				var br = new BuildResource (res, amount);
-				rd.Add (br);
-			}
-		}
-	}
-
-	List<BuildResource> PartResources (Part p)
-	{
-		var bc = new BuildCost ();
-		bc.addPart (p);
-		var rd = new BuildResourceSet ();
-		VesselResources.ResourceProcessor process = delegate (VesselResources vr, string res) {
-			ProcessResource (vr, res, rd);
-		};
-		bc.resources.Process (process);
-		var reslist = rd.Values;
-		rd.Clear ();
-		bc.container.Process (process);
-		reslist.AddRange (rd.Values);
-		rd.Clear ();
-		bc.hullResoures.Process (process);
-		reslist.AddRange (rd.Values);
-		return reslist;
-	}
-
-	double TransferResource (BuildResource br, double amount)
-	{
-		var capacity = recycler.ResourceCapacity (br.name);
-		if (amount > capacity) {
-			amount = capacity;
-		}
-		br.amount -= amount;
-		br.mass = br.amount * br.density;
-		return recycler.TransferResource (br.name, amount);
-	}
-
-	public IEnumerator RecycleVessel (double deltat)
-	{
-		while (true) {
-			if (part_resources == null) {
-				var p = SelectPart ();
-				if (p == null) {
-					yield break;
-				}
-				part_resources = PartResources (p);
-				recycle_parts.Remove (p.flightID);
-				p.Die ();
-			}
-			int res_index = 0;
-			while (part_resources.Count > 0) {
-				var br = part_resources[res_index];
-				while (br.amount > 0) {
-					if (br.density > 0) {
-						var amount = deltat / br.density;
-						if (amount > br.amount) {
-							amount = br.amount;
-						}
-						if (TransferResource (br, amount) < amount) {
-							break;
-						}
-					} else {
-						TransferResource (br, br.amount);
-						br.amount = 0;
-					}
-					yield return null;
-				}
-				if (br.amount < 1e-6) {
-					part_resources.RemoveAt (res_index);
-				}
-				res_index++;
-				if (res_index >= part_resources.Count) {
-					res_index = 0;
-				}
-			}
-			yield return null;
-		}
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
@@ -260,7 +105,9 @@ public class ExRecycler : PartModule, IModuleInfo
 	{
 		// Recyclers are not actual work-sinks, but the master is needed
 		// to check the vessel producitivity
-		master = data.Get<ExWorkshop> ("master");
+		if (sm != null) {
+			sm.SetMaster (data.Get<ExWorkshop> ("master"));
+		}
 	}
 
 	public override void OnStart (StartState state)
@@ -271,31 +118,11 @@ public class ExRecycler : PartModule, IModuleInfo
 		RecycleField = part.FindModelComponent<Collider> (RecycleField_name);
 		Debug.Log (String.Format ("[EL Recycler] OnStart: {0}", RecycleField));
 		if (RecycleField != null) {
-			RecycleField.enabled = RecyclerActive ();
+			RecycleField.enabled = false;
 		}
 		if (state == PartModule.StartState.None
 			|| state == PartModule.StartState.Editor) {
 			return;
-		}
-
-		GameEvents.onVesselWasModified.Add (onVesselWasModified);
-
-		recycler = new VesselResources (vessel, recycle_parts);
-
-		if (recycle_parts.Count > 0) {
-			StartCoroutine (RecycleVessel (0));
-		}
-	}
-
-	void OnDestroy ()
-	{
-		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
-	}
-
-	void onVesselWasModified (Vessel v)
-	{
-		if (v == vessel) {
-			recycler = new VesselResources (vessel, recycle_parts);
 		}
 	}
 
@@ -304,13 +131,8 @@ public class ExRecycler : PartModule, IModuleInfo
 		if (CompatibilityChecker.IsWin64 ()) {
 			return;
 		}
-		var rp = recycle_parts.Select(s => s.ToString()).ToArray();
-		node.AddValue ("recycle_parts", String.Join (" ", rp));
-		if (part_resources != null) {
-			foreach (var res in part_resources) {
-				var pr = node.AddNode ("part_resource");
-				res.Save (pr);
-			}
+		if (sm != null) {
+			sm.Save (node);
 		}
 	}
 
@@ -319,34 +141,15 @@ public class ExRecycler : PartModule, IModuleInfo
 		if (CompatibilityChecker.IsWin64 ()) {
 			Events["Activate"].active = false;
 			Events["Deactivate"].active = false;
-			recyclerActive = false;
 			return;
-		}
-		recycle_parts = new HashSet<uint> ();
-		if (node.HasValue ("recycle_parts")) {
-			var ids = node.GetValue ("recycle_parts").Split (new char[]{' '});
-			uint id;
-			for (int i = 0; i < ids.Length; i++) {
-				if (uint.TryParse (ids[i], out id)) {
-					recycle_parts.Add (id);
-				}
-			}
-		}
-		if (node.HasNode ("part_resource")) {
-			part_resources = new List<BuildResource> ();
-			foreach (var pr in node.GetNodes ("part_resource")) {
-				var res = new BuildResource ();
-				res.Load (pr);
-				part_resources.Add (res);
-			}
 		}
 		Deactivate ();
 	}
 
-	public void Update ()
+	public void FixedUpdate ()
 	{
-		if (RecycleField != null) {
-			RecycleField.enabled = RecyclerActive ();
+		if (sm != null) {
+			sm.Update ();
 		}
 	}
 }

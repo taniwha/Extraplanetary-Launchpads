@@ -103,21 +103,21 @@ namespace ExtraplanetaryLaunchpads {
 		{
 		}
 
-		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "")]
+		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "")]
 		public void NextUse()
 		{
 			use = (use + 1) % StakeUses.Count();
 			Events["NextUse"].guiName = StakeUses[use];
 		}
 
-		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "")]
+		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "")]
 		public void ToggleBound()
 		{
 			bound = !bound;
 			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 		}
 
-		[KSPEvent (active = true, guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 2f, guiName = "Rename Stake")]
+		[KSPEvent (active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "Rename Stake")]
 		public void RenameVessel ()
 		{
 			vessel.RenameVessel ();

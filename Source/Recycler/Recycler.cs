@@ -78,8 +78,7 @@ public class ExRecycler : PartModule, IModuleInfo
 		Part p = col.attachedRigidbody.GetComponent<Part>();
 		//Debug.Log (String.Format ("[EL] OnTriggerStay: {0}", p));
 		if (p != null && CanRecycle (p.vessel)) {
-			sm.CollectParts (p.vessel);
-			p.Couple (part);
+			sm.CollectParts (p);
 		}
 	}
 
@@ -89,6 +88,9 @@ public class ExRecycler : PartModule, IModuleInfo
 		Events["Activate"].active = false;
 		Events["Deactivate"].active = true;
 		status = "Active";
+		if (sm != null) {
+			sm.Enable ();
+		}
 	}
 
 	[KSPEvent (guiActive = true, guiName = "Deactivate Recycler",
@@ -98,6 +100,9 @@ public class ExRecycler : PartModule, IModuleInfo
 		Events["Activate"].active = true;
 		Events["Deactivate"].active = false;
 		status = "Inactive";
+		if (sm != null) {
+			sm.Disable ();
+		}
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
@@ -124,6 +129,7 @@ public class ExRecycler : PartModule, IModuleInfo
 			|| state == PartModule.StartState.Editor) {
 			return;
 		}
+		sm.Start (RecycleField);
 	}
 
 	public override void OnSave (ConfigNode node)
@@ -143,13 +149,17 @@ public class ExRecycler : PartModule, IModuleInfo
 			Events["Deactivate"].active = false;
 			return;
 		}
+		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
+			sm = new RecyclerFSM (this);
+		}
 		Deactivate ();
 	}
 
 	public void FixedUpdate ()
 	{
 		if (sm != null) {
-			sm.Update ();
+			sm.FixedUpdate ();
+			status = sm.CurrentState;
 		}
 	}
 }

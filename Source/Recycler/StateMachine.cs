@@ -27,7 +27,20 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class RecyclerFSM
 	{
-		KerbalFSM fsm;
+		class RecFSM : KerbalFSM {
+			public KFSMState FindState (string name)
+			{
+				for (int i = 0; i < States.Count; i++) {
+					if (States[i].name == name) {
+						return States[i];
+					}
+				}
+				return null;
+			}
+		}
+		RecFSM fsm;
+
+		KFSMState start_state;
 
 		KFSMState state_off;
 		KFSMState state_idle;
@@ -35,17 +48,20 @@ namespace ExtraplanetaryLaunchpads {
 		KFSMState state_processing_part;
 		KFSMState state_transferring_resources;
 
+		KFSMEvent event_enabled;
+		KFSMEvent event_disabled;
 		KFSMEvent event_enter_field;
 		KFSMEvent event_part_selected;
 		KFSMEvent event_resources_collected;
 		KFSMEvent event_resources_transferred;
 		KFSMEvent event_parts_exhausted;
 
+		bool recycler_active;
 		ExRecycler recycler;
 		Collider RecycleField;
 		VesselResources recycler_resources;
 		Part active_part;
-		ExWorkshop master;
+		//ExWorkshop master;
 		HashSet<uint> recycle_parts;
 		List<BuildResource> part_resources;
 		int res_index;
@@ -53,6 +69,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		void onenter_off (KFSMState s)
 		{
+		}
+		bool check_enabled (KFSMState s)
+		{
+			return recycler_active;
+		}
+		bool check_disabled (KFSMState s)
+		{
+			return !recycler_active;
 		}
 
 		void onenter_idle (KFSMState s)
@@ -71,21 +95,23 @@ namespace ExtraplanetaryLaunchpads {
 		void onenter_captured_idle (KFSMState s)
 		{
 			active_part = SelectPart ();
+			var evt = event_part_selected;
 			if (active_part == null) {
-				fsm.RunEvent (event_parts_exhausted);
-			} else {
-				fsm.RunEvent (event_part_selected);
+				evt = event_parts_exhausted;
 			}
+			fsm.RunEvent (evt);
 		}
 		void onleave_captured_idle (KFSMState s) { }
 
 		void onenter_processing_part (KFSMState s)
 		{
 			part_resources = PartResources (active_part);
-			fsm.RunEvent (event_resources_collected);
+			var evt = event_resources_collected;
+			fsm.RunEvent (evt);
 		}
 		void onleave_processing_part (KFSMState s)
 		{
+			Debug.Log (String.Format ("[EL RSM] onleave_processing_part"));
 			recycle_parts.Remove (active_part.flightID);
 			active_part.Die ();
 			active_part = null;
@@ -97,10 +123,15 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			bool did_something;
 
+			Debug.Log (String.Format ("[EL RSM] onupdate_transferring_resources: {0}", deltat));
 			do {
 				var br = part_resources[res_index];
 				var old_amount = br.amount;
 				deltat = ReclaimResource (br, deltat);
+				Debug.Log (String.Format ("[EL RSM] {0} {1} {2} {3} {4}",
+										  br.name, deltat,
+										  old_amount, br.amount,
+										  old_amount - br.amount));
 				did_something = old_amount != br.amount;
 				if (br.amount < 1e-6) {
 					part_resources.RemoveAt (res_index);
@@ -115,6 +146,11 @@ namespace ExtraplanetaryLaunchpads {
 		bool check_resources_transferred (KFSMState s)
 		{
 			return part_resources.Count < 1;
+		}
+
+		void LogEvent (string name)
+		{
+			Debug.Log (String.Format ("[EL RSM] event: {0}", name));
 		}
 
 		public RecyclerFSM (ExRecycler recycler)
@@ -139,46 +175,72 @@ namespace ExtraplanetaryLaunchpads {
 			state_transferring_resources = new KFSMState ("Transferring Resources");
 			state_transferring_resources.OnEnter = onenter_transferring_resources;
 			state_transferring_resources.OnLeave = onleave_transferring_resources;
-			state_transferring_resources.OnUpdate = onupdate_transferring_resources;
+			state_transferring_resources.OnFixedUpdate = onupdate_transferring_resources;
+
+			event_enabled = new KFSMEvent ("Enabled");
+			event_enabled.GoToStateOnEvent = state_idle;
+			event_enabled.updateMode = KFSMUpdateMode.FIXEDUPDATE;
+			event_enabled.OnCheckCondition = check_enabled;
+			event_enabled.OnEvent = delegate { LogEvent ("Enabled"); };
+
+			event_disabled = new KFSMEvent ("Disabled");
+			event_disabled.GoToStateOnEvent = state_off;
+			event_disabled.updateMode = KFSMUpdateMode.FIXEDUPDATE;
+			event_disabled.OnCheckCondition = check_disabled;
+			event_disabled.OnEvent = delegate { LogEvent ("Disabled"); };
 
 			event_enter_field = new KFSMEvent ("Enter Field");
 			event_enter_field.GoToStateOnEvent = state_captured_idle;
 			event_enter_field.updateMode = KFSMUpdateMode.MANUAL_TRIGGER;
+			event_enter_field.OnEvent = delegate { LogEvent ("Enter Field"); };
 
 			event_part_selected = new KFSMEvent ("Part Selected");
 			event_part_selected.GoToStateOnEvent = state_processing_part;
 			event_part_selected.updateMode = KFSMUpdateMode.MANUAL_TRIGGER;
+			event_part_selected.OnEvent = delegate { LogEvent ("Part Selected"); };
 
 			event_resources_collected = new KFSMEvent ("Resources Collected");
 			event_resources_collected.GoToStateOnEvent = state_transferring_resources;
 			event_resources_collected.updateMode = KFSMUpdateMode.MANUAL_TRIGGER;
+			event_resources_collected.OnEvent = delegate { LogEvent ("Resources Collected"); };
 
 			event_resources_transferred = new KFSMEvent ("Resources Transferred");
 			event_resources_transferred.GoToStateOnEvent = state_captured_idle;
 			event_resources_transferred.OnCheckCondition = check_resources_transferred;
-			event_resources_transferred.updateMode = KFSMUpdateMode.UPDATE;
+			event_resources_transferred.updateMode = KFSMUpdateMode.FIXEDUPDATE;
+			event_resources_transferred.OnEvent = delegate { LogEvent ("Resources Transferred"); };
 
 			event_parts_exhausted = new KFSMEvent ("Parts Exhausted");
 			event_parts_exhausted.GoToStateOnEvent = state_idle;
 			event_parts_exhausted.updateMode = KFSMUpdateMode.MANUAL_TRIGGER;
+			event_parts_exhausted.OnEvent = delegate { LogEvent ("Parts Exhausted"); };
 
-			fsm = new KerbalFSM ();
+			fsm = new RecFSM ();
+			fsm.AddState (state_off);
 			fsm.AddState (state_idle);
 			fsm.AddState (state_captured_idle);
 			fsm.AddState (state_processing_part);
 			fsm.AddState (state_transferring_resources);
 
+			fsm.AddEvent (event_enabled, new KFSMState [] {state_off});
+			fsm.AddEvent (event_disabled, new KFSMState [] {state_idle});
 			fsm.AddEvent (event_enter_field, new KFSMState [] {state_idle});
 			fsm.AddEvent (event_part_selected, new KFSMState [] {state_captured_idle});
 			fsm.AddEvent (event_resources_collected, new KFSMState [] {state_processing_part});
 			fsm.AddEvent (event_resources_transferred, new KFSMState [] {state_transferring_resources});
 			fsm.AddEvent (event_parts_exhausted, new KFSMState [] {state_captured_idle});
+
+			start_state = state_off;
+
+
+			recycle_parts = new HashSet<uint> ();
 		}
 
 		public void Start (Collider field)
 		{
 			RecycleField = field;
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			fsm.StartFSM (start_state);
 		}
 
 		public void Save (ConfigNode node)
@@ -186,13 +248,18 @@ namespace ExtraplanetaryLaunchpads {
 			if (CompatibilityChecker.IsWin64 ()) {
 				return;
 			}
-			var rp = recycle_parts.Select(s => s.ToString()).ToArray();
-			node.AddValue ("recycle_parts", String.Join (" ", rp));
+			if (recycle_parts != null) {
+				var rp = recycle_parts.Select(s => s.ToString()).ToArray();
+				node.AddValue ("recycle_parts", String.Join (" ", rp));
+			}
 			if (part_resources != null) {
 				foreach (var res in part_resources) {
 					var pr = node.AddNode ("part_resource");
 					res.Save (pr);
 				}
+			}
+			if (fsm.CurrentState != null) {
+				node.AddValue ("state", fsm.CurrentState.name);
 			}
 		}
 
@@ -216,6 +283,12 @@ namespace ExtraplanetaryLaunchpads {
 					part_resources.Add (res);
 				}
 			}
+			if (node.HasValue ("state")) {
+				var state = fsm.FindState (node.GetValue ("state"));
+				if (state != null) {
+					start_state = state;
+				}
+			}
 		}
 
 		void OnDestroy ()
@@ -223,15 +296,15 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 		}
 
-		public void Update ()
+		public void FixedUpdate ()
 		{
 			deltat = TimeWarp.fixedDeltaTime;
-			fsm.UpdateFSM ();
+			fsm.FixedUpdateFSM ();
 		}
 
 		public void SetMaster (ExWorkshop master)
 		{
-			this.master = master;
+			//this.master = master;
 		}
 
 		void onVesselWasModified (Vessel v)
@@ -241,14 +314,40 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void CollectParts (Vessel v)
+		public void Enable ()
+		{
+			recycler_active = true;
+		}
+
+		public void Disable ()
+		{
+			recycler_active = false;
+		}
+
+		public string CurrentState
+		{
+			get {
+				if (fsm.CurrentState != null) {
+					return fsm.CurrentState.name;
+				}
+				return "FSM not started";
+			}
+		}
+
+		IEnumerator WaitAndCouple (Part part)
+		{
+			yield return null;
+			part.Couple (recycler.part);
+			fsm.RunEvent (event_enter_field);
+		}
+
+		public void CollectParts (Part part)
 		{
 			recycle_parts.Clear ();
-			foreach (var p in v.parts) {
+			foreach (var p in part.vessel.parts) {
 				recycle_parts.Add (p.flightID);
 			}
-
-			recycler_resources = new VesselResources (recycler.vessel, recycle_parts);
+			recycler.StartCoroutine (WaitAndCouple (part));
 		}
 
 		static float random (float min, float max)
@@ -267,16 +366,16 @@ namespace ExtraplanetaryLaunchpads {
 			if (count < 1) {
 				return null;
 			}
-			float prod = 0;
-			if (master != null) {
-				prod = ExWorkshop.HyperCurve (master.vessel_productivity);
-			}
+			//float prod = 0;
+			//if (master != null) {
+			//	prod = ExWorkshop.HyperCurve (master.vessel_productivity);
+			//}
 			var id = recycle_parts.ToArray ()[random (0, recycle_parts.Count)];
 			Part p = recycler.vessel[id];
 			while (p.children.Count > 0) {
-				if (prod < 1 && random (0, 1f) < 1 - prod) {
-					break;
-				}
+				//if (prod < 1 && random (0, 1f) < 1 - prod) {
+				//	break;
+				//}
 				p = p.children[random (0, p.children.Count)];
 			}
 			return p;
@@ -350,6 +449,5 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			return deltat;
 		}
-
 	}
 }

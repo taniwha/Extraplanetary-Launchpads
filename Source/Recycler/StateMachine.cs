@@ -453,7 +453,7 @@ namespace ExtraplanetaryLaunchpads {
 		double ReclaimResource (BuildResource br, double deltat)
 		{
 			if (br.density > 0) {
-				var amount = deltat / br.density;
+				var amount = recycler.RecycleRate * deltat / br.density;
 				var base_amount = amount;
 				if (amount > br.amount) {
 					amount = br.amount;

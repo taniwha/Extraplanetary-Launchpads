@@ -78,6 +78,7 @@ public class ExRecycler : PartModule, IModuleInfo
 		Part p = col.attachedRigidbody.GetComponent<Part>();
 		//Debug.Log (String.Format ("[EL] OnTriggerStay: {0}", p));
 		if (p != null && CanRecycle (p.vessel)) {
+			RecycleField.enabled = false;
 			sm.CollectParts (p);
 		}
 	}

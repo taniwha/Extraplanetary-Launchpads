@@ -61,7 +61,7 @@ namespace ExtraplanetaryLaunchpads {
 		Collider RecycleField;
 		VesselResources recycler_resources;
 		Part active_part;
-		//ExWorkshop master;
+		ExWorkshop master;
 		HashSet<uint> recycle_parts;
 		List<BuildResource> part_resources;
 		int res_index;
@@ -95,19 +95,20 @@ namespace ExtraplanetaryLaunchpads {
 		void onenter_captured_idle (KFSMState s)
 		{
 			active_part = SelectPart ();
-			var evt = event_part_selected;
-			if (active_part == null) {
-				evt = event_parts_exhausted;
-			}
-			fsm.RunEvent (evt);
 		}
 		void onleave_captured_idle (KFSMState s) { }
+		bool check_part_selected (KFSMState s)
+		{
+			return active_part != null;
+		}
+		bool check_parts_exhausted (KFSMState s)
+		{
+			return active_part == null;
+		}
 
 		void onenter_processing_part (KFSMState s)
 		{
 			part_resources = PartResources (active_part);
-			var evt = event_resources_collected;
-			fsm.RunEvent (evt);
 		}
 		void onleave_processing_part (KFSMState s)
 		{
@@ -116,9 +117,16 @@ namespace ExtraplanetaryLaunchpads {
 			active_part.Die ();
 			active_part = null;
 		}
+		bool check_resources_collected (KFSMState s)
+		{
+			return part_resources != null;
+		}
 
 		void onenter_transferring_resources (KFSMState s) { }
-		void onleave_transferring_resources (KFSMState s) { }
+		void onleave_transferring_resources (KFSMState s)
+		{
+			part_resources = null;
+		}
 		void onupdate_transferring_resources ()
 		{
 			bool did_something;
@@ -179,14 +187,14 @@ namespace ExtraplanetaryLaunchpads {
 
 			event_enabled = new KFSMEvent ("Enabled");
 			event_enabled.GoToStateOnEvent = state_idle;
-			event_enabled.updateMode = KFSMUpdateMode.FIXEDUPDATE;
 			event_enabled.OnCheckCondition = check_enabled;
+			event_enabled.updateMode = KFSMUpdateMode.FIXEDUPDATE;
 			event_enabled.OnEvent = delegate { LogEvent ("Enabled"); };
 
 			event_disabled = new KFSMEvent ("Disabled");
 			event_disabled.GoToStateOnEvent = state_off;
-			event_disabled.updateMode = KFSMUpdateMode.FIXEDUPDATE;
 			event_disabled.OnCheckCondition = check_disabled;
+			event_disabled.updateMode = KFSMUpdateMode.FIXEDUPDATE;
 			event_disabled.OnEvent = delegate { LogEvent ("Disabled"); };
 
 			event_enter_field = new KFSMEvent ("Enter Field");
@@ -196,12 +204,14 @@ namespace ExtraplanetaryLaunchpads {
 
 			event_part_selected = new KFSMEvent ("Part Selected");
 			event_part_selected.GoToStateOnEvent = state_processing_part;
-			event_part_selected.updateMode = KFSMUpdateMode.MANUAL_TRIGGER;
+			event_part_selected.OnCheckCondition = check_part_selected;
+			event_part_selected.updateMode = KFSMUpdateMode.FIXEDUPDATE;
 			event_part_selected.OnEvent = delegate { LogEvent ("Part Selected"); };
 
 			event_resources_collected = new KFSMEvent ("Resources Collected");
 			event_resources_collected.GoToStateOnEvent = state_transferring_resources;
-			event_resources_collected.updateMode = KFSMUpdateMode.MANUAL_TRIGGER;
+			event_resources_collected.OnCheckCondition = check_resources_collected;
+			event_resources_collected.updateMode = KFSMUpdateMode.FIXEDUPDATE;
 			event_resources_collected.OnEvent = delegate { LogEvent ("Resources Collected"); };
 
 			event_resources_transferred = new KFSMEvent ("Resources Transferred");
@@ -212,7 +222,8 @@ namespace ExtraplanetaryLaunchpads {
 
 			event_parts_exhausted = new KFSMEvent ("Parts Exhausted");
 			event_parts_exhausted.GoToStateOnEvent = state_idle;
-			event_parts_exhausted.updateMode = KFSMUpdateMode.MANUAL_TRIGGER;
+			event_parts_exhausted.OnCheckCondition = check_parts_exhausted;
+			event_parts_exhausted.updateMode = KFSMUpdateMode.FIXEDUPDATE;
 			event_parts_exhausted.OnEvent = delegate { LogEvent ("Parts Exhausted"); };
 
 			fsm = new RecFSM ();
@@ -304,7 +315,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetMaster (ExWorkshop master)
 		{
-			//this.master = master;
+			this.master = master;
 		}
 
 		void onVesselWasModified (Vessel v)
@@ -366,16 +377,16 @@ namespace ExtraplanetaryLaunchpads {
 			if (count < 1) {
 				return null;
 			}
-			//float prod = 0;
-			//if (master != null) {
-			//	prod = ExWorkshop.HyperCurve (master.vessel_productivity);
-			//}
+			float prod = 0;
+			if (master != null) {
+				prod = ExWorkshop.HyperCurve (master.vessel_productivity);
+			}
 			var id = recycle_parts.ToArray ()[random (0, recycle_parts.Count)];
 			Part p = recycler.vessel[id];
 			while (p.children.Count > 0) {
-				//if (prod < 1 && random (0, 1f) < 1 - prod) {
-				//	break;
-				//}
+				if (prod < 1 && random (0, 1f) < 1 - prod) {
+					break;
+				}
 				p = p.children[random (0, p.children.Count)];
 			}
 			return p;

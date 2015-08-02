@@ -57,7 +57,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static void ProcessPart (Part part, Dictionary<string, ResourceInfo> resources)
 		{
-			var recipe = part_recipes[part.name].Bake (part.mass);
+			string name = part.name;
+			if (!part_recipes.ContainsKey (name)) {
+				print ("ExRecipeDatabase.ProcessPart: no part recipe for " + name);
+				return;
+			}
+			var recipe = part_recipes[name].Bake (part.mass);
 			for (int i = 0; i < recipe.ingredients.Count; i++) {
 				var ingredient = recipe.ingredients[i];
 				ingredient.ratio /= ResourceDensity (ingredient.name);

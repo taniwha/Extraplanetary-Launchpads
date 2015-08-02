@@ -131,15 +131,15 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			bool did_something;
 
-			Debug.Log (String.Format ("[EL RSM] onupdate_transferring_resources: {0}", deltat));
+			//Debug.Log (String.Format ("[EL RSM] onupdate_transferring_resources: {0}", deltat));
 			do {
 				var br = part_resources[res_index];
 				var old_amount = br.amount;
 				deltat = ReclaimResource (br, deltat);
-				Debug.Log (String.Format ("[EL RSM] {0} {1} {2} {3} {4}",
-										  br.name, deltat,
-										  old_amount, br.amount,
-										  old_amount - br.amount));
+				//Debug.Log (String.Format ("[EL RSM] {0} {1} {2} {3} {4}",
+										  //br.name, deltat,
+										  //old_amount, br.amount,
+										  //old_amount - br.amount));
 				did_something = old_amount != br.amount;
 				if (br.amount < 1e-6) {
 					part_resources.RemoveAt (res_index);

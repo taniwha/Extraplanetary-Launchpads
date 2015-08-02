@@ -381,9 +381,16 @@ namespace ExtraplanetaryLaunchpads {
 			if (master != null) {
 				prod = ExWorkshop.HyperCurve (master.vessel_productivity);
 			}
-			var id = recycle_parts.ToArray ()[random (0, recycle_parts.Count)];
-			Part p = recycler.vessel[id];
-			while (p.children.Count > 0) {
+			Part p;
+			do {
+				var ar = recycle_parts.ToArray ();
+				var id = ar[random (0, recycle_parts.Count)];
+				p = recycler.vessel[id];
+				if (p == null) {
+					recycle_parts.Remove (id);
+				}
+			} while (p == null && recycle_parts.Count > 0);
+			while (p != null && p.children.Count > 0) {
 				if (prod < 1 && random (0, 1f) < 1 - prod) {
 					break;
 				}

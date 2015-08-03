@@ -354,6 +354,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void CollectParts (Part part)
 		{
+			if (part.vessel.isEVA) {
+				FlightGlobals.ForceSetActiveVessel (recycler.vessel);
+			}
 			recycle_parts.Clear ();
 			foreach (var p in part.vessel.parts) {
 				recycle_parts.Add (p.flightID);
@@ -399,29 +402,60 @@ namespace ExtraplanetaryLaunchpads {
 			return p;
 		}
 
-		void ProcessResource (VesselResources vr, string res, BuildResourceSet rd)
+		void ProcessIngredient (Ingredient ingredient, BuildResourceSet rd)
 		{
-			var amount = vr.ResourceAmount (res);
+			var res = ingredient.name;
 			var recipe = ExRecipeDatabase.RecycleRecipe (res);
 
 			if (recipe != null) {
-				var br = new BuildResource (res, amount);
-				recipe = recipe.Bake (br.mass);
-				foreach (var ingredient in recipe.ingredients) {
-					br = new BuildResource (ingredient);
-					rd.Add (br);
+				recipe = recipe.Bake (ingredient.ratio);
+				foreach (var ing in recipe.ingredients) {
+					if (ing.isReal) {
+						var br = new BuildResource (ing);
+						rd.Add (br);
+					}
 				}
 			} else {
 				if (ExRecipeDatabase.ResourceRecipe (res) != null) {
 				} else {
-					var br = new BuildResource (res, amount);
-					rd.Add (br);
+					if (ingredient.isReal) {
+						var br = new BuildResource (ingredient);
+						rd.Add (br);
+					}
 				}
+			}
+		}
+
+		void ProcessResource (VesselResources vr, string res, BuildResourceSet rd)
+		{
+			var amount = vr.ResourceAmount (res);
+			var mass = amount * ExRecipeDatabase.ResourceDensity (res);
+
+			ProcessIngredient (new Ingredient (res, mass), rd);
+		}
+
+		void ProcessKerbal (ProtoCrewMember crew, BuildResourceSet rd)
+		{
+			string message = crew.name + " was mulched";
+			ScreenMessages.PostScreenMessage (message, 30.0f, ScreenMessageStyle.UPPER_CENTER);
+
+			var part_recipe = ExRecipeDatabase.KerbalRecipe ();
+			if (part_recipe == null) {
+				return;
+			}
+			var kerbal_recipe = part_recipe.Bake (0.09375);//FIXME
+			for (int i = 0; i < kerbal_recipe.ingredients.Count; i++) {
+				var ingredient = kerbal_recipe.ingredients[i];
+				ProcessIngredient (ingredient, rd);
+			}
+			foreach (var br in rd.Values) {
+				Debug.Log (String.Format ("[EL RSM] ProcessKerbal: {0} {1} {2}", crew.name, br.name, br.amount));
 			}
 		}
 
 		List<BuildResource> PartResources (Part p)
 		{
+			Debug.Log (String.Format ("[EL RSM] PartResources: {0} {1}", p.name, p.CrewCapacity));
 			var bc = new BuildCost ();
 			bc.addPart (p);
 			var rd = new BuildResourceSet ();
@@ -436,6 +470,14 @@ namespace ExtraplanetaryLaunchpads {
 			rd.Clear ();
 			bc.hullResoures.Process (process);
 			reslist.AddRange (rd.Values);
+			if (p.CrewCapacity > 0 && !p.name.Contains ("kerbalEVA")) {
+				rd.Clear ();
+				for (int i = 0; i < p.protoModuleCrew.Count; i++) {
+					var crew = p.protoModuleCrew[i];
+					ProcessKerbal (crew, rd);
+				}
+				reslist.AddRange (rd.Values);
+			}
 			return reslist;
 		}
 

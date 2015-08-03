@@ -40,5 +40,13 @@ namespace ExtraplanetaryLaunchpads {
 				ratio = 0;
 			}
 		}
+		public bool isReal
+		{
+			get {
+				PartResourceDefinition res_def;
+				res_def = PartResourceLibrary.Instance.GetDefinition (name);
+				return res_def != null;
+			}
+		}
 	}
 }

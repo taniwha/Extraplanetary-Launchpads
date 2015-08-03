@@ -27,16 +27,30 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		public bool done;
 
-		void LoadDefautStructureRecipe ()
+		ConfigNode LoadRecipeNode (string node_name)
 		{
 			var dbase = GameDatabase.Instance;
-			var node_list = dbase.GetConfigNodes ("EL_DefaultStructureRecipe");
-			var node = node_list.LastOrDefault ();
+			var node_list = dbase.GetConfigNodes (node_name);
+			return node_list.LastOrDefault ();
+		}
+
+		void LoadDefautStructureRecipe ()
+		{
+			var node = LoadRecipeNode ("EL_DefaultStructureRecipe");
 			if (node != null) {
 				var recipe = new Recipe (node);
 				if (recipe.ingredients.Count > 0) {
 					ExRecipeDatabase.default_structure_recipe = recipe;
 				}
+			}
+		}
+
+		void LoadKerbalRecipe ()
+		{
+			var node = LoadRecipeNode ("EL_KerbalRecipe");
+			if (node != null) {
+				var recipe = new PartRecipe (node);
+				ExRecipeDatabase.part_recipes["kerbalEVA"] = recipe;
 			}
 		}
 
@@ -129,6 +143,7 @@ namespace ExtraplanetaryLaunchpads {
 		IEnumerator<YieldInstruction> LoadRecipes()
 		{
 			LoadDefautStructureRecipe ();
+			LoadKerbalRecipe ();
 			yield return StartCoroutine (LoadResourceRecipes ());
 			yield return StartCoroutine (LoadModuleRecipes ());
 			yield return StartCoroutine (LoadPartRecipes ());

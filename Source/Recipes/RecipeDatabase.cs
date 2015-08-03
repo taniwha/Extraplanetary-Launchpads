@@ -55,6 +55,15 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
+		public static PartRecipe KerbalRecipe ()
+		{
+			var name = "kerbalEVA";
+			if (part_recipes.ContainsKey (name)) {
+				return part_recipes[name];
+			}
+			return null;
+		}
+
 		public static void ProcessPart (Part part, Dictionary<string, ResourceInfo> resources)
 		{
 			string name = part.name;

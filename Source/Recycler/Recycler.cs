@@ -158,10 +158,13 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public void FixedUpdate ()
 	{
+		double mass = part.partInfo.partPrefab.mass;
 		if (sm != null) {
 			sm.FixedUpdate ();
 			status = sm.CurrentState;
+			mass += sm.ResourceMass;
 		}
+		part.mass = (float)mass;
 	}
 }
 

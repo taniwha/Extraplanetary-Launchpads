@@ -345,6 +345,20 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public double ResourceMass
+		{
+			get {
+				double mass = 0;
+				if (part_resources != null) {
+					for (int i = 0; i < part_resources.Count; i++) {
+						var br = part_resources[i];
+						mass += br.amount * br.density;
+					}
+				}
+				return mass;
+			}
+		}
+
 		IEnumerator WaitAndCouple (Part part)
 		{
 			yield return null;

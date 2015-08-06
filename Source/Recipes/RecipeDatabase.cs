@@ -67,6 +67,11 @@ namespace ExtraplanetaryLaunchpads {
 		public static void ProcessPart (Part part, Dictionary<string, ResourceInfo> resources)
 		{
 			string name = part.name;
+			if (name.Contains ("kerbalEVA")) {
+				// kerbalEVA parts have the name of the kerbal appended to the
+				// part name.
+				name = "kerbalEVA";
+			}
 			if (!part_recipes.ContainsKey (name)) {
 				print ("ExRecipeDatabase.ProcessPart: no part recipe for " + name);
 				return;

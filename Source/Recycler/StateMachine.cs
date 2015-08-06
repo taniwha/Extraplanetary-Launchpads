@@ -140,6 +140,9 @@ namespace ExtraplanetaryLaunchpads {
 										  //br.name, deltat,
 										  //old_amount, br.amount,
 										  //old_amount - br.amount));
+				if (deltat > 1e-6) {
+					deltat = DumpResource (br, deltat);
+				}
 				did_something = old_amount != br.amount;
 				if (br.amount < 1e-6) {
 					part_resources.RemoveAt (res_index);
@@ -518,6 +521,23 @@ namespace ExtraplanetaryLaunchpads {
 				deltat = deltat * amount / base_amount;
 			} else {
 				TransferResource (br, br.amount);
+				br.amount = 0;
+				deltat = 0;
+			}
+			return deltat;
+		}
+
+		double DumpResource (BuildResource br, double deltat)
+		{
+			if (br.density > 0) {
+				var amount = recycler.RecycleRate * deltat / br.density;
+				var base_amount = amount;
+				if (amount > br.amount) {
+					amount = br.amount;
+				}
+				br.amount -= amount;
+				deltat = deltat * (base_amount - amount) / base_amount;
+			} else {
 				br.amount = 0;
 				deltat = 0;
 			}

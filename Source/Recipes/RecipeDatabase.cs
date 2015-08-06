@@ -79,6 +79,10 @@ namespace ExtraplanetaryLaunchpads {
 			var recipe = part_recipes[name].Bake (part.mass);
 			for (int i = 0; i < recipe.ingredients.Count; i++) {
 				var ingredient = recipe.ingredients[i];
+				if (!ingredient.isReal) {
+					print ("fake ingredient: " + ingredient.name);
+					continue;
+				}
 				ingredient.ratio /= ResourceDensity (ingredient.name);
 
 				ResourceInfo resourceInfo;

@@ -145,6 +145,7 @@ namespace ExtraplanetaryLaunchpads {
 			LoadDefautStructureRecipe ();
 			LoadKerbalRecipe ();
 			yield return StartCoroutine (LoadResourceRecipes ());
+			yield return StartCoroutine (LoadRecycleRecipes ());
 			yield return StartCoroutine (LoadModuleRecipes ());
 			yield return StartCoroutine (LoadPartRecipes ());
 		}

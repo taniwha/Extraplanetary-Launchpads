@@ -17,6 +17,7 @@ along with Extraplanetary Launchpads.  If not, see
 */
 using System;
 using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -139,7 +140,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		internal IEnumerator<YieldInstruction> WaitAndShutdownGenerator ()
+		internal IEnumerator WaitAndShutdownGenerator ()
 		{
 			yield return null;
 			if (part == null || part.Modules == null) {

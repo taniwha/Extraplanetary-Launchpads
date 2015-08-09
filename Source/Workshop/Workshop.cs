@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -116,7 +117,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		}
 	}
 
-	private IEnumerator<YieldInstruction> UpdateNetwork ()
+	private IEnumerator UpdateNetwork ()
 	{
 		yield return null;
 		DiscoverWorkshops ();
@@ -296,7 +297,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		DetermineProductivity ();
 	}
 
-	private IEnumerator<YieldInstruction> WaitAndDetermineProductivity ()
+	private IEnumerator WaitAndDetermineProductivity ()
 	{
 		yield return null;
 		DetermineProductivity ();
@@ -362,7 +363,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 
-	private IEnumerator<YieldInstruction> WaitAndStartWorkshop ()
+	private IEnumerator WaitAndStartWorkshop ()
 	{
 		yield return null;
 		yield return null;

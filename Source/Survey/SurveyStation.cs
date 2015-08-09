@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -520,7 +521,7 @@ namespace ExtraplanetaryLaunchpads {
 			Debug.Log (String.Format ("[EL SS] {0}", site));
 		}
 
-		IEnumerator<YieldInstruction> WaitAndFindSites ()
+		IEnumerator WaitAndFindSites ()
 		{
 			while (!FlightGlobals.ready) {
 				yield return null;

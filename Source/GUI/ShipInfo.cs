@@ -17,6 +17,7 @@ along with Extraplanetary Launchpads.  If not, see
 */
 using KSPAPIExtensions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -75,7 +76,7 @@ namespace ExtraplanetaryLaunchpads {
             parts_count++;
 		}
 
-		private IEnumerator<YieldInstruction> WaitAndRebuildList (ShipConstruct ship)
+		private IEnumerator WaitAndRebuildList (ShipConstruct ship)
 		{
 			yield return null;
 

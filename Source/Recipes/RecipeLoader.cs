@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -54,7 +55,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		IEnumerator<YieldInstruction> LoadResourceRecipes ()
+		IEnumerator LoadResourceRecipes ()
 		{
 			var dbase = GameDatabase.Instance;
 			var node_list = dbase.GetConfigNodes ("EL_ResourceRecipe");
@@ -70,7 +71,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		IEnumerator<YieldInstruction> LoadRecycleRecipes ()
+		IEnumerator LoadRecycleRecipes ()
 		{
 			var dbase = GameDatabase.Instance;
 			var node_list = dbase.GetConfigNodes ("EL_RecycleRecipe");
@@ -86,7 +87,23 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		IEnumerator<YieldInstruction> LoadModuleRecipes ()
+		IEnumerator LoadTransferRecipes ()
+		{
+			var dbase = GameDatabase.Instance;
+			var node_list = dbase.GetConfigNodes ("EL_TransferRecipe");
+			for (int i = 0; i < node_list.Length; i++) {
+				var node = node_list[i];
+				string name = node.GetValue ("name");
+
+				var recipe_node = node.GetNode ("Resources");
+				var recipe = new Recipe (recipe_node);
+				print ("[EL TransferRecipe] " + name);
+				ExRecipeDatabase.transfer_recipes[name] = recipe;
+				yield return null;
+			}
+		}
+
+		IEnumerator LoadModuleRecipes ()
 		{
 			var dbase = GameDatabase.Instance;
 			var node_list = dbase.GetConfigNodes ("EL_ModuleRecipe");
@@ -108,7 +125,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		IEnumerator<YieldInstruction> LoadPartRecipes()
+		IEnumerator LoadPartRecipes()
 		{
 			print ("[EL Recipes] LoadPartRecipes");
 			var dbase = GameDatabase.Instance;
@@ -140,12 +157,13 @@ namespace ExtraplanetaryLaunchpads {
 			done = true;
 		}
 
-		IEnumerator<YieldInstruction> LoadRecipes()
+		IEnumerator LoadRecipes()
 		{
 			LoadDefautStructureRecipe ();
 			LoadKerbalRecipe ();
 			yield return StartCoroutine (LoadResourceRecipes ());
 			yield return StartCoroutine (LoadRecycleRecipes ());
+			yield return StartCoroutine (LoadTransferRecipes ());
 			yield return StartCoroutine (LoadModuleRecipes ());
 			yield return StartCoroutine (LoadPartRecipes ());
 		}

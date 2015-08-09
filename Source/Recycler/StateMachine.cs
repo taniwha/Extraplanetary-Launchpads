@@ -419,10 +419,20 @@ namespace ExtraplanetaryLaunchpads {
 			return p;
 		}
 
-		void ProcessIngredient (Ingredient ingredient, BuildResourceSet rd)
+		void ProcessIngredient (Ingredient ingredient, BuildResourceSet rd, bool xfer)
 		{
 			var res = ingredient.name;
-			var recipe = ExRecipeDatabase.RecycleRecipe (res);
+			Recipe recipe = null;
+
+			// If the resource is being transfered from a tank (rather than
+			// coming from the part body itself), then a transfer recipe will
+			// override a recycle recipe
+			if (xfer) {
+				recipe = ExRecipeDatabase.TransferRecipe (res);
+			}
+			if (recipe == null) {
+				recipe = ExRecipeDatabase.RecycleRecipe (res);
+			}
 
 			if (recipe != null) {
 				recipe = recipe.Bake (ingredient.ratio);
@@ -443,12 +453,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void ProcessResource (VesselResources vr, string res, BuildResourceSet rd)
+		void ProcessResource (VesselResources vr, string res, BuildResourceSet rd, bool xfer)
 		{
 			var amount = vr.ResourceAmount (res);
 			var mass = amount * ExRecipeDatabase.ResourceDensity (res);
 
-			ProcessIngredient (new Ingredient (res, mass), rd);
+			ProcessIngredient (new Ingredient (res, mass), rd, xfer);
 		}
 
 		void ProcessKerbal (ProtoCrewMember crew, BuildResourceSet rd)
@@ -463,7 +473,7 @@ namespace ExtraplanetaryLaunchpads {
 			var kerbal_recipe = part_recipe.Bake (0.09375);//FIXME
 			for (int i = 0; i < kerbal_recipe.ingredients.Count; i++) {
 				var ingredient = kerbal_recipe.ingredients[i];
-				ProcessIngredient (ingredient, rd);
+				ProcessIngredient (ingredient, rd, false);
 			}
 			foreach (var br in rd.Values) {
 				Debug.Log (String.Format ("[EL RSM] ProcessKerbal: {0} {1} {2}", crew.name, br.name, br.amount));
@@ -476,8 +486,9 @@ namespace ExtraplanetaryLaunchpads {
 			var bc = new BuildCost ();
 			bc.addPart (p);
 			var rd = new BuildResourceSet ();
+			bool xfer = true;
 			VesselResources.ResourceProcessor process = delegate (VesselResources vr, string res) {
-				ProcessResource (vr, res, rd);
+				ProcessResource (vr, res, rd, xfer);
 			};
 			bc.resources.Process (process);
 			var reslist = rd.Values;
@@ -485,6 +496,7 @@ namespace ExtraplanetaryLaunchpads {
 			bc.container.Process (process);
 			reslist.AddRange (rd.Values);
 			rd.Clear ();
+			xfer = false;
 			bc.hullResoures.Process (process);
 			reslist.AddRange (rd.Values);
 			if (p.CrewCapacity > 0 && !p.name.Contains ("kerbalEVA")) {

@@ -530,7 +530,7 @@ namespace ExtraplanetaryLaunchpads {
 					amount = br.amount;
 				}
 				amount -= TransferResource (br, amount);
-				deltat = deltat * amount / base_amount;
+				deltat = deltat * (base_amount - amount) / base_amount;
 			} else {
 				TransferResource (br, br.amount);
 				br.amount = 0;

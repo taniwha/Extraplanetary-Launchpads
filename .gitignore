@@ -12,3 +12,5 @@ build
 obj
 bin
 *.csproj.user
+
+Assets/*.png

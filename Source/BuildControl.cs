@@ -785,24 +785,25 @@ namespace ExtraplanetaryLaunchpads {
 				lockedParts = true;
 			}
 			GameObject ro = ship.parts[0].localRoot.gameObject;
-			Vessel dummy = ro.AddComponent<Vessel>();
-			dummy.Initialize (true);
+			Vessel craftVessel = ro.AddComponent<Vessel>();
+			craftVessel.Initialize (true);
 			if (ExSettings.B9Wings_Present) {
-				if (!InitializeB9Wings (dummy) && ExSettings.FAR_Present) {
-					InitializeFARSurfaces (dummy);
+				if (!InitializeB9Wings (craftVessel)
+					&& ExSettings.FAR_Present) {
+					InitializeFARSurfaces (craftVessel);
 				}
 			} else if (ExSettings.FAR_Present) {
-				InitializeFARSurfaces (dummy);
+				InitializeFARSurfaces (craftVessel);
 			}
 
-			craftResources = new VesselResources (dummy);
+			craftResources = new VesselResources (craftVessel);
 
 			BuildCost resources = new BuildCost ();
 
 			foreach (Part p in ship.parts) {
 				resources.addPart (p);
 			}
-			dummy.Die ();
+			craftVessel.Die ();
 
 			return resources.cost;
 		}

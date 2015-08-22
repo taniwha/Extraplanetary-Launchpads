@@ -800,7 +800,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			BuildCost resources = new BuildCost ();
 
-			foreach (Part p in ship.parts) {
+			foreach (Part p in craftVessel.parts) {
 				resources.addPart (p);
 			}
 			craftVessel.Die ();

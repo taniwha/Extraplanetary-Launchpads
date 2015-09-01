@@ -50,7 +50,16 @@ namespace ExtraplanetaryLaunchpads {
 			ingredients = new List<Ingredient> (resdict.Values);
 		}
 
-		public Recipe (string recipe) : this (ConfigNode.Parse (recipe))
+		static MethodInfo PreFormatConfig = typeof(ConfigNode).GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Where(m => m.Name == "PreFormatConfig" && m.GetParameters().Length == 1).FirstOrDefault();
+		static MethodInfo RecurseFormat = typeof(ConfigNode).GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Where(m => m.Name == "RecurseFormat" && m.GetParameters().Length == 1).FirstOrDefault();
+		static ConfigNode Parse(string s)
+		{
+			var lines = s.Split(new char[]{'\n', '\r'});
+			object obj = PreFormatConfig.Invoke(null, new object[] {lines});
+			return (ConfigNode) RecurseFormat.Invoke(null, new object[] {obj});
+		}
+
+		public Recipe (string recipe) : this (Parse (recipe))
 		{
 		}
 

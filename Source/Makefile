@@ -8,11 +8,6 @@ APIEXTDATA	:= ${PLUGINDIR}
 TARGETS		:= bin/Launchpad.dll
 
 EL_FILES := \
-	Converter/Converter.cs				\
-	Converter/Extractor.cs				\
-	Converter/IResourceProvider.cs		\
-	Converter/KethaneResourceProvider.cs\
-	Converter/StockResourceProvider.cs	\
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/BuildResourceSet.cs			\
@@ -38,7 +33,6 @@ EL_FILES := \
 	assembly/VersionReport.cs			\
 	GUI/BuildWindow.cs					\
 	GUI/DropDownList.cs					\
-	GUI/EditorToolbar.cs				\
 	GUI/RenameWindow.cs					\
 	GUI/ShipInfo.cs						\
 	GUI/ProgressBar.cs					\
@@ -54,7 +48,6 @@ EL_FILES := \
 	lib/KerbalStatsWrapper.cs			\
 	toolbar/Toolbar.cs					\
 	toolbar/ToolbarWrapper.cs			\
-	AirstreamShield.cs					\
 	BuildControl.cs						\
 	Settings.cs							\
 	$e

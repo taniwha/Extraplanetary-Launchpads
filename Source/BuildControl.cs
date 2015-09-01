@@ -485,20 +485,6 @@ namespace ExtraplanetaryLaunchpads {
 			return box;
 		}
 
-		IEnumerator FixAirstreamShielding (Vessel v)
-		{
-			yield return null;
-			int num_parts = v.parts.Count;
-			var AS = new AirstreamShield (builder);
-			for (int i = 0; i < num_parts; i++) {
-				v.parts[i].AddShield (AS);
-			}
-			yield return null;
-			for (int i = 0; i < num_parts; i++) {
-				v.parts[i].RemoveShield (AS);
-			}
-		}
-
 		void EnableExtendingLaunchClamps (ShipConstruct ship)
 		{
 			for (int i = 0; i < ship.parts.Count; i++) {
@@ -729,7 +715,6 @@ namespace ExtraplanetaryLaunchpads {
 			var vesselCount = FlightGlobals.Vessels.Count;
 			Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
 			FlightGlobals.ForceSetActiveVessel (vsl);
-			builder.part.StartCoroutine (FixAirstreamShielding (vsl));
 
 			CleaupAfterRelease ();
 		}

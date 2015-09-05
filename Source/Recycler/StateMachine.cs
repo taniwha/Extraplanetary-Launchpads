@@ -510,17 +510,6 @@ namespace ExtraplanetaryLaunchpads {
 			return reslist;
 		}
 
-		double TransferResource (BuildResource br, double amount)
-		{
-			var capacity = recycler_resources.ResourceCapacity (br.name);
-			if (amount > capacity) {
-				amount = capacity;
-			}
-			br.amount -= amount;
-			br.mass = br.amount * br.density;
-			return recycler_resources.TransferResource (br.name, amount);
-		}
-
 		double ReclaimResource (BuildResource br, double deltat)
 		{
 			if (br.density > 0) {
@@ -529,10 +518,12 @@ namespace ExtraplanetaryLaunchpads {
 				if (amount > br.amount) {
 					amount = br.amount;
 				}
-				amount -= TransferResource (br, amount);
-				deltat = deltat * (base_amount - amount) / base_amount;
+				var remain = recycler_resources.TransferResource (br.name, amount);
+				br.amount -= amount - remain;
+				br.mass = br.amount * br.density;
+				deltat = deltat * remain / base_amount;
 			} else {
-				TransferResource (br, br.amount);
+				recycler_resources.TransferResource (br.name, br.amount);
 				br.amount = 0;
 				deltat = 0;
 			}

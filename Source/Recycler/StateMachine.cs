@@ -371,7 +371,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void CollectParts (Part part)
 		{
-			if (part.vessel.isEVA) {
+			if (FlightGlobals.ActiveVessel == part.vessel) {
 				FlightGlobals.ForceSetActiveVessel (recycler.vessel);
 			}
 			recycle_parts.Clear ();

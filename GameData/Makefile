@@ -16,7 +16,7 @@ all:
 clean:
 
 info:
-	@echo "Modular Fuel Tanks Build Information"
+	@echo "Extraplanetary Launchpads Build Information"
 	@echo "    resgen2:  ${RESGEN2}"
 	@echo "    gmcs:     ${GMCS}"
 	@echo "    git:      ${GIT}"

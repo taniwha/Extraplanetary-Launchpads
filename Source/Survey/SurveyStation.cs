@@ -238,7 +238,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 
-			public Vector3d Up ()
+			public Vector3d LocalUp ()
 			{
 				double lat = body.GetLatitude (center);
 				double lon = body.GetLongitude (center);
@@ -269,7 +269,7 @@ namespace ExtraplanetaryLaunchpads {
 			{
 				// find a reference frame that is close to the given possibly
 				// non-orthogonal frame, but where up is always up
-				Vector3d u = Up ();
+				Vector3d u = LocalUp ();
 				r = Vector3d.Normalize (r - Vector3d.Dot (r, u) * u);
 				f = Vector3d.Normalize (f - Vector3d.Dot (f, u) * u);
 				f = Vector3d.Normalize (f + Vector3d.Cross (r, u));
@@ -347,21 +347,22 @@ namespace ExtraplanetaryLaunchpads {
 			Quaternion rot;
 			if (y.IsZero ()) {
 				if (z.IsZero () && x.IsZero ()) {
-					x = Vector3d.Cross (p.Up (), Vector3d.up);
+					x = Vector3d.Cross (p.LocalUp (), Vector3d.up);
 					x.Normalize ();
-					z = Vector3d.Cross (x, p.Up ());
+					z = Vector3d.Cross (x, p.LocalUp ());
 				} else if (z.IsZero ()) {
-					z = Vector3d.Cross (x, p.Up ());
+					z = Vector3d.Cross (x, p.LocalUp ());
 					z.Normalize ();
 				} else if (x.IsZero ()) {
-					x = Vector3d.Cross (p.Up (), z);
+					x = Vector3d.Cross (p.LocalUp (), z);
 					x.Normalize ();
 				}
 				rot = p.ChooseRotation (x, z);
 			} else if (x.IsZero ()) {
 				// y is not zero
 				if (z.IsZero ()) {
-					z = Vector3d.Cross (p.Up (), y);
+					// use local up for x
+					z = Vector3d.Cross (p.LocalUp (), y);
 					z.Normalize ();
 				}
 				rot = p.ChooseRotation (z, y);

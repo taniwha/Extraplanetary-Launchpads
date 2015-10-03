@@ -364,6 +364,8 @@ namespace ExtraplanetaryLaunchpads {
 					// use local up for x
 					z = Vector3d.Cross (p.LocalUp (), y);
 					z.Normalize ();
+				} else {
+					z = Vector3d.Normalize (z - Vector3d.Dot (z, p.LocalUp ()) * p.LocalUp ());
 				}
 				rot = p.ChooseRotation (z, y);
 			} else if (z.IsZero ()) {

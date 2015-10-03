@@ -367,7 +367,7 @@ namespace ExtraplanetaryLaunchpads {
 				} else {
 					z = Vector3d.Normalize (z - Vector3d.Dot (z, p.LocalUp ()) * p.LocalUp ());
 				}
-				rot = p.ChooseRotation (z, y);
+				rot = Quaternion.LookRotation (z, y);
 			} else if (z.IsZero ()) {
 				// neither x nor y are zero
 				rot = p.ChooseRotation (y, x);

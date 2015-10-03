@@ -83,7 +83,8 @@ namespace ExtraplanetaryLaunchpads {
             buildCost = null;
             parts_count = 0;
 
-			if (ship == null || ship.parts == null) {
+			if (ship == null || ship.parts == null || ship.parts.Count < 1
+				|| ship.parts[0] == null) {
 				yield break;
 			}
 

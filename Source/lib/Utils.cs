@@ -68,7 +68,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var span = TimeSpan (seconds);
 			int i = 0;
-			while (i < span.Length && span[i] == 0) {
+			while (i < span.Length - 1 && span[i] == 0) {
 				i++;
 			}
 			return String.Format (time_formats[i], span.Cast<object>().ToArray());

@@ -353,6 +353,9 @@ namespace ExtraplanetaryLaunchpads {
 		double BuildETA (BuildResource br, BuildResource req, bool forward)
 		{
 			double numberOfFramesLeft;
+			if (br.deltaAmount <= 0) {
+				return 0;
+			}
 			if (forward) {
 				numberOfFramesLeft = (br.amount / br.deltaAmount);
 			} else {

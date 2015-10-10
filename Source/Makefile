@@ -52,6 +52,7 @@ EL_FILES := \
 	lib/KISWrapper.cs					\
 	lib/KACWrapper.cs					\
 	lib/KerbalStatsWrapper.cs			\
+	lib/Utils.cs						\
 	toolbar/Toolbar.cs					\
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\

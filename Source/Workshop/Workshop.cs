@@ -247,28 +247,12 @@ public class ExWorkshop : PartModule, IModuleInfo
 		return contribution;
 	}
 
-	List<ProtoCrewMember> GetCrewList ()
-	{
-		if (part.CrewCapacity > 0) {
-			return part.protoModuleCrew;
-		} else {
-			var crew = new List<ProtoCrewMember> ();
-			var seats = part.FindModulesImplementing<KerbalSeat> ();
-			foreach (var s in seats) {
-				if (s.Occupant != null) {
-					crew.Add (s.Occupant.protoModuleCrew[0]);
-				}
-			}
-			return crew;
-		}
-	}
-
 	private void DetermineProductivity ()
 	{
 		float kh = 0;
 		enableSkilled = false;
 		enableUnskilled = false;
-		var crewList = GetCrewList ();
+		var crewList = EL_Utils.GetCrewList (part);
 		if (useSkill) {
 			foreach (var crew in crewList) {
 				if (HasConstructionSkill (crew)) {

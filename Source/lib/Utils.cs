@@ -43,6 +43,37 @@ namespace ExtraplanetaryLaunchpads {
 				return crew;
 			}
 		}
+
+		public static double[] TimeSpan (double seconds)
+		{
+			var years = Math.Floor (seconds / KSPUtil.Year);
+			seconds -= years * KSPUtil.Year;
+			var days = Math.Floor (seconds / KSPUtil.Day);
+			seconds -= days * KSPUtil.Day;
+			var hours = Math.Floor (seconds / KSPUtil.Hour);
+			seconds -= hours * KSPUtil.Hour;
+			var minutes = Math.Floor (seconds / KSPUtil.Minute);
+			seconds -= minutes * KSPUtil.Minute;
+			return new double[] {years, days, hours, minutes, seconds};
+		}
+
+		static string[] time_formats = {
+			"{0:F0}y{1:000}d{2:00}h{3:00}m{4:00}s",
+			"{1:F0}d{2:00}h{3:00}m{4:00}s",
+			"{2:F0}h{3:00}m{4:00}s",
+			"{3:F0}m{4:00}s",
+			"{4:F0}s",
+		};
+		public static string TimeSpanString (double seconds)
+		{
+			var span = TimeSpan (seconds);
+			int i = 0;
+			while (i < span.Length && span[i] == 0) {
+				i++;
+			}
+			return String.Format (time_formats[i], span.Cast<object>().ToArray());
+		}
+
 		public static bool HasSkill<T> (ProtoCrewMember crew) where T : class
 		{
 			ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is T).FirstOrDefault ();

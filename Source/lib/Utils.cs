@@ -23,6 +23,7 @@ using System.Linq;
 using UnityEngine;
 
 using KSP.IO;
+using Experience;
 
 namespace ExtraplanetaryLaunchpads {
 
@@ -41,6 +42,14 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				return crew;
 			}
+		}
+		public static bool HasSkill<T> (ProtoCrewMember crew) where T : class
+		{
+			ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is T).FirstOrDefault ();
+			if (skill == null) {
+				return false;
+			}
+			return true;
 		}
 	}
 }

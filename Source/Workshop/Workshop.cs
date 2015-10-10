@@ -174,15 +174,6 @@ public class ExWorkshop : PartModule, IModuleInfo
 		return y + (v + a * c / 2) * c + (1+2*s)*(1-Mathf.Exp(-w));
 	}
 
-	private bool HasConstructionSkill (ProtoCrewMember crew)
-	{
-		ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is ExConstructionSkill).FirstOrDefault ();
-		if (skill == null) {
-			return false;
-		}
-		return true;
-	}
-
 	public static float HyperCurve (float x)
 	{
 		return (Mathf.Sqrt (x * x + 1) + x) / 2;
@@ -205,7 +196,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			contribution = Normal (stupidity, courage, experience);
 		}
 		if (useSkill) {
-			if (!HasConstructionSkill (crew)) {
+			if (!EL_Utils.HasSkill<ExConstructionSkill> (crew)) {
 				if (!enableUnskilled) {
 					// can't work here, but may not know to keep out of the way.
 					contribution = Mathf.Min (contribution, 0);
@@ -241,7 +232,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 								  + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
 								  crew.name, stupidity, courage, isBadass,
 								  experience, expstr, contribution,
-								  HasConstructionSkill (crew),
+								  EL_Utils.HasSkill<ExConstructionSkill> (crew),
 								  crew.experienceLevel,
 								  enableSkilled, ProductivityFactor));
 		return contribution;
@@ -255,7 +246,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		var crewList = EL_Utils.GetCrewList (part);
 		if (useSkill) {
 			foreach (var crew in crewList) {
-				if (HasConstructionSkill (crew)) {
+				if (EL_Utils.HasSkill<ExConstructionSkill> (crew)) {
 					if (crew.experienceLevel >= 4) {
 						enableSkilled = true;
 					}

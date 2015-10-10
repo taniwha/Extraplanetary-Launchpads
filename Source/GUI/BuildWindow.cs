@@ -350,6 +350,17 @@ namespace ExtraplanetaryLaunchpads {
 			return fraction;
 		}
 
+		double BuildETA (BuildResource br, BuildResource req, bool forward)
+		{
+			double numberOfFramesLeft;
+			if (forward) {
+				numberOfFramesLeft = (br.amount / br.deltaAmount);
+			} else {
+				numberOfFramesLeft = ((req.amount-br.amount) / br.deltaAmount);
+			}
+			return numberOfFramesLeft * TimeWarp.fixedDeltaTime;
+		}
+
 		double ResourceProgress (string label, BuildResource br,
 			BuildResource req, bool forward)
 		{
@@ -357,30 +368,14 @@ namespace ExtraplanetaryLaunchpads {
 			double required = br.amount;
 			double available = control.padResources.ResourceAmount (br.name);
 			double alarmTime;
-			string percent = (fraction * 100).ToString ("G4") + "% ";
+			string percent = (fraction * 100).ToString ("G4") + "%";
 			if (control.paused) {
 				percent = percent + "[paused]";
 				alarmTime = 0; // need assignment or compiler complains about use of unassigned variable
 			} else {
-				double numberOfFramesLeft;
-				TimeSpan timeLeft;
-				try {
-					if (forward) {
-						numberOfFramesLeft = (br.amount / br.deltaAmount);
-					} else {
-						numberOfFramesLeft = ((req.amount-br.amount) / br.deltaAmount);
-					}
-					double numberOfSecondsLeft = numberOfFramesLeft * TimeWarp.fixedDeltaTime;
-					timeLeft = TimeSpan.FromSeconds (numberOfSecondsLeft);
-					alarmTime = Planetarium.GetUniversalTime () + timeLeft.TotalSeconds;
-				}
-				catch {
-					// catch overflows or any other math errors, and just give a value
-					// it will be overwritten the next time
-					timeLeft = TimeSpan.FromSeconds(0);
-					alarmTime=0;
-				}
-				percent = percent + String.Format ("{0:D2}:{1:D2}:{2:D2}", timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
+				double eta = BuildETA (br, req, forward);
+				alarmTime = Planetarium.GetUniversalTime () + eta;
+				percent = percent + " " + EL_Utils.TimeSpanString (eta);
 
 			}
 

@@ -34,6 +34,11 @@ namespace ExtraplanetaryLaunchpads {
 		List<SurveySite> available_sites;
 		SurveySite site;
 		float base_mass;
+		[KSPField (guiName = "Range", guiActive = true)]
+		float range = 20;
+		public static float[] site_ranges = {
+			20, 50, 100, 200, 400, 800, 1600, 2000
+		};
 
 		public override string GetInfo ()
 		{
@@ -460,6 +465,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			control.OnStart ();
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
+			GameEvents.onCrewTransferred.Add (onCrewTransferred);
+			StartCoroutine (WaitAndDetermineRange ());
 			if (canBuild) {
 				StartCoroutine (WaitAndFindSites ());
 			}
@@ -472,6 +479,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			control.OnDestroy ();
 			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
+			GameEvents.onCrewTransferred.Remove (onCrewTransferred);
 			ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
 			ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
 			ExSurveyTracker.onSiteModified.Remove (onSiteModified);
@@ -505,7 +513,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void FindSites ()
 		{
-			available_sites = ExSurveyTracker.instance.FindSites (vessel, 100.0);
+			available_sites = ExSurveyTracker.instance.FindSites (vessel, range);
 			if (available_sites == null || available_sites.Count < 1) {
 				Highlight (false);
 				site = null;
@@ -535,6 +543,31 @@ namespace ExtraplanetaryLaunchpads {
 			FindSites ();
 		}
 
+		IEnumerator WaitAndDetermineRange ()
+		{
+			yield return null;
+			DetermineRange ();
+		}
+
+		void DetermineRange ()
+		{
+			var crewList = EL_Utils.GetCrewList (part);
+			int bestLevel = -2;
+			foreach (var crew in crewList) {
+				int level = -1;
+				if (EL_Utils.HasSkill<ExSurveySkill> (crew)) {
+					level = crew.experienceLevel;
+				}
+				if (level > bestLevel) {
+					bestLevel = level;
+				}
+			}
+			if (bestLevel > 5) {
+				bestLevel = 5;
+			}
+			range = site_ranges[bestLevel + 2];
+		}
+
 		private void onVesselSituationChange (GameEvents.HostedFromToAction<Vessel, Vessel.Situations> vs)
 		{
 			if (vs.host != vessel) {
@@ -545,6 +578,16 @@ namespace ExtraplanetaryLaunchpads {
 				|| vessel.situation == Vessel.Situations.PRELAUNCH) {
 				StartCoroutine (WaitAndFindSites ());
 			}
+		}
+
+		void onCrewTransferred (GameEvents.HostedFromToAction<ProtoCrewMember,Part> hft)
+		{
+			if (hft.from != part && hft.to != part) {
+				return;
+			}
+			Debug.Log (String.Format ("[EL SurveyStation] transfer: {0} {1} {2}",
+									  hft.host, hft.from, hft.to));
+			DetermineRange ();
 		}
 
 		void onSiteAdded (SurveySite s)

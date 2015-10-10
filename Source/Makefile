@@ -30,6 +30,7 @@ EL_FILES := \
 	Survey/SiteBody.cs					\
 	Survey/SiteList.cs					\
 	Survey/SurveySite.cs				\
+	Survey/SurveySkill.cs				\
 	Survey/SurveyStake.cs				\
 	Survey/SurveyStation.cs				\
 	Survey/SurveyTracker.cs				\

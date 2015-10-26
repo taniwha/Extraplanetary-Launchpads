@@ -39,7 +39,8 @@ public class ExWorkshop : PartModule, IModuleInfo
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
 
-	public double lastUpdate = 0.0;
+	[KSPField]
+	public bool FullyEquipped = false;
 
 	[KSPField]
 	public bool IgnoreCrewCapacity = true;
@@ -50,6 +51,14 @@ public class ExWorkshop : PartModule, IModuleInfo
 	[KSPField (guiName = "Vessel Productivity", guiActive = true)]
 	public float VesselProductivity;
 
+	public double lastUpdate = 0.0;
+
+	public bool SupportInexperienced
+	{
+		get {
+			return FullyEquipped || ProductivityFactor >= 1;
+		}
+	}
 	private bool workshop_started;
 	private ExWorkshop master;
 	private List<ExWorkshop> sources;
@@ -208,7 +217,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			} else {
 				switch (crew.experienceLevel) {
 				case 0:
-					if (!enableSkilled && ProductivityFactor < 1.0f) {
+					if (!enableSkilled && !SupportInexperienced) {
 						// can't work here, but knows to keep out of the way.
 						contribution = 0;
 					}
@@ -216,7 +225,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 				case 1:
 					break;
 				case 2:
-					if (ProductivityFactor >= 1.0f) {
+					if (SupportInexperienced) {
 						// He's learned the ropes.
 						contribution = HyperCurve (contribution);
 					}
@@ -234,7 +243,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 								  experience, expstr, contribution,
 								  EL_Utils.HasSkill<ExConstructionSkill> (crew),
 								  crew.experienceLevel,
-								  enableSkilled, ProductivityFactor));
+								  enableSkilled, SupportInexperienced));
 		return contribution;
 	}
 

@@ -82,5 +82,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			return true;
 		}
+
+		public static void SetupEVAEvent(BaseEvent evt, float EVARange)
+		{
+			evt.externalToEVAOnly = true;
+			evt.guiActiveUnfocused = true;
+			evt.unfocusedRange = EVARange;
+		}
 	}
 }

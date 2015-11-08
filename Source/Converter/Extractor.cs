@@ -15,6 +15,9 @@ namespace ExtraplanetaryLaunchpads {
 		double rate;
 
 		[KSPField]
+		public float EVARange = 1.5f;
+
+		[KSPField]
 		public string ResourceName = "";
 
 		[KSPField]
@@ -92,6 +95,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnStart(PartModule.StartState state)
 		{
+			base.OnStart(state);
 			if (!HighLogic.LoadedSceneIsFlight) {
 				return;
 			}
@@ -106,7 +110,8 @@ namespace ExtraplanetaryLaunchpads {
 			resource_amounts = new double[resource_providers.Count];
 			FindTransforms ();
 			Fields["ResourceStatus"].guiName = ResourceName + " rate";
-			base.OnStart(state);
+			EL_Utils.SetupEVAEvent (Events["StartResourceConverter"], EVARange);
+			EL_Utils.SetupEVAEvent (Events["StopResourceConverter"], EVARange);
 		}
 
 		protected override void PostProcess(ConverterResults result, double deltaTime)

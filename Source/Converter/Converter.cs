@@ -25,6 +25,16 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		ConversionRecipe ratio_recipe;
 
+		[KSPField]
+		public float EVARange = 1.5f;
+
+		public override void OnStart(PartModule.StartState state)
+		{
+			base.OnStart (state);
+			EL_Utils.SetupEVAEvent (Events["StartResourceConverter"], EVARange);
+			EL_Utils.SetupEVAEvent (Events["StopResourceConverter"], EVARange);
+		}
+
 		public ConversionRecipe Recipe
 		{
 			get {

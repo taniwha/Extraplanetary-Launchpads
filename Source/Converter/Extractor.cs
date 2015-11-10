@@ -47,11 +47,6 @@ namespace ExtraplanetaryLaunchpads {
 			return consumed;
 		}
 
-		protected override float GetHeatMultiplier(ConverterResults result, double deltaTime)
-		{
-			return 1 / (float)rate * HeatThrottle;
-		}
-
 		public override string GetInfo()
 		{
 			return "";
@@ -163,7 +158,7 @@ namespace ExtraplanetaryLaunchpads {
 				status = "Inactive";
 				return null;
 			}
-			rate = amount * Efficiency * HeatThrottle;
+			rate = amount * Efficiency;
 			return LoadRecipe(rate);
 		}
 	}

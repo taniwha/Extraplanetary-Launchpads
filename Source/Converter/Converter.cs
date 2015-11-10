@@ -45,11 +45,6 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		protected override float GetHeatMultiplier (ConverterResults result, double deltaTime)
-		{
-			return 1;
-		}
-
 		public override string GetInfo ()
 		{
 			return "EL Converter";

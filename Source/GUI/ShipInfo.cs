@@ -106,6 +106,12 @@ namespace ExtraplanetaryLaunchpads {
 			StartCoroutine (WaitAndRebuildList (ship));
         }
 
+		void onEditorRestart ()
+		{
+			buildCost = null;
+			parts_count = 0;
+		}
+
 		void Awake ()
 		{
 			if (CompatibilityChecker.IsWin64 ()) {
@@ -113,11 +119,13 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			GameEvents.onEditorShipModified.Add (RebuildList);
+			GameEvents.onEditorRestart.Add (onEditorRestart);
 		}
 
 		void OnDestroy ()
 		{
 			GameEvents.onEditorShipModified.Remove (RebuildList);
+			GameEvents.onEditorRestart.Remove (onEditorRestart);
 		}
 
 		void OnGUI ()

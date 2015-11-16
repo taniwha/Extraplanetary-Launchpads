@@ -73,15 +73,15 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			//Debug.Log (String.Format ("[EL GUI] attach: {0}", part));
 			buildCost.addPart (part);
-            parts_count++;
+			parts_count++;
 		}
 
 		private IEnumerator WaitAndRebuildList (ShipConstruct ship)
 		{
 			yield return null;
 
-            buildCost = null;
-            parts_count = 0;
+			buildCost = null;
+			parts_count = 0;
 
 			if (ship == null || ship.parts == null || ship.parts.Count < 1
 				|| ship.parts[0] == null) {
@@ -91,7 +91,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (ship.parts.Count > 0) {
 				Part root = ship.parts[0].localRoot;
 
-                buildCost = new BuildCost ();
+				buildCost = new BuildCost ();
 				addPart (root);
 				foreach (Part p in root.GetComponentsInChildren<Part>()) {
 					if (p != root) {
@@ -101,10 +101,10 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-        public void RebuildList(ShipConstruct ship)
-        {
+		public void RebuildList(ShipConstruct ship)
+		{
 			StartCoroutine (WaitAndRebuildList (ship));
-        }
+		}
 
 		void onEditorRestart ()
 		{
@@ -130,8 +130,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnGUI ()
 		{
-            if (!showGUI || buildCost == null)
-                return;
+			if (!showGUI || buildCost == null)
+				return;
 
 			if (winpos.x == 0 && winpos.y == 0) {
 				winpos.x = Screen.width / 2;
@@ -161,12 +161,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		private void MassLabel (string title, double mass)
 		{
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(title + ":");
-            GUILayout.FlexibleSpace();
-            GUILayout.Label(MathUtils.FormatMass(mass));
-            GUILayout.EndHorizontal();
-        }
+			GUILayout.BeginHorizontal();
+			GUILayout.Label(title + ":");
+			GUILayout.FlexibleSpace();
+			GUILayout.Label(MathUtils.FormatMass(mass));
+			GUILayout.EndHorizontal();
+		}
 
 		private Vector2 ResourcePanel (string title,
 									   List<BuildResource> resources,

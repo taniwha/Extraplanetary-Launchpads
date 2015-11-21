@@ -132,7 +132,13 @@ namespace ExtraplanetaryLaunchpads {
 			bool did_something;
 
 			//Debug.Log (String.Format ("[EL RSM] onupdate_transferring_resources: {0}", deltat));
+			if (part_resources.Count < 1) {
+				return;
+			}
 			do {
+				if (res_index >= part_resources.Count) {
+					res_index = 0;
+				}
 				var br = part_resources[res_index];
 				var old_amount = br.amount;
 				deltat = ReclaimResource (br, deltat);
@@ -148,9 +154,6 @@ namespace ExtraplanetaryLaunchpads {
 					part_resources.RemoveAt (res_index);
 				} else {
 					res_index++;
-				}
-				if (res_index >= part_resources.Count) {
-					res_index = 0;
 				}
 			} while (deltat > 1e-6 && part_resources.Count > 0 && did_something);
 		}

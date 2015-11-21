@@ -529,7 +529,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				site_list = new DropDownList (slist);
 			}
-			Debug.Log (String.Format ("[EL SS] {0}", site));
+			Debug.Log (String.Format ("[EL SS] site: '{0}'", site));
 		}
 
 		IEnumerator WaitAndFindSites ()

@@ -367,7 +367,10 @@ namespace ExtraplanetaryLaunchpads {
 		double ResourceProgress (string label, BuildResource br,
 			BuildResource req, bool forward)
 		{
-			double fraction = (req.amount - br.amount) / req.amount;
+			double fraction = 1;
+			if (req.amount > 0) {
+				fraction = (req.amount - br.amount) / req.amount;
+			}
 			double required = br.amount;
 			double available = control.padResources.ResourceAmount (br.name);
 			double alarmTime;

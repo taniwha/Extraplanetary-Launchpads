@@ -73,9 +73,20 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
+		static string GetPartName (Part part)
+		{
+			// Extract the actual part name from the part. Root nodes include
+			// the vessel name :P
+			string pname = part.name;
+			if (pname.Contains (" (")) {
+				pname = pname.Substring (0, pname.IndexOf (" ("));
+			}
+			return pname;
+		}
+
 		public static void ProcessPart (Part part, Dictionary<string, ResourceInfo> resources)
 		{
-			string name = part.name;
+			string name = GetPartName (part);
 			if (name.Contains ("kerbalEVA")) {
 				// kerbalEVA parts have the name of the kerbal appended to the
 				// part name.

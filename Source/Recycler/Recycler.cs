@@ -76,6 +76,9 @@ public class ExRecycler : PartModule, IModuleInfo
 			|| !col.CompareTag ("Untagged")
 			|| col.gameObject.name == "MapOverlay collider")	// kethane
 			return;
+		if (!RecycleField.enabled) {
+			return;
+		}
 		Part p = col.attachedRigidbody.GetComponent<Part>();
 		//Debug.Log (String.Format ("[EL] OnTriggerStay: {0}", p));
 		if (p != null && CanRecycle (p.vessel)) {

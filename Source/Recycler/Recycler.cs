@@ -72,7 +72,8 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public void OnTriggerStay (Collider col)
 	{
-		if (!col.CompareTag ("Untagged")
+		if (col.attachedRigidbody == null
+			|| !col.CompareTag ("Untagged")
 			|| col.gameObject.name == "MapOverlay collider")	// kethane
 			return;
 		Part p = col.attachedRigidbody.GetComponent<Part>();

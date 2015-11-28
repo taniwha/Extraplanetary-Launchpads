@@ -377,14 +377,31 @@ public class ExWorkshop : PartModule, IModuleInfo
 		}
 	}
 
+	double GetDeltaTime ()
+	{
+		double delta = -1;
+		if (Time.timeSinceLevelLoad >= 1 && FlightGlobals.ready) {
+			if (lastUpdate < 1e-9) {
+				lastUpdate = Planetarium.GetUniversalTime ();
+			} else {
+				var currentTime = Planetarium.GetUniversalTime ();
+				delta = currentTime - lastUpdate;
+				delta = Math.Min (delta, ResourceUtilities.GetMaxDeltaTime ());
+				lastUpdate += delta;
+			}
+		}
+		return delta;
+	}
+
 	public void FixedUpdate ()
 	{
 		if (!workshop_started) {
 			return;
 		}
-		double currentTime = Planetarium.GetUniversalTime ();
-		double timeDelta = currentTime - lastUpdate;
-		//print ("last Update: " + lastUpdateTime + "/" + lastUpdate);
+		double timeDelta = GetDeltaTime ();
+		if (timeDelta < 1e-9) {
+			return;
+		}
 		if (this == master) {
 			double hours = 0;
 			vessel_productivity = 0;
@@ -412,7 +429,6 @@ public class ExWorkshop : PartModule, IModuleInfo
 				}
 			}
 		}
-		lastUpdate = currentTime;
 	}
 }
 

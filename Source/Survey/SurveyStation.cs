@@ -467,9 +467,6 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
 			GameEvents.onCrewTransferred.Add (onCrewTransferred);
 			StartCoroutine (WaitAndDetermineRange ());
-			if (canBuild) {
-				StartCoroutine (WaitAndFindSites ());
-			}
 			ExSurveyTracker.onSiteAdded.Add (onSiteAdded);
 			ExSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
 			ExSurveyTracker.onSiteModified.Add (onSiteModified);
@@ -566,6 +563,9 @@ namespace ExtraplanetaryLaunchpads {
 				bestLevel = 5;
 			}
 			range = site_ranges[bestLevel + 2];
+			if (canBuild) {
+				StartCoroutine (WaitAndFindSites ());
+			}
 		}
 
 		private void onVesselSituationChange (GameEvents.HostedFromToAction<Vessel, Vessel.Situations> vs)
@@ -573,9 +573,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (vs.host != vessel) {
 				return;
 			}
-			if (vessel.situation == Vessel.Situations.LANDED
-				|| vessel.situation == Vessel.Situations.SPLASHED
-				|| vessel.situation == Vessel.Situations.PRELAUNCH) {
+			if (canBuild) {
 				StartCoroutine (WaitAndFindSites ());
 			}
 		}
@@ -587,7 +585,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			Debug.Log (String.Format ("[EL SurveyStation] transfer: {0} {1} {2}",
 									  hft.host, hft.from, hft.to));
-			DetermineRange ();
+			StartCoroutine (WaitAndDetermineRange ());
 		}
 
 		void onSiteAdded (SurveySite s)

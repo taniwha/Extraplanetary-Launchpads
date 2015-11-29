@@ -21,29 +21,28 @@ using System.Linq;
 using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
-	public class BuildResource: IComparable<BuildResource>, IConfigNode
+	public class BuildResource: IEquatable<BuildResource>, IComparable<BuildResource>, IConfigNode
 	{
 		public string name;
 		public double amount;
 		public double deltaAmount = 0;
 		public double density;
 		public double mass;
-		public bool hull;
 		public double kerbalHours;
+
+		public override int GetHashCode ()
+		{
+			return name.GetHashCode ();
+		}
+
+		public bool Equals (BuildResource other)
+		{
+			return name.Equals (other.name);
+		}
 
 		public int CompareTo (BuildResource other)
 		{
 			return name.CompareTo (other.name);
-		}
-
-		private static bool isHullResource (PartResourceDefinition res)
-		{
-			// FIXME need smarter resource "type" handling
-			if (res.resourceTransferMode == ResourceTransferMode.NONE
-				|| res.resourceFlowMode == ResourceFlowMode.NO_FLOW) {
-				return true;
-			}
-			return false;
 		}
 
 		private double KerbalHours ()
@@ -81,7 +80,23 @@ namespace ExtraplanetaryLaunchpads {
 				amount = mass;
 				mass = 0;
 			}
-			hull = isHullResource (res_def);
+			kerbalHours = KerbalHours ();
+		}
+
+		public BuildResource (Ingredient ingredient)
+		{
+			this.name = ingredient.name;
+			this.mass = ingredient.ratio;
+
+			PartResourceDefinition res_def;
+			res_def = PartResourceLibrary.Instance.GetDefinition (name);
+			density = res_def.density;
+			if (density > 0) {
+				amount = mass / density;
+			} else {
+				amount = mass;
+				mass = 0;
+			}
 			kerbalHours = KerbalHours ();
 		}
 
@@ -93,7 +108,6 @@ namespace ExtraplanetaryLaunchpads {
 			res_def = PartResourceLibrary.Instance.GetDefinition (name);
 			density = res_def.density;
 			mass = amount * density;
-			hull = isHullResource (res_def);
 			kerbalHours = KerbalHours ();
 		}
 
@@ -110,7 +124,6 @@ namespace ExtraplanetaryLaunchpads {
 			res_def = PartResourceLibrary.Instance.GetDefinition (name);
 			density = res_def.density;
 			mass = amount * density;
-			hull = isHullResource (res_def);
 			kerbalHours = KerbalHours ();
 		}
 
@@ -119,6 +132,12 @@ namespace ExtraplanetaryLaunchpads {
 			node.AddValue ("name", name);
 			// 17 digits is enough to uniquely identify any double
 			node.AddValue ("amount", amount.ToString ("G17"));
+		}
+
+		public void Merge (BuildResource res)
+		{
+			amount += res.amount;
+			mass += res.mass;
 		}
 	}
 }

@@ -24,6 +24,8 @@ using UnityEngine;
 
 using KSP.IO;
 
+using ExtraplanetaryLaunchpads;
+
 namespace ExtraplanetaryLaunchpads.KIS {
 
 	public class KIS_Item {
@@ -174,7 +176,7 @@ namespace ExtraplanetaryLaunchpads.KIS {
 					ResourceInfo resourceInfo;
 					var resourceName = res.resourceName;
 					if (!resources.ContainsKey (resourceName)) {
-						resourceInfo = new ExtraplanetaryLaunchpads.ResourceInfo ();
+						resourceInfo = new ResourceInfo ();
 						resources[resourceName] = resourceInfo;
 					}
 					resourceInfo = resources[resourceName];

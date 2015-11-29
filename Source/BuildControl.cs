@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -186,7 +187,7 @@ namespace ExtraplanetaryLaunchpads {
 					&& !paused);
 		}
 
-		private IEnumerator<YieldInstruction> DewarpAndBuildCraft ()
+		private IEnumerator DewarpAndBuildCraft ()
 		{
 			state = State.Dewarping;
 			Debug.Log (String.Format ("[EL Launchpad] dewarp"));
@@ -410,7 +411,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		private IEnumerator<YieldInstruction> CaptureCraft ()
+		private IEnumerator CaptureCraft ()
 		{
 			Vector3 pos;
 			while (true) {
@@ -484,7 +485,7 @@ namespace ExtraplanetaryLaunchpads {
 			return box;
 		}
 
-		IEnumerator<YieldInstruction> FixAirstreamShielding (Vessel v)
+		IEnumerator FixAirstreamShielding (Vessel v)
 		{
 			yield return null;
 			int num_parts = v.parts.Count;
@@ -784,24 +785,27 @@ namespace ExtraplanetaryLaunchpads {
 				lockedParts = true;
 			}
 			GameObject ro = ship.parts[0].localRoot.gameObject;
-			Vessel dummy = ro.AddComponent<Vessel>();
-			dummy.Initialize (true);
+			Vessel craftVessel = ro.AddComponent<Vessel>();
+			craftVessel.Initialize (true);
 			if (ExSettings.B9Wings_Present) {
-				if (!InitializeB9Wings (dummy) && ExSettings.FAR_Present) {
-					InitializeFARSurfaces (dummy);
+				if (!InitializeB9Wings (craftVessel)
+					&& ExSettings.FAR_Present) {
+					InitializeFARSurfaces (craftVessel);
 				}
 			} else if (ExSettings.FAR_Present) {
-				InitializeFARSurfaces (dummy);
+				InitializeFARSurfaces (craftVessel);
 			}
 
-			craftResources = new VesselResources (dummy);
+			// needed for displaying optional resources during the planning
+			// stage.
+			craftResources = new VesselResources (craftVessel);
 
 			BuildCost resources = new BuildCost ();
 
-			foreach (Part p in ship.parts) {
+			foreach (Part p in craftVessel.parts) {
 				resources.addPart (p);
 			}
-			dummy.Die ();
+			craftVessel.Die ();
 
 			return resources.cost;
 		}

@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -112,7 +113,7 @@ namespace ExtraplanetaryLaunchpads {
 			sites[bodyName][siteName].RemoveStake (vessel);
 		}
 
-		IEnumerator<YieldInstruction> WaitAndAddStake (Vessel vessel)
+		IEnumerator WaitAndAddStake (Vessel vessel)
 		{
 			while (vessel.vesselName == null || vessel.vesselName == "") {
 				yield return null;

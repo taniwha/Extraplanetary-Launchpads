@@ -13,7 +13,7 @@ ZIP		:= zip
 
 .PHONY: all clean info install
 
-SUBDIRS=GameData Source
+SUBDIRS=Assets GameData Source
 
 all clean install:
 	@for dir in ${SUBDIRS}; do \

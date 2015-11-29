@@ -1,7 +1,11 @@
 ExtraplanetaryLaunchpads/EL_MM.cfg
 ExtraplanetaryLaunchpads/Settings.cfg
 ExtraplanetaryLaunchpads/seat_tasks.cfg
+ExtraplanetaryLaunchpads/Agencies/Agents.cfg
+ExtraplanetaryLaunchpads/Resources/Asteroid_MetalOre.cfg
 ExtraplanetaryLaunchpads/Resources/ExtraSpaceCenters.cfg
+ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
+ExtraplanetaryLaunchpads/Resources/Recipes.cfg
 ExtraplanetaryLaunchpads/Parts/OMD/model.mu
 ExtraplanetaryLaunchpads/Parts/OMD/OMD.tga
 ExtraplanetaryLaunchpads/Parts/OMD/part.cfg
@@ -64,7 +68,6 @@ ExtraplanetaryLaunchpads/Parts/launchpad2/launchpad2.mu
 ExtraplanetaryLaunchpads/Parts/launchpad2/model.mu
 ExtraplanetaryLaunchpads/Parts/launchpad2/pad.png
 ExtraplanetaryLaunchpads/Parts/launchpad2/part.cfg
-ExtraplanetaryLaunchpads/Parts/launchpad2/pad.tga
 ExtraplanetaryLaunchpads/Parts/Magnetometer/model.mu
 ExtraplanetaryLaunchpads/Parts/Magnetometer/Magnetometer.png
 ExtraplanetaryLaunchpads/Parts/Magnetometer/part.cfg

@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -33,6 +34,11 @@ namespace ExtraplanetaryLaunchpads {
 		List<SurveySite> available_sites;
 		SurveySite site;
 		float base_mass;
+		[KSPField (guiName = "Range", guiActive = true)]
+		float range = 20;
+		public static float[] site_ranges = {
+			20, 50, 100, 200, 400, 800, 1600, 2000
+		};
 
 		public override string GetInfo ()
 		{
@@ -237,7 +243,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 
-			public Vector3d Up ()
+			public Vector3d LocalUp ()
 			{
 				double lat = body.GetLatitude (center);
 				double lon = body.GetLongitude (center);
@@ -268,7 +274,7 @@ namespace ExtraplanetaryLaunchpads {
 			{
 				// find a reference frame that is close to the given possibly
 				// non-orthogonal frame, but where up is always up
-				Vector3d u = Up ();
+				Vector3d u = LocalUp ();
 				r = Vector3d.Normalize (r - Vector3d.Dot (r, u) * u);
 				f = Vector3d.Normalize (f - Vector3d.Dot (f, u) * u);
 				f = Vector3d.Normalize (f + Vector3d.Cross (r, u));
@@ -346,24 +352,27 @@ namespace ExtraplanetaryLaunchpads {
 			Quaternion rot;
 			if (y.IsZero ()) {
 				if (z.IsZero () && x.IsZero ()) {
-					x = Vector3d.Cross (p.Up (), Vector3d.up);
+					x = Vector3d.Cross (p.LocalUp (), Vector3d.up);
 					x.Normalize ();
-					z = Vector3d.Cross (x, p.Up ());
+					z = Vector3d.Cross (x, p.LocalUp ());
 				} else if (z.IsZero ()) {
-					z = Vector3d.Cross (x, p.Up ());
+					z = Vector3d.Cross (x, p.LocalUp ());
 					z.Normalize ();
 				} else if (x.IsZero ()) {
-					x = Vector3d.Cross (p.Up (), z);
+					x = Vector3d.Cross (p.LocalUp (), z);
 					x.Normalize ();
 				}
 				rot = p.ChooseRotation (x, z);
 			} else if (x.IsZero ()) {
 				// y is not zero
 				if (z.IsZero ()) {
-					z = Vector3d.Cross (p.Up (), y);
+					// use local up for x
+					z = Vector3d.Cross (p.LocalUp (), y);
 					z.Normalize ();
+				} else {
+					z = Vector3d.Normalize (z - Vector3d.Dot (z, p.LocalUp ()) * p.LocalUp ());
 				}
-				rot = p.ChooseRotation (z, y);
+				rot = Quaternion.LookRotation (z, y);
 			} else if (z.IsZero ()) {
 				// neither x nor y are zero
 				rot = p.ChooseRotation (y, x);
@@ -456,9 +465,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			control.OnStart ();
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
-			if (canBuild) {
-				StartCoroutine (WaitAndFindSites ());
-			}
+			GameEvents.onCrewTransferred.Add (onCrewTransferred);
+			StartCoroutine (WaitAndDetermineRange ());
 			ExSurveyTracker.onSiteAdded.Add (onSiteAdded);
 			ExSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
 			ExSurveyTracker.onSiteModified.Add (onSiteModified);
@@ -468,6 +476,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			control.OnDestroy ();
 			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
+			GameEvents.onCrewTransferred.Remove (onCrewTransferred);
 			ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
 			ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
 			ExSurveyTracker.onSiteModified.Remove (onSiteModified);
@@ -501,7 +510,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void FindSites ()
 		{
-			available_sites = ExSurveyTracker.instance.FindSites (vessel, 100.0);
+			available_sites = ExSurveyTracker.instance.FindSites (vessel, range);
 			if (available_sites == null || available_sites.Count < 1) {
 				Highlight (false);
 				site = null;
@@ -517,10 +526,10 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				site_list = new DropDownList (slist);
 			}
-			Debug.Log (String.Format ("[EL SS] {0}", site));
+			Debug.Log (String.Format ("[EL SS] site: '{0}'", site));
 		}
 
-		IEnumerator<YieldInstruction> WaitAndFindSites ()
+		IEnumerator WaitAndFindSites ()
 		{
 			while (!FlightGlobals.ready) {
 				yield return null;
@@ -531,16 +540,52 @@ namespace ExtraplanetaryLaunchpads {
 			FindSites ();
 		}
 
+		IEnumerator WaitAndDetermineRange ()
+		{
+			yield return null;
+			DetermineRange ();
+		}
+
+		void DetermineRange ()
+		{
+			var crewList = EL_Utils.GetCrewList (part);
+			int bestLevel = -2;
+			foreach (var crew in crewList) {
+				int level = -1;
+				if (EL_Utils.HasSkill<ExSurveySkill> (crew)) {
+					level = crew.experienceLevel;
+				}
+				if (level > bestLevel) {
+					bestLevel = level;
+				}
+			}
+			if (bestLevel > 5) {
+				bestLevel = 5;
+			}
+			range = site_ranges[bestLevel + 2];
+			if (canBuild) {
+				StartCoroutine (WaitAndFindSites ());
+			}
+		}
+
 		private void onVesselSituationChange (GameEvents.HostedFromToAction<Vessel, Vessel.Situations> vs)
 		{
 			if (vs.host != vessel) {
 				return;
 			}
-			if (vessel.situation == Vessel.Situations.LANDED
-				|| vessel.situation == Vessel.Situations.SPLASHED
-				|| vessel.situation == Vessel.Situations.PRELAUNCH) {
+			if (canBuild) {
 				StartCoroutine (WaitAndFindSites ());
 			}
+		}
+
+		void onCrewTransferred (GameEvents.HostedFromToAction<ProtoCrewMember,Part> hft)
+		{
+			if (hft.from != part && hft.to != part) {
+				return;
+			}
+			Debug.Log (String.Format ("[EL SurveyStation] transfer: {0} {1} {2}",
+									  hft.host, hft.from, hft.to));
+			StartCoroutine (WaitAndDetermineRange ());
 		}
 
 		void onSiteAdded (SurveySite s)

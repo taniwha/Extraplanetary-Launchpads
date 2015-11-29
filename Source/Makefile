@@ -15,7 +15,14 @@ EL_FILES := \
 	Converter/StockResourceProvider.cs	\
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
+	Recipes/BuildResourceSet.cs			\
 	Recipes/CostReport.cs				\
+	Recipes/Ingredient.cs				\
+	Recipes/PartRecipe.cs				\
+	Recipes/Recipe.cs					\
+	Recipes/RecipeResourceContainer.cs	\
+	Recipes/RecipeDatabase.cs			\
+	Recipes/RecipeLoader.cs				\
 	Resources/IResourceContainer.cs		\
 	Resources/KISResourceContainer.cs	\
 	Resources/PartResourceContainer.cs	\
@@ -23,6 +30,7 @@ EL_FILES := \
 	Survey/SiteBody.cs					\
 	Survey/SiteList.cs					\
 	Survey/SurveySite.cs				\
+	Survey/SurveySkill.cs				\
 	Survey/SurveyStake.cs				\
 	Survey/SurveyStation.cs				\
 	Survey/SurveyTracker.cs				\
@@ -38,12 +46,14 @@ EL_FILES := \
 	LaunchClamp/LaunchClamp.cs			\
 	Pad/Launchpad.cs					\
 	Recycler/Recycler.cs				\
+	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/Workshop.cs				\
 	lib/KISWrapper.cs					\
 	lib/KACWrapper.cs					\
 	lib/KerbalStatsWrapper.cs			\
+	lib/Utils.cs						\
 	toolbar/Toolbar.cs					\
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\

@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -38,7 +39,8 @@ public class ExWorkshop : PartModule, IModuleInfo
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
 
-	public double lastUpdate = 0.0;
+	[KSPField]
+	public bool FullyEquipped = false;
 
 	[KSPField]
 	public bool IgnoreCrewCapacity = true;
@@ -49,12 +51,24 @@ public class ExWorkshop : PartModule, IModuleInfo
 	[KSPField (guiName = "Vessel Productivity", guiActive = true)]
 	public float VesselProductivity;
 
+	public double lastUpdate = 0.0;
+
+	public bool SupportInexperienced
+	{
+		get {
+			return FullyEquipped || ProductivityFactor >= 1;
+		}
+	}
 	private bool workshop_started;
 	private ExWorkshop master;
 	private List<ExWorkshop> sources;
 	private List<ExWorkSink> sinks;
 	private bool functional;
-	private float vessel_productivity;
+	public float vessel_productivity
+	{
+		get;
+		private set;
+	}
 	private bool enableSkilled;
 	private bool enableUnskilled;
 	private bool useSkill;
@@ -112,7 +126,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		}
 	}
 
-	private IEnumerator<YieldInstruction> UpdateNetwork ()
+	private IEnumerator UpdateNetwork ()
 	{
 		yield return null;
 		DiscoverWorkshops ();
@@ -169,16 +183,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		return y + (v + a * c / 2) * c + (1+2*s)*(1-Mathf.Exp(-w));
 	}
 
-	private bool HasConstructionSkill (ProtoCrewMember crew)
-	{
-		ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is ExConstructionSkill).FirstOrDefault ();
-		if (skill == null) {
-			return false;
-		}
-		return true;
-	}
-
-	private float HyperCurve (float x)
+	public static float HyperCurve (float x)
 	{
 		return (Mathf.Sqrt (x * x + 1) + x) / 2;
 	}
@@ -200,7 +205,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			contribution = Normal (stupidity, courage, experience);
 		}
 		if (useSkill) {
-			if (!HasConstructionSkill (crew)) {
+			if (!EL_Utils.HasSkill<ExConstructionSkill> (crew)) {
 				if (!enableUnskilled) {
 					// can't work here, but may not know to keep out of the way.
 					contribution = Mathf.Min (contribution, 0);
@@ -212,7 +217,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			} else {
 				switch (crew.experienceLevel) {
 				case 0:
-					if (!enableSkilled && ProductivityFactor < 1.0f) {
+					if (!enableSkilled && !SupportInexperienced) {
 						// can't work here, but knows to keep out of the way.
 						contribution = 0;
 					}
@@ -220,7 +225,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 				case 1:
 					break;
 				case 2:
-					if (ProductivityFactor >= 1.0f) {
+					if (SupportInexperienced) {
 						// He's learned the ropes.
 						contribution = HyperCurve (contribution);
 					}
@@ -236,26 +241,10 @@ public class ExWorkshop : PartModule, IModuleInfo
 								  + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
 								  crew.name, stupidity, courage, isBadass,
 								  experience, expstr, contribution,
-								  HasConstructionSkill (crew),
+								  EL_Utils.HasSkill<ExConstructionSkill> (crew),
 								  crew.experienceLevel,
-								  enableSkilled, ProductivityFactor));
+								  enableSkilled, SupportInexperienced));
 		return contribution;
-	}
-
-	List<ProtoCrewMember> GetCrewList ()
-	{
-		if (part.CrewCapacity > 0) {
-			return part.protoModuleCrew;
-		} else {
-			var crew = new List<ProtoCrewMember> ();
-			var seats = part.FindModulesImplementing<KerbalSeat> ();
-			foreach (var s in seats) {
-				if (s.Occupant != null) {
-					crew.Add (s.Occupant.protoModuleCrew[0]);
-				}
-			}
-			return crew;
-		}
 	}
 
 	private void DetermineProductivity ()
@@ -263,10 +252,10 @@ public class ExWorkshop : PartModule, IModuleInfo
 		float kh = 0;
 		enableSkilled = false;
 		enableUnskilled = false;
-		var crewList = GetCrewList ();
+		var crewList = EL_Utils.GetCrewList (part);
 		if (useSkill) {
 			foreach (var crew in crewList) {
-				if (HasConstructionSkill (crew)) {
+				if (EL_Utils.HasSkill<ExConstructionSkill> (crew)) {
 					if (crew.experienceLevel >= 4) {
 						enableSkilled = true;
 					}
@@ -292,7 +281,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		DetermineProductivity ();
 	}
 
-	private IEnumerator<YieldInstruction> WaitAndDetermineProductivity ()
+	private IEnumerator WaitAndDetermineProductivity ()
 	{
 		yield return null;
 		DetermineProductivity ();
@@ -358,7 +347,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 
-	private IEnumerator<YieldInstruction> WaitAndStartWorkshop ()
+	private IEnumerator WaitAndStartWorkshop ()
 	{
 		yield return null;
 		yield return null;
@@ -388,14 +377,31 @@ public class ExWorkshop : PartModule, IModuleInfo
 		}
 	}
 
+	double GetDeltaTime ()
+	{
+		double delta = -1;
+		if (Time.timeSinceLevelLoad >= 1 && FlightGlobals.ready) {
+			if (lastUpdate < 1e-9) {
+				lastUpdate = Planetarium.GetUniversalTime ();
+			} else {
+				var currentTime = Planetarium.GetUniversalTime ();
+				delta = currentTime - lastUpdate;
+				delta = Math.Min (delta, ResourceUtilities.GetMaxDeltaTime ());
+				lastUpdate += delta;
+			}
+		}
+		return delta;
+	}
+
 	public void FixedUpdate ()
 	{
 		if (!workshop_started) {
 			return;
 		}
-		double currentTime = Planetarium.GetUniversalTime ();
-		double timeDelta = currentTime - lastUpdate;
-		//print ("last Update: " + lastUpdateTime + "/" + lastUpdate);
+		double timeDelta = GetDeltaTime ();
+		if (timeDelta < 1e-9) {
+			return;
+		}
 		if (this == master) {
 			double hours = 0;
 			vessel_productivity = 0;
@@ -423,7 +429,6 @@ public class ExWorkshop : PartModule, IModuleInfo
 				}
 			}
 		}
-		lastUpdate = currentTime;
 	}
 }
 

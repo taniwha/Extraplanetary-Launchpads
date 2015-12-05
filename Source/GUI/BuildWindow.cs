@@ -640,16 +640,8 @@ namespace ExtraplanetaryLaunchpads {
 			return reslist.Where(r => r.name == name).FirstOrDefault ();
 		}
 
-		void BuildProgress (bool forward)
+		void UpdateAlarm (double mostFutureAlarmTime, bool forward)
 		{
-			double mostFutureAlarmTime = 0;
-			foreach (var br in control.builtStuff.required) {
-				var req = FindResource (control.buildCost.required, br.name);
-				double alarmTime = ResourceProgress (br.name, br, req, forward);
-				if (alarmTime > mostFutureAlarmTime) {
-					mostFutureAlarmTime = alarmTime;
-				}
-			}
 			if (KACWrapper.APIReady && ExSettings.use_KAC) {
 				if (control.paused) {
 					// It doesn't make sense to have an alarm for an event that will never happen
@@ -705,7 +697,19 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
+		}
 
+		void BuildProgress (bool forward)
+		{
+			double mostFutureAlarmTime = 0;
+			foreach (var br in control.builtStuff.required) {
+				var req = FindResource (control.buildCost.required, br.name);
+				double alarmTime = ResourceProgress (br.name, br, req, forward);
+				if (alarmTime > mostFutureAlarmTime) {
+					mostFutureAlarmTime = alarmTime;
+				}
+			}
+			UpdateAlarm (mostFutureAlarmTime, forward);
 		}
 
 		void OptionalResources ()

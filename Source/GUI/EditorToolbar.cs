@@ -54,8 +54,8 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			GameEvents.onGUIEditorToolbarReady.Add (onGUIEditorToolbarReady);
 			if (texture == null) {
-				texture = GameDatabase.Instance.GetTexture ("ExtraplanetaryLaunchpads/Textures/icon_button", false);
-				icon = new Icon ("EL icon", texture, texture);
+				texture = GameDatabase.Instance.GetTexture ("ExtraplanetaryLaunchpads/Textures/icon_filter", false);
+				icon = new Icon ("EL icon", texture, texture, true);
 				elItems = new HashSet<string> ();
 			}
 			elItems.Clear ();

@@ -14,7 +14,7 @@ GIT			:= git
 TAR			:= tar
 ZIP			:= zip
 
-all: kairyuu.png kairyuu_scaled.png
+all: kairyuu.png kairyuu_scaled.png icon_button.png
 
 info:
 	@echo "Extraplanetary Launchpads Build Information"
@@ -32,11 +32,16 @@ kairyuu.png: kairyuu.svg
 kairyuu_scaled.png: kairyuu.svg
 	inkscape --export-width=64 --export-height=40 --export-background='#000000' --export-background-opacity=0 --export-png=$@ $^
 
+icon_button.png: icon_button.svg
+	inkscape --export-width=24 --export-height=24 --export-background='#000000' --export-background-opacity=0 --export-png=$@ $^
+
 clean:
 	rm -f kairyuu.png kairyuu_scaled.png
 
 install: all
 	mkdir -p ${ELGAMEDATA}/Agencies
 	cp kairyuu.png kairyuu_scaled.png ${ELGAMEDATA}/Agencies
+	mkdir -p ${ELGAMEDATA}/Textures
+	cp icon_button.png ${ELGAMEDATA}/Textures
 
 .PHONY: all clean install

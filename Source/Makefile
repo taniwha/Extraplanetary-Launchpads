@@ -62,7 +62,7 @@ EL_FILES := \
 	$e
 
 RESGEN2		:= resgen2
-GMCS		:= gmcs
+GMCS		:= mcs
 GMCSFLAGS	:= -optimize -warnaserror -debug
 GIT			:= git
 TAR			:= tar

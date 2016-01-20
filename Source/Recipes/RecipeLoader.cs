@@ -55,6 +55,16 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		ConfigNode GetResources (ConfigNode node, string recipe_name)
+		{
+			var resources = node.GetNode ("Resources");
+			if (resources == null) {
+				print ("[EL Recipes] skipping " + recipe_name + " "
+					   + name + " with no Resources");
+			}
+			return resources;
+		}
+
 		IEnumerator LoadResourceRecipes ()
 		{
 			var dbase = GameDatabase.Instance;
@@ -62,8 +72,15 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < node_list.Length; i++) {
 				var node = node_list[i];
 				string name = node.GetValue ("name");
+				if (String.IsNullOrEmpty (name)) {
+					print ("[EL Recipes] skipping unnamed EL_ResourceRecipe");
+					continue;
+				}
 
-				var recipe_node = node.GetNode ("Resources");
+				var recipe_node = GetResources (node, "EL_ResourceRecipe");
+				if (recipe_node == null) {
+					continue;
+				}
 				var recipe = new Recipe (recipe_node);
 				print ("[EL ResourceRecipe] " + name);
 				ExRecipeDatabase.resource_recipes[name] = recipe;
@@ -78,8 +95,15 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < node_list.Length; i++) {
 				var node = node_list[i];
 				string name = node.GetValue ("name");
+				if (String.IsNullOrEmpty (name)) {
+					print ("[EL Recipes] skipping unnamed EL_RecycleRecipe");
+					continue;
+				}
 
-				var recipe_node = node.GetNode ("Resources");
+				var recipe_node = GetResources (node, "EL_RecycleRecipe");
+				if (recipe_node == null) {
+					continue;
+				}
 				var recipe = new Recipe (recipe_node);
 				print ("[EL RecycleRecipe] " + name);
 				ExRecipeDatabase.recycle_recipes[name] = recipe;
@@ -94,8 +118,15 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < node_list.Length; i++) {
 				var node = node_list[i];
 				string name = node.GetValue ("name");
+				if (String.IsNullOrEmpty (name)) {
+					print ("[EL Recipes] skipping unnamed EL_TransferRecipe");
+					continue;
+				}
 
-				var recipe_node = node.GetNode ("Resources");
+				var recipe_node = GetResources (node, "EL_TransferRecipe");
+				if (recipe_node == null) {
+					continue;
+				}
 				var recipe = new Recipe (recipe_node);
 				print ("[EL TransferRecipe] " + name);
 				ExRecipeDatabase.transfer_recipes[name] = recipe;
@@ -110,17 +141,24 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < node_list.Length; i++) {
 				var node = node_list[i];
 				string name = node.GetValue ("name");
+				if (String.IsNullOrEmpty (name)) {
+					print ("[EL Recipes] skipping unnamed EL_ModuleRecipe");
+					continue;
+				}
 
 				Type mod;
 				mod = AssemblyLoader.GetClassByName(typeof(PartModule), name);
-				if (mod != null) {
-					var recipe_node = node.GetNode ("Resources");
-					var recipe = new Recipe (recipe_node);
-					print ("[EL ModuleRecipe] " + name);
-					ExRecipeDatabase.module_recipes[name] = recipe;
-				} else {
+				if (mod == null) {
 					print ("[EL ModuleRecipe] no such module: " + name);
+					continue;
 				}
+				var recipe_node = GetResources (node, "EL_ModuleRecipe");
+				if (recipe_node == null) {
+					continue;
+				}
+				print ("[EL ModuleRecipe] " + name);
+				var recipe = new Recipe (recipe_node);
+				ExRecipeDatabase.module_recipes[name] = recipe;
 				yield return null;
 			}
 		}
@@ -133,7 +171,12 @@ namespace ExtraplanetaryLaunchpads {
 			var module_recipes = ExRecipeDatabase.module_recipes;
 			foreach (var c in configurls) {
 				var node = c.config;
-				string name = node.GetValue("name").Replace('_', '.');
+				string name = node.GetValue("name");
+				if (String.IsNullOrEmpty (name)) {
+					print ("[EL Recipes] skipping unnamed PART");
+					continue;
+				}
+				name = name.Replace('_', '.');
 				print("[EL Recipes] " + name);
 				if (node.HasNode ("EL_Recipe")) {
 					var recipe_node = node.GetNode ("EL_Recipe");
@@ -144,6 +187,10 @@ namespace ExtraplanetaryLaunchpads {
 					var modules = node.GetNodes ("MODULE");
 					for (int i = 0; i < modules.Length; i++) {
 						var mod_name = modules[i].GetValue ("name");
+						if (String.IsNullOrEmpty (mod_name)) {
+							print ("[EL Recipes] skipping unnamed MODULE");
+							continue;
+						}
 						if (module_recipes.ContainsKey (mod_name)) {
 							print ("[EL Recipes] adding module " + mod_name);
 							var mod_ingredient = new Ingredient (mod_name, 1);

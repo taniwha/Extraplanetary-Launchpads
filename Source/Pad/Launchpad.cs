@@ -221,7 +221,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy ()
 		{
-			control.OnDestroy ();
+			if (control != null) {
+				control.OnDestroy ();
+			}
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]

@@ -474,12 +474,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy ()
 		{
-			control.OnDestroy ();
-			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
-			GameEvents.onCrewTransferred.Remove (onCrewTransferred);
-			ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
-			ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
-			ExSurveyTracker.onSiteModified.Remove (onSiteModified);
+			if (control != null) {
+				control.OnDestroy ();
+				GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
+				GameEvents.onCrewTransferred.Remove (onCrewTransferred);
+				ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
+				ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
+				ExSurveyTracker.onSiteModified.Remove (onSiteModified);
+			}
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]

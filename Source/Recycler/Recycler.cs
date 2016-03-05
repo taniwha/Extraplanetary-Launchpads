@@ -122,9 +122,6 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public override void OnStart (StartState state)
 	{
-		if (CompatibilityChecker.IsWin64 ()) {
-			return;
-		}
 		RecycleField = part.FindModelComponent<Collider> (RecycleField_name);
 		Debug.Log (String.Format ("[EL Recycler] OnStart: {0}", RecycleField));
 		if (RecycleField != null) {
@@ -139,9 +136,6 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public override void OnSave (ConfigNode node)
 	{
-		if (CompatibilityChecker.IsWin64 ()) {
-			return;
-		}
 		if (sm != null) {
 			sm.Save (node);
 		}
@@ -149,11 +143,6 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public override void OnLoad (ConfigNode node)
 	{
-		if (CompatibilityChecker.IsWin64 ()) {
-			Events["Activate"].active = false;
-			Events["Deactivate"].active = false;
-			return;
-		}
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
 			sm = new RecyclerFSM (this);
 		}

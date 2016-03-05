@@ -129,11 +129,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnAwake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				Events["SetAsTarget"].active = false;
-				Events["UnsetTarget"].active = false;
-				return;
-			}
 		}
 	}
 }

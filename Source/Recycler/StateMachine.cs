@@ -262,9 +262,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Save (ConfigNode node)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			if (recycle_parts != null) {
 				var rp = recycle_parts.Select(s => s.ToString()).ToArray();
 				node.AddValue ("recycle_parts", String.Join (" ", rp));

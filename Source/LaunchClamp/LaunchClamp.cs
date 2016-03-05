@@ -57,9 +57,6 @@ namespace ExtraplanetaryLaunchpads {
 		public new void OnPutToGround (PartHeightQuery qr)
 		{
 			base.OnPutToGround (qr);
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			Debug.Log (String.Format ("[EL ELC] OnPutToGround qr: {0}", qr.lowestPoint));
 			foreach (var p in qr.lowestOnParts) {
 				Debug.Log (String.Format ("[EL ELC] OnPutToGround qr.lop: {0}", p));
@@ -152,10 +149,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnStart (PartModule.StartState state)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				base.OnStart (state);
-				return;
-			}
 			Debug.Log (String.Format ("[EL ELC] OnStart: {0} {1}", HighLogic.LoadedSceneIsFlight, points));
 			if (HighLogic.LoadedSceneIsFlight && extension_enabled) {
 				ExtendTower ();

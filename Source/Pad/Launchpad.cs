@@ -175,9 +175,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnSave (ConfigNode node)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			control.Save (node);
 			if (base_mass != 0) {
 				node.AddValue ("baseMass", base_mass);
@@ -186,9 +183,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnLoad (ConfigNode node)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			control.Load (node);
 			if (node.HasValue ("baseMass")) {
 				float.TryParse (node.GetValue ("baseMass"), out base_mass);
@@ -199,19 +193,11 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnAwake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				Events["HideUI"].active = false;
-				Events["ShowUI"].active = false;
-				return;
-			}
 			control = new ExBuildControl (this);
 		}
 
 		public override void OnStart (PartModule.StartState state)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			if (state == PartModule.StartState.None
 				|| state == PartModule.StartState.Editor) {
 				return;

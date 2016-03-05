@@ -114,10 +114,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Awake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				enabled = false;
-				return;
-			}
 			GameEvents.onEditorShipModified.Add (RebuildList);
 			GameEvents.onEditorRestart.Add (onEditorRestart);
 		}

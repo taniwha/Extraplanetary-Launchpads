@@ -307,9 +307,6 @@ public class ExWorkshop : PartModule, IModuleInfo
 
 	public override void OnLoad (ConfigNode node)
 	{
-		if (CompatibilityChecker.IsWin64 ()) {
-			return;
-		}
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
 			Debug.Log (String.Format ("[EL Workshop] {0} cap: {1} seats: {2}",
 					  part, part.CrewCapacity,

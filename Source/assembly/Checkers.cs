@@ -1,6 +1,5 @@
-﻿
-/**
- * Copyright (c) 2014, Majiir
+﻿/**
+ * Copyright (c) 2016, Majiir, ferram4
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -65,8 +64,7 @@ namespace ExtraplanetaryLaunchpads
             // Even if you don't lock down functionality, you should return true if your users
             // can expect a future update to be available.
             //
-            //return Versioning.version_major == 1 && Versioning.version_minor == 0 && Versioning.Revision == 0;
-            return Versioning.version_major == 1 && Versioning.version_minor == 0;
+            return Versioning.version_minor == 1 && Versioning.version_major == 1;
 
             /*-----------------------------------------------*\
             | IMPLEMENTERS SHOULD NOT EDIT BEYOND THIS POINT! |
@@ -81,7 +79,6 @@ namespace ExtraplanetaryLaunchpads
 
             // TODO: Implement your own Unity compatibility check.
             //
-            // DRE is not going to care about the fact that KSP .25 OSX uses a different Unity...
             return true;
 
             /*-----------------------------------------------*\
@@ -90,7 +87,7 @@ namespace ExtraplanetaryLaunchpads
         }
 
         // Version of the compatibility checker itself.
-        private static int _version = 4;
+        private static int _version = 5;
 
         public void Start()
         {
@@ -188,7 +185,7 @@ namespace ExtraplanetaryLaunchpads
 
             if ((incompatible.Length > 0) || (incompatibleUnity.Length > 0) || IsWin64())
             {
-                PopupDialog.SpawnPopupDialog("Incompatible Mods Detected", message, "OK", true, HighLogic.Skin);
+                PopupDialog.SpawnPopupDialog(new Vector2(0, 0), new Vector2(0, 0), "Incompatible Mods Detected", message, "OK", true, HighLogic.UISkin);
             }
         }
 

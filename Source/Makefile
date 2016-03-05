@@ -3,7 +3,6 @@ MANAGED		:= ${KSPDIR}/KSP_Data/Managed
 GAMEDATA	:= ${KSPDIR}/GameData
 ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
 PLUGINDIR	:= ${ELGAMEDATA}/Plugins
-APIEXTDATA	:= ${PLUGINDIR}
 
 TARGETS		:= bin/Launchpad.dll
 
@@ -59,6 +58,7 @@ EL_FILES := \
 	AirstreamShield.cs					\
 	BuildControl.cs						\
 	Settings.cs							\
+	VersionReport.cs					\
 	$e
 
 RESGEN2		:= resgen2
@@ -86,9 +86,10 @@ info:
 
 bin/Launchpad.dll: ${EL_FILES}
 	@mkdir -p bin
-	${GMCS} ${GMCSFLAGS} -t:library -lib:${APIEXTDATA},${MANAGED} \
-		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
-		-r:KSPAPIExtensions \
+	${GMCS} ${GMCSFLAGS} -t:library -lib:${MANAGED} \
+		-r:Assembly-CSharp,Assembly-CSharp-firstpass \
+		-r:UnityEngine,UnityEngine.UI \
+		-r:KSPUtil \
 		-out:$@ $^
 
 clean:

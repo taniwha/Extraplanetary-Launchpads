@@ -868,7 +868,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			GUI.skin = HighLogic.Skin;
 			string name = "Extraplanetary Launchpad";
-			string ver = ExSettings.GetVersion ();
+			string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
 			string sit = control.builder.vessel.situation.ToString ();
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,

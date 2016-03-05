@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using UnityEngine;
-using KSPAPIExtensions;
 
 using KSP.IO;
 
@@ -81,18 +80,12 @@ namespace ExtraplanetaryLaunchpads {
 		static string version = null;
 		static Rect windowpos;
 		private static bool gui_enabled;
-		private static string[] alarmactions = new string[] {"Kill Warp+Message", "Kill Warp only", "Message Only", "Pause Game"};
-		public static string GetVersion ()
-		{
-			if (version != null) {
-				return version;
-			}
-
-			var asm = Assembly.GetCallingAssembly ();
-			version =  SystemUtils.GetAssemblyVersionString (asm);
-
-			return version;
-		}
+		private static string[] alarmactions = new string[] {
+			"Kill Warp+Message",
+			"Kill Warp only",
+			"Message Only",
+			"Pause Game"
+		};
 
 		public static ExSettings current
 		{
@@ -323,7 +316,7 @@ namespace ExtraplanetaryLaunchpads {
 							Screen.height / 2 - 30, 0, 0);
 					}
 					string name = "Extraplanetary Launchpad";
-					string ver = ExSettings.GetVersion ();
+					string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
 					windowpos = GUILayout.Window (GetInstanceID (),
 						windowpos, WindowGUI,
 						name + " " + ver,

@@ -46,14 +46,15 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static double[] TimeSpan (double seconds)
 		{
-			var years = Math.Floor (seconds / KSPUtil.Year);
-			seconds -= years * KSPUtil.Year;
-			var days = Math.Floor (seconds / KSPUtil.Day);
-			seconds -= days * KSPUtil.Day;
-			var hours = Math.Floor (seconds / KSPUtil.Hour);
-			seconds -= hours * KSPUtil.Hour;
-			var minutes = Math.Floor (seconds / KSPUtil.Minute);
-			seconds -= minutes * KSPUtil.Minute;
+			var dtFmt = KSPUtil.dateTimeFormatter;
+			var years = Math.Floor (seconds / dtFmt.Year);
+			seconds -= years * dtFmt.Year;
+			var days = Math.Floor (seconds / dtFmt.Day);
+			seconds -= days * dtFmt.Day;
+			var hours = Math.Floor (seconds / dtFmt.Hour);
+			seconds -= hours * dtFmt.Hour;
+			var minutes = Math.Floor (seconds / dtFmt.Minute);
+			seconds -= minutes * dtFmt.Minute;
 			return new double[] {years, days, hours, minutes, seconds};
 		}
 

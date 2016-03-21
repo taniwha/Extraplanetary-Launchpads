@@ -30,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		int parts_count;
 		public BuildCost buildCost;
+		CostReport cashed_cost;
 		Vector2 scrollPosR, scrollPosO;
 
 		public static void ToggleGUI ()
@@ -80,6 +81,7 @@ namespace ExtraplanetaryLaunchpads {
 			yield return null;
 
 			buildCost = null;
+			cashed_cost = null;
 			parts_count = 0;
 
 			if (ship == null || ship.parts == null || ship.parts.Count < 1
@@ -98,6 +100,7 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
+			cashed_cost = buildCost.cost;
 		}
 
 		public void RebuildList(ShipConstruct ship)
@@ -108,6 +111,7 @@ namespace ExtraplanetaryLaunchpads {
 		void onEditorRestart ()
 		{
 			buildCost = null;
+			cashed_cost = null;
 			parts_count = 0;
 		}
 
@@ -184,7 +188,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void InfoWindow (int windowID)
 		{
-			var cost = buildCost.cost;
+			var cost = cashed_cost;
 			double required_mass = 0;
 			double resource_mass = 0;
 			double kerbalHours = 0;

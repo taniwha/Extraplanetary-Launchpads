@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExLaunchPad : PartModule, IModuleInfo, ExBuildControl.IBuilder
+	public class ExLaunchPad : PartModule, IModuleInfo, IPartMassModifier, ExBuildControl.IBuilder
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -35,7 +35,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public float spawnOffset = 0;
 		Transform launchTransform;
-		float base_mass;
+		double craft_mass;
 
 		public override string GetInfo ()
 		{
@@ -131,7 +131,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetCraftMass (double mass)
 		{
-			part.mass = base_mass + (float) mass;
+			craft_mass = mass;
+		}
+
+		public float GetModuleMass (float defaultMass)
+		{
+			return (float) craft_mass;
 		}
 
 		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
@@ -176,19 +181,11 @@ namespace ExtraplanetaryLaunchpads {
 		public override void OnSave (ConfigNode node)
 		{
 			control.Save (node);
-			if (base_mass != 0) {
-				node.AddValue ("baseMass", base_mass);
-			}
 		}
 
 		public override void OnLoad (ConfigNode node)
 		{
 			control.Load (node);
-			if (node.HasValue ("baseMass")) {
-				float.TryParse (node.GetValue ("baseMass"), out base_mass);
-			} else {
-				base_mass = part.mass;
-			}
 		}
 
 		public override void OnAwake ()

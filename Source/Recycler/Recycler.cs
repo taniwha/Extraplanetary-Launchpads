@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class ExRecycler : PartModule, IModuleInfo
+public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
 {
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField] public string RecycleField_name = "RecycleField";
@@ -151,13 +151,18 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public void FixedUpdate ()
 	{
-		double mass = part.partInfo.partPrefab.mass;
 		if (sm != null) {
 			sm.FixedUpdate ();
 			status = sm.CurrentState;
-			mass += sm.ResourceMass;
 		}
-		part.mass = (float)mass;
+	}
+
+	public float GetModuleMass (float defaultMass)
+	{
+		if (sm != null) {
+			return (float) sm.ResourceMass;
+		}
+		return 0;
 	}
 }
 

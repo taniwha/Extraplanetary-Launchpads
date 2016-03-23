@@ -154,7 +154,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label (title + ":");
 			GUILayout.FlexibleSpace ();
-			GUILayout.Label (MathUtils.ToStringSI(amount, 4, unit:units));
+			GUILayout.Label (amount.ToStringSI(4, unit:units));
 			GUILayout.EndHorizontal ();
 		}
 
@@ -163,7 +163,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(title + ":");
 			GUILayout.FlexibleSpace();
-			GUILayout.Label(MathUtils.FormatMass(mass));
+			GUILayout.Label(EL_Utils.FormatMass(mass));
 			GUILayout.EndHorizontal();
 		}
 
@@ -178,7 +178,7 @@ namespace ExtraplanetaryLaunchpads {
 				GUILayout.BeginHorizontal ();
 				GUILayout.Label (String.Format ("{0}:", res.name));
 				GUILayout.FlexibleSpace ();
-				GUILayout.Label (String.Format ("{0} ({1})", res.amount.ToStringSI(4, unit:"u"), MathUtils.FormatMass(res.mass, 4)));
+				GUILayout.Label (String.Format ("{0} ({1})", res.amount.ToStringSI(4, unit:"u"), EL_Utils.FormatMass(res.mass, 4)));
 				GUILayout.EndHorizontal ();
 			}
 			GUILayout.EndScrollView ();

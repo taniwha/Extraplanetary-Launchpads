@@ -52,7 +52,6 @@ EL_FILES := \
 	lib/KISWrapper.cs					\
 	lib/KACWrapper.cs					\
 	lib/KerbalStatsWrapper.cs			\
-	lib/MathUtils.cs					\
 	lib/Utils.cs						\
 	toolbar/Toolbar.cs					\
 	toolbar/ToolbarWrapper.cs			\

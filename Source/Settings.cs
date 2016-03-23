@@ -77,6 +77,7 @@ namespace ExtraplanetaryLaunchpads {
 			private set;
 		}
 
+		static string version = null;
 		static Rect windowpos;
 		private static bool gui_enabled;
 		private static string[] alarmactions = new string[] {

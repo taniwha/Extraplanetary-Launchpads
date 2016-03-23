@@ -27,7 +27,7 @@ using Experience;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class EL_Utils {
+	public static class EL_Utils {
 		public static List<ProtoCrewMember> GetCrewList (Part part)
 		{
 			if (part.CrewCapacity > 0) {

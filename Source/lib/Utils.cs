@@ -33,7 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (unit == null) {
 				unit = "";
 			}
-			return PartModuleUtil.PrintResourceSI (value, unit, false);
+			return PartModuleUtil.PrintResourceSI (value, unit, sigFigs, false);
 		}
 
 		public static string ToStringSI(this float value, int sigFigs = 3, string unit = null)
@@ -41,7 +41,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (unit == null) {
 				unit = "";
 			}
-			return PartModuleUtil.PrintResourceSI (value, unit, false);
+			return PartModuleUtil.PrintResourceSI (value, unit, sigFigs, false);
 		}
 
 		public static string FormatMass (double mass, int sigFigs = 4)

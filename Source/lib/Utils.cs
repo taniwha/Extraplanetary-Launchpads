@@ -28,7 +28,7 @@ using Experience;
 namespace ExtraplanetaryLaunchpads {
 
 	public static class EL_Utils {
-		public static string ToStringSI(this double value, int sigFigs = 3, int exponent = 0, string unit = null)
+		public static string ToStringSI(this double value, int sigFigs = 3, string unit = null)
 		{
 			if (unit == null) {
 				unit = "";
@@ -36,7 +36,7 @@ namespace ExtraplanetaryLaunchpads {
 			return PartModuleUtil.PrintResourceSI (value, unit, false);
 		}
 
-		public static string ToStringSI(this float value, int sigFigs = 3, int exponent = 0, string unit = null)
+		public static string ToStringSI(this float value, int sigFigs = 3, string unit = null)
 		{
 			if (unit == null) {
 				unit = "";
@@ -44,14 +44,13 @@ namespace ExtraplanetaryLaunchpads {
 			return PartModuleUtil.PrintResourceSI (value, unit, false);
 		}
 
-		public static string FormatMass (double mass, int sigFigs = 4, int exponent = 0)
+		public static string FormatMass (double mass, int sigFigs = 4)
 		{
 			if (mass < 1.0) {
 				mass *= 1e6;
-				// exponent + 6
-				return mass.ToStringSI(sigFigs, exponent, "g");
+				return mass.ToStringSI(sigFigs, "g");
 			} else {
-				return mass.ToStringSI(sigFigs, exponent, "t");
+				return mass.ToStringSI(sigFigs, "t");
 			}
 		}
 

@@ -138,9 +138,8 @@ namespace ExtraplanetaryLaunchpads {
 				winpos.width = 300;
 				winpos.height = 100;
 			}
-			string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
 			winpos = GUILayout.Window (GetInstanceID (), winpos, InfoWindow,
-									  "Build Resources: " + ver,
+									  "Build Resources",
 									  GUILayout.MinWidth (200));
 			if (enabled && winpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
 				InputLockManager.SetControlLock ("EL_ShipInfo_window_lock");
@@ -215,6 +214,8 @@ namespace ExtraplanetaryLaunchpads {
 			scrollPosR = ResourcePanel ("Required", cost.required, scrollPosR);
 			scrollPosO = ResourcePanel ("Optional", cost.optional, scrollPosO);
 
+			string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
+			GUILayout.Label(ver);
 			GUILayout.EndVertical ();
 			GUI.DragWindow ();
 		}

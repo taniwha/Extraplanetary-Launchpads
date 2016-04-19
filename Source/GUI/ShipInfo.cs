@@ -76,9 +76,13 @@ namespace ExtraplanetaryLaunchpads {
 			parts_count++;
 		}
 
+		int rebuild_list_wait_frames = 0;
+
 		private IEnumerator WaitAndRebuildList (ShipConstruct ship)
 		{
-			yield return null;
+			while (--rebuild_list_wait_frames > 0) {
+				yield return null;
+			}
 
 			buildCost = null;
 			cashed_cost = null;
@@ -105,7 +109,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void RebuildList(ShipConstruct ship)
 		{
-			StartCoroutine (WaitAndRebuildList (ship));
+			// some parts/modules fire the event before doing things
+			const int wait_frames = 2;
+			if (rebuild_list_wait_frames < wait_frames) {
+				rebuild_list_wait_frames += wait_frames;
+				if (rebuild_list_wait_frames == wait_frames) {
+					StartCoroutine (WaitAndRebuildList (ship));
+				}
+			}
 		}
 
 		void onEditorRestart ()

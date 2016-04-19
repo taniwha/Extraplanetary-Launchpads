@@ -59,8 +59,8 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var resources = node.GetNode ("Resources");
 			if (resources == null) {
-				print ("[EL Recipes] skipping " + recipe_name + " "
-					   + name + " with no Resources");
+				//print ("[EL Recipes] skipping " + recipe_name + " "
+				//	   + name + " with no Resources");
 			}
 			return resources;
 		}
@@ -82,7 +82,7 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				var recipe = new Recipe (recipe_node);
-				print ("[EL ResourceRecipe] " + name);
+				//print ("[EL ResourceRecipe] " + name);
 				ExRecipeDatabase.resource_recipes[name] = recipe;
 				yield return null;
 			}
@@ -105,7 +105,7 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				var recipe = new Recipe (recipe_node);
-				print ("[EL RecycleRecipe] " + name);
+				//print ("[EL RecycleRecipe] " + name);
 				ExRecipeDatabase.recycle_recipes[name] = recipe;
 				yield return null;
 			}
@@ -128,7 +128,7 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				var recipe = new Recipe (recipe_node);
-				print ("[EL TransferRecipe] " + name);
+				//print ("[EL TransferRecipe] " + name);
 				ExRecipeDatabase.transfer_recipes[name] = recipe;
 				yield return null;
 			}
@@ -156,7 +156,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (recipe_node == null) {
 					continue;
 				}
-				print ("[EL ModuleRecipe] " + name);
+				//print ("[EL ModuleRecipe] " + name);
 				var recipe = new Recipe (recipe_node);
 				ExRecipeDatabase.module_recipes[name] = recipe;
 				yield return null;
@@ -165,7 +165,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		IEnumerator LoadPartRecipes()
 		{
-			print ("[EL Recipes] LoadPartRecipes");
+			//print ("[EL Recipes] LoadPartRecipes");
 			var dbase = GameDatabase.Instance;
 			var configurls = dbase.GetConfigs("PART");
 			var module_recipes = ExRecipeDatabase.module_recipes;
@@ -177,7 +177,7 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				name = name.Replace('_', '.');
-				print("[EL Recipes] " + name);
+				//print("[EL Recipes] " + name);
 				if (node.HasNode ("EL_Recipe")) {
 					var recipe_node = node.GetNode ("EL_Recipe");
 					var recipe = new PartRecipe (recipe_node);
@@ -192,7 +192,7 @@ namespace ExtraplanetaryLaunchpads {
 							continue;
 						}
 						if (module_recipes.ContainsKey (mod_name)) {
-							print ("[EL Recipes] adding module " + mod_name);
+							//print ("[EL Recipes] adding module " + mod_name);
 							var mod_ingredient = new Ingredient (mod_name, 1);
 							recipe.part_recipe.AddIngredient (mod_ingredient);
 						}

@@ -100,7 +100,7 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < recipe.ingredients.Count; i++) {
 				var ingredient = recipe.ingredients[i];
 				if (!ingredient.isReal) {
-					print ("fake ingredient: " + ingredient.name);
+					//print ("fake ingredient: " + ingredient.name);
 					continue;
 				}
 				ingredient.ratio /= ResourceDensity (ingredient.name);
@@ -128,12 +128,12 @@ namespace ExtraplanetaryLaunchpads {
 			if (list != null) {
 				for (int i = 0; i < list.Count; i++) {
 					if (list[i] is ExRecipeLoader) {
-						print("[EL Recipes] found ExRecipeLoader: " + i);
+						//print("[EL Recipes] found ExRecipeLoader: " + i);
 						(list[i] as ExRecipeLoader).done = false;
 						break;
 					}
 					if (list[i] is PartLoader) {
-						print("[EL Recipes] found PartLoader: " + i);
+						//print("[EL Recipes] found PartLoader: " + i);
 						GameObject go = new GameObject();
 						ExRecipeLoader scanner = go.AddComponent<ExRecipeLoader>();
 						list.Insert (i, scanner);

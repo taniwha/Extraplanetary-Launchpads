@@ -157,12 +157,17 @@ public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
 		}
 	}
 
-	public float GetModuleMass (float defaultMass)
+	public float GetModuleMass (float defaultMass, ModifierStagingSituation sit)
 	{
 		if (sm != null) {
 			return (float) sm.ResourceMass;
 		}
 		return 0;
+	}
+
+	public ModifierChangeWhen GetModuleMassChangeWhen ()
+	{
+		return ModifierChangeWhen.CONSTANTLY;
 	}
 }
 

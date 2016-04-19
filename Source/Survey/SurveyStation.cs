@@ -385,9 +385,14 @@ namespace ExtraplanetaryLaunchpads {
 			craft_mass = mass;
 		}
 
-		public float GetModuleMass (float defaultMass)
+		public float GetModuleMass (float defaultMass, ModifierStagingSituation sit)
 		{
 			return (float) craft_mass;
+		}
+
+		public ModifierChangeWhen GetModuleMassChangeWhen ()
+		{
+			return ModifierChangeWhen.CONSTANTLY;
 		}
 
 		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)

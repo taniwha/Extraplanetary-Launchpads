@@ -590,8 +590,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Save (ConfigNode node)
 		{
-			node.AddValue ("filename", filename);
-			node.AddValue ("flagname", flagname);
+			if (filename != null) {
+				node.AddValue ("filename", filename);
+			}
+			if (flagname != null) {
+				node.AddValue ("flagname", flagname);
+			}
 			if (craftConfig != null) {
 				craftConfig.name = "CraftConfig";
 				node.AddNode (craftConfig);
@@ -650,9 +654,15 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Load (ConfigNode node)
 		{
-			filename = node.GetValue ("filename");
-			flagname = node.GetValue ("flagname");
-			craftConfig = node.GetNode ("CraftConfig");
+			if (node.HasValue ("filename")) {
+				filename = node.GetValue ("filename");
+			}
+			if (node.HasValue ("flagname")) {
+				flagname = node.GetValue ("flagname");
+			}
+			if (node.HasNode ("CraftConfig")) {
+				craftConfig = node.GetNode ("CraftConfig");
+			}
 			if (node.HasNode ("BuildCost")) {
 				var bc = node.GetNode ("BuildCost");
 				buildCost = new CostReport ();
@@ -679,7 +689,9 @@ namespace ExtraplanetaryLaunchpads {
 				bool.TryParse (s, out p);
 				paused = p;
 			}
-			KACalarmID = node.GetValue ("KACalarmID");
+			if (node.HasValue ("KACalarmID")) {
+				KACalarmID = node.GetValue ("KACalarmID");
+			}
 			if (node.HasNode ("DockedVesselInfo")) {
 				ConfigNode vi = node.GetNode ("DockedVesselInfo");
 				vesselInfo = new DockedVesselInfo ();

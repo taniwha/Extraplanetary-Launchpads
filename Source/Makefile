@@ -1,8 +1,8 @@
-KSPDIR		:= ${HOME}/ksp/KSP_linux
-MANAGED		:= ${KSPDIR}/KSP_Data/Managed
-GAMEDATA	:= ${KSPDIR}/GameData
-ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
-PLUGINDIR	:= ${ELGAMEDATA}/Plugins
+export KSPDIR		:= ${HOME}/ksp/KSP_linux
+export MANAGED		:= ${KSPDIR}/KSP_Data/Managed
+export GAMEDATA	:= ${KSPDIR}/GameData
+export ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
+export PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 
 TARGETS		:= bin/Launchpad.dll
 

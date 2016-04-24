@@ -1,0 +1,426 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Modules provided by EL
+\end_layout
+
+\begin_layout Subsection
+Overview
+\end_layout
+
+\begin_layout Description
+ExRecycler Destroys anything it touches (including unfortunate kerbals)
+ reclaiming what resources it can.
+\end_layout
+
+\begin_layout Description
+ExLaunchPad Builds complete vessels attached (pseudo-docked) to the current
+ vessel.
+ Allows post-build resource transfer without any extra fuss.
+ Supports building both landed or in orbit.
+\end_layout
+
+\begin_layout Description
+ExTarget Allows a part to be targeted.
+ Includes orientation so it works with any docking alignment mod (DPAI,
+ navball, and navhud are known to work).
+\end_layout
+
+\begin_layout Description
+ExWorkshop Collect productivity from kerbals in the part.
+ Works with either normal parts with crew capacity or command chairs.
+\end_layout
+
+\begin_layout Description
+ExSurveyStation Builds complete vessels at locations marked out using survey
+ stakes (parts with the ExSurveyStake module).
+ Does not allow post-build resource transfer (freedom is not free), but
+ as KIS
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Kerbal Inventory System: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://forum.kerbalspaceprogram.com/index.php?/topic/101928-105-kerbal-inventory-sy
+stem-kis-126/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is required to place the stakes, and KAS
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Kerbal Attachment System: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://forum.kerbalspaceprogram.com/index.php?/topic/83468-105-kerbal-attachment-sy
+stem-kas-055/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is almost always installed with it, survey stations are probably the preferred
+ tool for landed operations.
+\end_layout
+
+\begin_layout Description
+ExSurveyStake Marks locations for survey station.
+ In the current implementation, a stake must be the only part in the vessel
+ for the survey station to recognize it.
+\end_layout
+
+\begin_layout Subsection
+Configuration
+\end_layout
+
+\begin_layout Standard
+For the most part, EL places no restrictions on the models used for parts
+ using EL's module, so unless otherwise stated, models are completely free-form
+ as far as EL is concerned.
+\end_layout
+
+\begin_layout Subsubsection
+ExRecycler
+\end_layout
+
+\begin_layout Paragraph
+Model/Part Requirements
+\end_layout
+
+\begin_layout Standard
+The only requirement is the recycle field.
+ The recycle field must be a trigger collider and should (must?) not touch
+ anything else.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+RecycleField_name Specifies the name of the transform for the recycle field
+ collider.
+ Defaults to 
+\begin_inset Quotes eld
+\end_inset
+
+ReycleField
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+RecycleRate Specifies the recycling rate in tons/second.
+ Defaults to 1.0t/s.
+\end_layout
+
+\begin_layout Subsubsection
+ExLaunchPad
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+No requirements, but it highly recommended that the part has plenty of free
+ space 
+\begin_inset Quotes eld
+\end_inset
+
+above
+\begin_inset Quotes erd
+\end_inset
+
+ (positive Y-axis in KSP/Unity, Z-axis in Blender) the launch transform.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+SpawnHeightOffset Specifies the distance in meters above the launch transform
+ of the lowest point of the spawned vessel.
+ This is most useful when the model does not have a specific spawn transform.
+ Defaults to 1.0m.
+\end_layout
+
+\begin_layout Description
+SpawnTransform Specifies the model transform to be used as the launch transform.
+ Optional, but using a spawn transform allows finer control over the launch
+ position that afforded by SpawnHeightOffset, and also allows the orientation
+ to be specified.
+ If not specified, the model's root transform will be used as the launch
+ transform (setting SpawnHeightOffset is highly recommended, but not as
+ highly as having a spawn transform).
+\end_layout
+
+\begin_layout Description
+PadName Specifies the name of the launchpad.
+ Note that this is editable by the user both in the editor (VAB/SPH) or
+ in flight.
+\end_layout
+
+\begin_layout Subsubsection
+ExTarget
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+TargetTransform Specifies the model transform to be used as the target.
+ If not specified (the default), the model's root transform will be used.
+\end_layout
+
+\begin_layout Description
+TargetName String to be added after the host vessel's name when set as target.
+ Defaults to 
+\begin_inset Quotes eld
+\end_inset
+
+Target
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+ExWorkshop
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+The part must have some crew capacity.
+ This can be via either the part's crewCapacity field, or KerbalSeat (stock
+ KSP) modules (currently, not both: for KerbalSeat to be checked, the crewCapaci
+ty must be 0).
+ Note that parts may have multiple KerbalSeat modules on them (eg, EL's
+ Rocket Workbench).
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+ProductivityFactor Specifies the multiplier for calculating kerbal productivity.
+ Must be greater than 0.
+ All workshops with ProductivityFactor greater than 1.0 are considered to
+ be fully equipped (ie, even 0-star kerbals with the construction skill
+ can contribute).
+ Defaults to 1.0.
+\end_layout
+
+\begin_layout Description
+FullyEquipped If true, then even workshops with productivity factors less
+ than 1.0 are considered fully equipped allowing 0-star kerbals to contribute.
+\end_layout
+
+\begin_layout Description
+IgnoreCrewCapacity If true, the workshop will operate even if the part's
+ crewCapacity is 0 (and not check for KerbalSeat).
+ This is most useful on parts with dynamic crew capacities (eg, inflatables).
+\end_layout
+
+\begin_layout Subsubsection
+ExSurveyStation
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+No requirements, but as kerbals improve its range, having crew capacity
+ (crewCapacity > 0 or KerbalSeat modules) is recommended.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+StationName Specifies the name of the survey station.
+ Note that this is editable by the user both in the editor (VAB/SPH) or
+ in flight.
+\end_layout
+
+\begin_layout Subsubsection
+ExSurveyStake
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None except any required by KIS for ground attachment.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+As the survey station will not look at vessels with more than one part to
+ check for the ExSurveyStake module, the part should be configured to be
+ ground attached using KIS.
+ However, parts designed to be dropped via staging or decoupling will work,
+ too, so long as the resulting vessel consists of only the one part.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\end_body
+\end_document

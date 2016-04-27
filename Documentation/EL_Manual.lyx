@@ -69,6 +69,346 @@
 \begin_body
 
 \begin_layout Section
+Survey Stakes
+\end_layout
+
+\begin_layout Subsection
+stuff
+\end_layout
+
+\begin_layout Standard
+Ok, about the surveyed builds...
+\end_layout
+
+\begin_layout Standard
+Firstly, they are still a work in progress: they are working as intended
+ and most of the planned features seem to be working, but two important
+ features are not yet implemented and there may be more bugs lurking in
+ the code (over 800 lines).
+\end_layout
+
+\begin_layout Standard
+Secondly, surveyed builds flat out require Kerbal Attachment System: the
+ survey stakes cannot be attached to any part via any means (node attach,
+ surface attach, KAS attach).
+ They can, however, be attached to planetary surfaces, carried around by
+ kerbals (<2kg), and put in KAS storage containers.
+ Stakes are used to determine the placement of the build craft: both location
+ and optionally orientation.
+\end_layout
+
+\begin_layout Standard
+Thirdly, to make use of the survey stakes, your build vessel needs to have
+ a survey station.
+ Currently this is a clone (via MM magic) of the stock hitchhiker can.
+ I will create a new part for this once I've had a break and will ensure
+ it is physically compatible, but I suggest avoiding surface attachments
+ as the exact shape may differ, or parts may be animated.
+ Use of the survey station is exactly the same as a pad, except it must
+ be landed for it to work.
+\end_layout
+
+\begin_layout Standard
+Finally, craft built via a survey station will not be loaded with any resources.
+ Probes with neither ox-stat solar panels nor RTGs (or similar mod parts)
+ will be DOA.
+ Resources can be transfered by connective via either docking or KAS.
+\end_layout
+
+\begin_layout Standard
+And now a little bit about actually using the stakes...
+\end_layout
+
+\begin_layout Itemize
+Stakes have "usage modes".
+ These can be seen via the right-click menu from EVA.
+ The possible settings are: Origin, +X, +Y, +Z, -X, -Y, -Z.
+\end_layout
+
+\begin_layout Itemize
+Stakes can be renamed via Rename Stake in the right-click menu.
+ The dialog is the same as for Rename Vessel, but the ship type has no meaning.
+ The name defaults to "<kerbal name> Base".
+ Stakes of the same name will be considered to be part of the same survey
+ site.
+ Multiple survey sites is one of the not-yet fully implemented features.
+ Multiple sites within range of the survey station may result in interesting
+ outcomes.
+\end_layout
+
+\begin_layout Itemize
+Stakes in Origin mode determine where the built craft will be placed (the
+ root part).
+ If the site has multiple Origin stakes, then their positions will be averaged.
+ This is a very useful feature :).
+\end_layout
+
+\begin_layout Itemize
+Stakes in +/- XYZ mode determine the orientation of the built craft.
+ The default is for the starboard size of the craft to face east (same as
+ a normal launch).
+ +X is starboard, -X is port.
+ I have not done sufficient testing, but +Z is forwards for craft built
+ in the SPH (this I have tested).
+\end_layout
+
+\begin_layout Itemize
+Multiple stakes with the same orientation mode in the one site are averaged.
+\end_layout
+
+\begin_layout Itemize
+Mixing orientation modes in a site may result in interesting outcomes.
+\end_layout
+
+\begin_layout Itemize
+Moving stakes around does not reset their modes.
+ Putting them away in a KAS container probably does (not tested, but I doubt
+ KAS preserves the information).
+\end_layout
+
+\begin_layout Itemize
+Launch clamps work well enough with surveyed builds, but the spawned craft
+ has its bottom about 20cm above the ground (for default orientation).
+ Results may vary on uneven ground.
+\end_layout
+
+\begin_layout Standard
+Essentially, surveyed builds make it a little easier to get bases going
+ as you don't need to fly in an awkward launchpad.
+\end_layout
+
+\begin_layout Subsection
+Direction Stakes
+\end_layout
+
+\begin_layout Standard
+Nice to see that NASA uses a right-handed system (I hate unity's left-handed
+ system).
+ Unfortunately, I have to stick with the LHS for my description or I'll
+ confuse myself.
+\end_layout
+
+\begin_layout Standard
+Ok, I have verified that the survey station averages all of a site's stakes
+ to find the center, but if Origin stakes are present, it then sets the
+ center to the average of the Origin stakes (I guess I wasn't feeling that
+ sadistic).
+\end_layout
+
+\begin_layout Standard
+Once the survey station has set the center, it goes on to find the orientation.
+\end_layout
+
+\begin_layout Itemize
+If the Y axis has not been staked out, then it will, without fail, be the
+ local vertical (ie, directly along the radial vector from the center of
+ the celestial body through the center of the site).
+ Local ground slope is ignored.
+ The XZ plane is horizontal.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If neither X nor Z has been staked out, then the X axis is set to point
+ east.
+ This will not work at the poles (which way is east? Every direction is
+ either south or north).
+ The Z axis is then set to point south.
+ This is the same orientation for rockets on the pad at KSC.
+\end_layout
+
+\begin_layout Itemize
+If only X has been staked out, then the X axis is set to point in the same
+ direction, and the Z axis will be at 3 o'clock (if the X axis is 12 o'clock)
+ when viewed from above.
+\end_layout
+
+\begin_layout Itemize
+If only Z has been staked out, then it is a similar story, but the Z axis
+ is 12 o'clock pointing in the same direction and the X axis is 9 o'clock.
+\end_layout
+
+\begin_layout Itemize
+If both X and Z have been staked out, then the errors for the X and Z axes
+ will be balanced, though X might be reversed if you get the placement wrong.
+ The Y axis is still vertically up.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If the Y axis has been staked out, but the X axis has not, then the X axis
+ will be the local vertical.
+ The YZ plane is horizontal.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If the Z axis has not been staked out, then it will be pointed at 3 o'clock
+ with the Y axis at 12 o'clock.
+ 
+\end_layout
+
+\begin_layout Itemize
+If the Z axis has been staked out, then the Y and Z axis errors will be
+ balanced.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If both the Y axis and the X axis have been staked out, but the Z axis has
+ not, then the Z axis will be the local vertical, and the XY plane will
+ be horizontal.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The X and Y axis errors will be balanced.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If all three axes have been staked out, then I hope you know what you are
+ doing.
+ All three axis errors will be balanced.
+ Used carefully, this might be useful on extreme slopes, or maybe in the
+ vicinity of a Mun arch.
+\end_layout
+
+\begin_layout Standard
+Note: it is intended that the vessel is built flat.
+ It is not accidental behavior, and it is why I modified the launch clamps.
+\end_layout
+
+\begin_layout Subsection
+Bounds stakes
+\end_layout
+
+\begin_layout Standard
+Some points about Bounds stakes:
+\end_layout
+
+\begin_layout Itemize
+Bounds stakes use the same highlight colors as Direction stakes, but flash.
+\end_layout
+
+\begin_layout Itemize
+Single (for a specific axis) Bounds stakes will lock the relevant side of
+ the vessel's bounding box to that stake (ie, the box face and the stake
+ will be coplanar).
+\end_layout
+
+\begin_layout Itemize
+Two Bounds stakes (eg, -X and +X) will cause the box to be centered between
+ the stakes.
+\end_layout
+
+\begin_layout Itemize
+No Bounds stakes on an axis will center the vessel's root part on the Origin
+ stake (or the average of all stakes if there is no Origin stake).
+\end_layout
+
+\begin_layout Itemize
+As per Origin and Direction stakes, multiple Bounds stakes of the same axis
+ (eg, -Z) will be averaged together.
+\end_layout
+
+\begin_layout Itemize
+There is no difference between a Bounds Origin stake and a Direction Origin
+ Stake.
+\end_layout
+
+\begin_layout Standard
+Again, I apologize for suggesting the use of bounds stakes when I had not
+ yet released them.
+ I had begun working on them right after releasing 5.0.2, so I had forgotten
+ they were new.
+\end_layout
+
+\begin_layout Section
+Recipes
+\end_layout
+
+\begin_layout Standard
+On 29/03/2016 at 0:25 PM, goldenpsp said:
+\end_layout
+
+\begin_layout Standard
+I would imagine the EPL recycling bin would need some sort of MM config
+ as by default it isn't going to recycle to material kits.
+\end_layout
+
+\begin_layout Standard
+All it needs is appropriate EL_RecycleRecipe(s) and EL_TransferRecipe(s)
+ (both are for resources, not parts).
+ Tank contents use EL_TransferRecipe (to override other recipes, so not
+ always needed), parts get broken down into appropriate resources using
+ their EL_PartRecipe(s), and those resources use EL_RecycleRecipe (any resource
+ with a EL_ResourceRecipe but no EL_TransferRecipe will evaporate from takes,
+ and evaporate when recycling parts if there is no EL_RecyleRecipe for that
+ resource).
+\end_layout
+
+\begin_layout Standard
+When building:
+\end_layout
+
+\begin_layout Itemize
+Any resource mentioned in EL_PartRecipe or EL_ModuleRecipe is required for
+ building (but not for filling tanks).
+\end_layout
+
+\begin_layout Itemize
+Any stored resource that has an EL_ResourceRecipe becomes a required resource
+ (eg, SolidFuel).
+\end_layout
+
+\begin_layout Itemize
+Any resource stored in a part inside a KIS container becomes a required
+ resource, regardless of recipes.
+\end_layout
+
+\begin_layout Standard
+When recycling:
+\end_layout
+
+\begin_layout Itemize
+Done on a part-by-part basis.
+ Some of you may have had spotty results recycling entire vessels: that
+ is intentional, and there is a way around it (see if you can guess).
+\end_layout
+
+\begin_layout Itemize
+Any resources stored in the part are drained.
+ Those with an EL_ResourceRecipe but no EL_TransferRecipe are lost, otherwise
+ they transfer as dictated by the EL_TransferRecipe.
+\end_layout
+
+\begin_layout Itemize
+The part is then broken down into the resources specified by its EL_PartRecipe
+ and EL_ModuleRecipe(s).
+ Those resources with an EL_ResourceRecipe but no EL_RecycleRecipe are lost,
+ otherwise they get broken down further in accordance with their EL_RecycleRecip
+e.
+\end_layout
+
+\begin_layout Itemize
+Whether tranferring (from a tank) or recycling (the part itself), resources
+ with no recipe are reclaimed as-is at a 1:1 ratio.
+\end_layout
+
+\begin_layout Itemize
+Of course, any reclaimed resource need storage space.
+\end_layout
+
+\begin_layout Standard
+I hope that helps anybody wishing to tweak recipes.
+ There are example recipes in EL's Resources directory, and, I imagine,
+ somewhere in USI's tree.
+ Only EL_PartRecipes need to be MMed (into the part), the rest are independent.
+ 
+\end_layout
+
+\begin_layout Section
 Modules provided by EL
 \end_layout
 

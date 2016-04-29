@@ -126,6 +126,7 @@ public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
 		Debug.Log (String.Format ("[EL Recycler] OnStart: {0}", RecycleField));
 		if (RecycleField != null) {
 			RecycleField.enabled = false;
+			RecycleField.isTrigger = true;	//FIXME workaround for KSP 1.1 bug
 		}
 		if (state == PartModule.StartState.None
 			|| state == PartModule.StartState.Editor) {

@@ -57,6 +57,7 @@ EL_FILES := \
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\
 	BuildControl.cs						\
+	InternalFlagDecal.cs				\
 	Settings.cs							\
 	VersionReport.cs					\
 	$e

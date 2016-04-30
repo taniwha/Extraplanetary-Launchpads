@@ -49,9 +49,11 @@ ExtraplanetaryLaunchpads/Parts/OrbitalDock/OrbitalDock.mu
 ExtraplanetaryLaunchpads/Parts/SurveyStake/Stake.png
 ExtraplanetaryLaunchpads/Parts/SurveyStake/part.cfg
 ExtraplanetaryLaunchpads/Parts/SurveyStake/surveystake.mu
-ExtraplanetaryLaunchpads/Parts/Workshop/Hull.png
 ExtraplanetaryLaunchpads/Parts/Workshop/Hatch.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Hull.png
 ExtraplanetaryLaunchpads/Parts/Workshop/Ladder.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Workshop.Internal.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Workstation.png
 ExtraplanetaryLaunchpads/Parts/Workshop/part.cfg
 ExtraplanetaryLaunchpads/Parts/Workshop/workshop.mu
 ExtraplanetaryLaunchpads/Parts/smelter/model.mu

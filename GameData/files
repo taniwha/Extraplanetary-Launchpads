@@ -52,8 +52,14 @@ ExtraplanetaryLaunchpads/Parts/SurveyStake/surveystake.mu
 ExtraplanetaryLaunchpads/Parts/Workshop/Hatch.png
 ExtraplanetaryLaunchpads/Parts/Workshop/Hull.png
 ExtraplanetaryLaunchpads/Parts/Workshop/Ladder.png
-ExtraplanetaryLaunchpads/Parts/Workshop/Workshop.Internal.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Workshop-Internal.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Workshop.Internal.cfg
+ExtraplanetaryLaunchpads/Parts/Workshop/Workshop.Internal.mu
+ExtraplanetaryLaunchpads/Parts/Workshop/Workstation.cfg
+ExtraplanetaryLaunchpads/Parts/Workshop/Workstation.mu
 ExtraplanetaryLaunchpads/Parts/Workshop/Workstation.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Workstation_Screen-16x9.png
+ExtraplanetaryLaunchpads/Parts/Workshop/Workstation_Screen-4x3.png
 ExtraplanetaryLaunchpads/Parts/Workshop/part.cfg
 ExtraplanetaryLaunchpads/Parts/Workshop/workshop.mu
 ExtraplanetaryLaunchpads/Parts/smelter/model.mu

@@ -69,6 +69,192 @@
 \begin_body
 
 \begin_layout Section
+Construction Basics
+\end_layout
+
+\begin_layout Subsection
+Productivity
+\end_layout
+
+\begin_layout Standard
+All kerbals have a base productivity score computed from their stupidity,
+ courage, and bad-ass characteristics.
+ The more stupid a kerbal is, the less that kerbal will contribute to the
+ workshop's (and thus the overall vessel's) productivity, and more courageous
+ kerbals will, in general, contribute less than less courageous kerbals,
+ though bad-ass kerbals complicate the relationship.
+ It is entirely possible for a kerbal to have negative productivity.
+\end_layout
+
+\begin_layout Standard
+If the KerbalStats
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+KerbalStats: http://forum.kerbalspaceprogram.com/index.php?/topic/89285-105-kerbals
+tats-v201/
+\end_layout
+
+\end_inset
+
+ mod is installed, then the amount of time a kerbal has spent in certain
+ workshops (currently only EL's blue workshop (afaik)) improves the kerbal's
+ productivity.
+\end_layout
+
+\begin_layout Standard
+A workshop's productivity is the sum of the productivities of all kerbals
+ working in that shop.
+ A vessel's productivity is the sum of the productivities of all workshops
+ in that vessel.
+ If the vessel's productivity is greater than zero, then construction will
+ progress.
+ Negative productivity does not cause production to become destruction,
+ instead it causes a productivity deficit that must be overcome by better
+ construction kerbals.
+\end_layout
+
+\begin_layout Subsection
+Construction Skill
+\end_layout
+
+\begin_layout Standard
+Kerbals with the construction skill (by default, engineers) are the cornerstone
+ of workshop productivity.
+ However, their space-faring (stock) experience affects their productivity
+ greatly.
+\end_layout
+
+\begin_layout Description
+0
+\begin_inset space ~
+\end_inset
+
+stars The kerbal can work in a fully equipped workshop.
+\end_layout
+
+\begin_layout Description
+1
+\begin_inset space ~
+\end_inset
+
+star The kerbal can work in any workshop.
+\end_layout
+
+\begin_layout Description
+2
+\begin_inset space ~
+\end_inset
+
+stars The kerbal is always productive in a fully equipped workshop (base
+ productivity still matters, but to get negative productivity, the kerbal
+ would have to have infinitely negative base productivity).
+\end_layout
+
+\begin_layout Description
+3
+\begin_inset space ~
+\end_inset
+
+stars The kerbal is always productive in any workshop.
+\end_layout
+
+\begin_layout Description
+4
+\begin_inset space ~
+\end_inset
+
+stars The kerbal enables skilled workers in any workshop (a 4-star construction
+ kerbal in an under-equipped workshop allows 0-star construction kerbals
+ to contribute).
+\end_layout
+
+\begin_layout Description
+5
+\begin_inset space ~
+\end_inset
+
+stars The kerbal enables unskilled workers in a fully equipped workshop
+ (a 5-star construction kerbal in a fully equipped workshop allows any kerbal,
+ even those without the construction skill, to contribute).
+\end_layout
+
+\begin_layout Subsubsection
+Unskilled kerbals
+\end_layout
+
+\begin_layout Standard
+Unskilled kerbals cannot work unless a 5-star construction kerbal is present
+ in the same workshop, and the workshop must be fully equipped, but if the
+ kerbal's skill is 2 or less, and the kerbal's base productivity is negative,
+ the kerbal will detract from the workshop's productivity.
+\end_layout
+
+\begin_layout Subsubsection
+Non-career modes
+\end_layout
+
+\begin_layout Standard
+In sandbox (and science?) mode, all kerbals are level 5, so there will be
+ no negative contributions, and if there is at least one construction kerbal
+ in the workshop, then all kerbals of sufficient ability will contribute.
+\end_layout
+
+\begin_layout Subsection
+Workshops
+\end_layout
+
+\begin_layout Standard
+Workshops, too, affect productivity.
+ All workshops have a productivity factor that is multiplied by the sum
+ of the productivities of the kerbals working in that shop.
+ The resulting productivity is then passed to the vessel.
+\end_layout
+
+\begin_layout Subsubsection
+Fully equipped
+\end_layout
+
+\begin_layout Standard
+Fully equipped workshops are those with a productivity factor of 1.0 or more,
+ or specially marked workshops with lower productivity factors.
+ EL's blue workshop, and the rocket workbench are both fully equipped workshops.
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+For role-play purposes, 
+\begin_inset Quotes eld
+\end_inset
+
+fully equipped
+\begin_inset Quotes erd
+\end_inset
+
+ can be thought of as the workshop having all the necessary tools, and the
+ productivity factor as being the quality of the tools or the level of automatio
+n available.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Other parts
+\end_layout
+
+\begin_layout Standard
+All stock crewed parts act as under-equipped workshops.
+ In addition, all crewed command pods, including those from other mods,
+ act as under-equipped workshops.
+ Many base-building mods (eg, USI-MKS, Pathfinder) provide workshops (refer
+ to those mods for details).
+\end_layout
+
+\begin_layout Section
 Survey Stakes
 \end_layout
 
@@ -589,7 +775,7 @@ Module Fields
 SpawnHeightOffset Specifies the distance in meters above the launch transform
  of the lowest point of the spawned vessel.
  This is most useful when the model does not have a specific spawn transform.
- Defaults to 1.0m.
+ Defaults to 0.0m.
 \end_layout
 
 \begin_layout Description

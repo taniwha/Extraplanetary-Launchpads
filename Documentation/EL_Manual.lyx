@@ -73,6 +73,394 @@ Construction Basics
 \end_layout
 
 \begin_layout Subsection
+Resources
+\end_layout
+
+\begin_layout Standard
+Currently, EL uses four resources for its production chain (though the recipe
+ system allows for much more complicated systems).
+\end_layout
+
+\begin_layout Description
+MetalOre Assumed to be iron ore (but not explicitly stated as such) but
+ with a very slightly higher density (
+\begin_inset Formula $5.5t/m^{3}$
+\end_inset
+
+ vs 
+\begin_inset Formula $4.5-5.3t/m^{3}$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Description
+Metal Assumed to be iron (but not explicitly stated as such) and thus has
+ a density of 
+\begin_inset Formula $7.8t/m^{3}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+RocketParts Assumed to be sub-parts ready for assembly into actual parts,
+ and thus has a very low density of 
+\begin_inset Formula $0.5t/m^{3}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+ScrapMetal The true product of any machine shop: all machine shops produce
+ scrap metal in various forms and efficiencies.
+ The lumps of metal handed over to the customer are really the left-overs
+ from producing scrap metal.
+ Scrap metal generally does not pack well, so a density of 
+\begin_inset Formula $0.8t/m^{3}$
+\end_inset
+
+ was chosen as an average.
+\end_layout
+
+\begin_layout Subsubsection
+Prospecting and Mining: dirt? to MetalOre
+\end_layout
+
+\begin_layout Standard
+In order to obtain MetalOre when away from KSC, one of the augers is used
+ to mine MetalOre from the surface of the planet or moon.
+ EL uses the stock resource distribution system configured to distribute
+ MetalOre, so prospecting is done as for stock's Ore resource, but with
+ a focus on MetalOre instead.
+\end_layout
+
+\begin_layout Paragraph
+Kethane and Karbonite
+\end_layout
+
+\begin_layout Standard
+Prior to KSP 1.0, EL relied solely on Kethane for its prospecting and mining,
+ and there was an adaptation to make EL use Karbonite instead.
+ As of KSP 1.0 (EL 5.1.90) Kethane is completely optional, but if present,
+ will be used on top of the stock resource system.
+ Scanning is quite separate, but mining is done using the exact same augers.
+ Mining outside a MetalOre deposit created by Kethane will extract MetalOre
+ at the rate dictated by the concentration given by the stock system (1%
+ to 15%), but deposits created by Kethane effectively provide hot-spots
+ of 100% concentration.
+ It may be worthwhile thinking of the stock system providing a means to
+ extract MetalOre from a larger mix of 
+\begin_inset Quotes eld
+\end_inset
+
+dirt
+\begin_inset Quotes erd
+\end_inset
+
+, while the Kethane system provides access to rich veins of MetalOre.
+\end_layout
+
+\begin_layout Standard
+The Karbonite adaptation seems to have been mothballed, but it was mostly
+ a parts mod with configs for EL, so it may still be usable.
+\end_layout
+
+\begin_layout Subsubsection
+Smelting: MetalOre to Metal
+\end_layout
+
+\begin_layout Standard
+MetalOre is converted to Metal via smelting.
+ Smelting is the process of reducing
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+chemistry term, the opposite of oxidation
+\end_layout
+
+\end_inset
+
+ metal oxides.
+ EL assumes MetalOre is Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ (the most common iron ore on Earth).
+ Reducing Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ is a three-step process (from Wikipedia):
+\end_layout
+
+\begin_layout Description
+Stage
+\begin_inset space ~
+\end_inset
+
+One 3Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ + CO → 2Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+
+ + CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Stage
+\begin_inset space ~
+\end_inset
+
+Two Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+
++ CO → 3FeO + CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Stage
+\begin_inset space ~
+\end_inset
+
+Three FeO + CO → Fe + CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+However, this really happens all at once in a smelter so the effective process
+ is 3Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ + 9CO → 6Fe + 9CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Fe has a molar mas of 
+\begin_inset Formula $55.845g/mol$
+\end_inset
+
+, O has a molar mass of 
+\begin_inset Formula $15.999g/mol$
+\end_inset
+
+ (EL currently does not model CO consumption or CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ production), so 
+\begin_inset Formula $479.061g$
+\end_inset
+
+ of 3Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ will produce 
+\begin_inset Formula $335.070g$
+\end_inset
+
+ of Fe.
+ This leads to a MetalOre to Metal mass conversion rate of 0.699431 (0.493188
+ volume (resource unit) conversion rate).
+\end_layout
+
+\begin_layout Subsubsection
+Working: Metal to RocketParts
+\end_layout
+
+\begin_layout Standard
+Metal is converted to RocketParts by working it.
+ Currently, this is done using either the workshop (big blue part in Utilities),
+ or the workbench (tower with little platforms in Pods).
+ Unfortunately, the process is quite bogus: Metal is used for for everything,
+ and the conversion speed is far too fast.
+ However, the efficiency (0.7 by mass) is reasonable: it is the estimated
+ average of various means of production: cutting cast iron parts leads to
+ high efficiency, but cutting lumps of steel can lead to fairly low efficiency
+ depending on just how much metal needs to be cut away.
+ At the same time, ScrapMetal is produced at a rate of 0.2995 by mass (some
+ scraps are lost).
+\end_layout
+
+\begin_layout Subsubsection
+Remelting: ScrapMetal to Metal
+\end_layout
+
+\begin_layout Standard
+ScrapMetal can optionally be remelted to Metal using a smelter.
+ The process is lossless (conversion rate of 1), the loss (very small) occurs
+ when producing the ScrapMetal.
+ Storing and reclaiming ScrapMetal is fully optional: running out of storage
+ will not stop Metal to RocketParts conversion.
+\end_layout
+
+\begin_layout Subsubsection
+Building: RocketParts to Rockets
+\end_layout
+
+\begin_layout Standard
+Building is done by the launchpads, orbital dock, or survey station (or
+ just 
+\begin_inset Quotes eld
+\end_inset
+
+pads
+\begin_inset Quotes erd
+\end_inset
+
+ for short).
+ The rate is governed by the overall vessel productivity (measured in kerbal-hou
+rs (Khr)) shared amongst active pads.
+ Each ton of rocket (dry-mass) requires five kerbal-hours (ie, 5Kh/t).
+\end_layout
+
+\begin_layout Subsection
 Productivity
 \end_layout
 

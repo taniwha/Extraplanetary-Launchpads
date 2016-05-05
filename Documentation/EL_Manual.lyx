@@ -150,8 +150,13 @@ Prior to KSP 1.0, EL relied solely on Kethane for its prospecting and mining,
  at the rate dictated by the concentration given by the stock system (1%
  to 15%), but deposits created by Kethane effectively provide hot-spots
  of 100% concentration.
- It may be worthwhile thinking of the stock system providing a means to
- extract MetalOre from a larger mix of 
+ 
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+It may be worthwhile thinking of the stock system providing a means to extract
+ MetalOre from a larger mix of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -160,6 +165,11 @@ dirt
 \end_inset
 
 , while the Kethane system provides access to rich veins of MetalOre.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

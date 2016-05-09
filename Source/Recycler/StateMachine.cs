@@ -257,6 +257,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			RecycleField = field;
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			recycler_resources = new VesselResources (recycler.vessel, recycle_parts);
 			fsm.StartFSM (start_state);
 		}
 

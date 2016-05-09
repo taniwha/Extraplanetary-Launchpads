@@ -146,6 +146,7 @@ public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
 	{
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
 			sm = new RecyclerFSM (this);
+			sm.Load (node);
 		}
 		Deactivate ();
 	}

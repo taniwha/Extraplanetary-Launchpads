@@ -652,6 +652,57 @@ All stock crewed parts act as under-equipped workshops.
  to those mods for details).
 \end_layout
 
+\begin_layout Subsection
+Pads
+\end_layout
+
+\begin_layout Standard
+All construction is done at 
+\begin_inset Quotes eld
+\end_inset
+
+pads
+\begin_inset Quotes erd
+\end_inset
+
+, whether the pad is an orbital dock, a launchpad, or a survey site (marked
+ out using survey stakes and managed by a survey station).
+\end_layout
+
+\begin_layout Standard
+Initiating construction is the same for everything: open the build window
+ (via either the toolbar button (blizzy's toolbar), or the Show UI button
+ in the PAW
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Part Action Window (right-click menu)
+\end_layout
+
+\end_inset
+
+), select the craft to build, and press the Build button.
+ Between selecting the craft to build and pressing the Build button, the
+ required and optional resources for the build will be displayed.
+ There is no need to have all the required resources on-hand when beginning
+ the build: if they run out during the build, the build will stop until
+ the resources become available and then automatically resume.
+ The resources can become available via supply runs or local processing.
+\end_layout
+
+\begin_layout Subsubsection
+Launchpads and Orbital Docks
+\end_layout
+
+\begin_layout Standard
+Technically, there is no difference between a launchpad and an orbital dock:
+ they operate exactly the same way.
+ The difference comes in the physical attributes of the parts: launchpads
+ are optimized for grounded operation, and the orbital dock is optimized
+ for orbital operation.
+\end_layout
+
 \begin_layout Section
 Survey Stakes
 \end_layout

@@ -141,16 +141,13 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				var br = part_resources[res_index];
 				var old_amount = br.amount;
-				deltat = ReclaimResource (br, deltat);
+				deltat = TransferResource (br, deltat);
 				//Debug.Log (String.Format ("[EL RSM] {0} {1} {2} {3} {4}",
 										  //br.name, deltat,
 										  //old_amount, br.amount,
 										  //old_amount - br.amount));
-				if (deltat > 1e-6) {
-					deltat = DumpResource (br, deltat);
-				}
 				did_something = old_amount != br.amount;
-				if (br.amount < 1e-6) {
+				if (br.amount <= 0) {
 					part_resources.RemoveAt (res_index);
 				} else {
 					res_index++;
@@ -511,7 +508,7 @@ namespace ExtraplanetaryLaunchpads {
 			return reslist;
 		}
 
-		double ReclaimResource (BuildResource br, double deltat)
+		double TransferResource (BuildResource br, double deltat)
 		{
 			if (br.density > 0) {
 				var amount = recycler.RecycleRate * deltat / br.density;
@@ -519,29 +516,14 @@ namespace ExtraplanetaryLaunchpads {
 				if (amount > br.amount) {
 					amount = br.amount;
 				}
-				var remain = recycler_resources.TransferResource (br.name, amount);
-				br.amount -= amount - remain;
+				recycler_resources.TransferResource (br.name, amount);
+				br.amount -= amount;	// any untransfered resource is lost
 				br.mass = br.amount * br.density;
-				deltat = deltat * remain / base_amount;
-			} else {
-				recycler_resources.TransferResource (br.name, br.amount);
-				br.amount = 0;
-				deltat = 0;
-			}
-			return deltat;
-		}
-
-		double DumpResource (BuildResource br, double deltat)
-		{
-			if (br.density > 0) {
-				var amount = recycler.RecycleRate * deltat / br.density;
-				var base_amount = amount;
-				if (amount > br.amount) {
-					amount = br.amount;
-				}
-				br.amount -= amount;
 				deltat = deltat * (base_amount - amount) / base_amount;
 			} else {
+				// Massless resources are transferred in one tick (for now),
+				// but consume the whole tick.
+				recycler_resources.TransferResource (br.name, br.amount);
 				br.amount = 0;
 				deltat = 0;
 			}

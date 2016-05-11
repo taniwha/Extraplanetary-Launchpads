@@ -1196,8 +1196,8 @@ Model Requirements
 \end_layout
 
 \begin_layout Standard
-No requirements, but it highly recommended that the part has plenty of free
- space 
+No requirements, but it is highly recommended that the part has plenty of
+ free space 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1230,8 +1230,8 @@ SpawnHeightOffset Specifies the distance in meters above the launch transform
 \begin_layout Description
 SpawnTransform Specifies the model transform to be used as the launch transform.
  Optional, but using a spawn transform allows finer control over the launch
- position that afforded by SpawnHeightOffset, and also allows the orientation
- to be specified.
+ position than that afforded by SpawnHeightOffset, and also allows the orientati
+on to be specified.
  If not specified, the model's root transform will be used as the launch
  transform (setting SpawnHeightOffset is highly recommended, but not as
  highly as having a spawn transform).

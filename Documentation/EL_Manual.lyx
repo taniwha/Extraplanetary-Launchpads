@@ -117,7 +117,8 @@ ScrapMetal The true product of any machine shop: all machine shops produce
  scrap metal in various forms and efficiencies.
  The lumps of metal handed over to the customer are really the left-overs
  from producing scrap metal.
- Scrap metal generally does not pack well, so a density of 
+ Scrap metal generally does not pack well, though better than parts, so
+ a density of 
 \begin_inset Formula $0.8t/m^{3}$
 \end_inset
 
@@ -188,7 +189,7 @@ MetalOre is converted to Metal via smelting.
 status collapsed
 
 \begin_layout Plain Layout
-chemistry term, the opposite of oxidation
+chemistry term, the opposite of oxidizing (or reduction vs oxidization)
 \end_layout
 
 \end_inset
@@ -380,7 +381,12 @@ Fe has a molar mas of
 \begin_inset Formula $15.999g/mol$
 \end_inset
 
- (EL currently does not model CO consumption or CO
+ 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+EL currently does not model CO consumption or CO
 \begin_inset script subscript
 
 \begin_layout Plain Layout
@@ -389,7 +395,33 @@ Fe has a molar mas of
 
 \end_inset
 
- production), so 
+ production, but C has a molar mass of 
+\begin_inset Formula $12.0107g/mol$
+\end_inset
+
+ giving CO a molar mass of 
+\begin_inset Formula $28.0097g/mol$
+\end_inset
+
+ and CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ a molar mass of 
+\begin_inset Formula $44.0087g/mol$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, so 
 \begin_inset Formula $479.061g$
 \end_inset
 
@@ -585,8 +617,8 @@ Unskilled kerbals
 \begin_layout Standard
 Unskilled kerbals cannot work unless a 5-star construction kerbal is present
  in the same workshop, and the workshop must be fully equipped, but if the
- kerbal's skill is 2 or less, and the kerbal's base productivity is negative,
- the kerbal will detract from the workshop's productivity.
+ kerbal's experience level is 2 or less, and the kerbal's base productivity
+ is negative, the kerbal will detract from the workshop's productivity.
 \end_layout
 
 \begin_layout Subsubsection
@@ -684,7 +716,7 @@ Part Action Window (right-click menu)
 
 ), select the craft to build, and press the Build button.
  Between selecting the craft to build and pressing the Build button, the
- required and optional resources for the build will be displayed.
+ required and optional resources for the build will be displayed in a preview.
  There is no need to have all the required resources on-hand when beginning
  the build: if they run out during the build, the build will stop until
  the resources become available and then automatically resume.
@@ -701,6 +733,57 @@ Technically, there is no difference between a launchpad and an orbital dock:
  The difference comes in the physical attributes of the parts: launchpads
  are optimized for grounded operation, and the orbital dock is optimized
  for orbital operation.
+\end_layout
+
+\begin_layout Standard
+Adjusting the optional resources in the preview will set the defaults for
+ the amounts to be transfered upon release.
+\end_layout
+
+\begin_layout Subsubsection
+Survey Stations and Survey Stakes
+\end_layout
+
+\begin_layout Standard
+Survey stations use local survey sites to specify the location and orientation
+ of the built vessel.
+ Survey sites are sets of one or more survey stakes with the same name
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+A stake's name defaults to the name of the kerbal who planted it with 
+\begin_inset Quotes eld
+\end_inset
+
+Base
+\begin_inset Quotes erd
+\end_inset
+
+ appended.
+ Thus if 
+\noun on
+Valentina
+\noun default
+ plants a stake, it will be named 
+\noun on
+Valentina Kerman Base
+\noun default
+.
+ Thus, when creating a site consisting of more than one stake, it is easiest
+ to have only one kerbal do the stake planting.
+ Also, if multiple local sites are desired, getting a different kerbal to
+ plant the stakes for each site will make it easier.
+\end_layout
+
+\end_inset
+
+ and within range (200m) of each other.
+\end_layout
+
+\begin_layout Standard
+Adjusting the optional resources in the preview will have no effect as no
+ resources will be transfered.
 \end_layout
 
 \begin_layout Section

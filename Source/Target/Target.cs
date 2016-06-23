@@ -89,6 +89,10 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			return VesselTargetModes.DirectionVelocityAndOrientation;
 		}
+		public bool GetActiveTargetable()
+		{
+			return false;
+		}
 
 		public override void OnLoad (ConfigNode node)
 		{

@@ -552,7 +552,7 @@ namespace ExtraplanetaryLaunchpads {
 			craftOffset = launchTransform.InverseTransformDirection (offset);
 			SetupCraftResources (craftVessel);
 
-			Staging.beginFlight ();
+			KSP.UI.Screens.StageManager.BeginFlight ();
 
 			if (builder.capture) {
 				FlightGlobals.overrideOrbit = true;

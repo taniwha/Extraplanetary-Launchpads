@@ -89,6 +89,10 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			return VesselTargetModes.DirectionVelocityAndOrientation;
 		}
+		public bool GetActiveTargetable()
+		{
+			return false;
+		}
 
 		public override void OnLoad (ConfigNode node)
 		{
@@ -129,11 +133,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnAwake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				Events["SetAsTarget"].active = false;
-				Events["UnsetTarget"].active = false;
-				return;
-			}
 		}
 	}
 }

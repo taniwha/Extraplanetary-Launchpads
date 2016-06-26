@@ -86,7 +86,7 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < ingredients.Count; i++) {
 				var name = ingredients[i].name;
 				var ratio = mass * ingredients[i].ratio / total;
-				Debug.Log(String.Format("Bake: {0} {1} {2} {3}", name, ratio, ingredients[i].ratio, total));
+				//Debug.Log(String.Format("Bake: {0} {1} {2} {3}", name, ratio, ingredients[i].ratio, total));
 				var ingredient = new Ingredient (name, ratio);
 				bake.ingredients.Add (ingredient);
 			}

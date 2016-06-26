@@ -1,0 +1,1484 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Construction Basics
+\end_layout
+
+\begin_layout Subsection
+Resources
+\end_layout
+
+\begin_layout Standard
+Currently, EL uses four resources for its production chain (though the recipe
+ system allows for much more complicated systems).
+\end_layout
+
+\begin_layout Description
+MetalOre Assumed to be iron ore (but not explicitly stated as such) but
+ with a very slightly higher density (
+\begin_inset Formula $5.5t/m^{3}$
+\end_inset
+
+ vs 
+\begin_inset Formula $4.5-5.3t/m^{3}$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Description
+Metal Assumed to be iron (but not explicitly stated as such) and thus has
+ a density of 
+\begin_inset Formula $7.8t/m^{3}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+RocketParts Assumed to be sub-parts ready for assembly into actual parts,
+ and thus has a very low density of 
+\begin_inset Formula $0.5t/m^{3}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+ScrapMetal The true product of any machine shop: all machine shops produce
+ scrap metal in various forms and efficiencies.
+ The lumps of metal handed over to the customer are really the left-overs
+ from producing scrap metal.
+ Scrap metal generally does not pack well, though better than parts, so
+ a density of 
+\begin_inset Formula $0.8t/m^{3}$
+\end_inset
+
+ was chosen as an average.
+\end_layout
+
+\begin_layout Subsubsection
+Prospecting and Mining: dirt? to MetalOre
+\end_layout
+
+\begin_layout Standard
+In order to obtain MetalOre when away from KSC, one of the augers is used
+ to mine MetalOre from the surface of the planet or moon.
+ EL uses the stock resource distribution system configured to distribute
+ MetalOre, so prospecting is done as for stock's Ore resource, but with
+ a focus on MetalOre instead.
+\end_layout
+
+\begin_layout Paragraph
+Kethane and Karbonite
+\end_layout
+
+\begin_layout Standard
+Prior to KSP 1.0, EL relied solely on Kethane for its prospecting and mining,
+ and there was an adaptation to make EL use Karbonite instead.
+ As of KSP 1.0 (EL 5.1.90) Kethane is completely optional, but if present,
+ will be used on top of the stock resource system.
+ Scanning is quite separate, but mining is done using the exact same augers.
+ Mining outside a MetalOre deposit created by Kethane will extract MetalOre
+ at the rate dictated by the concentration given by the stock system (1%
+ to 15%), but deposits created by Kethane effectively provide hot-spots
+ of 100% concentration.
+ 
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+It may be worthwhile thinking of the stock system providing a means to extract
+ MetalOre from a larger mix of 
+\begin_inset Quotes eld
+\end_inset
+
+dirt
+\begin_inset Quotes erd
+\end_inset
+
+, while the Kethane system provides access to rich veins of MetalOre.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Karbonite adaptation seems to have been mothballed, but it was mostly
+ a parts mod with configs for EL, so it may still be usable.
+\end_layout
+
+\begin_layout Subsubsection
+Smelting: MetalOre to Metal
+\end_layout
+
+\begin_layout Standard
+MetalOre is converted to Metal via smelting.
+ Smelting is the process of reducing
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+chemistry term, the opposite of oxidizing (or reduction vs oxidization)
+\end_layout
+
+\end_inset
+
+ metal oxides.
+ EL assumes MetalOre is Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ (the most common iron ore on Earth).
+ Reducing Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ is a three-step process (from Wikipedia):
+\end_layout
+
+\begin_layout Description
+Stage
+\begin_inset space ~
+\end_inset
+
+One 3Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ + CO → 2Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+
+ + CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Stage
+\begin_inset space ~
+\end_inset
+
+Two Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+
++ CO → 3FeO + CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Stage
+\begin_inset space ~
+\end_inset
+
+Three FeO + CO → Fe + CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+However, this really happens all at once in a smelter so the effective process
+ is 3Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ + 9CO → 6Fe + 9CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Fe has a molar mas of 
+\begin_inset Formula $55.845g/mol$
+\end_inset
+
+, O has a molar mass of 
+\begin_inset Formula $15.999g/mol$
+\end_inset
+
+ 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+EL currently does not model CO consumption or CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ production, but C has a molar mass of 
+\begin_inset Formula $12.0107g/mol$
+\end_inset
+
+ giving CO a molar mass of 
+\begin_inset Formula $28.0097g/mol$
+\end_inset
+
+ and CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ a molar mass of 
+\begin_inset Formula $44.0087g/mol$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, so 
+\begin_inset Formula $479.061g$
+\end_inset
+
+ of 3Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ will produce 
+\begin_inset Formula $335.070g$
+\end_inset
+
+ of Fe.
+ This leads to a MetalOre to Metal mass conversion rate of 0.699431 (0.493188
+ volume (resource unit) conversion rate).
+\end_layout
+
+\begin_layout Subsubsection
+Working: Metal to RocketParts
+\end_layout
+
+\begin_layout Standard
+Metal is converted to RocketParts by working it.
+ Currently, this is done using either the workshop (big blue part in Utilities),
+ or the workbench (tower with little platforms in Pods).
+ Unfortunately, the process is quite bogus: Metal is used for for everything,
+ and the conversion speed is far too fast.
+ However, the efficiency (0.7 by mass) is reasonable: it is the estimated
+ average of various means of production: cutting cast iron parts leads to
+ high efficiency, but cutting lumps of steel can lead to fairly low efficiency
+ depending on just how much metal needs to be cut away.
+ At the same time, ScrapMetal is produced at a rate of 0.2995 by mass (some
+ scraps are lost).
+\end_layout
+
+\begin_layout Subsubsection
+Remelting: ScrapMetal to Metal
+\end_layout
+
+\begin_layout Standard
+ScrapMetal can optionally be remelted to Metal using a smelter.
+ The process is lossless (conversion rate of 1), the loss (very small) occurs
+ when producing the ScrapMetal.
+ Storing and reclaiming ScrapMetal is fully optional: running out of storage
+ will not stop Metal to RocketParts conversion.
+\end_layout
+
+\begin_layout Subsubsection
+Building: RocketParts to Rockets
+\end_layout
+
+\begin_layout Standard
+Building is done by the launchpads, orbital dock, or survey station (or
+ just 
+\begin_inset Quotes eld
+\end_inset
+
+pads
+\begin_inset Quotes erd
+\end_inset
+
+ for short).
+ The rate is governed by the overall vessel productivity (measured in kerbal-hou
+rs (Khr)) shared amongst active pads.
+ Each ton of rocket (dry-mass) requires five kerbal-hours (ie, 5Kh/t).
+\end_layout
+
+\begin_layout Subsection
+Productivity
+\end_layout
+
+\begin_layout Standard
+All kerbals have a base productivity score computed from their stupidity,
+ courage, and bad-ass characteristics.
+ The more stupid a kerbal is, the less that kerbal will contribute to the
+ workshop's (and thus the overall vessel's) productivity, and more courageous
+ kerbals will, in general, contribute less than less courageous kerbals,
+ though bad-ass kerbals complicate the relationship.
+ It is entirely possible for a kerbal to have negative productivity.
+\end_layout
+
+\begin_layout Standard
+If the KerbalStats
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+KerbalStats: http://forum.kerbalspaceprogram.com/index.php?/topic/89285-105-kerbals
+tats-v201/
+\end_layout
+
+\end_inset
+
+ mod is installed, then the amount of time a kerbal has spent in certain
+ workshops (currently only EL's blue workshop (afaik)) improves the kerbal's
+ productivity.
+\end_layout
+
+\begin_layout Standard
+A workshop's productivity is the sum of the productivities of all kerbals
+ working in that shop.
+ A vessel's productivity is the sum of the productivities of all workshops
+ in that vessel.
+ If the vessel's productivity is greater than zero, then construction will
+ progress.
+ Negative productivity does not cause production to become destruction,
+ instead it causes a productivity deficit that must be overcome by better
+ construction kerbals.
+\end_layout
+
+\begin_layout Subsection
+Construction Skill
+\end_layout
+
+\begin_layout Standard
+Kerbals with the construction skill (by default, engineers) are the cornerstone
+ of workshop productivity.
+ However, their space-faring (stock) experience affects their productivity
+ greatly.
+\end_layout
+
+\begin_layout Description
+0
+\begin_inset space ~
+\end_inset
+
+stars The kerbal can work in a fully equipped workshop.
+\end_layout
+
+\begin_layout Description
+1
+\begin_inset space ~
+\end_inset
+
+star The kerbal can work in any workshop.
+\end_layout
+
+\begin_layout Description
+2
+\begin_inset space ~
+\end_inset
+
+stars The kerbal is always productive in a fully equipped workshop (base
+ productivity still matters, but to get negative productivity, the kerbal
+ would have to have infinitely negative base productivity).
+\end_layout
+
+\begin_layout Description
+3
+\begin_inset space ~
+\end_inset
+
+stars The kerbal is always productive in any workshop.
+\end_layout
+
+\begin_layout Description
+4
+\begin_inset space ~
+\end_inset
+
+stars The kerbal enables skilled workers in any workshop (a 4-star construction
+ kerbal in an under-equipped workshop allows 0-star construction kerbals
+ to contribute).
+\end_layout
+
+\begin_layout Description
+5
+\begin_inset space ~
+\end_inset
+
+stars The kerbal enables unskilled workers in a fully equipped workshop
+ (a 5-star construction kerbal in a fully equipped workshop allows any kerbal,
+ even those without the construction skill, to contribute).
+\end_layout
+
+\begin_layout Subsubsection
+Unskilled kerbals
+\end_layout
+
+\begin_layout Standard
+Unskilled kerbals cannot work unless a 5-star construction kerbal is present
+ in the same workshop, and the workshop must be fully equipped, but if the
+ kerbal's experience level is 2 or less, and the kerbal's base productivity
+ is negative, the kerbal will detract from the workshop's productivity.
+\end_layout
+
+\begin_layout Subsubsection
+Non-career modes
+\end_layout
+
+\begin_layout Standard
+In sandbox (and science?) mode, all kerbals are level 5, so there will be
+ no negative contributions, and if there is at least one construction kerbal
+ in the workshop, then all kerbals of sufficient ability will contribute.
+\end_layout
+
+\begin_layout Subsection
+Workshops
+\end_layout
+
+\begin_layout Standard
+Workshops, too, affect productivity.
+ All workshops have a productivity factor that is multiplied by the sum
+ of the productivities of the kerbals working in that shop.
+ The resulting productivity is then passed to the vessel.
+\end_layout
+
+\begin_layout Subsubsection
+Fully equipped
+\end_layout
+
+\begin_layout Standard
+Fully equipped workshops are those with a productivity factor of 1.0 or more,
+ or specially marked workshops with lower productivity factors.
+ EL's blue workshop, and the rocket workbench are both fully equipped workshops.
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+For role-play purposes, 
+\begin_inset Quotes eld
+\end_inset
+
+fully equipped
+\begin_inset Quotes erd
+\end_inset
+
+ can be thought of as the workshop having all the necessary tools, and the
+ productivity factor as being the quality of the tools or the level of automatio
+n available.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Other parts
+\end_layout
+
+\begin_layout Standard
+All stock crewed parts act as under-equipped workshops.
+ In addition, all crewed command pods, including those from other mods,
+ act as under-equipped workshops.
+ Many base-building mods (eg, USI-MKS, Pathfinder) provide workshops (refer
+ to those mods for details).
+\end_layout
+
+\begin_layout Subsection
+Pads
+\end_layout
+
+\begin_layout Standard
+All construction is done at 
+\begin_inset Quotes eld
+\end_inset
+
+pads
+\begin_inset Quotes erd
+\end_inset
+
+, whether the pad is an orbital dock, a launchpad, or a survey site (marked
+ out using survey stakes and managed by a survey station).
+\end_layout
+
+\begin_layout Standard
+Initiating construction is the same for everything: open the build window
+ (via either the toolbar button (blizzy's toolbar), or the Show UI button
+ in the PAW
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Part Action Window (right-click menu)
+\end_layout
+
+\end_inset
+
+), select the craft to build, and press the Build button.
+ Between selecting the craft to build and pressing the Build button, the
+ required and optional resources for the build will be displayed in a preview.
+ There is no need to have all the required resources on-hand when beginning
+ the build: if they run out during the build, the build will stop until
+ the resources become available and then automatically resume.
+ The resources can become available via supply runs or local processing.
+\end_layout
+
+\begin_layout Subsubsection
+Launchpads and Orbital Docks
+\end_layout
+
+\begin_layout Standard
+Technically, there is no difference between a launchpad and an orbital dock:
+ they operate exactly the same way.
+ The difference comes in the physical attributes of the parts: launchpads
+ are optimized for grounded operation, and the orbital dock is optimized
+ for orbital operation.
+\end_layout
+
+\begin_layout Standard
+Adjusting the optional resources in the preview will set the defaults for
+ the amounts to be transfered upon release.
+\end_layout
+
+\begin_layout Subsubsection
+Survey Stations and Survey Stakes
+\end_layout
+
+\begin_layout Standard
+Survey stations use local survey sites to specify the location and orientation
+ of the built vessel.
+ Survey sites are sets of one or more survey stakes with the same name
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+A stake's name defaults to the name of the kerbal who planted it with 
+\begin_inset Quotes eld
+\end_inset
+
+Base
+\begin_inset Quotes erd
+\end_inset
+
+ appended.
+ Thus if 
+\noun on
+Valentina
+\noun default
+ plants a stake, it will be named 
+\noun on
+Valentina Kerman Base
+\noun default
+.
+ Thus, when creating a site consisting of more than one stake, it is easiest
+ to have only one kerbal do the stake planting.
+ Also, if multiple local sites are desired, getting a different kerbal to
+ plant the stakes for each site will make it easier.
+\end_layout
+
+\end_inset
+
+ and within range (200m) of each other.
+\end_layout
+
+\begin_layout Standard
+Adjusting the optional resources in the preview will have no effect as no
+ resources will be transfered.
+\end_layout
+
+\begin_layout Section
+Survey Stakes
+\end_layout
+
+\begin_layout Subsection
+stuff
+\end_layout
+
+\begin_layout Standard
+Ok, about the surveyed builds...
+\end_layout
+
+\begin_layout Standard
+Firstly, they are still a work in progress: they are working as intended
+ and most of the planned features seem to be working, but two important
+ features are not yet implemented and there may be more bugs lurking in
+ the code (over 800 lines).
+\end_layout
+
+\begin_layout Standard
+Secondly, surveyed builds flat out require Kerbal Attachment System: the
+ survey stakes cannot be attached to any part via any means (node attach,
+ surface attach, KAS attach).
+ They can, however, be attached to planetary surfaces, carried around by
+ kerbals (<2kg), and put in KAS storage containers.
+ Stakes are used to determine the placement of the build craft: both location
+ and optionally orientation.
+\end_layout
+
+\begin_layout Standard
+Thirdly, to make use of the survey stakes, your build vessel needs to have
+ a survey station.
+ Currently this is a clone (via MM magic) of the stock hitchhiker can.
+ I will create a new part for this once I've had a break and will ensure
+ it is physically compatible, but I suggest avoiding surface attachments
+ as the exact shape may differ, or parts may be animated.
+ Use of the survey station is exactly the same as a pad, except it must
+ be landed for it to work.
+\end_layout
+
+\begin_layout Standard
+Finally, craft built via a survey station will not be loaded with any resources.
+ Probes with neither ox-stat solar panels nor RTGs (or similar mod parts)
+ will be DOA.
+ Resources can be transfered by connective via either docking or KAS.
+\end_layout
+
+\begin_layout Standard
+And now a little bit about actually using the stakes...
+\end_layout
+
+\begin_layout Itemize
+Stakes have "usage modes".
+ These can be seen via the right-click menu from EVA.
+ The possible settings are: Origin, +X, +Y, +Z, -X, -Y, -Z.
+\end_layout
+
+\begin_layout Itemize
+Stakes can be renamed via Rename Stake in the right-click menu.
+ The dialog is the same as for Rename Vessel, but the ship type has no meaning.
+ The name defaults to "<kerbal name> Base".
+ Stakes of the same name will be considered to be part of the same survey
+ site.
+ Multiple survey sites is one of the not-yet fully implemented features.
+ Multiple sites within range of the survey station may result in interesting
+ outcomes.
+\end_layout
+
+\begin_layout Itemize
+Stakes in Origin mode determine where the built craft will be placed (the
+ root part).
+ If the site has multiple Origin stakes, then their positions will be averaged.
+ This is a very useful feature :).
+\end_layout
+
+\begin_layout Itemize
+Stakes in +/- XYZ mode determine the orientation of the built craft.
+ The default is for the starboard size of the craft to face east (same as
+ a normal launch).
+ +X is starboard, -X is port.
+ I have not done sufficient testing, but +Z is forwards for craft built
+ in the SPH (this I have tested).
+\end_layout
+
+\begin_layout Itemize
+Multiple stakes with the same orientation mode in the one site are averaged.
+\end_layout
+
+\begin_layout Itemize
+Mixing orientation modes in a site may result in interesting outcomes.
+\end_layout
+
+\begin_layout Itemize
+Moving stakes around does not reset their modes.
+ Putting them away in a KAS container probably does (not tested, but I doubt
+ KAS preserves the information).
+\end_layout
+
+\begin_layout Itemize
+Launch clamps work well enough with surveyed builds, but the spawned craft
+ has its bottom about 20cm above the ground (for default orientation).
+ Results may vary on uneven ground.
+\end_layout
+
+\begin_layout Standard
+Essentially, surveyed builds make it a little easier to get bases going
+ as you don't need to fly in an awkward launchpad.
+\end_layout
+
+\begin_layout Subsection
+Direction Stakes
+\end_layout
+
+\begin_layout Standard
+Nice to see that NASA uses a right-handed system (I hate unity's left-handed
+ system).
+ Unfortunately, I have to stick with the LHS for my description or I'll
+ confuse myself.
+\end_layout
+
+\begin_layout Standard
+Ok, I have verified that the survey station averages all of a site's stakes
+ to find the center, but if Origin stakes are present, it then sets the
+ center to the average of the Origin stakes (I guess I wasn't feeling that
+ sadistic).
+\end_layout
+
+\begin_layout Standard
+Once the survey station has set the center, it goes on to find the orientation.
+\end_layout
+
+\begin_layout Itemize
+If the Y axis has not been staked out, then it will, without fail, be the
+ local vertical (ie, directly along the radial vector from the center of
+ the celestial body through the center of the site).
+ Local ground slope is ignored.
+ The XZ plane is horizontal.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If neither X nor Z has been staked out, then the X axis is set to point
+ east.
+ This will not work at the poles (which way is east? Every direction is
+ either south or north).
+ The Z axis is then set to point south.
+ This is the same orientation for rockets on the pad at KSC.
+\end_layout
+
+\begin_layout Itemize
+If only X has been staked out, then the X axis is set to point in the same
+ direction, and the Z axis will be at 3 o'clock (if the X axis is 12 o'clock)
+ when viewed from above.
+\end_layout
+
+\begin_layout Itemize
+If only Z has been staked out, then it is a similar story, but the Z axis
+ is 12 o'clock pointing in the same direction and the X axis is 9 o'clock.
+\end_layout
+
+\begin_layout Itemize
+If both X and Z have been staked out, then the errors for the X and Z axes
+ will be balanced, though X might be reversed if you get the placement wrong.
+ The Y axis is still vertically up.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If the Y axis has been staked out, but the X axis has not, then the X axis
+ will be the local vertical.
+ The YZ plane is horizontal.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If the Z axis has not been staked out, then it will be pointed at 3 o'clock
+ with the Y axis at 12 o'clock.
+ 
+\end_layout
+
+\begin_layout Itemize
+If the Z axis has been staked out, then the Y and Z axis errors will be
+ balanced.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If both the Y axis and the X axis have been staked out, but the Z axis has
+ not, then the Z axis will be the local vertical, and the XY plane will
+ be horizontal.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The X and Y axis errors will be balanced.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If all three axes have been staked out, then I hope you know what you are
+ doing.
+ All three axis errors will be balanced.
+ Used carefully, this might be useful on extreme slopes, or maybe in the
+ vicinity of a Mun arch.
+\end_layout
+
+\begin_layout Standard
+Note: it is intended that the vessel is built flat.
+ It is not accidental behavior, and it is why I modified the launch clamps.
+\end_layout
+
+\begin_layout Subsection
+Bounds stakes
+\end_layout
+
+\begin_layout Standard
+Some points about Bounds stakes:
+\end_layout
+
+\begin_layout Itemize
+Bounds stakes use the same highlight colors as Direction stakes, but flash.
+\end_layout
+
+\begin_layout Itemize
+Single (for a specific axis) Bounds stakes will lock the relevant side of
+ the vessel's bounding box to that stake (ie, the box face and the stake
+ will be coplanar).
+\end_layout
+
+\begin_layout Itemize
+Two Bounds stakes (eg, -X and +X) will cause the box to be centered between
+ the stakes.
+\end_layout
+
+\begin_layout Itemize
+No Bounds stakes on an axis will center the vessel's root part on the Origin
+ stake (or the average of all stakes if there is no Origin stake).
+\end_layout
+
+\begin_layout Itemize
+As per Origin and Direction stakes, multiple Bounds stakes of the same axis
+ (eg, -Z) will be averaged together.
+\end_layout
+
+\begin_layout Itemize
+There is no difference between a Bounds Origin stake and a Direction Origin
+ Stake.
+\end_layout
+
+\begin_layout Standard
+Again, I apologize for suggesting the use of bounds stakes when I had not
+ yet released them.
+ I had begun working on them right after releasing 5.0.2, so I had forgotten
+ they were new.
+\end_layout
+
+\begin_layout Section
+Recipes
+\end_layout
+
+\begin_layout Standard
+On 29/03/2016 at 0:25 PM, goldenpsp said:
+\end_layout
+
+\begin_layout Standard
+I would imagine the EPL recycling bin would need some sort of MM config
+ as by default it isn't going to recycle to material kits.
+\end_layout
+
+\begin_layout Standard
+All it needs is appropriate EL_RecycleRecipe(s) and EL_TransferRecipe(s)
+ (both are for resources, not parts).
+ Tank contents use EL_TransferRecipe (to override other recipes, so not
+ always needed), parts get broken down into appropriate resources using
+ their EL_PartRecipe(s), and those resources use EL_RecycleRecipe (any resource
+ with a EL_ResourceRecipe but no EL_TransferRecipe will evaporate from takes,
+ and evaporate when recycling parts if there is no EL_RecyleRecipe for that
+ resource).
+\end_layout
+
+\begin_layout Standard
+When building:
+\end_layout
+
+\begin_layout Itemize
+Any resource mentioned in EL_PartRecipe or EL_ModuleRecipe is required for
+ building (but not for filling tanks).
+\end_layout
+
+\begin_layout Itemize
+Any stored resource that has an EL_ResourceRecipe becomes a required resource
+ (eg, SolidFuel).
+\end_layout
+
+\begin_layout Itemize
+Any resource stored in a part inside a KIS container becomes a required
+ resource, regardless of recipes.
+\end_layout
+
+\begin_layout Standard
+When recycling:
+\end_layout
+
+\begin_layout Itemize
+Done on a part-by-part basis.
+ Some of you may have had spotty results recycling entire vessels: that
+ is intentional, and there is a way around it (see if you can guess).
+\end_layout
+
+\begin_layout Itemize
+Any resources stored in the part are drained.
+ Those with an EL_ResourceRecipe but no EL_TransferRecipe are lost, otherwise
+ they transfer as dictated by the EL_TransferRecipe.
+\end_layout
+
+\begin_layout Itemize
+The part is then broken down into the resources specified by its EL_PartRecipe
+ and EL_ModuleRecipe(s).
+ Those resources with an EL_ResourceRecipe but no EL_RecycleRecipe are lost,
+ otherwise they get broken down further in accordance with their EL_RecycleRecip
+e.
+\end_layout
+
+\begin_layout Itemize
+Whether tranferring (from a tank) or recycling (the part itself), resources
+ with no recipe are reclaimed as-is at a 1:1 ratio.
+\end_layout
+
+\begin_layout Itemize
+Of course, any reclaimed resource need storage space.
+\end_layout
+
+\begin_layout Standard
+I hope that helps anybody wishing to tweak recipes.
+ There are example recipes in EL's Resources directory, and, I imagine,
+ somewhere in USI's tree.
+ Only EL_PartRecipes need to be MMed (into the part), the rest are independent.
+ 
+\end_layout
+
+\begin_layout Section
+Modules provided by EL
+\end_layout
+
+\begin_layout Subsection
+Overview
+\end_layout
+
+\begin_layout Description
+ExRecycler Destroys anything it touches (including unfortunate kerbals)
+ reclaiming what resources it can.
+\end_layout
+
+\begin_layout Description
+ExLaunchPad Builds complete vessels attached (pseudo-docked) to the current
+ vessel.
+ Allows post-build resource transfer without any extra fuss.
+ Supports building both landed or in orbit.
+\end_layout
+
+\begin_layout Description
+ExTarget Allows a part to be targeted.
+ Includes orientation so it works with any docking alignment mod (DPAI,
+ navball, and navhud are known to work).
+\end_layout
+
+\begin_layout Description
+ExWorkshop Collect productivity from kerbals in the part.
+ Works with either normal parts with crew capacity or command chairs.
+\end_layout
+
+\begin_layout Description
+ExSurveyStation Builds complete vessels at locations marked out using survey
+ stakes (parts with the ExSurveyStake module).
+ Does not allow post-build resource transfer (freedom is not free), but
+ as KIS
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Kerbal Inventory System: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://forum.kerbalspaceprogram.com/index.php?/topic/101928-105-kerbal-inventory-sy
+stem-kis-126/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is required to place the stakes, and KAS
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Kerbal Attachment System: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://forum.kerbalspaceprogram.com/index.php?/topic/83468-105-kerbal-attachment-sy
+stem-kas-055/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is almost always installed with it, survey stations are probably the preferred
+ tool for landed operations.
+\end_layout
+
+\begin_layout Description
+ExSurveyStake Marks locations for survey station.
+ In the current implementation, a stake must be the only part in the vessel
+ for the survey station to recognize it.
+\end_layout
+
+\begin_layout Subsection
+Configuration
+\end_layout
+
+\begin_layout Standard
+For the most part, EL places no restrictions on the models used for parts
+ using EL's module, so unless otherwise stated, models are completely free-form
+ as far as EL is concerned.
+\end_layout
+
+\begin_layout Subsubsection
+ExRecycler
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+The only requirement is the recycle field.
+ The recycle field must be a trigger collider and should (must?) not touch
+ anything else.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+RecycleField_name Specifies the name of the transform for the recycle field
+ collider.
+ Defaults to 
+\begin_inset Quotes eld
+\end_inset
+
+ReycleField
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+RecycleRate Specifies the recycling rate in tons/second.
+ Defaults to 1.0t/s.
+\end_layout
+
+\begin_layout Subsubsection
+ExLaunchPad
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+No requirements, but it is highly recommended that the part has plenty of
+ free space 
+\begin_inset Quotes eld
+\end_inset
+
+above
+\begin_inset Quotes erd
+\end_inset
+
+ (positive Y-axis in KSP/Unity, Z-axis in Blender) the launch transform.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+SpawnHeightOffset Specifies the distance in meters above the launch transform
+ of the lowest point of the spawned vessel.
+ This is most useful when the model does not have a specific spawn transform.
+ Defaults to 0.0m.
+\end_layout
+
+\begin_layout Description
+SpawnTransform Specifies the model transform to be used as the launch transform.
+ Optional, but using a spawn transform allows finer control over the launch
+ position than that afforded by SpawnHeightOffset, and also allows the orientati
+on to be specified.
+ If not specified, the model's root transform will be used as the launch
+ transform (setting SpawnHeightOffset is highly recommended, but not as
+ highly as having a spawn transform).
+\end_layout
+
+\begin_layout Description
+PadName Specifies the name of the launchpad.
+ Note that this is editable by the user both in the editor (VAB/SPH) or
+ in flight.
+\end_layout
+
+\begin_layout Subsubsection
+ExTarget
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+TargetTransform Specifies the model transform to be used as the target.
+ If not specified (the default), the model's root transform will be used.
+\end_layout
+
+\begin_layout Description
+TargetName String to be added after the host vessel's name when set as target.
+ Defaults to 
+\begin_inset Quotes eld
+\end_inset
+
+Target
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+ExWorkshop
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+The part must have some crew capacity.
+ This can be via either the part's crewCapacity field, or KerbalSeat (stock
+ KSP) modules (currently, not both: for KerbalSeat to be checked, the crewCapaci
+ty must be 0).
+ Note that parts may have multiple KerbalSeat modules on them (eg, EL's
+ Rocket Workbench).
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+ProductivityFactor Specifies the multiplier for calculating kerbal productivity.
+ Must be greater than 0.
+ All workshops with ProductivityFactor greater than 1.0 are considered to
+ be fully equipped (ie, even 0-star kerbals with the construction skill
+ can contribute).
+ Defaults to 1.0.
+\end_layout
+
+\begin_layout Description
+FullyEquipped If true, then even workshops with productivity factors less
+ than 1.0 are considered fully equipped allowing 0-star kerbals to contribute.
+\end_layout
+
+\begin_layout Description
+IgnoreCrewCapacity If true, the workshop will operate even if the part's
+ crewCapacity is 0 (and not check for KerbalSeat).
+ This is most useful on parts with dynamic crew capacities (eg, inflatables).
+\end_layout
+
+\begin_layout Subsubsection
+ExSurveyStation
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+No requirements, but as kerbals improve its range, having crew capacity
+ (crewCapacity > 0 or KerbalSeat modules) is recommended.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+StationName Specifies the name of the survey station.
+ Note that this is editable by the user both in the editor (VAB/SPH) or
+ in flight.
+\end_layout
+
+\begin_layout Subsubsection
+ExSurveyStake
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None except any required by KIS for ground attachment.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+As the survey station will not look at vessels with more than one part to
+ check for the ExSurveyStake module, the part should be configured to be
+ ground attached using KIS.
+ However, parts designed to be dropped via staging or decoupling will work,
+ too, so long as the resulting vessel consists of only the one part.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\end_body
+\end_document

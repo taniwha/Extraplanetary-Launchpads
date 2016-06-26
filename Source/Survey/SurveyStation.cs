@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExSurveyStation : PartModule, IModuleInfo, ExBuildControl.IBuilder
+	public class ExSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ExBuildControl.IBuilder
 	{
 		[KSPField (isPersistant = true)]
 		public string StationName = "";
@@ -33,7 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 		DropDownList site_list;
 		List<SurveySite> available_sites;
 		SurveySite site;
-		float base_mass;
+		double craft_mass;
 		[KSPField (guiName = "Range", guiActive = true)]
 		float range = 20;
 		public static float[] site_ranges = {
@@ -42,9 +42,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override string GetInfo ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return "";
-			}
 			return "Survey Station";
 		}
 
@@ -385,7 +382,17 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetCraftMass (double mass)
 		{
-			base.part.mass = base_mass + (float) mass;
+			craft_mass = mass;
+		}
+
+		public float GetModuleMass (float defaultMass, ModifierStagingSituation sit)
+		{
+			return (float) craft_mass;
+		}
+
+		public ModifierChangeWhen GetModuleMassChangeWhen ()
+		{
+			return ModifierChangeWhen.CONSTANTLY;
 		}
 
 		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
@@ -422,43 +429,21 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnSave (ConfigNode node)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			control.Save (node);
-			if (base_mass != 0) {
-				node.AddValue ("baseMass", base_mass);
-			}
 		}
 
 		public override void OnLoad (ConfigNode node)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			control.Load (node);
-			if (node.HasValue ("baseMass")) {
-				float.TryParse (node.GetValue ("baseMass"), out base_mass);
-			} else {
-				base_mass = base.part.mass;
-			}
 		}
 
 		public override void OnAwake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			control = new ExBuildControl (this);
 		}
 
 		public override void OnStart (PartModule.StartState state)
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				Events["HideUI"].active = false;
-				Events["ShowUI"].active = false;
-				return;
-			}
 			if (state == PartModule.StartState.None
 				|| state == PartModule.StartState.Editor) {
 				return;
@@ -474,12 +459,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy ()
 		{
-			control.OnDestroy ();
-			GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
-			GameEvents.onCrewTransferred.Remove (onCrewTransferred);
-			ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
-			ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
-			ExSurveyTracker.onSiteModified.Remove (onSiteModified);
+			if (control != null) {
+				control.OnDestroy ();
+				GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
+				GameEvents.onCrewTransferred.Remove (onCrewTransferred);
+				ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
+				ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
+				ExSurveyTracker.onSiteModified.Remove (onSiteModified);
+			}
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]

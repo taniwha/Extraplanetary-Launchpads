@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class ExRecycler : PartModule, IModuleInfo
+public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
 {
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField] public string RecycleField_name = "RecycleField";
@@ -122,13 +122,11 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public override void OnStart (StartState state)
 	{
-		if (CompatibilityChecker.IsWin64 ()) {
-			return;
-		}
 		RecycleField = part.FindModelComponent<Collider> (RecycleField_name);
 		Debug.Log (String.Format ("[EL Recycler] OnStart: {0}", RecycleField));
 		if (RecycleField != null) {
 			RecycleField.enabled = false;
+			RecycleField.isTrigger = true;	//FIXME workaround for KSP 1.1 bug
 		}
 		if (state == PartModule.StartState.None
 			|| state == PartModule.StartState.Editor) {
@@ -139,9 +137,6 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public override void OnSave (ConfigNode node)
 	{
-		if (CompatibilityChecker.IsWin64 ()) {
-			return;
-		}
 		if (sm != null) {
 			sm.Save (node);
 		}
@@ -149,26 +144,32 @@ public class ExRecycler : PartModule, IModuleInfo
 
 	public override void OnLoad (ConfigNode node)
 	{
-		if (CompatibilityChecker.IsWin64 ()) {
-			Events["Activate"].active = false;
-			Events["Deactivate"].active = false;
-			return;
-		}
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
 			sm = new RecyclerFSM (this);
+			sm.Load (node);
 		}
 		Deactivate ();
 	}
 
 	public void FixedUpdate ()
 	{
-		double mass = part.partInfo.partPrefab.mass;
 		if (sm != null) {
 			sm.FixedUpdate ();
 			status = sm.CurrentState;
-			mass += sm.ResourceMass;
 		}
-		part.mass = (float)mass;
+	}
+
+	public float GetModuleMass (float defaultMass, ModifierStagingSituation sit)
+	{
+		if (sm != null) {
+			return (float) sm.ResourceMass;
+		}
+		return 0;
+	}
+
+	public ModifierChangeWhen GetModuleMassChangeWhen ()
+	{
+		return ModifierChangeWhen.CONSTANTLY;
 	}
 }
 

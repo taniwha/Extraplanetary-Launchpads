@@ -1,9 +1,8 @@
-KSPDIR		:= ${HOME}/ksp/KSP_linux
-MANAGED		:= ${KSPDIR}/KSP_Data/Managed
-GAMEDATA	:= ${KSPDIR}/GameData
-ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
-PLUGINDIR	:= ${ELGAMEDATA}/Plugins
-APIEXTDATA	:= ${PLUGINDIR}
+export KSPDIR		:= ${HOME}/ksp/KSP_linux
+export MANAGED		:= ${KSPDIR}/KSP_Data/Managed
+export GAMEDATA	:= ${KSPDIR}/GameData
+export ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
+export PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 
 TARGETS		:= bin/Launchpad.dll
 
@@ -58,11 +57,13 @@ EL_FILES := \
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\
 	BuildControl.cs						\
+	InternalFlagDecal.cs				\
 	Settings.cs							\
+	VersionReport.cs					\
 	$e
 
 RESGEN2		:= resgen2
-GMCS		:= gmcs
+GMCS		:= mcs
 GMCSFLAGS	:= -optimize -warnaserror -debug
 GIT			:= git
 TAR			:= tar
@@ -86,9 +87,10 @@ info:
 
 bin/Launchpad.dll: ${EL_FILES}
 	@mkdir -p bin
-	${GMCS} ${GMCSFLAGS} -t:library -lib:${APIEXTDATA},${MANAGED} \
-		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
-		-r:KSPAPIExtensions \
+	${GMCS} ${GMCSFLAGS} -t:library -lib:${MANAGED} \
+		-r:Assembly-CSharp,Assembly-CSharp-firstpass \
+		-r:UnityEngine,UnityEngine.UI \
+		-r:KSPUtil \
 		-out:$@ $^
 
 clean:

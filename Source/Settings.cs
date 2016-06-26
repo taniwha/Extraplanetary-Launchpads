@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using UnityEngine;
-using KSPAPIExtensions;
 
 using KSP.IO;
 
@@ -78,21 +77,14 @@ namespace ExtraplanetaryLaunchpads {
 			private set;
 		}
 
-		static string version = null;
 		static Rect windowpos;
 		private static bool gui_enabled;
-		private static string[] alarmactions = new string[] {"Kill Warp+Message", "Kill Warp only", "Message Only", "Pause Game"};
-		public static string GetVersion ()
-		{
-			if (version != null) {
-				return version;
-			}
-
-			var asm = Assembly.GetCallingAssembly ();
-			version =  SystemUtils.GetAssemblyVersionString (asm);
-
-			return version;
-		}
+		private static string[] alarmactions = new string[] {
+			"Kill Warp+Message",
+			"Kill Warp only",
+			"Message Only",
+			"Pause Game"
+		};
 
 		public static ExSettings current
 		{
@@ -153,12 +145,8 @@ namespace ExtraplanetaryLaunchpads {
 				ExBuildWindow.LoadSettings (node);
 			}
 
-			if (CompatibilityChecker.IsWin64 ()) {
-				enabled = false;
-			} else {
-				if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
-					enabled = true;
-				}
+			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
+				enabled = true;
 			}
 		}
 
@@ -241,10 +229,6 @@ namespace ExtraplanetaryLaunchpads {
 		
 		public override void OnAwake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				enabled = false;
-				return;
-			}
 			KIS_Present = KIS.KISWrapper.Initialize ();
 			B9Wings_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("B9_Aerospace_WingStuff", StringComparison.InvariantCultureIgnoreCase));
 			FAR_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
@@ -331,7 +315,7 @@ namespace ExtraplanetaryLaunchpads {
 							Screen.height / 2 - 30, 0, 0);
 					}
 					string name = "Extraplanetary Launchpad";
-					string ver = ExSettings.GetVersion ();
+					string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
 					windowpos = GUILayout.Window (GetInstanceID (),
 						windowpos, WindowGUI,
 						name + " " + ver,

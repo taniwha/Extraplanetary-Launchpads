@@ -271,10 +271,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Awake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				enabled = false;
-				return;
-			}
 			instance = this;
 			GameEvents.onVesselChange.Add (onVesselChange);
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
@@ -640,16 +636,8 @@ namespace ExtraplanetaryLaunchpads {
 			return reslist.Where(r => r.name == name).FirstOrDefault ();
 		}
 
-		void BuildProgress (bool forward)
+		void UpdateAlarm (double mostFutureAlarmTime, bool forward)
 		{
-			double mostFutureAlarmTime = 0;
-			foreach (var br in control.builtStuff.required) {
-				var req = FindResource (control.buildCost.required, br.name);
-				double alarmTime = ResourceProgress (br.name, br, req, forward);
-				if (alarmTime > mostFutureAlarmTime) {
-					mostFutureAlarmTime = alarmTime;
-				}
-			}
 			if (KACWrapper.APIReady && ExSettings.use_KAC) {
 				if (control.paused) {
 					// It doesn't make sense to have an alarm for an event that will never happen
@@ -705,7 +693,19 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
+		}
 
+		void BuildProgress (bool forward)
+		{
+			double mostFutureAlarmTime = 0;
+			foreach (var br in control.builtStuff.required) {
+				var req = FindResource (control.buildCost.required, br.name);
+				double alarmTime = ResourceProgress (br.name, br, req, forward);
+				if (alarmTime > mostFutureAlarmTime) {
+					mostFutureAlarmTime = alarmTime;
+				}
+			}
+			UpdateAlarm (mostFutureAlarmTime, forward);
 		}
 
 		void OptionalResources ()
@@ -866,12 +866,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnGUI ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			GUI.skin = HighLogic.Skin;
 			string name = "Extraplanetary Launchpad";
-			string ver = ExSettings.GetVersion ();
+			string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
 			string sit = control.builder.vessel.situation.ToString ();
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,

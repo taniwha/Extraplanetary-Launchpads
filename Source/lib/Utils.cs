@@ -27,7 +27,33 @@ using Experience;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class EL_Utils {
+	public static class EL_Utils {
+		public static string ToStringSI(this double value, int sigFigs = 3, string unit = null)
+		{
+			if (unit == null) {
+				unit = "";
+			}
+			return PartModuleUtil.PrintResourceSI (value, unit, sigFigs, false);
+		}
+
+		public static string ToStringSI(this float value, int sigFigs = 3, string unit = null)
+		{
+			if (unit == null) {
+				unit = "";
+			}
+			return PartModuleUtil.PrintResourceSI (value, unit, sigFigs, false);
+		}
+
+		public static string FormatMass (double mass, int sigFigs = 4)
+		{
+			if (mass < 1.0) {
+				mass *= 1e6;
+				return mass.ToStringSI(sigFigs, "g");
+			} else {
+				return mass.ToStringSI(sigFigs, "t");
+			}
+		}
+
 		public static List<ProtoCrewMember> GetCrewList (Part part)
 		{
 			if (part.CrewCapacity > 0) {
@@ -46,14 +72,15 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static double[] TimeSpan (double seconds)
 		{
-			var years = Math.Floor (seconds / KSPUtil.Year);
-			seconds -= years * KSPUtil.Year;
-			var days = Math.Floor (seconds / KSPUtil.Day);
-			seconds -= days * KSPUtil.Day;
-			var hours = Math.Floor (seconds / KSPUtil.Hour);
-			seconds -= hours * KSPUtil.Hour;
-			var minutes = Math.Floor (seconds / KSPUtil.Minute);
-			seconds -= minutes * KSPUtil.Minute;
+			var dtFmt = KSPUtil.dateTimeFormatter;
+			var years = Math.Floor (seconds / dtFmt.Year);
+			seconds -= years * dtFmt.Year;
+			var days = Math.Floor (seconds / dtFmt.Day);
+			seconds -= days * dtFmt.Day;
+			var hours = Math.Floor (seconds / dtFmt.Hour);
+			seconds -= hours * dtFmt.Hour;
+			var minutes = Math.Floor (seconds / dtFmt.Minute);
+			seconds -= minutes * dtFmt.Minute;
 			return new double[] {years, days, hours, minutes, seconds};
 		}
 

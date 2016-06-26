@@ -22,7 +22,7 @@ using System.Linq;
 using UnityEngine;
 using RUI.Icons.Selectable;
 
-using KSP.IO;
+using KSP.UI.Screens;
 
 namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false) ]
@@ -30,6 +30,13 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		static Texture texture;
 		static Icon icon;
+		static string[] elResources = {"MetalOre", "Metal", "RocketParts"};
+		static HashSet<string> elItems;
+
+		bool elItemFilter (AvailablePart ap)
+		{
+			return elItems.Contains (ap.name);
+		}
 
 		void onGUIEditorToolbarReady ()
 		{
@@ -39,15 +46,49 @@ namespace ExtraplanetaryLaunchpads {
 					subcat.button.SetIcon (icon);
 				}
 			}
+			cat = PartCategorizer.Instance.filters.Find (c => c.button.categoryName == "Filter by Function");
+			PartCategorizer.AddCustomSubcategoryFilter (cat, "EL Items", icon, elItemFilter);
 		}
 
 		void Awake ()
 		{
 			GameEvents.onGUIEditorToolbarReady.Add (onGUIEditorToolbarReady);
 			if (texture == null) {
-				texture = GameDatabase.Instance.GetTexture ("ExtraplanetaryLaunchpads/Textures/icon_button", false);
-				icon = new Icon ("EL icon", texture, texture);
+				texture = GameDatabase.Instance.GetTexture ("ExtraplanetaryLaunchpads/Textures/icon_filter", false);
+				icon = new Icon ("EL icon", texture, texture, true);
+				elItems = new HashSet<string> ();
 			}
+			elItems.Clear ();
+			foreach (AvailablePart ap in PartLoader.LoadedPartsList) {
+				if (ap.name.StartsWith ("kerbalEVA") || !ap.partPrefab) {
+					continue;
+				}
+				bool isELItem = false;
+				if (ap.partPrefab.Modules != null) {
+					foreach (PartModule mod in ap.partPrefab.Modules) {
+						if (mod.moduleName != null
+							&& mod.moduleName.StartsWith ("Ex")) {
+							isELItem = true;
+							break;
+						}
+					}
+				}
+				if (!isELItem && ap.partPrefab.Resources != null) {
+					foreach (PartResource res in ap.partPrefab.Resources) {
+						if (elResources.Contains (res.resourceName)) {
+							isELItem = true;
+							break;
+						}
+					}
+				}
+				Debug.Log (String.Format ("[EL PF] checking: {0} {1}", ap.name, isELItem));
+				if (isELItem) {
+					elItems.Add (ap.name);
+				}
+			}
+			elItems.Add ("OMD");
+			elItems.Add ("ExMallet");
+			elItems.Add ("Magnetometer");
 		}
 
 		void OnDestroy ()

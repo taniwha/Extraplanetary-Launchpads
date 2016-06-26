@@ -30,9 +30,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Awake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			if (ToolbarManager.Instance == null) {
 				return;
 			}
@@ -57,9 +54,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Awake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			if (ToolbarManager.Instance == null) {
 				return;
 			}
@@ -84,9 +78,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Awake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				return;
-			}
 			if (ToolbarManager.Instance == null) {
 				return;
 			}

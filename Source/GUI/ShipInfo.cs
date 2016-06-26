@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
-using KSPAPIExtensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		int parts_count;
 		public BuildCost buildCost;
+		CostReport cashed_cost;
 		Vector2 scrollPosR, scrollPosO;
 
 		public static void ToggleGUI ()
@@ -76,11 +76,16 @@ namespace ExtraplanetaryLaunchpads {
 			parts_count++;
 		}
 
+		int rebuild_list_wait_frames = 0;
+
 		private IEnumerator WaitAndRebuildList (ShipConstruct ship)
 		{
-			yield return null;
+			while (--rebuild_list_wait_frames > 0) {
+				yield return null;
+			}
 
 			buildCost = null;
+			cashed_cost = null;
 			parts_count = 0;
 
 			if (ship == null || ship.parts == null || ship.parts.Count < 1
@@ -99,25 +104,30 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
+			cashed_cost = buildCost.cost;
 		}
 
 		public void RebuildList(ShipConstruct ship)
 		{
-			StartCoroutine (WaitAndRebuildList (ship));
+			// some parts/modules fire the event before doing things
+			const int wait_frames = 2;
+			if (rebuild_list_wait_frames < wait_frames) {
+				rebuild_list_wait_frames += wait_frames;
+				if (rebuild_list_wait_frames == wait_frames) {
+					StartCoroutine (WaitAndRebuildList (ship));
+				}
+			}
 		}
 
 		void onEditorRestart ()
 		{
 			buildCost = null;
+			cashed_cost = null;
 			parts_count = 0;
 		}
 
 		void Awake ()
 		{
-			if (CompatibilityChecker.IsWin64 ()) {
-				enabled = false;
-				return;
-			}
 			GameEvents.onEditorShipModified.Add (RebuildList);
 			GameEvents.onEditorRestart.Add (onEditorRestart);
 		}
@@ -139,9 +149,8 @@ namespace ExtraplanetaryLaunchpads {
 				winpos.width = 300;
 				winpos.height = 100;
 			}
-			string ver = ExSettings.GetVersion ();
 			winpos = GUILayout.Window (GetInstanceID (), winpos, InfoWindow,
-									  "Build Resources: " + ver,
+									  "Build Resources",
 									  GUILayout.MinWidth (200));
 			if (enabled && winpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
 				InputLockManager.SetControlLock ("EL_ShipInfo_window_lock");
@@ -155,7 +164,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label (title + ":");
 			GUILayout.FlexibleSpace ();
-			GUILayout.Label (MathUtils.ToStringSI(amount, 4, unit:units));
+			GUILayout.Label (amount.ToStringSI(4, unit:units));
 			GUILayout.EndHorizontal ();
 		}
 
@@ -164,7 +173,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(title + ":");
 			GUILayout.FlexibleSpace();
-			GUILayout.Label(MathUtils.FormatMass(mass));
+			GUILayout.Label(EL_Utils.FormatMass(mass));
 			GUILayout.EndHorizontal();
 		}
 
@@ -179,7 +188,7 @@ namespace ExtraplanetaryLaunchpads {
 				GUILayout.BeginHorizontal ();
 				GUILayout.Label (String.Format ("{0}:", res.name));
 				GUILayout.FlexibleSpace ();
-				GUILayout.Label (String.Format ("{0} ({1})", res.amount.ToStringSI(4, unit:"u"), MathUtils.FormatMass(res.mass, 4)));
+				GUILayout.Label (String.Format ("{0} ({1})", res.amount.ToStringSI(4, unit:"u"), EL_Utils.FormatMass(res.mass, 4)));
 				GUILayout.EndHorizontal ();
 			}
 			GUILayout.EndScrollView ();
@@ -189,7 +198,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void InfoWindow (int windowID)
 		{
-			var cost = buildCost.cost;
+			var cost = cashed_cost;
 			double required_mass = 0;
 			double resource_mass = 0;
 			double kerbalHours = 0;
@@ -216,6 +225,8 @@ namespace ExtraplanetaryLaunchpads {
 			scrollPosR = ResourcePanel ("Required", cost.required, scrollPosR);
 			scrollPosO = ResourcePanel ("Optional", cost.optional, scrollPosO);
 
+			string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
+			GUILayout.Label(ver);
 			GUILayout.EndVertical ();
 			GUI.DragWindow ();
 		}

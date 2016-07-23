@@ -70,14 +70,17 @@ namespace ExtraplanetaryLaunchpads {
 				green = new GUIStyle (GUI.skin.box);
 				green.padding = new RectOffset (8, 8, 8, 8);
 				green.normal.textColor = green.focused.textColor = Color.green;
+				green.wordWrap = false;
 
 				white = new GUIStyle (GUI.skin.box);
 				white.padding = new RectOffset (8, 8, 8, 8);
 				white.normal.textColor = white.focused.textColor = Color.white;
+				white.wordWrap = false;
 
 				label = new GUIStyle (GUI.skin.label);
 				label.normal.textColor = label.focused.textColor = Color.white;
 				label.alignment = TextAnchor.MiddleCenter;
+				label.wordWrap = false;
 
 				slider = new GUIStyle (GUI.skin.horizontalSlider);
 				slider.margin = new RectOffset (0, 0, 0, 0);
@@ -295,7 +298,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 
 			// Resource name
-			GUILayout.Box (label, Styles.white, GUILayout.Width (120),
+			GUILayout.Box (label, Styles.white, GUILayout.Width (125),
 						   GUILayout.Height (40));
 
 			// Fill amount
@@ -327,15 +330,15 @@ namespace ExtraplanetaryLaunchpads {
 				requiredStyle = Styles.yellow;
 			}
 			// Required and Available
-			GUILayout.Box ((Math.Round (required, 2)).ToString (),
-						   requiredStyle, GUILayout.Width (75),
+			GUILayout.Box (displayAmount(required),
+						   requiredStyle, GUILayout.Width (100),
 						   GUILayout.Height (40));
 			if (available >= 0) {
-				GUILayout.Box ((Math.Round (available, 2)).ToString (),
-							   Styles.white, GUILayout.Width (75),
+				GUILayout.Box (displayAmount(available),
+							   Styles.white, GUILayout.Width (100),
 							   GUILayout.Height (40));
 			} else {
-				GUILayout.Box ("N/A", Styles.white, GUILayout.Width (75),
+				GUILayout.Box ("N/A", Styles.white, GUILayout.Width (100),
 							   GUILayout.Height (40));
 			}
 
@@ -344,6 +347,15 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.EndHorizontal ();
 
 			return fraction;
+		}
+
+		string displayAmount(double amount) {
+			if (amount > 1000000) {
+				return Math.Round((amount / 1000000), 2).ToString() + " M";
+			}
+			else {
+				return Math.Round(amount, 2).ToString();
+			}
 		}
 
 		double BuildETA (BuildResource br, BuildResource req, bool forward)
@@ -384,7 +396,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 
 			// Resource name
-			GUILayout.Box (label, Styles.white, GUILayout.Width (120),
+			GUILayout.Box (label, Styles.white, GUILayout.Width (125),
 						   GUILayout.Height (40));
 
 			GUILayout.BeginVertical ();
@@ -398,11 +410,11 @@ namespace ExtraplanetaryLaunchpads {
 				requiredStyle = Styles.yellow;
 			}
 			// Required and Available
-			GUILayout.Box ((Math.Round (required, 2)).ToString (),
-						   requiredStyle, GUILayout.Width (75),
+			GUILayout.Box (displayAmount(required),
+						   requiredStyle, GUILayout.Width (100),
 						   GUILayout.Height (40));
-			GUILayout.Box ((Math.Round (available, 2)).ToString (),
-						   Styles.white, GUILayout.Width (75),
+			GUILayout.Box (displayAmount(available),
+						   Styles.white, GUILayout.Width (100),
 						   GUILayout.Height (40));
 			GUILayout.FlexibleSpace ();
 
@@ -544,19 +556,19 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var width120 = GUILayout.Width (120);
 			var width300 = GUILayout.Width (300);
-			var width75 = GUILayout.Width (75);
+			var width100 = GUILayout.Width (100);
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Resource", Styles.label, width120);
 			GUILayout.Label ("Fill Percentage", Styles.label, width300);
-			GUILayout.Label ("Required", Styles.label, width75);
-			GUILayout.Label ("Available", Styles.label, width75);
+			GUILayout.Label ("Required", Styles.label, width100);
+			GUILayout.Label ("Available", Styles.label, width100);
 			GUILayout.EndHorizontal ();
 		}
 
 		void ResourceScroll_begin ()
 		{
 			resscroll = GUILayout.BeginScrollView (resscroll,
-												   GUILayout.Width (625),
+												   GUILayout.Width (680),
 												   GUILayout.Height (300));
 			GUILayout.BeginHorizontal ();
 			GUILayout.BeginVertical ();
@@ -873,7 +885,7 @@ namespace ExtraplanetaryLaunchpads {
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,
 										  name + " " + ver + ": " + sit,
-										  GUILayout.Width (640));
+										  GUILayout.Width (695));
 			if (craftlist != null) {
 				craftlist.OnGUI ();
 			}

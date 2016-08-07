@@ -13,6 +13,9 @@ MAJOR=`echo $full_version | cut -f 1 -d .`
 MINOR=`echo $full_version | cut -f 2 -d .`
 PATCH=`echo $full_version | cut -f 3 -d .`
 BUILD=`echo $full_version | cut -f 4 -d . | cut -f 1 -d '-'`
+if test -z "$BUILD"; then
+	BUILD=0
+fi
 
 set `head -20 $KSPDIR/readme.txt | grep ^Version | sed -e 's/\./ /g'`
 

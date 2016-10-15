@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
@@ -9,16 +11,16 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -373,7 +375,7 @@ O
 \end_layout
 
 \begin_layout Standard
-Fe has a molar mas of 
+Fe has a molar mass of 
 \begin_inset Formula $55.845g/mol$
 \end_inset
 
@@ -787,7 +789,264 @@ Adjusting the optional resources in the preview will have no effect as no
 \end_layout
 
 \begin_layout Section
-Survey Stakes
+Survey System
+\end_layout
+
+\begin_layout Standard
+EL's survey system greatly eases the seeding (or even complete build-out)
+ of bases, and works equally well for building ships and other vessels.
+ However, they do have one disadvantage: any optional resources (liquid
+ fuel, oxidizer, electric charge, etc) will 
+\emph on
+not
+\emph default
+ be transfered: the build will be empty of such resources (freedom is not
+ free), but as KIS
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Kerbal Inventory System: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://forum.kerbalspaceprogram.com/index.php?/topic/101928-105-kerbal-inventory-sy
+stem-kis-126/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is required to place the stakes, and KAS
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Kerbal Attachment System: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://forum.kerbalspaceprogram.com/index.php?/topic/83468-105-kerbal-attachment-sy
+stem-kas-055/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is almost always installed with it, this disadvantage should be only minor
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+It can, however, lead to good entertainment: https://www.youtube.com/watch?v=67vth
+86RQH0&t=1525
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The survey system consists of two parts
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+If you're thinking KSP parts, then it's three: survey station, survey stake,
+ and mallet.
+\end_layout
+
+\end_inset
+
+: the survey station, and the survey site.
+ The survey station (a re-purposed hitchhiker can) is used to keep track
+ of the survey sites and do the actual building (it serves the same purpose
+ as the orbital dock or a launchpad, but must be landed), and must be flown
+ down to the surface in the vicinity of where the builds will occur.
+ The survey site is ephemeral: it is marked out by one or more survey stakes
+ and is used to specify the location and orientation of the build.
+\end_layout
+
+\begin_layout Standard
+Stakes have two modes with seven settings in each mode (default is Direction:Ori
+gin):
+\end_layout
+
+\begin_layout Description
+Direction these are used to control the orientation of the build.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Origin used to mark the location above which the build's root part will
+ be placed, and also forms the reference point for other direction stakes
+ that aren't in pairs.
+\end_layout
+
+\begin_layout Description
+-X
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
++X used to specify the lateral (port (-X) and starboard (+X)) axis of the
+ build (both VAB and SPH).
+ If both -X and +X are used, then the origin is is ignored, otherwise the
+ axis runs from -X to origin or origin to +X.
+\end_layout
+
+\begin_layout Description
+-Y
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
++Y used to specify the "vertical" axis of the build (relative to the floor
+ in the VAB or SPH).
+ If both -Y and +Y are used, then the origin is is ignored, otherwise the
+ axis runs from -Y to origin or origin to +Y.
+ NOTE: not recommended, very advanced usage.
+\end_layout
+
+\begin_layout Description
+-Z
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
++Z used to specify the ventral (VAB) or fore/aft (SPH) axis of the build.
+ If both -Z and +Z are used, then the origin is is ignored, otherwise the
+ axis runs from -Z to origin or origin to +Z.
+\end_layout
+
+\begin_layout Description
+* If none of the axis direction stakes are used, then the default orientation
+ is such that the build's +Y axis is the local up, +X axis points east,
+ and +Z points south (same as on the KSC launchpad).
+\end_layout
+
+\begin_layout Description
+* If the axes marked out by the stakes are not perfectly orthogonal, then
+ the build will be oriented such that the errors are balanced.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Bounds these are used to control the placement of the build based on its
+ bounding box rather than its root part.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Origin used to mark the location of the root part along any axis that has
+ not been bound.
+\end_layout
+
+\begin_layout Description
+-X
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
++X used to mark the lateral (port (-X) and starboard (+X)) edges of the
+ build.
+ If only one of -X or +X is used, then that edge of the build will be exactly
+ on that stake, otherwise the the X-axis center of the build's bounding
+ box will be centered on the midpoint between the two stakes.
+\end_layout
+
+\begin_layout Description
+-Y
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
++Y used to mark the "vertical" edges of the build.
+ If only one of -Y or +Y is used, then that edge of the build will be exactly
+ on that stake, otherwise the the Y-axis center of the build's bounding
+ box will be centered on the midpoint between the two stakes.
+ NOTE: use of the +Y bounds stake is not recommended unless you know what
+ you are doing.
+\end_layout
+
+\begin_layout Description
+-Z
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
++Z used to mark the ventral (VAB) or fore/aft (SPH) edges of the build.
+ If only one of -Z or +Z is used, then that edge of the build will be exactly
+ on that stake, otherwise the the Z-axis center of the build's bounding
+ box will be centered on the midpoint between the two stakes.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+* Bounds stakes and direction stakes work together: any unbound axis of
+ the build slides along that axis of the reference frame created by the
+ direction stakes (or the default frame if no direction stakes are used).
+\end_layout
+
+\begin_layout Description
+* There is actually only one origin stake: there is no difference between
+ a bounds origin stake and a direction origin stake.
+ The appearance of there being two origin stakes is due to the overly simple
+ controls.
+\end_layout
+
+\begin_layout Description
+* If multiple stakes of the same type+setting have been placed, then they
+ will be averaged together to form a virtual stake of the same type+setting.
+ This can be very useful with multiple origin stakes to avoid the build
+ clipping into the stake when the lowest part of the build is directly below
+ the root part.
+\end_layout
+
+\begin_layout Description
+* If no origin stakes have been placed, then the average of all other stakes
+ is used as the origin point.
+\end_layout
+
+\begin_layout Description
+* The actual location of the stakes is about 19cm above the ground.
+\end_layout
+
+\begin_layout Description
+* If no Y bounds stake has been placed, then the origin acts as an implicit
+ -Y bounds stake (otherwise almost all builds would spawn in the ground).
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -923,6 +1182,10 @@ If the Y axis has not been staked out, then it will, without fail, be the
  the celestial body through the center of the site).
  Local ground slope is ignored.
  The XZ plane is horizontal.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -957,6 +1220,10 @@ If both X and Z have been staked out, then the errors for the X and Z axes
 If the Y axis has been staked out, but the X axis has not, then the X axis
  will be the local vertical.
  The YZ plane is horizontal.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -976,6 +1243,10 @@ If the Z axis has been staked out, then the Y and Z axis errors will be
 If both the Y axis and the X axis have been staked out, but the Z axis has
  not, then the Z axis will be the local vertical, and the XY plane will
  be horizontal.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper

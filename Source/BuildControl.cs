@@ -374,7 +374,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public Vector3 GetVesselWorldCoM (Vessel v)
 		{
-			var com = v.findLocalCenterOfMass ();
+			var com = v.localCoM;
 			return v.rootPart.partTransform.TransformPoint (com);
 		}
 

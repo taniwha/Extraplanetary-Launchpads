@@ -22,6 +22,7 @@ using System.Linq;
 using UnityEngine;
 
 using KSP.IO;
+using KSP.UI.Screens;
 
 using ExtraplanetaryLaunchpads_KACWrapper;
 
@@ -114,9 +115,10 @@ namespace ExtraplanetaryLaunchpads {
 		static Rect windowpos;
 		static bool highlight_pad = true;
 		static bool link_lfo_sliders = true;
-		static MethodInfo buildCraftList = typeof(CraftBrowser).GetMethod ("buildCraftList", BindingFlags.NonPublic | BindingFlags.Instance);
+		static MethodInfo buildCraftList = typeof(CraftBrowserDialog).GetMethod ("BuildCraftList", BindingFlags.NonPublic | BindingFlags.Instance);
+		static FieldInfo craftSubfolder = typeof(CraftBrowserDialog).GetField("craftSubfolder", BindingFlags.NonPublic | BindingFlags.Instance);
 
-		static CraftBrowser craftlist = null;
+		static CraftBrowserDialog craftlist = null;
 		static Vector2 resscroll;
 
 		List<ExBuildControl> launchpads;
@@ -477,7 +479,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.FlexibleSpace ();
 			// VAB / SPH / Subassembly selection
 			ExBuildControl.CraftType maxType = ExBuildControl.CraftType.SubAss;
-			if (buildCraftList == null) {
+			if (buildCraftList == null || true) {
 				maxType = ExBuildControl.CraftType.SPH;
 				if (control.craftType == ExBuildControl.CraftType.SubAss) {
 					control.craftType = ExBuildControl.CraftType.VAB;
@@ -509,19 +511,14 @@ namespace ExtraplanetaryLaunchpads {
 					diff.AllowStockVessels = false;
 				}
 				//GUILayout.Button is "true" when clicked
-				var clrect = new Rect (Screen.width / 2, 100, 350, 500);
-				Texture2D fileicon = Instantiate(AssetBase.GetTexture("craftThumbGeneric")) as Texture2D;
-				craftlist = new CraftBrowser (clrect, facility[(int)control.craftType],
-											  strpath,
-											  "Select a ship to load",
-											  craftSelectComplete,
-											  craftSelectCancel,
-											  HighLogic.Skin,
-											  fileicon, true,
-											  false);
+				craftlist = CraftBrowserDialog.Spawn (facility[(int)control.craftType],
+													  strpath,
+													  craftSelectComplete,
+													  craftSelectCancel,
+													  false);
 				if (buildCraftList != null
 					&& control.craftType == ExBuildControl.CraftType.SubAss) {
-					craftlist.craftSubfolder = "../Subassemblies";
+					craftSubfolder.SetValue(craftlist, "../Subassemblies");
 					buildCraftList.Invoke (craftlist, null);
 				}
 				diff.AllowStockVessels = stock;
@@ -864,11 +861,11 @@ namespace ExtraplanetaryLaunchpads {
 
 		}
 
-		private void craftSelectComplete (string filename, string flagname,
-										  CraftBrowser.LoadType lt)
+		private void craftSelectComplete (string filename,
+										  CraftBrowserDialog.LoadType lt)
 		{
 			craftlist = null;
-			control.LoadCraft (filename, flagname);
+			control.LoadCraft (filename, control.builder.part.flagURL);
 		}
 
 		private void craftSelectCancel ()
@@ -886,9 +883,9 @@ namespace ExtraplanetaryLaunchpads {
 										  windowpos, WindowGUI,
 										  name + " " + ver + ": " + sit,
 										  GUILayout.Width (695));
-			if (craftlist != null) {
-				craftlist.OnGUI ();
-			}
+			//if (craftlist != null) {
+			//	craftlist.OnGUI ();
+			//}
 		}
 	}
 }

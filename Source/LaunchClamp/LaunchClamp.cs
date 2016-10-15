@@ -27,5 +27,9 @@ using KSP.IO;
 namespace ExtraplanetaryLaunchpads {
 	public class ExtendingLaunchClamp : LaunchClamp
 	{
+		public override void OnSave (ConfigNode node)
+		{
+			node.name = "LaunchClamp";
+		}
 	}
 }

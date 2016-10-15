@@ -539,7 +539,7 @@ namespace ExtraplanetaryLaunchpads {
 			int bestLevel = -2;
 			foreach (var crew in crewList) {
 				int level = -1;
-				if (EL_Utils.HasSkill<ExSurveySkill> (crew)) {
+				if (crew.GetEffect<ExSurveySkill> () != null) {
 					level = crew.experienceLevel;
 				}
 				if (level > bestLevel) {

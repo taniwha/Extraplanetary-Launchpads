@@ -101,15 +101,6 @@ namespace ExtraplanetaryLaunchpads {
 			return String.Format (time_formats[i], span.Cast<object>().ToArray());
 		}
 
-		public static bool HasSkill<T> (ProtoCrewMember crew) where T : class
-		{
-			ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is T).FirstOrDefault ();
-			if (skill == null) {
-				return false;
-			}
-			return true;
-		}
-
 		public static void SetupEVAEvent(BaseEvent evt, float EVARange)
 		{
 			evt.externalToEVAOnly = true;

@@ -24,18 +24,51 @@ using KSP.UI.Screens;
 namespace ExtraplanetaryLaunchpads {
 	using Toolbar;
 
+	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	public class ExAppButton : MonoBehaviour
+	{
+		private static ApplicationLauncherButton button = null;
+
+		public static Callback Toggle = delegate {};
+
+		private void onToggle ()
+		{
+			Toggle();
+		}
+
+		public void Start()
+		{
+			if (ToolbarManager.Instance != null) {
+				return;
+			}
+			GameObject.DontDestroyOnLoad(this);
+			GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+		}
+
+		void OnDestroy()
+		{
+			GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+		}
+
+		void OnGUIAppLauncherReady ()
+		{
+			if (ApplicationLauncher.Ready && button == null) {
+				var tex = GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/icon_button", false);
+				button = ApplicationLauncher.Instance.AddModApplication(onToggle, onToggle, null, null, null, null, ApplicationLauncher.AppScenes.SPACECENTER | ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH, tex);
+			}
+		}
+	}
+
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ExToolbar_ShipInfo : MonoBehaviour
 	{
 		private IButton ExEditorButton;
-		private static ApplicationLauncherButton appEditorButton = null;
 
 		public void Awake ()
 		{
+			ExAppButton.Toggle += ExShipInfo.ToggleGUI;
+
 			if (ToolbarManager.Instance == null) {
-				if (appEditorButton == null) {
-					GameEvents.onGUIApplicationLauncherReady.Add(setupAppButton_ShipInfo);
-				}
 				return;
 			}
 			ExEditorButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExEditorButton");
@@ -44,23 +77,12 @@ namespace ExtraplanetaryLaunchpads {
 			ExEditorButton.OnClick += (e) => ExShipInfo.ToggleGUI ();
 		}
 
-		public void setupAppButton_ShipInfo() {
-			if (appEditorButton == null) {
-				if (ApplicationLauncher.Ready) {
-					appEditorButton = ApplicationLauncher.Instance.AddModApplication(
-						ExShipInfo.ToggleGUI, ExShipInfo.ToggleGUI, null, null, null, null,
-						ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH,
-						GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/icon_button", false)
-					);
-				}
-			}
-		}
-
 		void OnDestroy()
 		{
 			if (ExEditorButton != null) {
 				ExEditorButton.Destroy ();
 			}
+			ExAppButton.Toggle -= ExShipInfo.ToggleGUI;
 		}
 	}
 
@@ -68,14 +90,12 @@ namespace ExtraplanetaryLaunchpads {
 	public class ExToolbar_BuildWindow : MonoBehaviour
 	{
 		private IButton ExBuildWindowButton;
-		private static ApplicationLauncherButton appBuildWindowButton = null;
 
 		public void Awake ()
 		{
+			ExAppButton.Toggle += ExBuildWindow.ToggleGUI;
+
 			if (ToolbarManager.Instance == null) {
-				if (appBuildWindowButton == null) {
-					GameEvents.onGUIApplicationLauncherReady.Add(setupAppButton_BuildWindow);
-				}
 				return;
 			}
 			ExBuildWindowButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExBuildWindowButton");
@@ -84,23 +104,12 @@ namespace ExtraplanetaryLaunchpads {
 			ExBuildWindowButton.OnClick += (e) => ExBuildWindow.ToggleGUI ();
 		}
 
-		public void setupAppButton_BuildWindow() {
-			if (appBuildWindowButton == null) {
-				if (ApplicationLauncher.Ready) {
-					appBuildWindowButton = ApplicationLauncher.Instance.AddModApplication(
-						ExBuildWindow.ToggleGUI, ExBuildWindow.ToggleGUI, null, null, null, null,
-						ApplicationLauncher.AppScenes.FLIGHT,
-						GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/icon_button", false)
-					);
-				}
-			}
-		}
-
 		void OnDestroy()
 		{
 			if (ExBuildWindowButton != null) {
 				ExBuildWindowButton.Destroy ();
 			}
+			ExAppButton.Toggle -= ExBuildWindow.ToggleGUI;
 		}
 	}
 
@@ -108,14 +117,12 @@ namespace ExtraplanetaryLaunchpads {
 	public class ExToolbar_SettingsWindow : MonoBehaviour
 	{
 		private IButton ExSettingsButton;
-		private static ApplicationLauncherButton appSettingsButton;
 
 		public void Awake ()
 		{
+			ExAppButton.Toggle += ExSettings.ToggleGUI;
+
 			if (ToolbarManager.Instance == null) {
-				if (appSettingsButton == null) {
-					GameEvents.onGUIApplicationLauncherReady.Add(setupAppButton_SpaceCenter);
-				}
 				return;
 			}
 			ExSettingsButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExSettingsButton");
@@ -124,23 +131,12 @@ namespace ExtraplanetaryLaunchpads {
 			ExSettingsButton.OnClick += (e) => ExSettings.ToggleGUI ();
 		}
 
-		public void setupAppButton_SpaceCenter() {
-			if (appSettingsButton == null) {
-				if (ApplicationLauncher.Ready) {
-					appSettingsButton = ApplicationLauncher.Instance.AddModApplication(
-						ExSettings.ToggleGUI, ExSettings.ToggleGUI, null, null, null, null,
-						ApplicationLauncher.AppScenes.SPACECENTER,
-						GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/icon_button", false)
-					);
-				}
-			}
-		}
-
 		void OnDestroy()
 		{
 			if (ExSettingsButton != null) {
 				ExSettingsButton.Destroy ();
 			}
+			ExAppButton.Toggle -= ExSettings.ToggleGUI;
 		}
 	}
 }

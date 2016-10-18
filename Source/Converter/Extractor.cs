@@ -22,6 +22,9 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField]
 		public float Rate;
 
+		[KSPField]
+		public ResourceFlowMode flowMode = ResourceFlowMode.ALL_VESSEL;
+
 		[KSPField(isPersistant = false)]
 		public string HeadTransform;
 
@@ -64,7 +67,8 @@ namespace ExtraplanetaryLaunchpads {
 			recipe.Outputs.Add(new ResourceRatio {
 				ResourceName = ResourceName,
 				Ratio = rate,
-				DumpExcess = dumpExcess
+				DumpExcess = dumpExcess,
+				FlowMode = flowMode
 			});
 			return recipe;
 		}

@@ -57,7 +57,6 @@ EL_FILES := \
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\
 	BuildControl.cs						\
-	InternalFlagDecal.cs				\
 	Settings.cs							\
 	VersionReport.cs					\
 	$e
@@ -90,7 +89,6 @@ bin/Launchpad.dll: ${EL_FILES}
 	${GMCS} ${GMCSFLAGS} -t:library -lib:${MANAGED} \
 		-r:Assembly-CSharp,Assembly-CSharp-firstpass \
 		-r:UnityEngine,UnityEngine.UI \
-		-r:KSPUtil \
 		-out:$@ $^
 
 clean:

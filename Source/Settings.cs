@@ -61,21 +61,6 @@ namespace ExtraplanetaryLaunchpads {
 			get;
 			private set;
 		}
-		public static string HullRecycleTarget
-		{
-			get;
-			private set;
-		}
-		public static string KerbalRecycleTarget
-		{
-			get;
-			private set;
-		}
-		public static double KerbalRecycleAmount
-		{
-			get;
-			private set;
-		}
 
 		static Rect windowpos;
 		private static bool gui_enabled;
@@ -173,9 +158,6 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			settings_loaded = true;
-			HullRecycleTarget = "Metal";
-			KerbalRecycleTarget = "Kethane";
-			KerbalRecycleAmount = 150.0;
 			use_KAC = true;
 			KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 			var dbase = GameDatabase.Instance;
@@ -183,20 +165,6 @@ namespace ExtraplanetaryLaunchpads {
 
 			if (settings == null) {
 				return;
-			}
-			if (settings.HasValue ("HullRecycleTarget")) {
-				string val = settings.GetValue ("HullRecycleTarget");
-				HullRecycleTarget = val;
-			}
-			if (settings.HasValue ("KerbalRecycleTarget")) {
-				string val = settings.GetValue ("KerbalRecycleTarget");
-				KerbalRecycleTarget = val;
-			}
-			if (settings.HasValue ("KerbalRecycleAmount")) {
-				string val = settings.GetValue ("KerbalRecycleAmount");
-				double kra;
-				double.TryParse (val, out kra);
-				KerbalRecycleAmount = kra;
 			}
 			if (settings.HasValue ("UseKAC")) {
 				string str = settings.GetValue ("UseKAC");

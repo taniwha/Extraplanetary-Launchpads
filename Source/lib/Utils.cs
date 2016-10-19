@@ -33,7 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (unit == null) {
 				unit = "";
 			}
-			return PartModuleUtil.PrintResourceSI (value, unit, sigFigs, false);
+			return KSPUtil.PrintSI (value, unit, sigFigs, false);
 		}
 
 		public static string ToStringSI(this float value, int sigFigs = 3, string unit = null)
@@ -41,7 +41,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (unit == null) {
 				unit = "";
 			}
-			return PartModuleUtil.PrintResourceSI (value, unit, sigFigs, false);
+			return KSPUtil.PrintSI (value, unit, sigFigs, false);
 		}
 
 		public static string FormatMass (double mass, int sigFigs = 4)
@@ -99,15 +99,6 @@ namespace ExtraplanetaryLaunchpads {
 				i++;
 			}
 			return String.Format (time_formats[i], span.Cast<object>().ToArray());
-		}
-
-		public static bool HasSkill<T> (ProtoCrewMember crew) where T : class
-		{
-			ExperienceEffect skill = crew.experienceTrait.Effects.Where (e => e is T).FirstOrDefault ();
-			if (skill == null) {
-				return false;
-			}
-			return true;
 		}
 
 		public static void SetupEVAEvent(BaseEvent evt, float EVARange)

@@ -374,7 +374,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public Vector3 GetVesselWorldCoM (Vessel v)
 		{
-			var com = v.findLocalCenterOfMass ();
+			var com = v.localCoM;
 			return v.rootPart.partTransform.TransformPoint (com);
 		}
 
@@ -503,9 +503,9 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			for (int i = 0; i < ship.parts.Count; i++) {
 				var p = ship.parts[i];
-				var elc = p.FindModulesImplementing<ExtendingLaunchClamp> ();
+				var elc = p.FindModulesImplementing<LaunchClamp> ();
 				for (int j = 0; j < elc.Count; j++) {
-					(elc[j] as ExtendingLaunchClamp).EnableExtension ();
+					(elc[j] as LaunchClamp).EnableExtension ();
 				}
 			}
 		}

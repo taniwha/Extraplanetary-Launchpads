@@ -18,6 +18,9 @@ if test -z "$BUILD"; then
 fi
 
 set `head -20 $KSPDIR/readme.txt | grep ^Version | sed -e 's/\./ /g'`
+KSPMAJOR=$2
+KSPMINOR=$3
+KSPPATCH=$4
 
 mkdir -p bin
 cat > bin/EL.version <<EOF
@@ -26,6 +29,6 @@ cat > bin/EL.version <<EOF
 	"URL":"http://taniwha.org/~bill/EL.version",
 	"DOWNLOAD":"http://forum.kerbalspaceprogram.com/threads/59545",
 	"VERSION":{"MAJOR":$MAJOR,"MINOR":$MINOR,"PATCH":$PATCH,"BUILD":$BUILD},
-	"KSP_VERSION":{"MAJOR":$2,"MINOR":$3,"PATCH":$4}
+	"KSP_VERSION":{"MAJOR":$KSPMAJOR,"MINOR":$KSPMINOR,"PATCH":$KSPPATCH}
 }
 EOF

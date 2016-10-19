@@ -205,7 +205,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			contribution = Normal (stupidity, courage, experience);
 		}
 		if (useSkill) {
-			if (!EL_Utils.HasSkill<ExConstructionSkill> (crew)) {
+			if (crew.GetEffect<ExConstructionSkill> () != null) {
 				if (!enableUnskilled) {
 					// can't work here, but may not know to keep out of the way.
 					contribution = Mathf.Min (contribution, 0);
@@ -241,7 +241,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 								  + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
 								  crew.name, stupidity, courage, isBadass,
 								  experience, expstr, contribution,
-								  EL_Utils.HasSkill<ExConstructionSkill> (crew),
+								  crew.GetEffect<ExConstructionSkill> () != null,
 								  crew.experienceLevel,
 								  enableSkilled, SupportInexperienced));
 		return contribution;
@@ -255,7 +255,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		var crewList = EL_Utils.GetCrewList (part);
 		if (useSkill) {
 			foreach (var crew in crewList) {
-				if (EL_Utils.HasSkill<ExConstructionSkill> (crew)) {
+				if (crew.GetEffect<ExConstructionSkill> () != null) {
 					if (crew.experienceLevel >= 4) {
 						enableSkilled = true;
 					}

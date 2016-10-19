@@ -21,7 +21,7 @@ using System.Linq;
 using UnityEngine;
 
 using KSP.IO;
-using HighlightingSystem;
+using Highlighting;
 
 namespace ExtraplanetaryLaunchpads {
 

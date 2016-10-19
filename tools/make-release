@@ -1,0 +1,8 @@
+#! /bin/sh
+
+ver=`Source/tools/git-version-gen --prefix v .tarball-version`
+make GAMEDATA=`pwd`/tmp install
+cd tmp
+zip -r9 ../Extraplanetary_Launchpads_v${ver}.zip ExtraplanetaryLaunchpads
+cd ..
+rm -rf tmp

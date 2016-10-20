@@ -17,7 +17,7 @@ along with KerbalStats.  If not, see <http://www.gnu.org/licenses/>.
 using UnityEngine;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Linq;
+using System;
 
 namespace ExtraplanetaryLaunchpads.KerbalStats {
 	public class KerbalExt
@@ -29,10 +29,14 @@ namespace ExtraplanetaryLaunchpads.KerbalStats {
 		{
 			if (!initialized) {
 				initialized = true;
-				System.Type KStype = AssemblyLoader.loadedAssemblies
-					.Select(a => a.assembly.GetExportedTypes())
-					.SelectMany(t => t)
-					.FirstOrDefault(t => t.FullName == "KerbalStats.KerbalExt");
+				Type KStype = null;
+				AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+				{
+					if (t.FullName == "KerbalStats.KerbalExt")
+					{
+						KStype = t;
+					}
+				});
 				if (KStype == null) {
 					Debug.LogWarning ("KerbalStats.KerbalExt class not found.");
 				} else {

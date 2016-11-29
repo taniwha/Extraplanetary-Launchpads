@@ -30,7 +30,7 @@ namespace ExtraplanetaryLaunchpads.KerbalStats {
 			if (!initialized) {
 				initialized = true;
 				System.Type KStype = AssemblyLoader.loadedAssemblies
-					.Select(a => a.assembly.GetExportedTypes())
+					.Select(a => a.assembly.GetTypes())
 					.SelectMany(t => t)
 					.FirstOrDefault(t => t.FullName == "KerbalStats.KerbalExt");
 				if (KStype == null) {

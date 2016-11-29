@@ -411,7 +411,7 @@ namespace ExtraplanetaryLaunchpads {
 			launchPos.transform.position += points.center - part.vessel.GetWorldPos3D ();
 			launchPos.transform.rotation = GetOrientation (points);
 			xform = launchPos.transform;
-			Debug.Log (String.Format ("[EL] launchPos {0} {1}", xform.position, xform.rotation));
+			Debug.LogFormat ("[EL SurveyStation] launchPos {0} {1}", xform.position, xform.rotation);
 
 			float angle;
 			Vector3 axis;
@@ -434,6 +434,11 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnLoad (ConfigNode node)
 		{
+			if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
+				Debug.Log (String.Format ("[EL SurveyStation] {0} cap: {1} seats: {2}",
+						  part, part.CrewCapacity,
+						  part.FindModulesImplementing<KerbalSeat> ().Count));
+			}
 			control.Load (node);
 		}
 
@@ -513,7 +518,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				site_list = new DropDownList (slist);
 			}
-			Debug.Log (String.Format ("[EL SS] site: '{0}'", site));
+			Debug.LogFormat ("[EL SurveyStation] site: '{0}'", site);
 		}
 
 		IEnumerator WaitAndFindSites ()
@@ -545,11 +550,17 @@ namespace ExtraplanetaryLaunchpads {
 				if (level > bestLevel) {
 					bestLevel = level;
 				}
+				Debug.LogFormat ("[EL SurveyStation] Kerbal: {0} {1} {2} {3}",
+								 crew.name,
+								 crew.GetEffect<ExSurveySkill> () != null,
+								 crew.experienceLevel, level);
 			}
 			if (bestLevel > 5) {
 				bestLevel = 5;
 			}
 			range = site_ranges[bestLevel + 2];
+			Debug.LogFormat ("[EL SurveyStation] best level: {0}, range: {1}",
+							 bestLevel, range);
 			if (canBuild) {
 				StartCoroutine (WaitAndFindSites ());
 			}
@@ -570,8 +581,8 @@ namespace ExtraplanetaryLaunchpads {
 			if (hft.from != part && hft.to != part) {
 				return;
 			}
-			Debug.Log (String.Format ("[EL SurveyStation] transfer: {0} {1} {2}",
-									  hft.host, hft.from, hft.to));
+			Debug.LogFormat ("[EL SurveyStation] transfer: {0} {1} {2}",
+							 hft.host, hft.from, hft.to);
 			StartCoroutine (WaitAndDetermineRange ());
 		}
 

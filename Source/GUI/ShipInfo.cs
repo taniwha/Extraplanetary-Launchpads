@@ -225,7 +225,7 @@ namespace ExtraplanetaryLaunchpads {
 			scrollPosR = ResourcePanel ("Required", cost.required, scrollPosR);
 			scrollPosO = ResourcePanel ("Optional", cost.optional, scrollPosO);
 
-			string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
+			string ver = ExVersionReport.GetVersion ();
 			GUILayout.Label(ver);
 			GUILayout.EndVertical ();
 			GUI.DragWindow ();

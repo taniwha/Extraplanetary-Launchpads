@@ -283,7 +283,7 @@ namespace ExtraplanetaryLaunchpads {
 							Screen.height / 2 - 30, 0, 0);
 					}
 					string name = "Extraplanetary Launchpad";
-					string ver = ExtraplanetaryLaunchpadsVersionReport.GetVersion ();
+					string ver = ExVersionReport.GetVersion ();
 					windowpos = GUILayout.Window (GetInstanceID (),
 						windowpos, WindowGUI,
 						name + " " + ver,

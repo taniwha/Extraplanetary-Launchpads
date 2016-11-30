@@ -58,7 +58,6 @@ EL_FILES := \
 	AirstreamShield.cs					\
 	BuildControl.cs						\
 	Settings.cs							\
-	VersionReport.cs					\
 	$e
 
 RESGEN2		:= resgen2

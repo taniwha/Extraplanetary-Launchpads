@@ -188,8 +188,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 		return (Mathf.Sqrt (x * x + 1) + x) / 2;
 	}
 
-	private float KerbalContribution (ProtoCrewMember crew, float stupidity,
-									  float courage, bool isBadass)
+	private float KerbalContribution (ProtoCrewMember crew)
 	{
 		string expstr = KerbalExt.Get (crew, "experience:task=Workshop");
 		float experience = 0;
@@ -199,13 +198,14 @@ public class ExWorkshop : PartModule, IModuleInfo
 
 		float contribution;
 
-		if (isBadass) {
-			contribution = Baddass (stupidity, courage, experience);
+		if (crew.isBadass) {
+			contribution = Baddass (crew.stupidity, crew.courage, experience);
 		} else {
-			contribution = Normal (stupidity, courage, experience);
+			contribution = Normal (crew.stupidity, crew.courage, experience);
 		}
+		bool hasConstructionSkill = crew.GetEffect<ExConstructionSkill> () != null;
 		if (useSkill) {
-			if (crew.GetEffect<ExConstructionSkill> () != null) {
+			if (!hasConstructionSkill) {
 				if (!enableUnskilled) {
 					// can't work here, but may not know to keep out of the way.
 					contribution = Mathf.Min (contribution, 0);
@@ -237,13 +237,13 @@ public class ExWorkshop : PartModule, IModuleInfo
 				}
 			}
 		}
-		Debug.Log (String.Format ("[EL Workshop] Kerbal: "
-								  + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
-								  crew.name, stupidity, courage, isBadass,
-								  experience, expstr, contribution,
-								  crew.GetEffect<ExConstructionSkill> () != null,
-								  crew.experienceLevel,
-								  enableSkilled, SupportInexperienced));
+		Debug.LogFormat ("[EL Workshop] Kerbal: "
+						 + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
+						 crew.name, crew.stupidity, crew.courage,
+						 crew.isBadass, experience, expstr,
+						 contribution, hasConstructionSkill,
+						 crew.experienceLevel,
+						 enableSkilled, SupportInexperienced);
 		return contribution;
 	}
 
@@ -266,8 +266,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 			}
 		}
 		foreach (var crew in crewList) {
-			kh += KerbalContribution (crew, crew.stupidity, crew.courage,
-									  crew.isBadass);
+			kh += KerbalContribution (crew);
 		}
 		Productivity = kh * ProductivityFactor;
 	}

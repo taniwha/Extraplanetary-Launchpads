@@ -27,9 +27,27 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
 	public class ExAppButton : MonoBehaviour
 	{
+		const ApplicationLauncher.AppScenes buttonScenes = ApplicationLauncher.AppScenes.SPACECENTER | ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH;
 		private static ApplicationLauncherButton button = null;
 
 		public static Callback Toggle = delegate {};
+
+		static bool buttonVisible
+		{
+			get {
+				if (ToolbarManager.Instance == null) {
+					return true;
+				}
+				return !ExSettings.PreferBlizzy;
+			}
+		}
+
+		public static void UpdateVisibility ()
+		{
+			if (button != null) {
+				button.VisibleInScenes = buttonVisible ? buttonScenes : 0;
+			}
+		}
 
 		private void onToggle ()
 		{
@@ -38,9 +56,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Start()
 		{
-			if (ToolbarManager.Instance != null) {
-				return;
-			}
 			GameObject.DontDestroyOnLoad(this);
 			GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
 		}
@@ -54,7 +69,8 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (ApplicationLauncher.Ready && button == null) {
 				var tex = GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/icon_button", false);
-				button = ApplicationLauncher.Instance.AddModApplication(onToggle, onToggle, null, null, null, null, ApplicationLauncher.AppScenes.SPACECENTER | ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH, tex);
+				button = ApplicationLauncher.Instance.AddModApplication(onToggle, onToggle, null, null, null, null, buttonScenes, tex);
+				UpdateVisibility ();
 			}
 		}
 	}
@@ -72,6 +88,7 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			ExEditorButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExEditorButton");
+			ExEditorButton.Visible = ExSettings.PreferBlizzy;
 			ExEditorButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ExEditorButton.ToolTip = "EL Build Resources Display";
 			ExEditorButton.OnClick += (e) => ExShipInfo.ToggleGUI ();
@@ -99,6 +116,7 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			ExBuildWindowButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExBuildWindowButton");
+			ExBuildWindowButton.Visible = ExSettings.PreferBlizzy;
 			ExBuildWindowButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ExBuildWindowButton.ToolTip = "EL Build Window";
 			ExBuildWindowButton.OnClick += (e) => ExBuildWindow.ToggleGUI ();
@@ -118,14 +136,25 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		private IButton ExSettingsButton;
 
+		public static ExToolbar_SettingsWindow Instance { get; private set; }
+
+		public void UpdateVisibility ()
+		{
+			if (ExSettingsButton != null) {
+				ExSettingsButton.Visible = ExSettings.PreferBlizzy;
+			}
+		}
+
 		public void Awake ()
 		{
+			Instance = this;
 			ExAppButton.Toggle += ExSettings.ToggleGUI;
 
 			if (ToolbarManager.Instance == null) {
 				return;
 			}
 			ExSettingsButton = ToolbarManager.Instance.add ("ExtraplanetaryLaunchpads", "ExSettingsButton");
+			ExSettingsButton.Visible = ExSettings.PreferBlizzy;
 			ExSettingsButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ExSettingsButton.ToolTip = "EL Settings Window";
 			ExSettingsButton.OnClick += (e) => ExSettings.ToggleGUI ();
@@ -133,6 +162,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy()
 		{
+			Instance = null;
 			if (ExSettingsButton != null) {
 				ExSettingsButton.Destroy ();
 			}

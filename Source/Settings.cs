@@ -61,6 +61,11 @@ namespace ExtraplanetaryLaunchpads {
 			get;
 			private set;
 		}
+		public static bool PreferBlizzy
+		{
+			get;
+			private set;
+		}
 
 		static Rect windowpos;
 		private static bool gui_enabled;
@@ -119,6 +124,29 @@ namespace ExtraplanetaryLaunchpads {
 			};
 		}
 
+		void UpdateToolbarButton ()
+		{
+			ExAppButton.UpdateVisibility ();
+			if (ExToolbar_SettingsWindow.Instance != null) {
+				ExToolbar_SettingsWindow.Instance.UpdateVisibility ();
+			}
+		}
+
+		void ParsePreferBlizzy (ConfigNode settings)
+		{
+			if (!settings.HasValue ("PreferBlizzy")) {
+				var val = PreferBlizzy.ToString();
+				settings.AddValue ("PreferBlizzy", val);
+			}
+
+			string str = settings.GetValue ("PreferBlizzy");
+			bool bval;
+			if (bool.TryParse (str, out bval)) {
+				PreferBlizzy = bval;
+			}
+			UpdateToolbarButton ();
+		}
+
 		void ParseShipInfo (ConfigNode settings)
 		{
 			if (settings.HasNode ("ShipInfo")) {
@@ -163,6 +191,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			settings.AddValue ("UseKAC", use_KAC);
 			settings.AddValue ("KACAction", KACAction.ToString ());
+			settings.AddValue ("PreferBlizzy", PreferBlizzy);
 
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
 			ExBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
@@ -184,6 +213,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			ParseUseKAC (settings);
 			ParseKACAction (settings);
+			ParsePreferBlizzy (settings);
 		}
 		
 		public override void OnAwake ()
@@ -204,6 +234,13 @@ namespace ExtraplanetaryLaunchpads {
 		void WindowGUI (int windowID)
 		{
 			GUILayout.BeginVertical ();
+
+			bool pb = PreferBlizzy;
+			pb = GUILayout.Toggle (pb, "Use Blizzy's toolbar instead of App launcher");
+			if (pb != PreferBlizzy) {
+				PreferBlizzy = pb;
+				UpdateToolbarButton ();
+			}
 
 			bool uk = use_KAC;
 			uk = GUILayout.Toggle (uk, "Create alarms in Kerbal Alarm Clock");

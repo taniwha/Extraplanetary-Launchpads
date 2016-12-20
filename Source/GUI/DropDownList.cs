@@ -82,7 +82,9 @@ namespace ExtraplanetaryLaunchpads {
                     Int32 oldIndex = SelectedIndex;
                     SelectedIndex = (Int32)Math.Floor((Event.current.mousePosition.y - rectListBox.y) / (rectListBox.height / Items.Count));
                     //Throw an event or some such from here
-                    SelectionChanged(oldIndex, SelectedIndex);
+					if (SelectionChanged != null) {
+						SelectionChanged(oldIndex, SelectedIndex);
+					}
                     ListVisible = false;
                 }
 

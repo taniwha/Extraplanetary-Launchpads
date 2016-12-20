@@ -79,30 +79,28 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public override void OnLoad (ConfigNode config)
+		void ParseUseKAC (ConfigNode settings)
 		{
-			//Debug.Log (String.Format ("[EL] Settings load"));
-			var settings = config.GetNode ("Settings");
-			if (settings == null) {
-				settings = new ConfigNode ("Settings");
-				gui_enabled = true; // Show settings window on first startup
-			}
 			if (!settings.HasValue ("UseKAC")) {
 				var val = use_KAC;
 				settings.AddValue ("UseKAC", val);
-			}
-			if (!settings.HasValue ("KACAction")) {
-				var val = KACAction.ToString();
-				settings.AddValue ("KACAction", val);
 			}
 
 			var uks = settings.GetValue ("UseKAC");
 			bool uk = true;
 			bool.TryParse (uks, out uk);
 			use_KAC = uk;
+		}
+
+		void ParseKACAction (ConfigNode settings)
+		{
+			if (!settings.HasValue ("KACAction")) {
+				var val = KACAction.ToString();
+				settings.AddValue ("KACAction", val);
+			}
 
 			string str = settings.GetValue ("KACAction");
-			switch (str){
+			switch (str) {
 			case ("KillWarp"):
 				KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 				break;
@@ -119,16 +117,38 @@ namespace ExtraplanetaryLaunchpads {
 				KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
 				break;
 			};
+		}
 
+		void ParseShipInfo (ConfigNode settings)
+		{
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
 				ExShipInfo.LoadSettings (node);
 			}
+		}
 
+		void ParseBuildWindow (ConfigNode settings)
+		{
 			if (settings.HasNode ("BuildWindow")) {
 				var node = settings.GetNode ("BuildWindow");
 				ExBuildWindow.LoadSettings (node);
 			}
+		}
+
+		public override void OnLoad (ConfigNode config)
+		{
+			//Debug.Log (String.Format ("[EL] Settings load"));
+			var settings = config.GetNode ("Settings");
+			if (settings == null) {
+				settings = new ConfigNode ("Settings");
+				gui_enabled = true; // Show settings window on first startup
+			}
+
+			ParseUseKAC (settings);
+			ParseKACAction (settings);
+			ParsePreferBlizzy (settings);
+			ParseShipInfo (settings);
+			ParseBuildWindow (settings);
 
 			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
 				enabled = true;
@@ -139,14 +159,10 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			//Debug.Log (String.Format ("[EL] Settings save: {0}", config));
 			var settings = new ConfigNode ("Settings");
-
-			bool uk = use_KAC;
-			settings.AddValue ("UseKAC", uk);
-
-			string ka = KACAction.ToString ();
-			settings.AddValue ("KACAction", ka);
-
 			config.AddNode (settings);
+
+			settings.AddValue ("UseKAC", use_KAC);
+			settings.AddValue ("KACAction", KACAction.ToString ());
 
 			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
 			ExBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
@@ -166,33 +182,8 @@ namespace ExtraplanetaryLaunchpads {
 			if (settings == null) {
 				return;
 			}
-			if (settings.HasValue ("UseKAC")) {
-				string str = settings.GetValue ("UseKAC");
-				bool val;
-				if (bool.TryParse (str, out val)) {
-					use_KAC = val;
-				}
-			}
-			if (settings.HasValue ("KACAction")) {
-				string str = settings.GetValue ("KACAction");
-				switch (str){
-				case ("KillWarp"):
-					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
-					break;
-				case ("KillWarpOnly"):
-					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly;
-					break;
-				case ("MessageOnly"):
-					KACAction = KACWrapper.KACAPI.AlarmActionEnum.MessageOnly;
-					break;
-				case ("PauseGame"):
-					KACAction = KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
-					break;
-				default:
-					KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
-					break;
-				};
-			}
+			ParseUseKAC (settings);
+			ParseKACAction (settings);
 		}
 		
 		public override void OnAwake ()

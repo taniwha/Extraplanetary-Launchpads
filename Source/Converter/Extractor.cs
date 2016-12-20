@@ -161,7 +161,7 @@ namespace ExtraplanetaryLaunchpads {
 				status = "Inactive";
 				return null;
 			}
-			rate = amount * Efficiency;
+			rate = amount * GetEfficiencyMultiplier();
 			return LoadRecipe(rate);
 		}
 	}

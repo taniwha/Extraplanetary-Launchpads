@@ -5,6 +5,9 @@
 \save_transient_properties true
 \origin unavailable
 \textclass article
+\begin_preamble
+\usepackage{marginfix}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -850,8 +853,18 @@ stem-kas-055/
 status collapsed
 
 \begin_layout Plain Layout
-It can, however, lead to good entertainment: https://www.youtube.com/watch?v=67vth
-86RQH0&t=1525
+It can, however, lead to good entertainment: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.youtube.com/watch?v=67vth86RQH0&t=1525
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1381,7 +1394,7 @@ e.
 \end_layout
 
 \begin_layout Itemize
-Whether tranferring (from a tank) or recycling (the part itself), resources
+Whether transferring (from a tank) or recycling (the part itself), resources
  with no recipe are reclaimed as-is at a 1:1 ratio.
 \end_layout
 

@@ -6,6 +6,7 @@
 \origin unavailable
 \textclass article
 \begin_preamble
+\usepackage[pdf]{graphviz}
 \usepackage{marginfix}
 \end_preamble
 \use_default_options true
@@ -74,7 +75,182 @@
 \begin_body
 
 \begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Building bases and space stations in Kerbal Space Program can be fun and
+ rewarding on its own: they look good and allow for the production or storage
+ of fuel and science, but they amount to little more than outposts.
+ One main problem with such outposts is that when things go wrong and repairs
+ are needed, they are highly dependent on resupply runs from the KSC
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Kerbal Space Center? Kerbin Space Center? Kerman Space Center? Kraken Snack
+ Constructor?
+\end_layout
+
+\end_inset
+
+.
+ A bigger problem is they serve only as way stations for grand missions:
+ it is very difficult to use them as the origin of such missions as all
+ the vessels comprising the grand mission must be launched from the KSC.
+\end_layout
+
+\begin_layout Standard
+Extraplanetary Launchpads (or EL for short
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Just like 
+\begin_inset Quotes eld
+\end_inset
+
+extraterrestrial
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+extraplanetary
+\begin_inset Quotes erd
+\end_inset
+
+ is (or would be) one word, and 
+\begin_inset Quotes eld
+\end_inset
+
+launchpad
+\begin_inset Quotes erd
+\end_inset
+
+ is also one word, thus in this case TLA is Two Letter Acronym
+\end_layout
+
+\end_inset
+
+) gives additional meaning to planetary bases and orbiting space stations
+ by allowing for the construction of all manner of vessels away from the
+ KSC.
+ The construction can be carried out both on the surface of any body and
+ in orbit.
+ However, EL does not do anything for life support supplies (other mods
+ have that covered), or the expansion of the kerbal population at the base
+ or station.
+\end_layout
+
+\begin_layout Standard
+EL defines the resources
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+other mods, eg USI, define other resource that replace those defined by
+ EL
+\end_layout
+
+\end_inset
+
+ used in the construction of vessels, and provides the parts required to
+ obtain and process those resources into the final product: a vessel that
+ can be an independent ship (or other vehicle), base, station, a module
+ for a larger vessel, or even individual parts
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+though currently a little awkwardly
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
 Construction Basics
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+digraph[scale=0.5]{MyGraph}{
+\end_layout
+
+\begin_layout Plain Layout
+
+	rankdir=LR;
+\end_layout
+
+\begin_layout Plain Layout
+
+	prospect->mine;
+\end_layout
+
+\begin_layout Plain Layout
+
+	mine->smelt;
+\end_layout
+
+\begin_layout Plain Layout
+
+	smelt->work;
+\end_layout
+
+\begin_layout Plain Layout
+
+	work->build;
+\end_layout
+
+\begin_layout Plain Layout
+
+	build->recycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+	recycle->work;
+\end_layout
+
+\begin_layout Plain Layout
+
+	"ship parts"->build;
+\end_layout
+
+\begin_layout Plain Layout
+
+	"ship metal"->work;
+\end_layout
+
+\begin_layout Plain Layout
+
+	"ship metalore"->smelt;
+\end_layout
+
+\begin_layout Plain Layout
+
+	work->smelt;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection

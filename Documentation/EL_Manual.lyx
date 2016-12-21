@@ -186,62 +186,91 @@ status open
 
 
 \backslash
-digraph[scale=0.5]{MyGraph}{
+digraph[scale=0.5]{ConstructionBasics}{
 \end_layout
 
 \begin_layout Plain Layout
 
-	rankdir=LR;
+	rankdir=TB;
 \end_layout
 
 \begin_layout Plain Layout
 
-	prospect->mine;
+	prospecting->mining;
 \end_layout
 
 \begin_layout Plain Layout
 
-	mine->smelt;
+	mining->smelting     [label="MetalOre"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	smelt->work;
+	smelting->working    [label="Metal"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	work->build;
+	working->building    [label="RocketParts"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	build->recycle;
+	building->recycling  [label="Vessel"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	recycle->work;
+	recycling->remelting [label="ScrapMetal"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	"ship parts"->build;
+	shipping->building   [label="RocketParts"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	"ship metal"->work;
+	shipping->working    [label="Metal"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	"ship metalore"->smelt;
+	shipping->smelting   [label="MetalOre"];
 \end_layout
 
 \begin_layout Plain Layout
 
-	work->smelt;
+	shipping->recycling  [label="Vessel"];
+\end_layout
+
+\begin_layout Plain Layout
+
+	working->remelting   [label="ScrapMetal"];
+\end_layout
+
+\begin_layout Plain Layout
+
+	remelting->working   [label="Metal"];
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	recycling->building  [style=invis];
+\end_layout
+
+\begin_layout Plain Layout
+
+	{rank=same shipping smelting}
+\end_layout
+
+\begin_layout Plain Layout
+
+	{rank=same recycling remelting}
 \end_layout
 
 \begin_layout Plain Layout
@@ -992,8 +1021,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://forum.kerbalspaceprogram.com/index.php?/topic/101928-105-kerbal-inventory-sy
-stem-kis-126/
+http://forum.kerbalspaceprogram.com/index.php?/topic/149848-kis/
 \end_layout
 
 \end_inset
@@ -1014,8 +1042,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://forum.kerbalspaceprogram.com/index.php?/topic/83468-105-kerbal-attachment-sy
-stem-kas-055/
+http://forum.kerbalspaceprogram.com/index.php?/topic/142594-kas/
 \end_layout
 
 \end_inset
@@ -1633,8 +1660,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://forum.kerbalspaceprogram.com/index.php?/topic/101928-105-kerbal-inventory-sy
-stem-kis-126/
+http://forum.kerbalspaceprogram.com/index.php?/topic/149848-kis/
 \end_layout
 
 \end_inset
@@ -1655,8 +1681,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://forum.kerbalspaceprogram.com/index.php?/topic/83468-105-kerbal-attachment-sy
-stem-kas-055/
+http://forum.kerbalspaceprogram.com/index.php?/topic/142594-kas/
 \end_layout
 
 \end_inset

@@ -27,7 +27,7 @@ info:
 	@echo "    KSP Data:   ${KSPDIR}"
 
 %.pdf: %.lyx
-	lyx -E pdf $@ $^
+	lyx -E pdf4 $@ $^
 
 clean:
 	rm -f *.pdf

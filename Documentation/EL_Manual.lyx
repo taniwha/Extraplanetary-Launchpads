@@ -8,6 +8,11 @@
 \begin_preamble
 \usepackage[pdf]{graphviz}
 \usepackage{marginfix}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\usepackage[nottoc]{tocbibind}
+\usepackage[style=numeric,backend=biber]{biblatex}
+\addbibresource{kspforums.bib}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -31,7 +36,7 @@ logicalmkup
 \graphics default
 \default_output_format default
 \output_sync 0
-\bibtex_command default
+\bibtex_command biber
 \index_command default
 \paperfontsize default
 \spacing single
@@ -134,7 +139,7 @@ launchpad
 \begin_inset Quotes erd
 \end_inset
 
- is also one word, thus in this case TLA is Two Letter Acronym
+ is also one word, thus in this case TLA is Two Letter Acronym.
 \end_layout
 
 \end_inset
@@ -155,7 +160,7 @@ EL defines the resources
 status collapsed
 
 \begin_layout Plain Layout
-other mods, eg USI, define other resource that replace those defined by
+Other mods, eg USI, define other resource that replace those defined by
  EL
 \end_layout
 
@@ -169,7 +174,7 @@ other mods, eg USI, define other resource that replace those defined by
 status collapsed
 
 \begin_layout Plain Layout
-though currently a little awkwardly
+Though currently a little awkwardly.
 \end_layout
 
 \end_inset
@@ -483,7 +488,7 @@ Metal
 status collapsed
 
 \begin_layout Plain Layout
-chemistry term, the opposite of oxidizing (or reduction vs oxidization)
+Chemistry term, the opposite of oxidizing (or reduction vs oxidization).
 \end_layout
 
 \end_inset
@@ -969,13 +974,9 @@ All kerbals have a base productivity score computed from their stupidity,
 
 \begin_layout Standard
 If the KerbalStats
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-KerbalStats: http://forum.kerbalspaceprogram.com/index.php?/topic/89285-105-kerbals
-tats-v201/
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KS"
 
 \end_inset
 
@@ -1251,44 +1252,16 @@ not
 \emph default
  be transfered: the build will be empty of such resources (freedom is not
  free), but as KIS
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Kerbal Inventory System: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://forum.kerbalspaceprogram.com/index.php?/topic/149848-kis/
-\end_layout
-
-\end_inset
-
-
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
 
 \end_inset
 
  is required to place the stakes, and KAS
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Kerbal Attachment System: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://forum.kerbalspaceprogram.com/index.php?/topic/142594-kas/
-\end_layout
-
-\end_inset
-
-
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KAS"
 
 \end_inset
 
@@ -1298,13 +1271,9 @@ status collapsed
 
 \begin_layout Plain Layout
 It can, however, lead to good entertainment: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-https://www.youtube.com/watch?v=67vth86RQH0&t=1525
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "HMV1"
 
 \end_inset
 
@@ -1546,44 +1515,16 @@ ExSurveyStation Builds complete vessels at locations marked out using survey
  stakes (parts with the ExSurveyStake module).
  Does not allow post-build resource transfer (freedom is not free), but
  as KIS
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Kerbal Inventory System: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://forum.kerbalspaceprogram.com/index.php?/topic/149848-kis/
-\end_layout
-
-\end_inset
-
-
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
 
 \end_inset
 
  is required to place the stakes, and KAS
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Kerbal Attachment System: 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://forum.kerbalspaceprogram.com/index.php?/topic/142594-kas/
-\end_layout
-
-\end_inset
-
-
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KAS"
 
 \end_inset
 
@@ -1839,7 +1780,14 @@ Model Requirements
 \end_layout
 
 \begin_layout Standard
-None except any required by KIS for ground attachment.
+None except any required by KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+ for ground attachment.
 \end_layout
 
 \begin_layout Paragraph
@@ -1849,7 +1797,14 @@ Part Requirements
 \begin_layout Standard
 As the survey station will not look at vessels with more than one part to
  check for the ExSurveyStake module, the part should be configured to be
- ground attached using KIS.
+ ground attached using KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+.
  However, parts designed to be dropped via staging or decoupling will work,
  too, so long as the resulting vessel consists of only the one part.
 \end_layout
@@ -3075,7 +3030,7 @@ EL_KerbalRecipe Specifies the resources making up a kerbal (whether on EVA
 status collapsed
 
 \begin_layout Plain Layout
-the kerbal is assumed to be suited or have a suit nearby in the same part
+The kerbal is assumed to be suited or have a suit nearby in the same part
 \end_layout
 
 \end_inset
@@ -3114,7 +3069,7 @@ gain
 status collapsed
 
 \begin_layout Plain Layout
-highly unrealistic, but that is how the KE-WAITNONOSTOP-01 in Kethane is
+Highly unrealistic, but that is how the KE-WAITNONOSTOP-01 in Kethane is
  configured
 \end_layout
 
@@ -3180,5 +3135,38 @@ EL_KerbalRecipe {
 \end_layout
 
 \end_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+printbibliography[heading=bibintoc]
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "kspforums"
+options "bibtotoc,plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document

@@ -10,6 +10,9 @@
 \usepackage{marginfix}
 \end_preamble
 \use_default_options true
+\begin_modules
+logicalmkup
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -75,7 +78,7 @@
 
 \begin_body
 
-\begin_layout Section
+\begin_layout Part*
 Introduction
 \end_layout
 
@@ -172,6 +175,19 @@ though currently a little awkwardly
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Using Extraplanetary Launchpads
 \end_layout
 
 \begin_layout Section
@@ -293,8 +309,12 @@ Currently, EL uses four resources for its production chain (though the recipe
 \end_layout
 
 \begin_layout Description
-MetalOre Assumed to be iron ore (but not explicitly stated as such) but
- with a very slightly higher density (
+
+\noun on
+MetalOre
+\noun default
+ Assumed to be iron ore (but not explicitly stated as such) but with a very
+ slightly higher density (
 \begin_inset Formula $5.5t/m^{3}$
 \end_inset
 
@@ -306,8 +326,12 @@ MetalOre Assumed to be iron ore (but not explicitly stated as such) but
 \end_layout
 
 \begin_layout Description
-Metal Assumed to be iron (but not explicitly stated as such) and thus has
- a density of 
+
+\noun on
+Metal
+\noun default
+ Assumed to be iron (but not explicitly stated as such) and thus has a density
+ of 
 \begin_inset Formula $7.8t/m^{3}$
 \end_inset
 
@@ -315,8 +339,12 @@ Metal Assumed to be iron (but not explicitly stated as such) and thus has
 \end_layout
 
 \begin_layout Description
-RocketParts Assumed to be sub-parts ready for assembly into actual parts,
- and thus has a very low density of 
+
+\noun on
+RocketParts
+\noun default
+ Assumed to be sub-parts ready for assembly into actual parts, and thus
+ has a very low density of 
 \begin_inset Formula $0.5t/m^{3}$
 \end_inset
 
@@ -324,8 +352,12 @@ RocketParts Assumed to be sub-parts ready for assembly into actual parts,
 \end_layout
 
 \begin_layout Description
-ScrapMetal The true product of any machine shop: all machine shops produce
- scrap metal in various forms and efficiencies.
+
+\noun on
+ScrapMetal
+\noun default
+ The true product of any machine shop: all machine shops produce scrap metal
+ in various forms and efficiencies.
  The lumps of metal handed over to the customer are really the left-overs
  from producing scrap metal.
  Scrap metal generally does not pack well, though better than parts, so
@@ -337,15 +369,35 @@ ScrapMetal The true product of any machine shop: all machine shops produce
 \end_layout
 
 \begin_layout Subsubsection
-Prospecting and Mining: dirt? to MetalOre
+Prospecting and Mining: dirt? to 
+\noun on
+MetalOre
 \end_layout
 
 \begin_layout Standard
-In order to obtain MetalOre when away from KSC, one of the augers is used
- to mine MetalOre from the surface of the planet or moon.
+In order to obtain 
+\noun on
+MetalOre
+\noun default
+ when away from the KSC, one of the augers is used to mine 
+\noun on
+MetalOre
+\noun default
+ from the surface of the planet or moon.
  EL uses the stock resource distribution system configured to distribute
- MetalOre, so prospecting is done as for stock's Ore resource, but with
- a focus on MetalOre instead.
+ 
+\noun on
+MetalOre
+\noun default
+, so prospecting is done as for stock's 
+\noun on
+Ore
+\noun default
+ resource, but with a focus on 
+\noun on
+MetalOre
+\noun default
+ instead.
 \end_layout
 
 \begin_layout Paragraph
@@ -358,10 +410,27 @@ Prior to KSP 1.0, EL relied solely on Kethane for its prospecting and mining,
  As of KSP 1.0 (EL 5.1.90) Kethane is completely optional, but if present,
  will be used on top of the stock resource system.
  Scanning is quite separate, but mining is done using the exact same augers.
- Mining outside a MetalOre deposit created by Kethane will extract MetalOre
- at the rate dictated by the concentration given by the stock system (1%
- to 15%), but deposits created by Kethane effectively provide hot-spots
- of 100% concentration.
+ Mining outside a 
+\noun on
+MetalOre
+\noun default
+ deposit created by Kethane will extract 
+\noun on
+MetalOre
+\noun default
+ at the rate dictated by the concentration given by the stock system (
+\begin_inset Formula $1$
+\end_inset
+
+% to 
+\begin_inset Formula $15$
+\end_inset
+
+%), but deposits created by Kethane effectively provide hot-spots of 
+\begin_inset Formula $100$
+\end_inset
+
+% concentration.
  
 \begin_inset Marginal
 status collapsed
@@ -390,11 +459,25 @@ The Karbonite adaptation seems to have been mothballed, but it was mostly
 \end_layout
 
 \begin_layout Subsubsection
-Smelting: MetalOre to Metal
+Smelting: 
+\noun on
+MetalOre
+\noun default
+ to 
+\noun on
+Metal
 \end_layout
 
 \begin_layout Standard
-MetalOre is converted to Metal via smelting.
+
+\noun on
+MetalOre
+\noun default
+ is converted to 
+\noun on
+Metal
+\noun default
+ via smelting.
  Smelting is the process of reducing
 \begin_inset Foot
 status collapsed
@@ -406,7 +489,11 @@ chemistry term, the opposite of oxidizing (or reduction vs oxidization)
 \end_inset
 
  metal oxides.
- EL assumes MetalOre is Fe
+ EL assumes 
+\noun on
+MetalOre
+\noun default
+ is Fe
 \begin_inset script subscript
 
 \begin_layout Plain Layout
@@ -659,42 +746,123 @@ O
 \end_inset
 
  of Fe.
- This leads to a MetalOre to Metal mass conversion rate of 0.699431 (0.493188
+ This leads to a 
+\noun on
+MetalOre
+\noun default
+ to 
+\noun on
+Metal
+\noun default
+ mass conversion rate of 
+\begin_inset Formula $0.699431$
+\end_inset
+
+ (
+\begin_inset Formula $0.493188$
+\end_inset
+
  volume (resource unit) conversion rate).
 \end_layout
 
 \begin_layout Subsubsection
-Working: Metal to RocketParts
+Working: 
+\noun on
+Metal
+\noun default
+ to 
+\noun on
+RocketParts
 \end_layout
 
 \begin_layout Standard
-Metal is converted to RocketParts by working it.
+
+\noun on
+Metal
+\noun default
+ is converted to 
+\noun on
+RocketParts
+\noun default
+ by working it.
  Currently, this is done using either the workshop (big blue part in Utilities),
  or the workbench (tower with little platforms in Pods).
- Unfortunately, the process is quite bogus: Metal is used for for everything,
- and the conversion speed is far too fast.
- However, the efficiency (0.7 by mass) is reasonable: it is the estimated
- average of various means of production: cutting cast iron parts leads to
- high efficiency, but cutting lumps of steel can lead to fairly low efficiency
- depending on just how much metal needs to be cut away.
- At the same time, ScrapMetal is produced at a rate of 0.2995 by mass (some
- scraps are lost).
+ Unfortunately, the process is quite bogus: 
+\noun on
+Metal
+\noun default
+ is used for for everything, and the conversion speed is far too fast.
+ However, the efficiency (
+\begin_inset Formula $0.7$
+\end_inset
+
+ by mass) is reasonable: it is the estimated average of various means of
+ production: cutting cast iron parts leads to high efficiency, but cutting
+ lumps of steel can lead to fairly low efficiency depending on just how
+ much metal needs to be cut away.
+ At the same time, 
+\noun on
+ScrapMetal
+\noun default
+ is produced at a rate of 
+\begin_inset Formula $0.2995$
+\end_inset
+
+ by mass (some scraps are lost).
 \end_layout
 
 \begin_layout Subsubsection
-Remelting: ScrapMetal to Metal
+Remelting: 
+\noun on
+ScrapMetal
+\noun default
+ to 
+\noun on
+Metal
 \end_layout
 
 \begin_layout Standard
-ScrapMetal can optionally be remelted to Metal using a smelter.
- The process is lossless (conversion rate of 1), the loss (very small) occurs
- when producing the ScrapMetal.
- Storing and reclaiming ScrapMetal is fully optional: running out of storage
- will not stop Metal to RocketParts conversion.
+
+\noun on
+ScrapMetal
+\noun default
+ can optionally be remelted to 
+\noun on
+Metal
+\noun default
+ using a smelter.
+ The process is lossless (conversion rate of 
+\begin_inset Formula $1$
+\end_inset
+
+), the loss (very small) occurs when producing the 
+\noun on
+ScrapMetal
+\noun default
+.
+ Storing and reclaiming 
+\noun on
+ScrapMetal
+\noun default
+ is fully optional: running out of storage will not stop 
+\noun on
+Metal
+\noun default
+ to 
+\noun on
+RocketParts
+\noun default
+ conversion.
 \end_layout
 
 \begin_layout Subsubsection
-Building: RocketParts to Rockets
+Building: 
+\noun on
+RocketParts
+\noun default
+ to 
+\noun on
+Rockets
 \end_layout
 
 \begin_layout Standard
@@ -710,7 +878,79 @@ pads
  for short).
  The rate is governed by the overall vessel productivity (measured in kerbal-hou
 rs (Khr)) shared amongst active pads.
- Each ton of rocket (dry-mass) requires five kerbal-hours (ie, 5Kh/t).
+ Each ton of rocket (dry-mass) requires five kerbal-hours (i.e.
+ 
+\begin_inset Formula $5Kh/t$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+There have been discussions that EL's build rate is too high, but those
+ arguing that side were unaware that 
+\noun on
+RocketParts
+\noun default
+ represent components to be assembled into the parts visible in KSP.
+ The building process is really just the kerbals putting those components
+ together.
+ It is the smelting and working stages that are unrealistically fast.
+\end_layout
+
+\begin_layout Subsubsection
+Recycling: 
+\noun on
+RocketParts
+\noun default
+ to 
+\noun on
+ScrapMetal
+\end_layout
+
+\begin_layout Standard
+Recycling is one on a part-by-part basis
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+Some of you may have had spotty results recycling entire vessels: that is
+ intentional, and there is a way around it (see if you can guess).
+\end_layout
+
+\end_inset
+
+.
+ When a part is recycled, it is first drained of any resources it contains
+ (e.g., 
+\noun on
+LiquidFuel
+\noun default
+ or 
+\noun on
+Oxidizer
+\noun default
+), and those resources will evaporate, be broken down into other resources
+ to be reclaimed, or transfered and thus reclaimed depending on the resource
+ (most will be transfered).
+ Once the part has been drained, it will be broken down from 
+\noun on
+RocketParts
+\noun default
+ to 
+\noun on
+ScrapMetal
+\noun default
+ and the 
+\noun on
+ScrapMetal
+\noun default
+ reclaimed.
+\end_layout
+
+\begin_layout Standard
+Of course, any reclaimed resource needs storage space.
+ Otherwise, it will be lost.
 \end_layout
 
 \begin_layout Subsection
@@ -1266,352 +1506,8 @@ and
  
 \end_layout
 
-\begin_layout Subsection
-stuff
-\end_layout
-
-\begin_layout Standard
-Ok, about the surveyed builds...
-\end_layout
-
-\begin_layout Standard
-Firstly, they are still a work in progress: they are working as intended
- and most of the planned features seem to be working, but two important
- features are not yet implemented and there may be more bugs lurking in
- the code (over 800 lines).
-\end_layout
-
-\begin_layout Standard
-Secondly, surveyed builds flat out require Kerbal Attachment System: the
- survey stakes cannot be attached to any part via any means (node attach,
- surface attach, KAS attach).
- They can, however, be attached to planetary surfaces, carried around by
- kerbals (<2kg), and put in KAS storage containers.
- Stakes are used to determine the placement of the build craft: both location
- and optionally orientation.
-\end_layout
-
-\begin_layout Standard
-Thirdly, to make use of the survey stakes, your build vessel needs to have
- a survey station.
- Currently this is a clone (via MM magic) of the stock hitchhiker can.
- I will create a new part for this once I've had a break and will ensure
- it is physically compatible, but I suggest avoiding surface attachments
- as the exact shape may differ, or parts may be animated.
- Use of the survey station is exactly the same as a pad, except it must
- be landed for it to work.
-\end_layout
-
-\begin_layout Standard
-Finally, craft built via a survey station will not be loaded with any resources.
- Probes with neither ox-stat solar panels nor RTGs (or similar mod parts)
- will be DOA.
- Resources can be transfered by connective via either docking or KAS.
-\end_layout
-
-\begin_layout Standard
-And now a little bit about actually using the stakes...
-\end_layout
-
-\begin_layout Itemize
-Stakes have "usage modes".
- These can be seen via the right-click menu from EVA.
- The possible settings are: Origin, +X, +Y, +Z, -X, -Y, -Z.
-\end_layout
-
-\begin_layout Itemize
-Stakes can be renamed via Rename Stake in the right-click menu.
- The dialog is the same as for Rename Vessel, but the ship type has no meaning.
- The name defaults to "<kerbal name> Base".
- Stakes of the same name will be considered to be part of the same survey
- site.
- Multiple survey sites is one of the not-yet fully implemented features.
- Multiple sites within range of the survey station may result in interesting
- outcomes.
-\end_layout
-
-\begin_layout Itemize
-Stakes in Origin mode determine where the built craft will be placed (the
- root part).
- If the site has multiple Origin stakes, then their positions will be averaged.
- This is a very useful feature :).
-\end_layout
-
-\begin_layout Itemize
-Stakes in +/- XYZ mode determine the orientation of the built craft.
- The default is for the starboard size of the craft to face east (same as
- a normal launch).
- +X is starboard, -X is port.
- I have not done sufficient testing, but +Z is forwards for craft built
- in the SPH (this I have tested).
-\end_layout
-
-\begin_layout Itemize
-Multiple stakes with the same orientation mode in the one site are averaged.
-\end_layout
-
-\begin_layout Itemize
-Mixing orientation modes in a site may result in interesting outcomes.
-\end_layout
-
-\begin_layout Itemize
-Moving stakes around does not reset their modes.
- Putting them away in a KAS container probably does (not tested, but I doubt
- KAS preserves the information).
-\end_layout
-
-\begin_layout Itemize
-Launch clamps work well enough with surveyed builds, but the spawned craft
- has its bottom about 20cm above the ground (for default orientation).
- Results may vary on uneven ground.
-\end_layout
-
-\begin_layout Standard
-Essentially, surveyed builds make it a little easier to get bases going
- as you don't need to fly in an awkward launchpad.
-\end_layout
-
-\begin_layout Subsection
-Direction Stakes
-\end_layout
-
-\begin_layout Standard
-Nice to see that NASA uses a right-handed system (I hate unity's left-handed
- system).
- Unfortunately, I have to stick with the LHS for my description or I'll
- confuse myself.
-\end_layout
-
-\begin_layout Standard
-Ok, I have verified that the survey station averages all of a site's stakes
- to find the center, but if Origin stakes are present, it then sets the
- center to the average of the Origin stakes (I guess I wasn't feeling that
- sadistic).
-\end_layout
-
-\begin_layout Standard
-Once the survey station has set the center, it goes on to find the orientation.
-\end_layout
-
-\begin_layout Itemize
-If the Y axis has not been staked out, then it will, without fail, be the
- local vertical (ie, directly along the radial vector from the center of
- the celestial body through the center of the site).
- Local ground slope is ignored.
- The XZ plane is horizontal.
-\begin_inset Separator latexpar
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-If neither X nor Z has been staked out, then the X axis is set to point
- east.
- This will not work at the poles (which way is east? Every direction is
- either south or north).
- The Z axis is then set to point south.
- This is the same orientation for rockets on the pad at KSC.
-\end_layout
-
-\begin_layout Itemize
-If only X has been staked out, then the X axis is set to point in the same
- direction, and the Z axis will be at 3 o'clock (if the X axis is 12 o'clock)
- when viewed from above.
-\end_layout
-
-\begin_layout Itemize
-If only Z has been staked out, then it is a similar story, but the Z axis
- is 12 o'clock pointing in the same direction and the X axis is 9 o'clock.
-\end_layout
-
-\begin_layout Itemize
-If both X and Z have been staked out, then the errors for the X and Z axes
- will be balanced, though X might be reversed if you get the placement wrong.
- The Y axis is still vertically up.
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-If the Y axis has been staked out, but the X axis has not, then the X axis
- will be the local vertical.
- The YZ plane is horizontal.
-\begin_inset Separator latexpar
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-If the Z axis has not been staked out, then it will be pointed at 3 o'clock
- with the Y axis at 12 o'clock.
- 
-\end_layout
-
-\begin_layout Itemize
-If the Z axis has been staked out, then the Y and Z axis errors will be
- balanced.
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-If both the Y axis and the X axis have been staked out, but the Z axis has
- not, then the Z axis will be the local vertical, and the XY plane will
- be horizontal.
-\begin_inset Separator latexpar
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-The X and Y axis errors will be balanced.
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-If all three axes have been staked out, then I hope you know what you are
- doing.
- All three axis errors will be balanced.
- Used carefully, this might be useful on extreme slopes, or maybe in the
- vicinity of a Mun arch.
-\end_layout
-
-\begin_layout Standard
-Note: it is intended that the vessel is built flat.
- It is not accidental behavior, and it is why I modified the launch clamps.
-\end_layout
-
-\begin_layout Subsection
-Bounds stakes
-\end_layout
-
-\begin_layout Standard
-Some points about Bounds stakes:
-\end_layout
-
-\begin_layout Itemize
-Bounds stakes use the same highlight colors as Direction stakes, but flash.
-\end_layout
-
-\begin_layout Itemize
-Single (for a specific axis) Bounds stakes will lock the relevant side of
- the vessel's bounding box to that stake (ie, the box face and the stake
- will be coplanar).
-\end_layout
-
-\begin_layout Itemize
-Two Bounds stakes (eg, -X and +X) will cause the box to be centered between
- the stakes.
-\end_layout
-
-\begin_layout Itemize
-No Bounds stakes on an axis will center the vessel's root part on the Origin
- stake (or the average of all stakes if there is no Origin stake).
-\end_layout
-
-\begin_layout Itemize
-As per Origin and Direction stakes, multiple Bounds stakes of the same axis
- (eg, -Z) will be averaged together.
-\end_layout
-
-\begin_layout Itemize
-There is no difference between a Bounds Origin stake and a Direction Origin
- Stake.
-\end_layout
-
-\begin_layout Standard
-Again, I apologize for suggesting the use of bounds stakes when I had not
- yet released them.
- I had begun working on them right after releasing 5.0.2, so I had forgotten
- they were new.
-\end_layout
-
-\begin_layout Section
-Recipes
-\end_layout
-
-\begin_layout Standard
-On 29/03/2016 at 0:25 PM, goldenpsp said:
-\end_layout
-
-\begin_layout Standard
-I would imagine the EPL recycling bin would need some sort of MM config
- as by default it isn't going to recycle to material kits.
-\end_layout
-
-\begin_layout Standard
-All it needs is appropriate EL_RecycleRecipe(s) and EL_TransferRecipe(s)
- (both are for resources, not parts).
- Tank contents use EL_TransferRecipe (to override other recipes, so not
- always needed), parts get broken down into appropriate resources using
- their EL_PartRecipe(s), and those resources use EL_RecycleRecipe (any resource
- with a EL_ResourceRecipe but no EL_TransferRecipe will evaporate from takes,
- and evaporate when recycling parts if there is no EL_RecyleRecipe for that
- resource).
-\end_layout
-
-\begin_layout Standard
-When building:
-\end_layout
-
-\begin_layout Itemize
-Any resource mentioned in EL_PartRecipe or EL_ModuleRecipe is required for
- building (but not for filling tanks).
-\end_layout
-
-\begin_layout Itemize
-Any stored resource that has an EL_ResourceRecipe becomes a required resource
- (eg, SolidFuel).
-\end_layout
-
-\begin_layout Itemize
-Any resource stored in a part inside a KIS container becomes a required
- resource, regardless of recipes.
-\end_layout
-
-\begin_layout Standard
-When recycling:
-\end_layout
-
-\begin_layout Itemize
-Done on a part-by-part basis.
- Some of you may have had spotty results recycling entire vessels: that
- is intentional, and there is a way around it (see if you can guess).
-\end_layout
-
-\begin_layout Itemize
-Any resources stored in the part are drained.
- Those with an EL_ResourceRecipe but no EL_TransferRecipe are lost, otherwise
- they transfer as dictated by the EL_TransferRecipe.
-\end_layout
-
-\begin_layout Itemize
-The part is then broken down into the resources specified by its EL_PartRecipe
- and EL_ModuleRecipe(s).
- Those resources with an EL_ResourceRecipe but no EL_RecycleRecipe are lost,
- otherwise they get broken down further in accordance with their EL_RecycleRecip
-e.
-\end_layout
-
-\begin_layout Itemize
-Whether transferring (from a tank) or recycling (the part itself), resources
- with no recipe are reclaimed as-is at a 1:1 ratio.
-\end_layout
-
-\begin_layout Itemize
-Of course, any reclaimed resource need storage space.
-\end_layout
-
-\begin_layout Standard
-I hope that helps anybody wishing to tweak recipes.
- There are example recipes in EL's Resources directory, and, I imagine,
- somewhere in USI's tree.
- Only EL_PartRecipes need to be MMed (into the part), the rest are independent.
- 
+\begin_layout Part
+Modding Extraplanetary Launchpads
 \end_layout
 
 \begin_layout Section
@@ -1966,5 +1862,1323 @@ Module Fields
 None.
 \end_layout
 
+\begin_layout Section
+Recipes
+\end_layout
+
+\begin_layout Standard
+Extraplanetary Launchpads provides, via recipes, a means of customizing
+ the resource costs for building parts, their modules and resources, and
+ thus whole vessels.
+ The recipes are used also for recycling.
+ 
+\end_layout
+
+\begin_layout Standard
+Essentially, recipes are config nodes with a list of ingredients with their
+ ratios in the form of 
+\noun on
+IngredientName = Ratio
+\noun default
+, although each recipe type will be a little more complex (details given
+ below).
+ The final ratio of each ingredient is calculated by dividing the specified
+ ratio by the sum of the ratios of all ingredients in the recipe such that
+ the final total is 
+\begin_inset Formula $1.0$
+\end_inset
+
+.
+ This allows for flexibility in how the ratios are specified, so long as
+ consistency is maintained throughout the individual recipe: they can be
+ considered as 
+\begin_inset Quotes eld
+\end_inset
+
+parts
+\begin_inset Quotes erd
+\end_inset
+
+ as in when mixing drinks (one part this, two parts that...), as masses in
+ any unit (
+\begin_inset Formula $24g$
+\end_inset
+
+ this, 
+\begin_inset Formula $16g$
+\end_inset
+
+ that, 
+\begin_inset Formula $6g$
+\end_inset
+
+ the other
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+A popular compound.
+\end_layout
+
+\end_inset
+
+), percentages (if they add up to 
+\begin_inset Formula $100$
+\end_inset
+
+), or raw ratios (if they add up to 
+\begin_inset Formula $1.0$
+\end_inset
+
+).
+ Note, however, that EL always uses mass for its calculations.
+\end_layout
+
+\begin_layout Standard
+For example, glucose (C
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+
+H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+
+) using approximate molar masses:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "30col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+Using masses:
+\end_layout
+
+\begin_layout Verbatim
+
+Carbon = 72
+\end_layout
+
+\begin_layout Verbatim
+
+Hydrogen = 12
+\end_layout
+
+\begin_layout Verbatim
+
+Oxygen = 96
+\end_layout
+
+\end_inset
+
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "30col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+Using parts:
+\end_layout
+
+\begin_layout Verbatim
+
+Carbon = 6
+\end_layout
+
+\begin_layout Verbatim
+
+Hydrogen = 1
+\end_layout
+
+\begin_layout Verbatim
+
+Oxygen = 8
+\end_layout
+
+\end_inset
+
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "30col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+Using raw ratios:
+\end_layout
+
+\begin_layout Verbatim
+
+Carbon = 0.4
+\end_layout
+
+\begin_layout Verbatim
+
+Hydrogen = 0.06667
+\end_layout
+
+\begin_layout Verbatim
+
+Oxygen = 0.53333
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In general, the ingredients will be KSP resources.
+ EL looks up the resource to find its density and calculates the amount
+ of resource required based on the total mass of the recipe, the ingredient's
+ ratio within the recipe as a fraction of the total mass, and the density
+ of the resource to give the resource units required to achieve that mass.
+\end_layout
+
+\begin_layout Standard
+Ingredients may be repeated within a recipe, in which case their ratios
+ will simply be added together.
+ This makes creating recipes from chemical formula a little easier.
+\end_layout
+
+\begin_layout Standard
+Unknown ingredients contribute to the total ratio and thus affect the ratios
+ of known ingredients.
+ Their effects when building are undefined, but they operate as losses when
+ recycling (i.e., unknown ingredients simply evaporate when a part is recycled).
+\end_layout
+
+\begin_layout Subsection
+Recipes for Building
+\end_layout
+
+\begin_layout Standard
+Building parts (and thus vessels) requires resources.
+ The total mass of the resources required for building a part is given by
+ the part's mass, but the mix of resources needed by the part is given by
+ the part's recipe.
+ Also, certain resources stored in a part (e.g.
+ 
+\noun on
+SolidFuel
+\noun default
+, 
+\noun on
+Ablator
+\noun default
+) cannot normally be created by other means (neither stock ISRU nor Kethane
+ provide a means to produce them), nor can they be transfered, so recipes
+ can be used for specifying how to build them.
+\end_layout
+
+\begin_layout Standard
+Any resource listed in a recipe becomes a required resource (i.e.
+ the build will not complete if there any require resource runs out).
+ Note, however, that normal resources that are simply stored in the part
+ to be built remain optional.
+ For example, to build a tank that holds 
+\noun on
+RocketParts
+\noun default
+, A mass of 
+\noun on
+RocketParts
+\noun default
+ equivalent to the dry mass of the tank is required to build the tank itself,
+ but the 
+\noun on
+RocketParts
+\noun default
+ used to fill the tank remain optional.
+ Thus, if there is a supply of 
+\noun on
+RocketParts
+\noun default
+ sufficient to build the tank, but not enough to fill it, then the tank
+ will be only partially full (or possibly even empty) when built.
+\end_layout
+
+\begin_layout Standard
+In summary:
+\end_layout
+
+\begin_layout Itemize
+Any resource mentioned in 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+ or 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ModuleRecipe
+\end_layout
+
+\end_inset
+
+ is required for building (but not for filling tanks).
+\end_layout
+
+\begin_layout Itemize
+Any stored resource that has an 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ResourceRecipe
+\end_layout
+
+\end_inset
+
+ becomes a required resource (eg, 
+\noun on
+SolidFuel
+\noun default
+).
+\end_layout
+
+\begin_layout Itemize
+Any resource stored in a part inside a KIS container becomes a required
+ resource, regardless of recipes.
+\end_layout
+
+\begin_layout Description
+EL_Recipe Specify the resources needed to build a part.
+ 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+ is to be added to the part's config (either by hand or using Module Manager).
+ 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+ nodes are really two nested recipes: the outer recipe specifies the ratios
+ between the part's structure (using 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+structure
+\end_layout
+
+\end_inset
+
+ as the ingredient name) and its part modules (the ingredient name is the
+ name of the part module).
+ The inner recipe is the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node, which specifies the resources needed to build the part's structure.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+Any part that does not have an 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+ node will be given the default shown below, but with additional 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+modulename = 1
+\end_layout
+
+\end_inset
+
+ lines for each part module on the part that has a corresponding 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ModuleRecipe
+\end_layout
+
+\end_inset
+
+.
+ Also, the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node will be taken from 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_DefaultStructureRecipe
+\end_layout
+
+\end_inset
+
+ (both for parts that have no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+ node, or whose 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+ node has no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node).
+\end_layout
+
+\begin_layout Verbatim
+
+EL_Recipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    structure = 5
+\end_layout
+
+\begin_layout Verbatim
+
+    Resources {
+\end_layout
+
+\begin_layout Verbatim
+
+        RocketParts = 1
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
+\begin_layout Description
+EL_ModuleRecipe Specify the resources needed to build any part's module.
+ Applies to all instances of that module.
+ The module to which the recipe applies is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line, and the actual recipe for the module is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node.
+ The mass of the module is calculated from the part's mass using the ratio
+ specified in the part's recipe.
+ If the named module does not exist, no module is named (ie, no top-level
+ 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line), or no recipe is given (no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node), the recipe will be dropped from the recipe database.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+The example below gives EL's module recipe for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+KerbalEVA
+\end_layout
+
+\end_inset
+
+.
+ The ratios are in kilograms, assuming a suited kerbal has a mass of 
+\begin_inset Formula $93.75kg$
+\end_inset
+
+ (
+\begin_inset Formula $10kg$
+\end_inset
+
+ for the kerbal).
+ It can be found in 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Verbatim
+
+EL_ModuleRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    name = KerbalEVA
+\end_layout
+
+\begin_layout Verbatim
+
+    Resources {
+\end_layout
+
+\begin_layout Verbatim
+
+        Metal = 39
+\end_layout
+
+\begin_layout Verbatim
+
+        loss = 44.75
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
+\begin_layout Description
+EL_DefaultStructureRecipe Specify the default recipe to be used for a part's
+ structure when the part has no recipe or the recipe does not specify a
+ recipe its structure.
+ There is no node in EL's configs: it is hard coded, but providing an 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_DefaultStructureRecipe
+\end_layout
+
+\end_inset
+
+ will override the hard-coded default.
+\end_layout
+
+\begin_deeper
+\begin_layout Verbatim
+
+EL_DefaultStructureRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    RocketParts = 1
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
+\begin_layout Description
+EL_ResourceRecipe Specify the resources needed to 
+\begin_inset Quotes eld
+\end_inset
+
+build
+\begin_inset Quotes erd
+\end_inset
+
+ a resource.
+ The resource to be 
+\begin_inset Quotes eld
+\end_inset
+
+built
+\begin_inset Quotes erd
+\end_inset
+
+ is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line, and the recipe for the 
+\begin_inset Quotes eld
+\end_inset
+
+built
+\begin_inset Quotes erd
+\end_inset
+
+ resource is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node.
+ If no resource is named (ie, no top-level 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line), or no recipe is given (no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node), the recipe will be dropped from the recipe database.
+ Recipes for undefined resources are permitted, allowing for resource 
+\begin_inset Quotes eld
+\end_inset
+
+macros
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+TODO: In theory: not tested.
+\end_layout
+
+\end_inset
+
+.
+ The example resource recipe shows 
+\noun on
+Ablator
+\noun default
+ being made from 
+\noun on
+RocketParts
+\noun default
+.
+ It and a similar recipe for 
+\noun on
+SolidFuel
+\noun default
+ can be found in 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ExtraplanetaryLaunchpads/Resources/Recipes.cfg
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Verbatim
+
+EL_ResourceRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    name = Ablator
+\end_layout
+
+\begin_layout Verbatim
+
+    Resources {
+\end_layout
+
+\begin_layout Verbatim
+
+        RocketParts = 1
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Recipes for Recycling
+\end_layout
+
+\begin_layout Standard
+First off, when recycling, part recipes (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+) are used for breaking a part down into its constituent resources.
+ However, whether from breaking down the part or 
+\begin_inset Quotes eld
+\end_inset
+
+drained
+\begin_inset Quotes erd
+\end_inset
+
+ from the part's resource storage, any resource that has a resource recipe
+ (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ResourceRecipe
+\end_layout
+
+\end_inset
+
+) will simply evaporate.
+ However, if the resource has a recycle recipe (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_RecycleRecipe
+\end_layout
+
+\end_inset
+
+), then that recipe will instead be broken down to the resources specified
+ by the recycle recipe.
+ A transfer recipe (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_TransferRecipe
+\end_layout
+
+\end_inset
+
+) is used to force a stored resource that would otherwise be broken down
+ by a recycle recipe to be transfered.
+\end_layout
+
+\begin_layout Itemize
+Any resources stored in the part are drained.
+ Those with an 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ResourceRecipe
+\end_layout
+
+\end_inset
+
+ but no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_TransferRecipe
+\end_layout
+
+\end_inset
+
+ are lost, otherwise they transfer as dictated by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_TransferRecipe
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The part is then broken down into the resources specified by its 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_Recipe
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ModuleRecipe
+\end_layout
+
+\end_inset
+
+(s).
+ Those resources with an 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ResourceRecipe
+\end_layout
+
+\end_inset
+
+ but no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_RecycleRecipe
+\end_layout
+
+\end_inset
+
+ are lost, otherwise they get broken down further in accordance with their
+ 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_RecycleRecipe
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Whether transferring (from a tank) or recycling (the part itself), resources
+ with no recipe are reclaimed as-is at a 1:1 ratio.
+\end_layout
+
+\begin_layout Description
+EL_RecycleRecipe Specify the resources to which a resource will be broken
+ down when recycling.
+ Prevents evaporation of the resource when the resource has a resource recipe
+ (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_ResourceRecipe
+\end_layout
+
+\end_inset
+
+).
+ The resource to be broken down is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line, and the recipe for the broken down resource is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node.
+ If no resource is named (ie, no top-level 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line), or no recipe is given (no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node), the recipe will be dropped from the recipe database.
+ Recipes for undefined resources are permitted, allowing for loss ratios
+ to be specified.
+ The example recycle recipe shows 
+\noun on
+RocketParts
+\noun default
+ being broken down to 
+\noun on
+ScrapMetal
+\noun default
+ with 
+\begin_inset Formula $10%\ensuremath{\%}
+$
+\end_inset
+
+ loss (the exact name (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+loss
+\end_layout
+
+\end_inset
+
+) doesn't matter so long as it is not a defined resource).
+ It can be found in 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ExtraplanetaryLaunchpads/Resources/Recipes.cfg
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Verbatim
+
+EL_RecycleRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    name = RocketParts
+\end_layout
+
+\begin_layout Verbatim
+
+    Resources {
+\end_layout
+
+\begin_layout Verbatim
+
+        ScrapMetal = 9
+\end_layout
+
+\begin_layout Verbatim
+
+        loss = 1
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
+\begin_layout Description
+EL_TransferRecipe Specifies how a resource that was stored in a part is
+ to be transfered.
+ Prevents the resource from being broken down by a recycle recipe when being
+ drained from a part's storage.
+ The resource to be broken down is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line, and the recipe for the broken down resource is specified by the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node.
+ If no resource is named (ie, no top-level 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+name =
+\end_layout
+
+\end_inset
+
+ line), or no recipe is given (no 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Resources
+\end_layout
+
+\end_inset
+
+ node), the recipe will be dropped from the recipe database.
+ Recipes for undefined resources are permitted, allowing for loss ratios
+ to be specified.
+ In general, the same resource should be specified in the recipe, but can
+ be used for converting a resource that does not have a recycle recipe.
+ The example transfer recipe shows 
+\noun on
+RocketParts
+\noun default
+ being transfered without any loss or conversion.
+ It can be found in 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ExtraplanetaryLaunchpads/Resources/Recipes.cfg
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Verbatim
+
+EL_TransferRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    name = RocketParts
+\end_layout
+
+\begin_layout Verbatim
+
+    Resources {
+\end_layout
+
+\begin_layout Verbatim
+
+        RocketParts = 1
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
+\begin_layout Description
+EL_KerbalRecipe Specifies the resources making up a kerbal (whether on EVA
+ or boarded
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+the kerbal is assumed to be suited or have a suit nearby in the same part
+\end_layout
+
+\end_inset
+
+).
+ This is a special part recipe that is not actually attached to any part
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The need for the node came from not having access to KerbalEVA part configs
+ at the time, and keeping it after KSP 1.2 maintains flexibility.
+\end_layout
+
+\end_inset
+
+, and is used only when the unfortunate kerbal gets recycled.
+ The kerbal recipe shown below assumes a fully suited kerbal is 
+\begin_inset Formula $93.75kg$
+\end_inset
+
+ (the default in KSP) with 
+\begin_inset Formula $10kg$
+\end_inset
+
+ for the kerbal and 
+\begin_inset Formula $83.75kg$
+\end_inset
+
+ for the suit, with a 30:1 
+\emph on
+gain
+\emph default
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+highly unrealistic, but that is how the KE-WAITNONOSTOP-01 in Kethane is
+ configured
+\end_layout
+
+\end_inset
+
+ when converting the kerbal to 
+\noun on
+Kethane
+\noun default
+.
+ It can be found in 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Verbatim
+
+EL_KerbalRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    structure = 10
+\end_layout
+
+\begin_layout Verbatim
+
+    KerbalEVA = 83.75
+\end_layout
+
+\begin_layout Verbatim
+
+    Resources {
+\end_layout
+
+\begin_layout Verbatim
+
+        Kethane = 30
+\end_layout
+
+\begin_layout Verbatim
+
+        loss = -29
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
 \end_body
 \end_document

@@ -2301,32 +2301,26 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
-
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2408,8 +2402,15 @@ KerbalEVA
 status open
 
 \begin_layout Plain Layout
-ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
+Kerbal.cfg
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "elker"
 
 \end_inset
 
@@ -2417,37 +2418,30 @@ ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2471,17 +2465,14 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2591,8 +2582,15 @@ SolidFuel
 status open
 
 \begin_layout Plain Layout
-ExtraplanetaryLaunchpads/Resources/Recipes.cfg
+Recipes.cfg
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "elrec"
 
 \end_inset
 
@@ -2601,32 +2599,26 @@ ExtraplanetaryLaunchpads/Resources/Recipes.cfg
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2877,8 +2869,15 @@ loss
 status open
 
 \begin_layout Plain Layout
-ExtraplanetaryLaunchpads/Resources/Recipes.cfg
+Recipes.cfg
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "elrec"
 
 \end_inset
 
@@ -2887,37 +2886,30 @@ ExtraplanetaryLaunchpads/Resources/Recipes.cfg
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2983,8 +2975,15 @@ RocketParts
 status open
 
 \begin_layout Plain Layout
-ExtraplanetaryLaunchpads/Resources/Recipes.cfg
+Recipes.cfg
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "elrec"
 
 \end_inset
 
@@ -2993,32 +2992,26 @@ ExtraplanetaryLaunchpads/Resources/Recipes.cfg
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3085,8 +3078,15 @@ Kethane
 status open
 
 \begin_layout Plain Layout
-ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
+Kerbal.cfg
 \end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "elker"
 
 \end_inset
 
@@ -3095,42 +3095,34 @@ ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
-
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
-
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 

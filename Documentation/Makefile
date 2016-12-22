@@ -32,8 +32,11 @@ info:
 clean:
 	rm -f *.pdf
 
+veryclean: clean
+	rm -f *.bak *~
+
 install: all
 	mkdir -p ${ELGAMEDATA}
 	cp *.pdf ${ELGAMEDATA}
 
-.PHONY: all clean install
+.PHONY: all clean install veryclean

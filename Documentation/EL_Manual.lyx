@@ -13,6 +13,7 @@
 \usepackage[nottoc]{tocbibind}
 \usepackage[style=numeric,backend=biber]{biblatex}
 \addbibresource{kspforums.bib}
+\date{}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -82,6 +83,14 @@ logicalmkup
 \end_header
 
 \begin_body
+
+\begin_layout Title
+Extraplanetary Launchpads User's and Modder's Guide
+\end_layout
+
+\begin_layout Author
+Bill Currie (taniwha)
+\end_layout
 
 \begin_layout Part*
 Introduction
@@ -160,8 +169,14 @@ EL defines the resources
 status collapsed
 
 \begin_layout Plain Layout
-Other mods, eg USI, define other resource that replace those defined by
- EL
+Other mods, e.g, USI-MKS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "MKS"
+
+\end_inset
+
+, define other resource that replace those defined by EL.
 \end_layout
 
 \end_inset
@@ -183,6 +198,13 @@ Though currently a little awkwardly.
 \end_layout
 
 \begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset toc
 LatexCommand tableofcontents
 
@@ -191,8 +213,260 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Part
 Using Extraplanetary Launchpads
+\end_layout
+
+\begin_layout Section
+Installation
+\end_layout
+
+\begin_layout Subsection
+Minimal Installation
+\end_layout
+
+\begin_layout Standard
+Download the zip file for the latest version via the EL forum thread
+\begin_inset CommandInset citation
+LatexCommand cite
+key "EL"
+
+\end_inset
+
+ and extract its contents to KSP's 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+GameData
+\end_layout
+
+\end_inset
+
+ directory
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Ok, folder.
+ Now get off my lawn ;)
+\end_layout
+
+\end_inset
+
+.
+ Ensure that the latest version of Module Manager
+\begin_inset CommandInset citation
+LatexCommand cite
+key "MM"
+
+\end_inset
+
+ is installed correctly.
+\end_layout
+
+\begin_layout Standard
+Note that the minimal installation will not support survey builds.
+\end_layout
+
+\begin_layout Subsection
+Survey Build Support
+\end_layout
+
+\begin_layout Standard
+In order to support survey builds, Kerbal Inventory System
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+ is required.
+\end_layout
+
+\begin_layout Subsection
+Recommended Mods
+\end_layout
+
+\begin_layout Standard
+There are several mods that improve EL
+\end_layout
+
+\begin_layout Description
+Kerbal
+\begin_inset space ~
+\end_inset
+
+Alarm
+\begin_inset space ~
+\end_inset
+
+Clock
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KAC"
+
+\end_inset
+
+ Keep track of when a build will be finished.
+ Really, the most important mod for anybody wishing to run more than one
+ mission at a time.
+\end_layout
+
+\begin_layout Description
+KerbalStats
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KS"
+
+\end_inset
+
+ Provides a means to extend kerbal attributes, but in the context of EL
+ it provides time and activity based experience for kerbals.
+\end_layout
+
+\begin_layout Description
+Kethane
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Keth"
+
+\end_inset
+
+ The original ISRU solution for KSP.
+ Provides hot-spot mining of 
+\noun on
+MetalOre
+\noun default
+.
+\end_layout
+
+\begin_layout Description
+Modular
+\begin_inset space ~
+\end_inset
+
+Fuel
+\begin_inset space ~
+\end_inset
+
+Tanks
+\begin_inset CommandInset citation
+LatexCommand cite
+key "MFT"
+
+\end_inset
+
+ Edit tank resources in the editor.
+\end_layout
+
+\begin_layout Description
+Talisar
+\begin_inset space ~
+\end_inset
+
+Parts
+\begin_inset CommandInset citation
+LatexCommand cite
+key "TP"
+
+\end_inset
+
+ High capacity spherical tanks (up to over 
+\begin_inset Formula $200m^{3}$
+\end_inset
+
+) and various structural parts.
+\end_layout
+
+\begin_layout Description
+Kerbal
+\begin_inset space ~
+\end_inset
+
+Attachment
+\begin_inset space ~
+\end_inset
+
+System
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KAS"
+
+\end_inset
+
+ Pipes and winches.
+\end_layout
+
+\begin_layout Description
+TAC
+\begin_inset space ~
+\end_inset
+
+Fuel
+\begin_inset space \thinspace{}
+\end_inset
+
+Balancer
+\begin_inset CommandInset citation
+LatexCommand cite
+key "TACFB"
+
+\end_inset
+
+ Easier transferal of resources.
+\end_layout
+
+\begin_layout Subsection
+Mods that support or use EL
+\end_layout
+
+\begin_layout Description
+Pathfinder
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Path"
+
+\end_inset
+
+ Space Camping & Geoscience.
+\end_layout
+
+\begin_layout Description
+SimpleConstuction
+\begin_inset CommandInset citation
+LatexCommand cite
+key "SC"
+
+\end_inset
+
+ Uses EL but stock parts.
+\end_layout
+
+\begin_layout Description
+USI
+\begin_inset space ~
+\end_inset
+
+Kolonization
+\begin_inset space ~
+\end_inset
+
+Systems
+\begin_inset CommandInset citation
+LatexCommand cite
+key "MKS"
+
+\end_inset
+
+ Uses EL but replaces both parts and the resource system.
 \end_layout
 
 \begin_layout Section
@@ -1512,7 +1786,17 @@ ExWorkshop Collect productivity from kerbals in the part.
 
 \begin_layout Description
 ExSurveyStation Builds complete vessels at locations marked out using survey
- stakes (parts with the ExSurveyStake module).
+ stakes (parts with the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ExSurveyStake
+\end_layout
+
+\end_inset
+
+ module).
  Does not allow post-build resource transfer (freedom is not free), but
  as KIS
 \begin_inset CommandInset citation
@@ -1636,11 +1920,29 @@ SpawnHeightOffset Specifies the distance in meters above the launch transform
 \begin_layout Description
 SpawnTransform Specifies the model transform to be used as the launch transform.
  Optional, but using a spawn transform allows finer control over the launch
- position than that afforded by SpawnHeightOffset, and also allows the orientati
-on to be specified.
+ position than that afforded by 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+SpawnHeightOffset
+\end_layout
+
+\end_inset
+
+, and also allows the orientation to be specified.
  If not specified, the model's root transform will be used as the launch
- transform (setting SpawnHeightOffset is highly recommended, but not as
- highly as having a spawn transform).
+ transform (setting 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+SpawnHeightOffset
+\end_layout
+
+\end_inset
+
+ is highly recommended, but not as highly as having a spawn transform).
 \end_layout
 
 \begin_layout Description
@@ -1709,11 +2011,58 @@ Part Requirements
 
 \begin_layout Standard
 The part must have some crew capacity.
- This can be via either the part's crewCapacity field, or KerbalSeat (stock
- KSP) modules (currently, not both: for KerbalSeat to be checked, the crewCapaci
-ty must be 0).
- Note that parts may have multiple KerbalSeat modules on them (eg, EL's
- Rocket Workbench).
+ This can be via either the part's 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+crewCapacity
+\end_layout
+
+\end_inset
+
+ field, or 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+KerbalSeat
+\end_layout
+
+\end_inset
+
+ (stock KSP) modules (currently, not both: for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+KerbalSeat
+\end_layout
+
+\end_inset
+
+ to be checked, the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+crewCapacity
+\end_layout
+
+\end_inset
+
+ must be 0).
+ Note that parts may have multiple 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+KerbalSeat
+\end_layout
+
+\end_inset
+
+ modules on them (eg, EL's Rocket Workbench).
 \end_layout
 
 \begin_layout Paragraph
@@ -1723,9 +2072,22 @@ Module Fields
 \begin_layout Description
 ProductivityFactor Specifies the multiplier for calculating kerbal productivity.
  Must be greater than 0.
- All workshops with ProductivityFactor greater than 1.0 are considered to
- be fully equipped (ie, even 0-star kerbals with the construction skill
- can contribute).
+ All workshops with 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ProductivityFactor
+\end_layout
+
+\end_inset
+
+ greater than 
+\begin_inset Formula $1.0$
+\end_inset
+
+ are considered to be fully equipped (ie, even 0-star kerbals with the construct
+ion skill can contribute).
  Defaults to 1.0.
 \end_layout
 
@@ -1736,7 +2098,27 @@ FullyEquipped If true, then even workshops with productivity factors less
 
 \begin_layout Description
 IgnoreCrewCapacity If true, the workshop will operate even if the part's
- crewCapacity is 0 (and not check for KerbalSeat).
+ 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+crewCapacity
+\end_layout
+
+\end_inset
+
+ is 0 (and not check for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+KerbalSeat
+\end_layout
+
+\end_inset
+
+).
  This is most useful on parts with dynamic crew capacities (eg, inflatables).
 \end_layout
 
@@ -1758,7 +2140,27 @@ Part Requirements
 
 \begin_layout Standard
 No requirements, but as kerbals improve its range, having crew capacity
- (crewCapacity > 0 or KerbalSeat modules) is recommended.
+ (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+crewCapacity
+\end_layout
+
+\end_inset
+
+ > 0 or 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+KerbalSeat
+\end_layout
+
+\end_inset
+
+ modules) is recommended.
 \end_layout
 
 \begin_layout Paragraph
@@ -1796,8 +2198,17 @@ Part Requirements
 
 \begin_layout Standard
 As the survey station will not look at vessels with more than one part to
- check for the ExSurveyStake module, the part should be configured to be
- ground attached using KIS
+ check for the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ExSurveyStake
+\end_layout
+
+\end_inset
+
+ module, the part should be configured to be ground attached using KIS
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
@@ -1918,6 +2329,13 @@ O
 \end_inset
 
 ) using approximate molar masses:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2044,6 +2462,13 @@ Oxygen = 0.53333
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 In general, the ingredients will be KSP resources.
  EL looks up the resource to find its density and calculates the amount
  of resource required based on the total mass of the recipe, the ingredient's
@@ -2089,7 +2514,7 @@ Ablator
 
 \begin_layout Standard
 Any resource listed in a recipe becomes a required resource (i.e.
- the build will not complete if there any require resource runs out).
+ the build will not complete if there any required resource runs out).
  Note, however, that normal resources that are simply stored in the part
  to be built remain optional.
  For example, to build a tank that holds 
@@ -2301,26 +2726,32 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
+
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -2418,30 +2849,37 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -2465,14 +2903,17 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -2599,26 +3040,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -2886,30 +3333,37 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -2992,26 +3446,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3095,38 +3555,53 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
+
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
+
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
 \end_deeper
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset ERT
 status open

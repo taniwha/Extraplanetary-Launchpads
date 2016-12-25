@@ -2829,26 +2829,32 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
+
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -2946,30 +2952,37 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -2994,14 +3007,17 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3128,26 +3144,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3210,12 +3232,23 @@ EL_TransferRecipe
 
 \end_inset
 
-) is used to force a stored resource that would otherwise be broken down
- by a recycle recipe to be transfered.
+) is used to force a stored resource that would otherwise be lost or broken
+ down by a recycle recipe to be transfered.
 \end_layout
 
 \begin_layout Itemize
 Any resources stored in the part are drained.
+ Those with an 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+EL_TransferRecipe
+\end_layout
+
+\end_inset
+
+ are transferred accordingly.
  Those with an 
 \begin_inset Flex Code
 status open
@@ -3231,22 +3264,22 @@ EL_ResourceRecipe
 status open
 
 \begin_layout Plain Layout
-EL_TransferRecipe
+EL_RecycleRecipe
 \end_layout
 
 \end_inset
 
- are lost, otherwise they transfer as dictated by the 
+ are lost, otherwise they are broken down as dictated by the 
 \begin_inset Flex Code
 status open
 
 \begin_layout Plain Layout
-EL_TransferRecipe
+EL_RecycleRecipe
 \end_layout
 
 \end_inset
 
-.
+ and the resultant resources will be transfered.
 \end_layout
 
 \begin_layout Itemize
@@ -3414,30 +3447,37 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3521,26 +3561,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3624,34 +3670,42 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
+
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
+
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 

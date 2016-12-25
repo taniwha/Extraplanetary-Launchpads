@@ -584,7 +584,14 @@ Resources
 
 \begin_layout Standard
 Currently, EL uses four resources for its production chain (though the recipe
- system allows for much more complicated systems).
+ system (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Recipes"
+
+\end_inset
+
+) allows for much more complicated systems).
 \end_layout
 
 \begin_layout Description
@@ -592,13 +599,13 @@ Currently, EL uses four resources for its production chain (though the recipe
 \noun on
 MetalOre
 \noun default
- Assumed to be iron ore (but not explicitly stated as such) but with a very
- slightly higher density (
+ Assumed to be iron ore (but not explicitly stated as such) but with a slightly
+ higher density (
 \begin_inset Formula $5.5t/m^{3}$
 \end_inset
 
  vs 
-\begin_inset Formula $4.5-5.3t/m^{3}$
+\begin_inset Formula $4.5t/m^{3}-5.3t/m^{3}$
 \end_inset
 
 ).
@@ -684,8 +691,33 @@ Kethane and Karbonite
 \end_layout
 
 \begin_layout Standard
-Prior to KSP 1.0, EL relied solely on Kethane for its prospecting and mining,
- and there was an adaptation to make EL use Karbonite instead.
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+It may be worthwhile thinking of the stock system providing a means to extract
+ MetalOre from a larger mix of 
+\begin_inset Quotes eld
+\end_inset
+
+dirt
+\begin_inset Quotes erd
+\end_inset
+
+, while the Kethane system provides access to rich veins of MetalOre.
+\end_layout
+
+\end_inset
+
+Prior to KSP 1.0, EL relied solely on Kethane
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Keth"
+
+\end_inset
+
+ for its prospecting and mining, and there was an adaptation to make EL
+ use Karbonite instead.
  As of KSP 1.0 (EL 5.1.90) Kethane is completely optional, but if present,
  will be used on top of the stock resource system.
  Scanning is quite separate, but mining is done using the exact same augers.
@@ -710,26 +742,6 @@ MetalOre
 \end_inset
 
 % concentration.
- 
-\begin_inset Marginal
-status collapsed
-
-\begin_layout Plain Layout
-It may be worthwhile thinking of the stock system providing a means to extract
- MetalOre from a larger mix of 
-\begin_inset Quotes eld
-\end_inset
-
-dirt
-\begin_inset Quotes erd
-\end_inset
-
-, while the Kethane system provides access to rich veins of MetalOre.
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -1037,11 +1049,20 @@ Metal
 \begin_inset Formula $0.699431$
 \end_inset
 
- (
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Formula $0.493188$
 \end_inset
 
- volume (resource unit) conversion rate).
+ volume (resource unit) conversion rate.
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1166,8 +1187,9 @@ rs (Khr)) shared amongst active pads.
 \end_layout
 
 \begin_layout Standard
-There have been discussions that EL's build rate is too high, but those
- arguing that side were unaware that 
+There have been discussions that EL's build rate is too high compared to
+ Kerbal Construction Time, but those arguing that side were unaware that
+ 
 \noun on
 RocketParts
 \noun default
@@ -1188,7 +1210,7 @@ ScrapMetal
 \end_layout
 
 \begin_layout Standard
-Recycling is one on a part-by-part basis
+Recycling is done on a part-by-part basis
 \begin_inset Marginal
 status collapsed
 
@@ -1237,7 +1259,7 @@ Productivity
 \end_layout
 
 \begin_layout Standard
-All kerbals have a base productivity score computed from their stupidity,
+All kerbals have a base productivity score determined by their stupidity,
  courage, and bad-ass characteristics.
  The more stupid a kerbal is, the less that kerbal will contribute to the
  workshop's (and thus the overall vessel's) productivity, and more courageous
@@ -1268,7 +1290,7 @@ A workshop's productivity is the sum of the productivities of all kerbals
  progress.
  Negative productivity does not cause production to become destruction,
  instead it causes a productivity deficit that must be overcome by better
- construction kerbals.
+ construction kerbals before construction will proceed.
 \end_layout
 
 \begin_layout Subsection
@@ -1276,8 +1298,8 @@ Construction Skill
 \end_layout
 
 \begin_layout Standard
-Kerbals with the construction skill (by default, engineers) are the cornerstone
- of workshop productivity.
+Kerbals with the construction skill (by default, engineers, but hereon referred
+ to as construction kerbals) are the cornerstone of workshop productivity.
  However, their space-faring (stock) experience affects their productivity
  greatly.
 \end_layout
@@ -1373,9 +1395,6 @@ Fully equipped
 \end_layout
 
 \begin_layout Standard
-Fully equipped workshops are those with a productivity factor of 1.0 or more,
- or specially marked workshops with lower productivity factors.
- EL's blue workshop, and the rocket workbench are both fully equipped workshops.
 \begin_inset Marginal
 status collapsed
 
@@ -1395,7 +1414,9 @@ n available.
 
 \end_inset
 
-
+Fully equipped workshops are those with a productivity factor of 1.0 or more,
+ or specially marked workshops with lower productivity factors.
+ EL's blue workshop, and the rocket workbench are both fully equipped workshops.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1406,8 +1427,21 @@ Other parts
 All stock crewed parts act as under-equipped workshops.
  In addition, all crewed command pods, including those from other mods,
  act as under-equipped workshops.
- Many base-building mods (eg, USI-MKS, Pathfinder) provide workshops (refer
- to those mods for details).
+ Many base-building mods (eg, USI-MKS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "MKS"
+
+\end_inset
+
+, Pathfinder
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Path"
+
+\end_inset
+
+) provide workshops (refer to those mods for details).
 \end_layout
 
 \begin_layout Subsection
@@ -1429,8 +1463,14 @@ pads
 
 \begin_layout Standard
 Initiating construction is the same for everything: open the build window
- (via either the toolbar button (blizzy's toolbar), or the Show UI button
- in the PAW
+ (via either the toolbar button (blizzy's toolbar
+\begin_inset CommandInset citation
+LatexCommand cite
+key "TB"
+
+\end_inset
+
+, or the stock app button), or the Show UI button in the PAW
 \begin_inset Foot
 status collapsed
 
@@ -1456,9 +1496,9 @@ Launchpads and Orbital Docks
 \begin_layout Standard
 Technically, there is no difference between a launchpad and an orbital dock:
  they operate exactly the same way.
- The difference comes in the physical attributes of the parts: launchpads
- are optimized for grounded operation, and the orbital dock is optimized
- for orbital operation.
+ The difference comes in the physical form of the parts: launchpads are
+ optimized for grounded operation, and the orbital dock is optimized for
+ orbital operation.
 \end_layout
 
 \begin_layout Standard
@@ -1620,8 +1660,8 @@ and
 \begin_inset space ~
 \end_inset
 
-+Y used to specify the "vertical" axis of the build (relative to the floor
- in the VAB or SPH).
++Y used to specify the "vertical" (nadir (-Y) and zenith (+Y)) axis of the
+ build (relative to the floor in the VAB or SPH).
  If both -Y and +Y are used, then the origin is is ignored, otherwise the
  axis runs from -Y to origin or origin to +Y.
  NOTE: not recommended, very advanced usage.
@@ -1636,7 +1676,18 @@ and
 \begin_inset space ~
 \end_inset
 
-+Z used to specify the ventral (VAB) or fore/aft (SPH) axis of the build.
++Z 
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+The VAB orientation really is weird.
+\end_layout
+
+\end_inset
+
+used to specify the ventral(+Z)/dorsal(-Z) (VAB) or fore(+Z)/aft(-Z) (SPH)
+ axis of the build.
  If both -Z and +Z are used, then the origin is is ignored, otherwise the
  axis runs from -Z to origin or origin to +Z.
 \end_layout
@@ -1644,7 +1695,7 @@ and
 \begin_layout Description
 * If none of the axis direction stakes are used, then the default orientation
  is such that the build's +Y axis is the local up, +X axis points east,
- and +Z points south (same as on the KSC launchpad).
+ and +Z points north (same as on the KSC launchpad).
 \end_layout
 
 \begin_layout Description
@@ -1689,7 +1740,8 @@ and
 \begin_inset space ~
 \end_inset
 
-+Y used to mark the "vertical" edges of the build.
++Y used to mark the "vertical" (nadir (-Y) and zenith (+Y)) edges of the
+ build.
  If only one of -Y or +Y is used, then that edge of the build will be exactly
  on that stake, otherwise the the Y-axis center of the build's bounding
  box will be centered on the midpoint between the two stakes.
@@ -1706,7 +1758,8 @@ and
 \begin_inset space ~
 \end_inset
 
-+Z used to mark the ventral (VAB) or fore/aft (SPH) edges of the build.
++Z used to mark the ventral(+Z)/dorsal(-Z) (VAB) or fore(+Z)/aft(-Z) (SPH)
+ edges of the build.
  If only one of -Z or +Z is used, then that edge of the build will be exactly
  on that stake, otherwise the the Z-axis center of the build's bounding
  box will be centered on the midpoint between the two stakes.
@@ -1762,7 +1815,7 @@ Overview
 \end_layout
 
 \begin_layout Description
-ExRecycler Destroys anything it touches (including unfortunate kerbals)
+ExRecycler Destroys anything it touches (including unfortunate kerbals),
  reclaiming what resources it can.
 \end_layout
 
@@ -1775,8 +1828,28 @@ ExLaunchPad Builds complete vessels attached (pseudo-docked) to the current
 
 \begin_layout Description
 ExTarget Allows a part to be targeted.
- Includes orientation so it works with any docking alignment mod (DPAI,
- navball, and navhud are known to work).
+ Includes orientation so it works with any docking alignment mod (DPAI
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DPAI"
+
+\end_inset
+
+, navball
+\begin_inset CommandInset citation
+LatexCommand cite
+key "NBDOCK"
+
+\end_inset
+
+, and navhud
+\begin_inset CommandInset citation
+LatexCommand cite
+key "NAVHUD"
+
+\end_inset
+
+ are known to work).
 \end_layout
 
 \begin_layout Description
@@ -1843,7 +1916,7 @@ Model Requirements
 \begin_layout Standard
 The only requirement is the recycle field.
  The recycle field must be a trigger collider and should (must?) not touch
- anything else.
+ any other collider.
 \end_layout
 
 \begin_layout Paragraph
@@ -1874,7 +1947,11 @@ ReycleField
 
 \begin_layout Description
 RecycleRate Specifies the recycling rate in tons/second.
- Defaults to 1.0t/s.
+ Defaults to 
+\begin_inset Formula $1.0t/s$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1914,7 +1991,11 @@ Module Fields
 SpawnHeightOffset Specifies the distance in meters above the launch transform
  of the lowest point of the spawned vessel.
  This is most useful when the model does not have a specific spawn transform.
- Defaults to 0.0m.
+ Defaults to 
+\begin_inset Formula $0.0m$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
@@ -2071,7 +2152,11 @@ Module Fields
 
 \begin_layout Description
 ProductivityFactor Specifies the multiplier for calculating kerbal productivity.
- Must be greater than 0.
+ Must be greater than 
+\begin_inset Formula $0$
+\end_inset
+
+.
  All workshops with 
 \begin_inset Flex Code
 status open
@@ -2088,12 +2173,20 @@ ProductivityFactor
 
  are considered to be fully equipped (ie, even 0-star kerbals with the construct
 ion skill can contribute).
- Defaults to 1.0.
+ Defaults to 
+\begin_inset Formula $1.0$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
 FullyEquipped If true, then even workshops with productivity factors less
- than 1.0 are considered fully equipped allowing 0-star kerbals to contribute.
+ than 
+\begin_inset Formula $1.0$
+\end_inset
+
+ are considered fully equipped allowing 0-star kerbals to contribute.
 \end_layout
 
 \begin_layout Description
@@ -2108,7 +2201,11 @@ crewCapacity
 
 \end_inset
 
- is 0 (and not check for 
+ is 
+\begin_inset Formula $0$
+\end_inset
+
+ (and not check for 
 \begin_inset Flex Code
 status open
 
@@ -2197,7 +2294,7 @@ Part Requirements
 \end_layout
 
 \begin_layout Standard
-As the survey station will not look at vessels with more than one part to
+As the survey system will not look at vessels with more than one part to
  check for the 
 \begin_inset Flex Code
 status open
@@ -2229,6 +2326,12 @@ None.
 \end_layout
 
 \begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Recipes"
+
+\end_inset
+
 Recipes
 \end_layout
 
@@ -2514,7 +2617,7 @@ Ablator
 
 \begin_layout Standard
 Any resource listed in a recipe becomes a required resource (i.e.
- the build will not complete if there any required resource runs out).
+ the build will not complete if any required resource runs out).
  Note, however, that normal resources that are simply stored in the part
  to be built remain optional.
  For example, to build a tank that holds 
@@ -2726,32 +2829,26 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
-
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2849,37 +2946,30 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2888,7 +2978,8 @@ EL_ModuleRecipe {
 EL_DefaultStructureRecipe Specify the default recipe to be used for a part's
  structure when the part has no recipe or the recipe does not specify a
  recipe its structure.
- There is no node in EL's configs: it is hard coded, but providing an 
+ There is no node in EL's configs: it is hard coded.
+ However, providing an 
 \begin_inset Flex Code
 status open
 
@@ -2903,17 +2994,14 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3040,32 +3128,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3086,7 +3168,7 @@ EL_Recipe
 \end_inset
 
 ) are used for breaking a part down into its constituent resources.
- However, whether from breaking down the part or 
+ Whether from breaking down the part or 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3285,8 +3367,8 @@ Resources
 \end_inset
 
  node), the recipe will be dropped from the recipe database.
- Recipes for undefined resources are permitted, allowing for loss ratios
- to be specified.
+ Ingredients specifying undefined resources are permitted, allowing for
+ loss ratios to be specified.
  The example recycle recipe shows 
 \noun on
 RocketParts
@@ -3296,11 +3378,10 @@ RocketParts
 ScrapMetal
 \noun default
  with 
-\begin_inset Formula $10%\ensuremath{\%}
-$
+\begin_inset Formula $10$
 \end_inset
 
- loss (the exact name (
+% loss (the exact name (
 \begin_inset Flex Code
 status open
 
@@ -3333,37 +3414,30 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3373,7 +3447,7 @@ EL_TransferRecipe Specifies how a resource that was stored in a part is
  to be transfered.
  Prevents the resource from being broken down by a recycle recipe when being
  drained from a part's storage.
- The resource to be broken down is specified by the 
+ The resource to be transfered is specified by the 
 \begin_inset Flex Code
 status open
 
@@ -3383,7 +3457,7 @@ name =
 
 \end_inset
 
- line, and the recipe for the broken down resource is specified by the 
+ line, and the recipe for the transfered resource is specified by the 
 \begin_inset Flex Code
 status open
 
@@ -3417,8 +3491,9 @@ Resources
  node), the recipe will be dropped from the recipe database.
  Recipes for undefined resources are permitted, allowing for loss ratios
  to be specified.
- In general, the same resource should be specified in the recipe, but can
- be used for converting a resource that does not have a recycle recipe.
+ In general, the same resource should be specified in the recipe, but a
+ transfer recipe can be used for converting a resource that does not have
+ a recycle recipe, or for specifying a loss factor while transferring.
  The example transfer recipe shows 
 \noun on
 RocketParts
@@ -3446,32 +3521,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3555,42 +3624,34 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
-
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
-
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 

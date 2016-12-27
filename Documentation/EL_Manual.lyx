@@ -4,7 +4,7 @@
 \begin_header
 \save_transient_properties true
 \origin unavailable
-\textclass article
+\textclass scrartcl
 \begin_preamble
 \usepackage[pdf]{graphviz}
 \usepackage{marginfix}
@@ -85,11 +85,41 @@ logicalmkup
 \begin_body
 
 \begin_layout Title
-Extraplanetary Launchpads User's and Modder's Guide
+Extraplanetary Launchpads
+\end_layout
+
+\begin_layout Subtitle
+User's and Modder's Guide
 \end_layout
 
 \begin_layout Author
 Bill Currie (taniwha)
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace vfill
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Graphics
+	filename base3.svg
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part*

@@ -73,7 +73,7 @@ namespace ExtraplanetaryLaunchpads_KACWrapper
 
             //find the base type
             KACType = AssemblyLoader.loadedAssemblies
-                .Select(a => a.assembly.GetExportedTypes())
+                .Select(a => a.assembly.GetTypes())
                 .SelectMany(t => t)
                 .FirstOrDefault(t => t.FullName == "KerbalAlarmClock.KerbalAlarmClock");
 
@@ -91,7 +91,7 @@ namespace ExtraplanetaryLaunchpads_KACWrapper
             
             //now the Alarm Type
             KACAlarmType = AssemblyLoader.loadedAssemblies
-                .Select(a => a.assembly.GetExportedTypes())
+                .Select(a => a.assembly.GetTypes())
                 .SelectMany(t => t)
                 .FirstOrDefault(t => t.FullName == "KerbalAlarmClock.KACAlarm");
 

@@ -255,10 +255,14 @@ Using Extraplanetary Launchpads
 \end_layout
 
 \begin_layout Section
-Installation
+Getting Started
 \end_layout
 
 \begin_layout Subsection
+Installation
+\end_layout
+
+\begin_layout Subsubsection
 Minimal Installation
 \end_layout
 
@@ -306,7 +310,7 @@ key "MM"
 Note that the minimal installation will not support survey builds.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Survey Build Support
 \end_layout
 
@@ -321,7 +325,7 @@ key "KIS"
  is required.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Recommended Mods
 \end_layout
 
@@ -454,7 +458,7 @@ key "TACFB"
  Easier transferal of resources.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Mods that support or use EL
 \end_layout
 
@@ -497,6 +501,15 @@ key "MKS"
 \end_inset
 
  Uses EL but replaces both parts and the resource system.
+\end_layout
+
+\begin_layout Subsection
+Setup
+\end_layout
+
+\begin_layout Standard
+The first time the space center scene is entered, an options window will
+ be presented allowing for the selection.
 \end_layout
 
 \begin_layout Section
@@ -747,9 +760,19 @@ key "Keth"
 \end_inset
 
  for its prospecting and mining, and there was an adaptation to make EL
- use Karbonite instead.
- As of KSP 1.0 (EL 5.1.90) Kethane is completely optional, but if present,
- will be used on top of the stock resource system.
+ use Karbonite
+\begin_inset CommandInset citation
+LatexCommand cite
+key "karb"
+
+\end_inset
+
+ instead.
+\end_layout
+
+\begin_layout Standard
+As of KSP 1.0 (EL 5.1.90) Kethane is completely optional, but if present, will
+ be used on top of the stock resource system.
  Scanning is quite separate, but mining is done using the exact same augers.
  Mining outside a 
 \noun on
@@ -1587,6 +1610,15 @@ Survey System
 \end_layout
 
 \begin_layout Standard
+When landed, orbital docks can be awkward for building as they tend to be
+ on top of the building vessel (especially awkward for building rovers as
+ getting the rover to the ground can be an issue), and lauchpads are highly
+ sensitive to ground conditions, and and have their own issues when building
+ large vessels.
+ Also, they provide no flexibility in placement or orientation of the build.
+\end_layout
+
+\begin_layout Standard
 EL's survey system greatly eases the seeding (or even complete build-out)
  of bases, and works equally well for building ships and other vessels.
  However, they do have one disadvantage: any optional resources (liquid
@@ -1648,6 +1680,14 @@ If you're thinking KSP parts, then it's three: survey station, survey stake,
  down to the surface in the vicinity of where the builds will occur.
  The survey site is ephemeral: it is marked out by one or more survey stakes
  and is used to specify the location and orientation of the build.
+\end_layout
+
+\begin_layout Subsection
+Survey Station
+\end_layout
+
+\begin_layout Subsection
+Survey Site
 \end_layout
 
 \begin_layout Standard
@@ -2859,32 +2899,26 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
-
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -2982,37 +3016,30 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3037,17 +3064,14 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3174,32 +3198,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3477,37 +3495,30 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3591,32 +3602,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3700,42 +3705,34 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
-
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
-
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 

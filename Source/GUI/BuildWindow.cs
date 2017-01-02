@@ -847,9 +847,6 @@ namespace ExtraplanetaryLaunchpads {
 										  windowpos, WindowGUI,
 										  name + " " + ver + ": " + sit,
 										  GUILayout.Width (695));
-			//if (craftlist != null) {
-			//	craftlist.OnGUI ();
-			//}
 		}
 	}
 }

@@ -37,6 +37,7 @@ EL_FILES := \
 	assembly/Checkers.cs				\
 	assembly/VersionReport.cs			\
 	GUI/BuildWindow.cs					\
+	GUI/CraftBrowser.cs					\
 	GUI/DropDownList.cs					\
 	GUI/EditorToolbar.cs				\
 	GUI/RenameWindow.cs					\

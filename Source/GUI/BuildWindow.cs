@@ -115,10 +115,8 @@ namespace ExtraplanetaryLaunchpads {
 		static Rect windowpos;
 		static bool highlight_pad = true;
 		static bool link_lfo_sliders = true;
-		static MethodInfo buildCraftList = typeof(CraftBrowserDialog).GetMethod ("BuildCraftList", BindingFlags.NonPublic | BindingFlags.Instance);
-		static FieldInfo craftSubfolder = typeof(CraftBrowserDialog).GetField("craftSubfolder", BindingFlags.NonPublic | BindingFlags.Instance);
 
-		static CraftBrowserDialog craftlist = null;
+		static ELCraftBrowser craftlist = null;
 		static Vector2 resscroll;
 
 		List<ExBuildControl> launchpads;
@@ -475,53 +473,18 @@ namespace ExtraplanetaryLaunchpads {
 
 		void SelectCraft ()
 		{
-			GUILayout.BeginHorizontal ("box");
-			GUILayout.FlexibleSpace ();
-			// VAB / SPH / Subassembly selection
-			ExBuildControl.CraftType maxType = ExBuildControl.CraftType.SubAss;
-			if (buildCraftList == null || true) {
-				maxType = ExBuildControl.CraftType.SPH;
-				if (control.craftType == ExBuildControl.CraftType.SubAss) {
-					control.craftType = ExBuildControl.CraftType.VAB;
-				}
-			}
-			for (var t = ExBuildControl.CraftType.VAB; t <= maxType; t++) {
-				if (GUILayout.Toggle (control.craftType == t, t.ToString (),
-									  GUILayout.Width (80))) {
-					control.craftType = t;
-				}
-			}
-			GUILayout.FlexibleSpace ();
-			GUILayout.EndHorizontal ();
-
 			string strpath = HighLogic.SaveFolder;
 
 			GUILayout.BeginHorizontal ();
 			if (GUILayout.Button ("Select Craft", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 
-				EditorFacility []facility = new EditorFacility[] {
-					EditorFacility.VAB,
-					EditorFacility.SPH,
-					EditorFacility.None,
-				};
-				var diff = HighLogic.CurrentGame.Parameters.Difficulty;
-				bool stock = diff.AllowStockVessels;
-				if (control.craftType == ExBuildControl.CraftType.SubAss) {
-					diff.AllowStockVessels = false;
-				}
 				//GUILayout.Button is "true" when clicked
-				craftlist = CraftBrowserDialog.Spawn (facility[(int)control.craftType],
-													  strpath,
-													  craftSelectComplete,
-													  craftSelectCancel,
-													  false);
-				if (buildCraftList != null
-					&& control.craftType == ExBuildControl.CraftType.SubAss) {
-					craftSubfolder.SetValue(craftlist, "../Subassemblies");
-					buildCraftList.Invoke (craftlist, null);
-				}
-				diff.AllowStockVessels = stock;
+				craftlist = ELCraftBrowser.Spawn (control.craftType,
+												  strpath,
+												  craftSelectComplete,
+												  craftSelectCancel,
+												  false);
 			}
 			GUI.enabled = control.craftConfig != null;
 			if (GUILayout.Button ("Reload", Styles.normal,
@@ -864,8 +827,9 @@ namespace ExtraplanetaryLaunchpads {
 		private void craftSelectComplete (string filename,
 										  CraftBrowserDialog.LoadType lt)
 		{
-			craftlist = null;
 			control.LoadCraft (filename, control.builder.part.flagURL);
+			control.craftType = craftlist.craftType;
+			craftlist = null;
 		}
 
 		private void craftSelectCancel ()

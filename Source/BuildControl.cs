@@ -92,10 +92,9 @@ namespace ExtraplanetaryLaunchpads {
 			private set;
 		}
 
-		public enum CraftType { VAB, SPH, SubAss };
 		public enum State { Idle, Planning, Building, Canceling, Dewarping, Complete, Transfer };
 
-		public CraftType craftType = CraftType.VAB;
+		public ELCraftType craftType = ELCraftType.VAB;
 
 		public string filename
 		{
@@ -517,7 +516,7 @@ namespace ExtraplanetaryLaunchpads {
 			nship.LoadShip (craftConfig);
 
 			int numParts = builder.vessel.parts.Count;
-			if (craftType != CraftType.SubAss)
+			if (craftType != ELCraftType.SubAss)
 				numParts = 0;
 
 			string landedAt = "External Launchpad";

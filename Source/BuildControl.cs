@@ -617,13 +617,6 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		internal static void dumpxform (Transform t, string n = "")
-		{
-			Debug.Log (String.Format ("[EL] xform: {0}", n + t.name));
-			foreach (Transform c in t)
-				dumpxform (c, n + t.name + ".");
-		}
-
 		internal List<Part> CraftParts ()
 		{
 			var part_list = new List<Part> ();

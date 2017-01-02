@@ -107,5 +107,17 @@ namespace ExtraplanetaryLaunchpads {
 			evt.guiActiveUnfocused = true;
 			evt.unfocusedRange = EVARange;
 		}
+
+		public static void dumpxform (Transform t, bool comps, string n = "")
+		{
+			Debug.LogFormat ("[EL] xform: {0}", n + t.name);
+			if (comps) {
+				foreach (var c in t.GetComponents<MonoBehaviour>()) {
+					Debug.LogFormat("  {0}", c);
+				}
+			}
+			foreach (Transform c in t)
+				dumpxform (c, comps, n + t.name + "/");
+		}
 	}
 }

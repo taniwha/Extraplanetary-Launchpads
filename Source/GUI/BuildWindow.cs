@@ -509,6 +509,7 @@ namespace ExtraplanetaryLaunchpads {
 			string strpath = HighLogic.SaveFolder;
 
 			GUILayout.BeginHorizontal ();
+			GUI.enabled = craftlist == null;
 			if (GUILayout.Button ("Select Craft", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 

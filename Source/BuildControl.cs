@@ -104,7 +104,7 @@ namespace ExtraplanetaryLaunchpads {
 		public string flagname
 		{
 			get;
-			private set;
+			set;
 		}
 		public bool lockedParts
 		{

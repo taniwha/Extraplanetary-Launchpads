@@ -119,6 +119,12 @@ namespace ExtraplanetaryLaunchpads {
 		static ELCraftBrowser craftlist = null;
 		static Vector2 resscroll;
 
+		static FlagBrowser flagBrowserPrefab;
+		static FlagBrowser flagBrowser;
+		static string flagURL;
+		static Texture2D flagTexture;
+
+
 		List<ExBuildControl> launchpads;
 		DropDownList pad_list;
 		ExBuildControl control;
@@ -130,6 +136,11 @@ namespace ExtraplanetaryLaunchpads {
 			{
 				//All good to go
 				Debug.Log ("KACWrapper initialized");
+			}
+
+			if (flagBrowserPrefab == null) {
+				var fbObj = AssetBase.GetPrefab ("FlagBrowser");
+				flagBrowserPrefab = fbObj.GetComponent<FlagBrowser> ();
 			}
 		}
 
@@ -251,6 +262,9 @@ namespace ExtraplanetaryLaunchpads {
 			enabled = !hide_ui && launchpads != null && gui_enabled;
 			if (control != null) {
 				control.builder.Highlight (enabled && highlight_pad);
+				if (enabled) {
+					UpdateFlagTexture ();
+				}
 			}
 			if (launchpads != null) {
 				for (int i = 0; i < launchpads.Count; i++) {
@@ -258,6 +272,25 @@ namespace ExtraplanetaryLaunchpads {
 					p.builder.UpdateMenus (enabled && p == control);
 				}
 			}
+		}
+
+		void UpdateFlagTexture ()
+		{
+			flagURL = control.flagname;
+
+			if (String.IsNullOrEmpty (flagURL)) {
+				flagURL = control.builder.part.flagURL;
+			}
+
+			flagTexture = GameDatabase.Instance.GetTexture (flagURL, false);
+		}
+
+		void CreateFlagBrowser ()
+		{
+			flagBrowser = Instantiate<FlagBrowser> (flagBrowserPrefab);
+
+			flagBrowser.OnDismiss = OnFlagCancel;
+			flagBrowser.OnFlagSelected = OnFlagSelected;
 		}
 
 		void onHideUI ()
@@ -485,6 +518,12 @@ namespace ExtraplanetaryLaunchpads {
 												  craftSelectComplete,
 												  craftSelectCancel,
 												  false);
+			}
+			GUI.enabled = flagBrowser == null;
+			if (GUILayout.Button (flagTexture, Styles.normal,
+								  GUILayout.Width (48), GUILayout.Height (32),
+								  GUILayout.ExpandWidth (false))) {
+				CreateFlagBrowser ();
 			}
 			GUI.enabled = control.craftConfig != null;
 			if (GUILayout.Button ("Reload", Styles.normal,
@@ -824,10 +863,23 @@ namespace ExtraplanetaryLaunchpads {
 
 		}
 
+		void OnFlagCancel ()
+		{
+			flagBrowser = null;
+		}
+
+		void OnFlagSelected (FlagBrowser.FlagEntry selected)
+		{
+			control.flagname = selected.textureInfo.name;
+			flagTexture = selected.textureInfo.texture;
+			UpdateFlagTexture ();
+			flagBrowser = null;
+		}
+
 		private void craftSelectComplete (string filename,
 										  CraftBrowserDialog.LoadType lt)
 		{
-			control.LoadCraft (filename, control.builder.part.flagURL);
+			control.LoadCraft (filename, flagURL);
 			control.craftType = craftlist.craftType;
 			craftlist = null;
 		}

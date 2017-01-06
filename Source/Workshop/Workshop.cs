@@ -31,10 +31,16 @@ using KerbalStats;
 public interface ExWorkSink
 {
 	void DoWork (double kerbalHours);
-	bool isActive ();
+	bool isActive { get; }
 }
 
-public class ExWorkshop : PartModule, IModuleInfo
+public interface ExWorkSource
+{
+	double GetProductivity (double timeDelta);
+	bool isActive { get; }
+}
+
+public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 {
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
@@ -139,11 +145,18 @@ public class ExWorkshop : PartModule, IModuleInfo
 		}
 	}
 
-	private double GetProductivity (double timeDelta)
+	public double GetProductivity (double timeDelta)
 	{
 		double prod = Productivity * timeDelta / 3600.0;
 		//Debug.log ("GetProductivity: lastupdate = " + lastUpdate.ToString ("F3") + ", currentTime = " + currentTime.ToString ("F3") + ", --> " + prod.ToString ());
 		return prod;
+	}
+
+	public bool isActive
+	{
+		get {
+			return true;
+		}
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
@@ -403,15 +416,17 @@ public class ExWorkshop : PartModule, IModuleInfo
 			vessel_productivity = 0;
 			for (int i = 0; i < sources.Count; i++) {
 				var source = sources[i];
-				hours += source.GetProductivity (timeDelta);
-				vessel_productivity += source.Productivity;
+				if (source.isActive) {
+					hours += source.GetProductivity (timeDelta);
+					vessel_productivity += source.Productivity;
+				}
 			}
 			//Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
 			//						  hours));
 			int num_sinks = 0;
 			for (int i = 0; i < sinks.Count; i++) {
 				var sink = sinks[i];
-				if (sink.isActive ()) {
+				if (sink.isActive) {
 					num_sinks++;
 				}
 			}
@@ -419,7 +434,7 @@ public class ExWorkshop : PartModule, IModuleInfo
 				double work = hours / num_sinks;
 				for (int i = 0; i < sinks.Count; i++) {
 					var sink = sinks[i];
-					if (sink.isActive ()) {
+					if (sink.isActive) {
 						sink.DoWork (work);
 					}
 				}

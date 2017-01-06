@@ -180,10 +180,12 @@ namespace ExtraplanetaryLaunchpads {
 			paused = false;
 		}
 
-		public bool isActive ()
+		public bool isActive
 		{
-			return ((state == State.Building || state == State.Canceling)
-					&& !paused);
+			get {
+				return ((state == State.Building || state == State.Canceling)
+						&& !paused);
+			}
 		}
 
 		private IEnumerator DewarpAndBuildCraft ()

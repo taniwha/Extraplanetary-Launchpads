@@ -719,7 +719,6 @@ namespace ExtraplanetaryLaunchpads {
 		void CleaupAfterRelease ()
 		{
 			craftRoot = null;
-			craftConfig = null;
 			vesselInfo = null;
 			buildCost = null;
 			builtStuff = null;

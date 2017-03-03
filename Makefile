@@ -11,7 +11,7 @@ GIT		:= git
 TAR		:= tar
 ZIP		:= zip
 
-.PHONY: all clean info install
+.PHONY: all clean info install release
 
 SUBDIRS=Assets Documentation GameData Source
 

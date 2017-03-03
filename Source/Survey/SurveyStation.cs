@@ -95,9 +95,6 @@ namespace ExtraplanetaryLaunchpads {
 		public new Part part
 		{
 			get {
-				if (site != null) {
-					return site[0].part;
-				}
 				return base.part;
 			}
 		}

@@ -3047,7 +3047,7 @@ EL_ModuleRecipe {
 \begin_layout Description
 EL_DefaultStructureRecipe Specify the default recipe to be used for a part's
  structure when the part has no recipe or the recipe does not specify a
- recipe its structure.
+ recipe for its structure.
  There is no node in EL's configs: it is hard coded.
  However, providing an 
 \begin_inset Flex Code

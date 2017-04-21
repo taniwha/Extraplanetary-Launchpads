@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using KSP.UI.Screens;
+
 namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ExShipInfo : MonoBehaviour
@@ -78,11 +80,13 @@ namespace ExtraplanetaryLaunchpads {
 
 		int rebuild_list_wait_frames = 0;
 
-		private IEnumerator WaitAndRebuildList (ShipConstruct ship)
+		private IEnumerator WaitAndRebuildList ()
 		{
 			while (--rebuild_list_wait_frames > 0) {
 				yield return null;
 			}
+			ShipConstruct ship = EditorLogic.fetch.ship;
+			Debug.LogFormat ("ExShipInfo.WaitAndRebuildList: {0}", ship);
 
 			buildCost = null;
 			cashed_cost = null;
@@ -107,16 +111,21 @@ namespace ExtraplanetaryLaunchpads {
 			cashed_cost = buildCost.cost;
 		}
 
-		public void RebuildList(ShipConstruct ship)
+		public void RebuildList()
 		{
 			// some parts/modules fire the event before doing things
 			const int wait_frames = 2;
 			if (rebuild_list_wait_frames < wait_frames) {
 				rebuild_list_wait_frames += wait_frames;
 				if (rebuild_list_wait_frames == wait_frames) {
-					StartCoroutine (WaitAndRebuildList (ship));
+					StartCoroutine (WaitAndRebuildList ());
 				}
 			}
+		}
+
+		void onEditorShipModified (ShipConstruct ship)
+		{
+			RebuildList ();
 		}
 
 		void onEditorRestart ()
@@ -126,16 +135,24 @@ namespace ExtraplanetaryLaunchpads {
 			parts_count = 0;
 		}
 
+		private void onEditorLoad (ShipConstruct ship, CraftBrowserDialog.LoadType loadType)
+		{
+			Debug.LogFormat ("ExShipInfo.onEditorLoad: {0} {1}", ship, loadType);
+			RebuildList ();
+		}
+
 		void Awake ()
 		{
-			GameEvents.onEditorShipModified.Add (RebuildList);
+			GameEvents.onEditorShipModified.Add (onEditorShipModified);
 			GameEvents.onEditorRestart.Add (onEditorRestart);
+			GameEvents.onEditorLoad.Add (onEditorLoad);
 		}
 
 		void OnDestroy ()
 		{
-			GameEvents.onEditorShipModified.Remove (RebuildList);
+			GameEvents.onEditorShipModified.Remove (onEditorShipModified);
 			GameEvents.onEditorRestart.Remove (onEditorRestart);
+			GameEvents.onEditorLoad.Remove (onEditorLoad);
 		}
 
 		void OnGUI ()

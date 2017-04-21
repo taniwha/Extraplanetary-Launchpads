@@ -389,7 +389,9 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 	double GetDeltaTime ()
 	{
 		double delta = -1;
-		if (Time.timeSinceLevelLoad >= 1 && FlightGlobals.ready) {
+		if (Time.timeSinceLevelLoad >= 1
+			&& FlightGlobals.ready
+			&& ResourceScenario.Instance != null) {
 			if (lastUpdate < 1e-9) {
 				lastUpdate = Planetarium.GetUniversalTime ();
 			} else {

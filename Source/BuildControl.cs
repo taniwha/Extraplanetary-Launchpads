@@ -792,6 +792,9 @@ namespace ExtraplanetaryLaunchpads {
 			GameObject ro = ship.parts[0].localRoot.gameObject;
 			Vessel craftVessel = ro.AddComponent<Vessel>();
 			craftVessel.Initialize (true);
+			foreach (Part part in craftVessel.parts) {
+				part.ModulesOnStart ();
+			}
 			if (ExSettings.B9Wings_Present) {
 				if (!InitializeB9Wings (craftVessel)
 					&& ExSettings.FAR_Present) {

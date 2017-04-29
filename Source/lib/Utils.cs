@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Text;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
@@ -118,6 +119,35 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			foreach (Transform c in t)
 				dumpxform (c, comps, n + t.name + "/");
+		}
+
+		public static void PrintResource (StringBuilder sb, ResourceRatio ratio)
+		{
+			var def = PartResourceLibrary.Instance.GetDefinition (ratio.ResourceName);
+			sb.Append ("\n - ");
+			sb.Append (ratio.ResourceName);
+			string unit, period;
+			double rate;
+			if (def.density > 0) {
+				rate = ratio.Ratio * def.density;
+				unit = "t";
+			} else {
+				rate = ratio.Ratio;
+				unit = "u";
+			}
+			if (rate < 0.1 / KSPUtil.dateTimeFormatter.Hour) {
+				rate *= KSPUtil.dateTimeFormatter.Day;
+				period = "day";
+			} else if (rate < 0.1 / KSPUtil.dateTimeFormatter.Minute) {
+				rate *= KSPUtil.dateTimeFormatter.Hour;
+				period = "hr";
+			} else if (rate < 0.1) {
+				rate *= KSPUtil.dateTimeFormatter.Minute;
+				period = "m";
+			} else {
+				period = "s";
+			}
+			sb.AppendFormat (" {0:0.00} {1}/{2}", rate, unit, period);
 		}
 	}
 }

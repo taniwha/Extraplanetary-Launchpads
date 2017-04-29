@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -47,7 +48,27 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override string GetInfo ()
 		{
-			return "EL Converter";
+			StringBuilder sb = StringBuilderCache.Acquire ();
+			sb.Append (ConverterName);
+			if (Recipe.Inputs.Count > 0) {
+				sb.Append ("\n\n<color=#bada55>Inputs:</color>");
+				for (int i = 0, c = Recipe.Inputs.Count; i < c; i++) {
+					EL_Utils.PrintResource (sb, Recipe.Inputs[i]);
+				}
+			}
+			if (Recipe.Outputs.Count > 0) {
+				sb.Append ("\n<color=#bada55>Outputs:</color>");
+				for (int i = 0, c = Recipe.Outputs.Count; i < c; i++) {
+					EL_Utils.PrintResource (sb, Recipe.Outputs[i]);
+				}
+			}
+			if (Recipe.Requirements.Count > 0) {
+				sb.Append ("\n<color=#bada55>Requirements:</color>");
+				for (int i = 0, c = Recipe.Requirements.Count; i < c; i++) {
+					EL_Utils.PrintResource (sb, Recipe.Requirements[i]);
+				}
+			}
+			return sb.ToStringAndRelease ();
 		}
 
 		public string GetPrimaryField ()

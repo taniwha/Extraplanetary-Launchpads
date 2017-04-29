@@ -27,6 +27,7 @@ EL_FILES := \
 	Resources/KISResourceContainer.cs	\
 	Resources/PartResourceContainer.cs	\
 	Resources/Resources.cs				\
+	Survey/Points.cs					\
 	Survey/SiteBody.cs					\
 	Survey/SiteList.cs					\
 	Survey/SurveySite.cs				\

@@ -28,7 +28,7 @@ namespace ExtraplanetaryLaunchpads {
 	public class ExShipInfo : MonoBehaviour
 	{
 		static Rect winpos;
-		static bool showGUI = true;
+		public static bool showGUI = false;
 
 		int parts_count;
 		public BuildCost buildCost;

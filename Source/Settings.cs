@@ -246,6 +246,10 @@ namespace ExtraplanetaryLaunchpads {
 			uk = GUILayout.Toggle (uk, "Create alarms in Kerbal Alarm Clock");
 			use_KAC = uk;
 
+			bool si = ExShipInfo.showGUI;
+			si = GUILayout.Toggle (si, "Build Resources window currently visible in editor");
+			ExShipInfo.showGUI = si;
+
 			if (uk) {
 				int actionint;
 				switch (KACAction){

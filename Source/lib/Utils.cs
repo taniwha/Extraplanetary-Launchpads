@@ -29,6 +29,11 @@ using Experience;
 namespace ExtraplanetaryLaunchpads {
 
 	public static class EL_Utils {
+		public static Vector3d LocalUp (this CelestialBody body, Vector3d pos)
+		{
+			return (pos - body.position).normalized;
+		}
+
 		public static string ToStringSI(this double value, int sigFigs = 3, string unit = null)
 		{
 			if (unit == null) {

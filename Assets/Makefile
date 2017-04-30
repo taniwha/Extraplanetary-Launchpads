@@ -14,7 +14,7 @@ GIT			:= git
 TAR			:= tar
 ZIP			:= zip
 
-all: kairyuu.png kairyuu_scaled.png icon_button.png icon_filter.png
+all: kairyuu.png kairyuu_scaled.png icon_button.png icon_filter.png plaque.png
 #	${GUI_ICONS}
 
 info:
@@ -37,6 +37,9 @@ GUI_ICONS = \
 ${GUI_ICONS} : gui_icons.blend export-images.py
 	blender -noaudio --background gui_icons.blend -P export-images.py
 
+plaque.png: plaque.svg
+	inkscape --export-width=128 --export-height=128 --export-png=$@ $^
+
 kairyuu.png: kairyuu.svg
 	inkscape --export-width=256 --export-height=160 --export-png=$@ $^
 
@@ -56,7 +59,7 @@ install: all
 	mkdir -p ${ELGAMEDATA}/Agencies
 	cp kairyuu.png kairyuu_scaled.png ${ELGAMEDATA}/Agencies
 	mkdir -p ${ELGAMEDATA}/Textures
-	cp icon_button.png icon_filter.png ${ELGAMEDATA}/Textures
+	cp icon_button.png icon_filter.png plaque.png ${ELGAMEDATA}/Textures
 	#cp ${GUI_ICONS} ${ELGAMEDATA}/Textures
 
 .PHONY: all clean install

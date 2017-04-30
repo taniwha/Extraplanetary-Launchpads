@@ -51,7 +51,11 @@ namespace ExtraplanetaryLaunchpads {
 		};
 		Highlighter highlighter;
 
+		const float PlaqueAlpha = 0.75f;
+
 		GameObject plaque;
+		CanvasRenderer plaqueBackgroundRenderer;
+		CanvasRenderer plaqueTextRenderer;
 		Text plaqueText;
 		//TextMeshPro plaqueText;
 
@@ -159,14 +163,19 @@ namespace ExtraplanetaryLaunchpads {
 
 		void UpdateText ()
 		{
+			var color = StakeColors[use];
+			plaqueBackgroundRenderer.SetColor (color);
+			plaqueTextRenderer.SetColor (color);
 			plaqueText.text = (bound ? "B" : "D") + StakeUses_short[use];
 		}
 
 		void CreateBackground (RectTransform parent)
 		{
 			GameObject go = new GameObject ("Survey Plaque Bacground",
-											typeof (RectTransform),
-											typeof (CanvasRenderer));
+											typeof (RectTransform));
+			plaqueBackgroundRenderer = go.AddComponent<CanvasRenderer> ();
+			plaqueBackgroundRenderer.SetAlpha (PlaqueAlpha);
+
 			go.layer = LayerMask.NameToLayer("Ignore Raycast");
 			RectTransform rxform = go.transform as RectTransform;
 			rxform.SetParent (parent, false);
@@ -176,15 +185,18 @@ namespace ExtraplanetaryLaunchpads {
 			rxform.SetSizeWithCurrentAnchors (RectTransform.Axis.Vertical, 50);
 
 			Image bg = go.AddComponent<Image> ();
-			Texture2D tex = GameDatabase.Instance.GetTexture(part.flagURL, false);
-			bg.sprite = Sprite.Create (tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
+			Texture2D tex = GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/plaque", false);
+			bg.sprite = Sprite.Create (tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect, new Vector4 (17, 17, 17, 17));
+			bg.type = Image.Type.Sliced;
 		}
 
 		void CreateText (RectTransform parent)
 		{
 			GameObject go = new GameObject ("Survey Plaque Text",
-											typeof (RectTransform),
-											typeof (CanvasRenderer));
+											typeof (RectTransform));
+			plaqueTextRenderer = go.AddComponent<CanvasRenderer> ();
+			plaqueTextRenderer.SetAlpha (PlaqueAlpha);
+
 			go.layer = LayerMask.NameToLayer("Ignore Raycast");
 			RectTransform rxform = go.transform as RectTransform;
 			rxform.SetParent (parent, false);
@@ -196,7 +208,7 @@ namespace ExtraplanetaryLaunchpads {
 			Font ArialFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			plaqueText.font = ArialFont;
 			plaqueText.material = ArialFont.material;
-			plaqueText.fontSize = 40;
+			plaqueText.fontSize = 35;
 
 			//plaqueText = go.AddComponent<TextMeshPro> ();
 			//plaqueText.alignment = TextAlignmentOptions.Center;

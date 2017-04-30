@@ -98,7 +98,7 @@ namespace ExtraplanetaryLaunchpads {
 				if ((state & StartState.Landed) != StartState.None) {
 					CreatePlaque ();
 				}
-				UpdateText ();
+				UpdatePlaque ();
 			}
 		}
 
@@ -116,7 +116,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			use = (use + 1) % StakeUses.Count();
 			Events["NextUse"].guiName = StakeUses[use];
-			UpdateText ();
+			UpdatePlaque ();
 		}
 
 		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "")]
@@ -124,7 +124,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			bound = !bound;
 			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
-			UpdateText ();
+			UpdatePlaque ();
 		}
 
 		[KSPEvent (active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "Rename Stake")]
@@ -135,6 +135,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Highlight (bool on)
 		{
+			plaque.SetActive (on);
+
 			if (on) {
 				var color = StakeColors[use];
 				var model = part.FindModelTransform("model");
@@ -153,6 +155,8 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				part.SetHighlightColor (color);
 				part.SetHighlight (true, false);
+
+				UpdatePlaque ();
 			} else {
 				if (highlighter != null) {
 					part.SetHighlightDefault ();
@@ -161,7 +165,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void UpdateText ()
+		void UpdatePlaque ()
 		{
 			var color = StakeColors[use];
 			plaqueBackgroundRenderer.SetColor (color);
@@ -224,13 +228,15 @@ namespace ExtraplanetaryLaunchpads {
 			EL_Billboard billboard = plaque.AddComponent<EL_Billboard>();
 			billboard.LocalUp = LocalUp;
 
+			plaque.SetActive (false);
+
 			GameObject go = new GameObject ("Survey Plaque Canvas",
 											typeof (RectTransform),
 											typeof (Canvas),
 											typeof (CanvasScaler));
 			RectTransform rxform = go.transform as RectTransform;
 			rxform.SetParent (plaque.transform, false);
-			rxform.localPosition = new Vector3 (0, 1, 0);
+			rxform.localPosition = new Vector3 (0, 0.5f, 0);
 			rxform.localScale = new Vector3 (0.01f, 0.01f, 0.01f);
 			rxform.SetSizeWithCurrentAnchors (RectTransform.Axis.Horizontal, 80);
 			rxform.SetSizeWithCurrentAnchors (RectTransform.Axis.Vertical, 50);

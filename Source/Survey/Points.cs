@@ -27,8 +27,8 @@ namespace ExtraplanetaryLaunchpads {
 
 	class Points
 	{
-		Dictionary<string, Vector3d> points;
-		Dictionary<string, Vector3d> bounds;
+		public Dictionary<string, Vector3d> points;
+		public Dictionary<string, Vector3d> bounds;
 		CelestialBody body;
 		public Vector3d center;
 
@@ -87,6 +87,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public Vector3d LocalUp ()
 		{
+			//return body.LocalUp (center);
 			double lat = body.GetLatitude (center);
 			double lon = body.GetLongitude (center);
 			return body.GetSurfaceNVector (lat, lon);
@@ -133,6 +134,45 @@ namespace ExtraplanetaryLaunchpads {
 			f = Vector3d.Normalize (f - Vector3d.Dot (f, u) * u);
 			f = Vector3d.Normalize (f + Vector3d.Cross (r, u));
 			return Quaternion.LookRotation (f, u);
+		}
+
+		public Quaternion GetOrientation ()
+		{
+			var x = GetDirection ("X");
+			var y = GetDirection ("Y");
+			var z = GetDirection ("Z");
+			Quaternion rot;
+			if (y.IsZero ()) {
+				if (z.IsZero () && x.IsZero ()) {
+					x = Vector3d.Cross (LocalUp (), Vector3d.up);
+					x.Normalize ();
+					z = Vector3d.Cross (x, LocalUp ());
+				} else if (z.IsZero ()) {
+					z = Vector3d.Cross (x, LocalUp ());
+					z.Normalize ();
+				} else if (x.IsZero ()) {
+					x = Vector3d.Cross (LocalUp (), z);
+					x.Normalize ();
+				}
+				rot = ChooseRotation (x, z);
+			} else if (x.IsZero ()) {
+				// y is not zero
+				if (z.IsZero ()) {
+					// use local up for x
+					z = Vector3d.Cross (LocalUp (), y);
+					z.Normalize ();
+				} else {
+					z = Vector3d.Normalize (z - Vector3d.Dot (z, LocalUp ()) * LocalUp ());
+				}
+				rot = Quaternion.LookRotation (z, y);
+			} else if (z.IsZero ()) {
+				// neither x nor y are zero
+				rot = ChooseRotation (y, x);
+			} else {
+				// no direction is 0
+				rot = ChooseRotation (x, z, y);
+			}
+			return rot;
 		}
 
 		public Vector3 ShiftBounds (Transform frame, Vector3 pos,

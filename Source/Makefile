@@ -36,6 +36,7 @@ EL_FILES := \
 	Survey/SurveyStake.cs				\
 	Survey/SurveyStation.cs				\
 	Survey/SurveyTracker.cs				\
+	Survey/VirtualPad.cs				\
     assembly/AssemblyInfo.cs			\
 	assembly/Checkers.cs				\
 	assembly/VersionReport.cs			\

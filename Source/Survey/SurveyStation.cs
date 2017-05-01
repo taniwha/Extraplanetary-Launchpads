@@ -30,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField (isPersistant = true)]
 		public string StationName = "";
 
+		EL_VirtualPad virtualPad;
 		DropDownList site_list;
 		List<SurveySite> available_sites;
 		SurveySite site;
@@ -119,13 +120,32 @@ namespace ExtraplanetaryLaunchpads {
 			site_list.DrawBlockingSelector ();
 		}
 
-		void Select_Site (SurveySite selected_site)
+		void SetSite (SurveySite selected_site)
 		{
-			if (site != selected_site) {
-				Highlight (false);
+			if (site == selected_site) {
+				if (site != null) {
+					// update display
+					virtualPad.SetSite (site);
+				}
+				return;
 			}
+			Highlight (false);
 			site = selected_site;
-			site_list.SelectItem (available_sites.IndexOf (site));
+			if (site == null) {
+				if (virtualPad != null) {
+					Destroy (virtualPad.gameObject);
+					virtualPad = null;
+				}
+			} else {
+				if (virtualPad == null) {
+					virtualPad = EL_VirtualPad.Create (site);
+				} else {
+					virtualPad.SetSite (site);
+				}
+			}
+			if (site_list != null) {
+				site_list.SelectItem (available_sites.IndexOf (site));
+			}
 			// The build window will take care of turning on highlighting
 		}
 
@@ -143,7 +163,7 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				GUILayout.BeginHorizontal ();
 				site_list.DrawButton ();
-				Select_Site (available_sites[site_list.SelectedIndex]);
+				SetSite (available_sites[site_list.SelectedIndex]);
 				GUILayout.EndHorizontal ();
 			}
 		}
@@ -177,45 +197,6 @@ namespace ExtraplanetaryLaunchpads {
 			data.Get<List<ExWorkSink>> ("sinks").Add (control);
 		}
 
-		Quaternion GetOrientation (Points p)
-		{
-			var x = p.GetDirection ("X");
-			var y = p.GetDirection ("Y");
-			var z = p.GetDirection ("Z");
-			Quaternion rot;
-			if (y.IsZero ()) {
-				if (z.IsZero () && x.IsZero ()) {
-					x = Vector3d.Cross (p.LocalUp (), Vector3d.up);
-					x.Normalize ();
-					z = Vector3d.Cross (x, p.LocalUp ());
-				} else if (z.IsZero ()) {
-					z = Vector3d.Cross (x, p.LocalUp ());
-					z.Normalize ();
-				} else if (x.IsZero ()) {
-					x = Vector3d.Cross (p.LocalUp (), z);
-					x.Normalize ();
-				}
-				rot = p.ChooseRotation (x, z);
-			} else if (x.IsZero ()) {
-				// y is not zero
-				if (z.IsZero ()) {
-					// use local up for x
-					z = Vector3d.Cross (p.LocalUp (), y);
-					z.Normalize ();
-				} else {
-					z = Vector3d.Normalize (z - Vector3d.Dot (z, p.LocalUp ()) * p.LocalUp ());
-				}
-				rot = Quaternion.LookRotation (z, y);
-			} else if (z.IsZero ()) {
-				// neither x nor y are zero
-				rot = p.ChooseRotation (y, x);
-			} else {
-				// no direction is 0
-				rot = p.ChooseRotation (x, z, y);
-			}
-			return rot;
-		}
-
 		public void SetCraftMass (double mass)
 		{
 			craft_mass = mass;
@@ -245,7 +226,7 @@ namespace ExtraplanetaryLaunchpads {
 			launchPos.transform.parent = t;
 			launchPos.transform.position = t.position;
 			launchPos.transform.position += points.center - part.vessel.GetWorldPos3D ();
-			launchPos.transform.rotation = GetOrientation (points);
+			launchPos.transform.rotation = points.GetOrientation ();
 			xform = launchPos.transform;
 			Debug.LogFormat ("[EL SurveyStation] launchPos {0} {1}", xform.position, xform.rotation);
 
@@ -341,8 +322,8 @@ namespace ExtraplanetaryLaunchpads {
 			available_sites = ExSurveyTracker.instance.FindSites (vessel, range);
 			if (available_sites == null || available_sites.Count < 1) {
 				Highlight (false);
-				site = null;
 				site_list = null;
+				SetSite (null);
 			} else {
 				var slist = new List<string> ();
 				for (int ind = 0; ind < available_sites.Count; ind++) {
@@ -350,11 +331,10 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				if (!available_sites.Contains (site)) {
 					Highlight (false);
-					site = available_sites[0];
+					SetSite (available_sites[0]);
 				}
 				site_list = new DropDownList (slist);
 			}
-			Debug.LogFormat ("[EL SurveyStation] site: '{0}'", site);
 		}
 
 		IEnumerator WaitAndFindSites ()

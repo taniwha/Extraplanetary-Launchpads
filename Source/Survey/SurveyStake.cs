@@ -95,23 +95,27 @@ namespace ExtraplanetaryLaunchpads {
 			Events["NextUse"].guiName = StakeUses[use];
 			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 			if (HighLogic.LoadedSceneIsFlight) {
-				if ((state & StartState.Landed) != StartState.None) {
-					CreatePlaque ();
-				}
+				CreatePlaque ();
 				UpdatePlaque ();
+			}
+			GameEvents.onPartDie.Add(OnPartDie);
+		}
+
+		void OnDestroy ()
+		{
+			GameEvents.onPartDie.Remove(OnPartDie);
+		}
+
+		public void OnPartDie (Part p)
+		{
+			if (p == part) {
+				ExSurveyTracker.instance.RemoveStake (vessel);
 			}
 		}
 
-		public void OnPartDie ()
-		{
-			ExSurveyTracker.instance.RemoveStake (vessel);
-		}
-
-		public void FixedUpdate ()
-		{
-		}
-
-		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "")]
+		[KSPEvent(active = true, guiActiveUnfocused = true,
+				  externalToEVAOnly = false, guiActive = false,
+				  unfocusedRange = 200f, guiName = "")]
 		public void NextUse()
 		{
 			use = (use + 1) % StakeUses.Count();
@@ -119,7 +123,9 @@ namespace ExtraplanetaryLaunchpads {
 			UpdatePlaque ();
 		}
 
-		[KSPEvent(active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "")]
+		[KSPEvent(active = true, guiActiveUnfocused = true,
+				  externalToEVAOnly = false, guiActive = false,
+				  unfocusedRange = 200f, guiName = "")]
 		public void ToggleBound()
 		{
 			bound = !bound;
@@ -127,7 +133,9 @@ namespace ExtraplanetaryLaunchpads {
 			UpdatePlaque ();
 		}
 
-		[KSPEvent (active = true, guiActiveUnfocused = true, externalToEVAOnly = false, guiActive = false, unfocusedRange = 200f, guiName = "Rename Stake")]
+		[KSPEvent (active = true, guiActiveUnfocused = true,
+				   externalToEVAOnly = false, guiActive = false,
+				   unfocusedRange = 200f, guiName = "Rename Stake")]
 		public void RenameVessel ()
 		{
 			vessel.RenameVessel ();

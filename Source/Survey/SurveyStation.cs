@@ -404,11 +404,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		void onSiteAdded (SurveySite s)
 		{
+			Debug.LogFormat ("[ExSurveyStation] onSiteAdded");
 			FindSites ();
+			SetSite (site);
 		}
 
 		void onSiteRemoved (SurveySite s)
 		{
+			Debug.LogFormat ("[ExSurveyStation] onSiteRemoved");
 			if (s == site) {
 				site = null;
 			}
@@ -417,7 +420,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void onSiteModified (SurveySite s)
 		{
+			Debug.LogFormat ("[ExSurveyStation] onSiteModified");
 			FindSites ();
+			SetSite (site);
 		}
 	}
 }

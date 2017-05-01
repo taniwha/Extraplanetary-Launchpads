@@ -100,6 +100,19 @@ namespace ExtraplanetaryLaunchpads {
 			AddSite (site);
 		}
 
+		internal void ModifyStake (Vessel vessel)
+		{
+			Debug.Log (String.Format ("[EL ST] ModifyStake {0} {1}", vessel.vesselName, vessel.mainBody.bodyName));
+			string bodyName = vessel.mainBody.bodyName;
+			string siteName = vessel.vesselName;
+			if (!sites.ContainsKey (bodyName)
+				|| !sites[bodyName].Contains (siteName)) {
+				Debug.Log (String.Format ("[EL ST] stake not found"));
+				return;
+			}
+			onSiteModified.Fire (sites[bodyName][siteName].FindSite (vessel));
+		}
+
 		internal void RemoveStake (Vessel vessel)
 		{
 			Debug.Log (String.Format ("[EL ST] RemoveStake {0} {1}", vessel.vesselName, vessel.mainBody.bodyName));

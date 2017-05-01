@@ -48,6 +48,11 @@ namespace ExtraplanetaryLaunchpads {
 				max.y = Mathf.Max (max.y, b.max.y);
 				max.z = Mathf.Max (max.z, b.max.z);
 			}
+
+			public override string ToString ()
+			{
+				return "[" + min + "," + max + "]";
+			}
 		}
 		public interface IBuilder
 		{
@@ -477,7 +482,7 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
-			Debug.Log (String.Format ("[EL] GetVesselBox {0} {1}", box.min, box.max));
+			Debug.Log (String.Format ("[EL] GetVesselBox {0} {1}", ship.parts[0].localRoot.transform.position, box));
 			for (int i = 0; i < ship.parts.Count; i++) {
 				Part p = ship[i];
 				p.SendMessage ("OnPutToGround", phq,

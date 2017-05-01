@@ -83,6 +83,16 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		internal SurveySite FindSite (Vessel stake)
+		{
+			foreach (var site in sites) {
+				if (site.Contains (stake)) {
+					return site;
+				}
+			}
+			return null;
+		}
+
 		internal void RemoveStake (Vessel stake)
 		{
 			foreach (var site in sites) {

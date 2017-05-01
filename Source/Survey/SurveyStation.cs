@@ -221,11 +221,8 @@ namespace ExtraplanetaryLaunchpads {
 			xform = part.FindModelTransform ("EL launch pos");
 
 			var points = new Points (site);
-			Transform t = part.transform;
 			GameObject launchPos = new GameObject ("EL launch pos");
-			launchPos.transform.parent = t;
-			launchPos.transform.position = t.position;
-			launchPos.transform.position += points.center - part.vessel.GetWorldPos3D ();
+			launchPos.transform.position = points.center;
 			launchPos.transform.rotation = points.GetOrientation ();
 			xform = launchPos.transform;
 			Debug.LogFormat ("[EL SurveyStation] launchPos {0} {1}", xform.position, xform.rotation);

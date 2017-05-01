@@ -32,9 +32,11 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Update()
 		{
-			Vector3 forward = Camera.main.transform.forward;
-			Vector3 up = LocalUp ();
-			transform.rotation = Quaternion.LookRotation(forward, up);
+			if (Camera.main != null) {
+				Vector3 forward = Camera.main.transform.forward;
+				Vector3 up = LocalUp ();
+				transform.rotation = Quaternion.LookRotation(forward, up);
+			}
 		}
 	}
 }

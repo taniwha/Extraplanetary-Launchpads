@@ -108,6 +108,7 @@ namespace ExtraplanetaryLaunchpads {
 				CreateAxis (i);
 				CreateBounds (i);
 			}
+			gameObject.SetActive (false);	// currently for debug
 		}
 
 		IEnumerator WaitAndSetBounds ()

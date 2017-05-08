@@ -133,7 +133,9 @@ namespace ExtraplanetaryLaunchpads {
 			points = new Points (site);
 			transform.position = points.center;
 			transform.rotation = points.GetOrientation ();
-			StartCoroutine (WaitAndSetBounds ());
+			if (gameObject.activeInHierarchy) {
+				StartCoroutine (WaitAndSetBounds ());
+			}
 		}
 
 		internal static EL_VirtualPad Create (SurveySite site)

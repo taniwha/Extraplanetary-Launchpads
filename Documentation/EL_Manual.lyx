@@ -199,14 +199,7 @@ EL defines the resources
 status collapsed
 
 \begin_layout Plain Layout
-Other mods, e.g, USI-MKS
-\begin_inset CommandInset citation
-LatexCommand cite
-key "MKS"
-
-\end_inset
-
-, define other resource that replace those defined by EL.
+Other mods can define other resource that replace those defined by EL.
 \end_layout
 
 \end_inset
@@ -463,6 +456,30 @@ Mods that support or use EL
 \end_layout
 
 \begin_layout Description
+Kerbal
+\begin_inset space ~
+\end_inset
+
+Planetary
+\begin_inset space ~
+\end_inset
+
+Base
+\begin_inset space ~
+\end_inset
+
+Systems
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kpbs"
+
+\end_inset
+
+ Several new parts that are designed to be used in a planetary base for
+ the kerbals.
+\end_layout
+
+\begin_layout Description
 Pathfinder
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -482,25 +499,6 @@ key "SC"
 \end_inset
 
  Uses EL but stock parts.
-\end_layout
-
-\begin_layout Description
-USI
-\begin_inset space ~
-\end_inset
-
-Kolonization
-\begin_inset space ~
-\end_inset
-
-Systems
-\begin_inset CommandInset citation
-LatexCommand cite
-key "MKS"
-
-\end_inset
-
- Uses EL but replaces both parts and the resource system.
 \end_layout
 
 \begin_layout Subsection

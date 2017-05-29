@@ -346,7 +346,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		[KSPEvent (guiActive=false, active = true)]
-		void ExDiscoverWorkshops (BaseEventData data)
+		void ExDiscoverWorkshops (BaseEventDetails data)
 		{
 			data.Get<List<ExWorkSink>> ("sinks").Add (this);
 		}
@@ -535,8 +535,8 @@ namespace ExtraplanetaryLaunchpads {
 			launchTransform = builder.PlaceShip (nship, vessel_bounds);
 
 			EnableExtendingLaunchClamps (nship);
-			ShipConstruction.AssembleForLaunch (nship, landedAt, flag, game,
-												crew);
+			ShipConstruction.AssembleForLaunch (nship, landedAt, landedAt,
+												flag, game, crew);
 			var FlightVessels = FlightGlobals.Vessels;
 			craftVessel = FlightVessels[FlightVessels.Count - 1];
 

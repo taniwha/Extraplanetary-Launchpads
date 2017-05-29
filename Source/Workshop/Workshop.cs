@@ -119,7 +119,7 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 		ExWorkshop shop = findFirstWorkshop (vessel.rootPart);
 		if (shop == this) {
 			//Debug.Log (String.Format ("[EL Workshop] master"));
-			var data = new BaseEventData (BaseEventData.Sender.USER);
+			var data = new BaseEventDetails (BaseEventDetails.Sender.USER);
 			data.Set<ExWorkshop> ("master", this);
 			sources = new List<ExWorkshop> ();
 			sinks = new List<ExWorkSink> ();
@@ -160,7 +160,7 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
-	void ExDiscoverWorkshops (BaseEventData data)
+	void ExDiscoverWorkshops (BaseEventDetails data)
 	{
 		if (!functional) {
 			return;

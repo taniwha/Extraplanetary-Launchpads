@@ -93,6 +93,10 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			return false;
 		}
+		public string GetDisplayName()
+		{
+			return TargetName;
+		}
 
 		public override void OnLoad (ConfigNode node)
 		{

@@ -47,7 +47,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			cat = PartCategorizer.Instance.filters.Find (c => c.button.categoryName == "Filter by Function");
-			PartCategorizer.AddCustomSubcategoryFilter (cat, "EL Items", icon, elItemFilter);
+			PartCategorizer.AddCustomSubcategoryFilter (cat, "EL Items", "EL Items", icon, elItemFilter);
 		}
 
 		void Awake ()

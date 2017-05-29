@@ -111,7 +111,7 @@ public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
-	void ExDiscoverWorkshops (BaseEventData data)
+	void ExDiscoverWorkshops (BaseEventDetails data)
 	{
 		// Recyclers are not actual work-sinks, but the master is needed
 		// to check the vessel producitivity

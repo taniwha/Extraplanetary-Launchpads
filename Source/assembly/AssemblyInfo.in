@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright ("2014 Bill Currie, 2013 Skyler Lehmkuhl")]
+[assembly: AssemblyCopyright ("2013-2017 Bill Currie, 2013 Skyler Lehmkuhl")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

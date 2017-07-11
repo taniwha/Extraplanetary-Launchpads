@@ -194,7 +194,7 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive=false, active = true)]
 		void ExDiscoverWorkshops (BaseEventDetails data)
 		{
-			data.Get<List<ExWorkSink>> ("sinks").Add (control);
+			control.ExDiscoverWorkshops (data);
 		}
 
 		public void SetCraftMass (double mass)

@@ -13,6 +13,7 @@
 \usepackage[nottoc]{tocbibind}
 \usepackage[style=numeric,backend=biber]{biblatex}
 \addbibresource{kspforums.bib}
+\setlength{\intextsep}{0cm plus1cm minus1cm}
 \date{}
 \end_preamble
 \use_default_options true
@@ -1619,7 +1620,7 @@ When landed, orbital docks can be awkward for building as they tend to be
 \begin_layout Standard
 EL's survey system greatly eases the seeding (or even complete build-out)
  of bases, and works equally well for building ships and other vessels.
- However, they do have one disadvantage: any optional resources (liquid
+ However, it does have one disadvantage: any optional resources (liquid
  fuel, oxidizer, electric charge, etc) will 
 \emph on
 not
@@ -1868,6 +1869,278 @@ and
 * If no Y bounds stake has been placed, then the origin acts as an implicit
  -Y bounds stake (otherwise almost all builds would spawn in the ground).
  
+\end_layout
+
+\begin_layout Section
+Designing a construction capable vessel
+\end_layout
+
+\begin_layout Subsection
+Orbital Construction
+\end_layout
+
+\begin_layout Standard
+\begin_inset Wrap figure
+lines 0
+placement O
+overhang 0in
+width "30col%"
+status collapsed
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename OrbitalDock.svg
+	lyxscale 25
+	width 50col%
+	BoundingBox 0bp 0bp 960bp 540bp
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Orbital Dock
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+Orbital construction is probably the easiest to get going as all that is
+ required is a supply of 
+\noun on
+RocketParts
+\noun default
+, an orbital dock, some qualified construction kerbals, and somewhere for
+ them to work.
+ This means that only two parts need to be added to the design of a station
+ that has crewed command pods or any stock crewed part
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+there are mods that supply suitably configured crewed parts
+\end_layout
+
+\end_inset
+
+: a reasonably sized 
+\noun on
+RocketParts
+\noun default
+ container, and the orbital dock.
+ When extending an existing station, a suitable docking port would be required
+ as well, and means to get the 
+\begin_inset Quotes eld
+\end_inset
+
+construction unit
+\begin_inset Quotes erd
+\end_inset
+
+ to the station.
+\end_layout
+
+\begin_layout Standard
+It can, however, be the most difficult to maintain due to the need for supplies
+ to be flown to the station.
+ That said, maintaining an orbital construction station can be quite interesting
+ as there are a number of options for feeding 
+\noun on
+RocketParts
+\noun default
+ into the orbital dock's ravenous maw, each with additional design requirements
+ for the station.
+\end_layout
+
+\begin_layout Itemize
+Firstly, and most simply, 
+\noun on
+RocketParts 
+\noun default
+can be flown up from a nearby, or even not so nearby, production base
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The KSC counts as a production base as all EL resources can be loaded onto
+ a vessel at launch time via tweakables.
+\end_layout
+
+\end_inset
+
+.
+ The only additional requirement for the station is an available docking
+ port, but a station with no docking ports is of rather limited use, so
+ this requirement is generally not too troublesome (though having enough
+ docking ports on a station can be tricky at times).
+\end_layout
+
+\begin_layout Itemize
+Secondly, 
+\noun on
+Metal
+\noun default
+ can be flown to the station and locally processed into 
+\noun on
+RocketParts
+\noun default
+.
+ Along with an available docking port, this method requires a means of convertin
+g 
+\noun on
+Metal
+\noun default
+ to 
+\noun on
+RocketParts
+\noun default
+.
+ This can be done using either the workshop or the rocket workbench, but
+ since even the rocket workbench can give a significant boost to production
+ speed, the only real disadvantages are the relevant part needs to be either
+ flown up to the station and docked or built at the station and maneuvered
+ into a convenient location
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+The rocket workbench can be manhandled into position by two kerbals using
+ KIS.
+\end_layout
+
+\end_inset
+
+, and the increased power requirements.
+ A minor disadvantage is the conversion of 
+\noun on
+Metal
+\noun default
+ into 
+\noun on
+RocketParts
+\noun default
+ produces 
+\noun on
+ScrapMetal
+\noun default
+.
+ Normally, the 
+\noun on
+ScrapMetal
+\noun default
+ is simply thrown away, but the next solution takes care of that.
+\end_layout
+
+\begin_layout Itemize
+Thirdly, if 
+\noun on
+Metal
+\noun default
+ to 
+\noun on
+RocketParts
+\noun default
+ production is already available on the station
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Or is included in the same module as the smelter.
+\end_layout
+
+\end_inset
+
+, a smelter can be added to the station allowing 
+\noun on
+MetalOre 
+\noun default
+can be flown in and processed into 
+\noun on
+Metal
+\noun default
+.
+ While this does further increase the power requirements of the station,
+ the smelter is actually dual-use: not only can it convert 
+\noun on
+MetalOre
+\noun default
+ into 
+\noun on
+Metal
+\noun default
+, but it can convert 
+\noun on
+ScrapMetal
+\noun default
+ into 
+\noun on
+Metal
+\noun default
+, resulting in very low production losses.
+ As an added bonus, the smelters have a small amount of storage for the
+ three resources.
+\end_layout
+
+\begin_layout Itemize
+Fourthly, and finally, a recycling bin can be added to the station.
+ The recycling bins do not look like much, but they are ravenous maws that
+ eat vessels of any size (except asteroids, but including unfortunate kerbals)
+ and spit out resources.
+ Most resources, except 
+\noun on
+Ablator
+\noun default
+ and 
+\noun on
+SolidFuel
+\noun default
+, stored in tanks will be reclaimed as-is without loss, and the hull material
+ will be recycled into 
+\noun on
+ScrapMetal
+\noun default
+.
+ For best results, the station needs large quantities of storage and a full
+ production chain.
+ The biggest advantage of using a recycling bin is unmanned
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Or manned by very brave pilots.
+\end_layout
+
+\end_inset
+
+ supply ships can be flown into the recycling bin and recycled.
+ If there is sufficient storage on the station, then all remaining fuel
+ and any stored resources will be automatically transfered to the station,
+ and the hull of the supply ship will go towards the next construction project.
+ Unfortunately, if there is insufficient storage for any resource, the the
+ excess of that resource will be lost.
+\end_layout
+
+\begin_layout Subsection
+Grounded Construction
+\end_layout
+
+\begin_layout Standard
+While more difficult to get going due to the need to fly to the location
+ and land safely, grounded construction can be much easier to maintain as
+ the site of the construction base can be chosen for optimal resource extraction.
+ Thus once production facilities (as described in the orbital construction
+ section) are in place, the base can be self-sufficient for a very long
+ time.
 \end_layout
 
 \begin_layout Part
@@ -2897,26 +3170,32 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
+
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3014,30 +3293,37 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3062,14 +3348,17 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3196,26 +3485,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3493,30 +3788,37 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3600,26 +3902,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3703,34 +4011,42 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
+
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
+
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 

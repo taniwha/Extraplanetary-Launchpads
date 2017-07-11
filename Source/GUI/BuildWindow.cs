@@ -482,6 +482,16 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label (control.builder.vessel.vesselName);
+			GUILayout.FlexibleSpace ();
+			double productivity = control.productivity;
+			GUIStyle prodStyle = Styles.green;
+			if (productivity <= 0) {
+				prodStyle = Styles.red;
+			} else if (productivity < 1) {
+				prodStyle = Styles.yellow;
+			}
+			GUILayout.Label ("Productivity: " + productivity.ToString("G3"),
+							 prodStyle);
 			GUILayout.EndHorizontal ();
 		}
 

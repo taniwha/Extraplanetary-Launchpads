@@ -153,6 +153,22 @@ namespace ExtraplanetaryLaunchpads {
 		}
 		public string KACalarmID = "";
 
+		public ExWorkshop master
+		{
+			get;
+			private set;
+		}
+
+		public double productivity
+		{
+			get {
+				if (master != null) {
+					return master.VesselProductivity;
+				}
+				return 0;
+			}
+		}
+
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
 		Part craftRoot;
@@ -348,6 +364,7 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive=false, active = true)]
 		void ExDiscoverWorkshops (BaseEventData data)
 		{
+			master = data.Get<ExWorkshop> ("master");
 			data.Get<List<ExWorkSink>> ("sinks").Add (this);
 		}
 

@@ -361,8 +361,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		[KSPEvent (guiActive=false, active = true)]
-		void ExDiscoverWorkshops (BaseEventData data)
+		public void ExDiscoverWorkshops (BaseEventData data)
 		{
 			master = data.Get<ExWorkshop> ("master");
 			data.Get<List<ExWorkSink>> ("sinks").Add (this);

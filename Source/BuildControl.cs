@@ -361,7 +361,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void ExDiscoverWorkshops (BaseEventData data)
+		public void ExDiscoverWorkshops (BaseEventDetails data)
 		{
 			master = data.Get<ExWorkshop> ("master");
 			data.Get<List<ExWorkSink>> ("sinks").Add (this);

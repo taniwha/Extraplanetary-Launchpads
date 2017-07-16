@@ -1,5 +1,5 @@
 #! /bin/sh
-
+set -e
 ver=`Source/tools/git-version-gen --prefix v .tarball-version`
 make GAMEDATA=`pwd`/tmp install
 cd tmp

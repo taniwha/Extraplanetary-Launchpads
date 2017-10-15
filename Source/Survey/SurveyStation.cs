@@ -123,7 +123,7 @@ namespace ExtraplanetaryLaunchpads {
 		void SetSite (SurveySite selected_site)
 		{
 			if (site == selected_site) {
-				if (site != null) {
+				if (site != null && virtualPad != null) {
 					// update display
 					virtualPad.SetSite (site);
 				}

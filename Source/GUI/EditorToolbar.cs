@@ -40,13 +40,13 @@ namespace ExtraplanetaryLaunchpads {
 
 		void onGUIEditorToolbarReady ()
 		{
-			var cat = PartCategorizer.Instance.filters.Where (c => c.button.categoryName == "Filter by module").FirstOrDefault ();
+			var cat = PartCategorizer.Instance.filters.Where (c => c.button.categoryName == "Filter by Module").FirstOrDefault ();
 			foreach (var subcat in cat.subcategories) {
 				if (subcat.button.categoryName.StartsWith ("EL ")) {
 					subcat.button.SetIcon (icon);
 				}
 			}
-			cat = PartCategorizer.Instance.filters.Find (c => c.button.categoryName == "Filter by function");
+			cat = PartCategorizer.Instance.filters.Find (c => c.button.categoryName == "Filter by Function");
 			PartCategorizer.AddCustomSubcategoryFilter (cat, "EL Items", "EL Items", icon, elItemFilter);
 		}
 

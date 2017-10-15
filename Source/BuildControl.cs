@@ -565,7 +565,7 @@ namespace ExtraplanetaryLaunchpads {
 				craftVessel.loaded = true;
 				craftVessel.packed = false;
 				craftVessel.GetHeightFromTerrain ();
-				Debug.Log (String.Format ("[EL] hft {0}", craftVessel.heightFromTerrain));
+				Debug.LogFormat ("[EL] hft {0}", craftVessel.heightFromTerrain);
 				craftVessel.loaded = loaded;
 				craftVessel.packed = packed;
 			}

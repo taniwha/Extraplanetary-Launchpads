@@ -516,6 +516,9 @@ Construction Basics
 \end_layout
 
 \begin_layout Standard
+\begin_inset Preview
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -613,6 +616,11 @@ digraph[scale=0.5]{ConstructionBasics}{
 \begin_layout Plain Layout
 
 }
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -3170,32 +3178,26 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
-
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3293,37 +3295,30 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3348,17 +3343,14 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3485,32 +3477,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3788,37 +3774,30 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3902,32 +3881,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -4011,42 +3984,34 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
-
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
-
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 

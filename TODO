@@ -1,0 +1,24 @@
+refurbish
+	Solid Fuel
+	Ablator
+	... (resources with resource recipes)
+
+disposable pad
+	works like a normal pad except:
+		it is destroyed when the build is finalized
+		the build is permanently attached to the previous location of the pad
+			need part on build to specify attachment point?
+			use root part?
+				require spare stack node?
+				which stack node?
+				orientation?
+
+recycler
+	pause instead of dump
+	capture but don't recycle (+release?)
+	reduce randomness with upgrades
+
+structural material
+refractory material
+transparent material
+electronics

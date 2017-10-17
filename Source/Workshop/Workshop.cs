@@ -46,6 +46,9 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 	public float ProductivityFactor = 1.0f;
 
 	[KSPField]
+	public float UnmannedProductivity = 0;
+
+	[KSPField]
 	public bool FullyEquipped = false;
 
 	[KSPField]
@@ -281,7 +284,7 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 		foreach (var crew in crewList) {
 			kh += KerbalContribution (crew);
 		}
-		Productivity = kh * ProductivityFactor;
+		Productivity = kh * ProductivityFactor + UnmannedProductivity;
 	}
 
 	void onCrewTransferred (GameEvents.HostedFromToAction<ProtoCrewMember,Part> hft)

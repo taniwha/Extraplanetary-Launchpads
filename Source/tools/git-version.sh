@@ -27,7 +27,7 @@ cat > bin/EL.version <<EOF
 {
 	"NAME":"Extraplanetary Launchpads",
 	"URL":"http://taniwha.org/~bill/EL.version",
-	"DOWNLOAD":"http://forum.kerbalspaceprogram.com/threads/59545",
+	"DOWNLOAD":"http://taniwha.org/~bill/Extraplanetary_Launchpads_v$full_version.zip",
 	"VERSION":{"MAJOR":$MAJOR,"MINOR":$MINOR,"PATCH":$PATCH,"BUILD":$BUILD},
 	"KSP_VERSION":{"MAJOR":$KSPMAJOR,"MINOR":$KSPMINOR,"PATCH":$KSPPATCH}
 }

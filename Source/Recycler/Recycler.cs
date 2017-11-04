@@ -25,14 +25,28 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier
+public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlInterface
 {
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField] public string RecycleField_name = "RecycleField";
 	[KSPField (guiName = "State", guiActive = true)] public string status;
 
+	[KSPField (isPersistant = true)]
+	public bool Operational = true;
+
 	Collider RecycleField;
 	RecyclerFSM sm;
+
+	public bool isBusy
+	{
+		get {return sm != null && sm.isBusy; }
+	}
+
+	public bool canOperate
+	{
+		get { return Operational; }
+		set { Operational = value; }
+	}
 
 	public override string GetInfo ()
 	{

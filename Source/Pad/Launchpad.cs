@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELLaunchPad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder
+	public class ELLaunchPad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -32,6 +32,9 @@ namespace ExtraplanetaryLaunchpads {
 		public string SpawnTransform;
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string PadName = "";
+
+		[KSPField (isPersistant = true)]
+		public bool Operational = true;
 
 		public float spawnOffset = 0;
 		Transform launchTransform;
@@ -60,7 +63,7 @@ namespace ExtraplanetaryLaunchpads {
 		public bool canBuild
 		{
 			get {
-				return true;
+				return canOperate;
 			}
 		}
 
@@ -121,6 +124,19 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				part.SetHighlightDefault ();
 			}
+		}
+
+		public bool isBusy
+		{
+			get {
+				return control.state > ELBuildControl.State.Planning;
+			}
+		}
+
+		public bool canOperate
+		{
+			get { return Operational; }
+			set { Operational = value; }
 		}
 
 		[KSPEvent (guiActive=false, active = true)]

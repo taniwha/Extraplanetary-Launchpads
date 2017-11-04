@@ -25,10 +25,13 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder
+	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface
 	{
-		[KSPField (isPersistant = true)]
+		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string StationName = "";
+
+		[KSPField (isPersistant = true)]
+		public bool Operational = true;
 
 		EL_VirtualPad virtualPad;
 		DropDownList site_list;
@@ -67,7 +70,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (vessel.situation == Vessel.Situations.LANDED
 					|| vessel.situation == Vessel.Situations.SPLASHED
 					|| vessel.situation == Vessel.Situations.PRELAUNCH) {
-					return true;
+					return canOperate;
 				}
 				return false;
 			}
@@ -107,6 +110,22 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			set {
 				StationName = value;
+			}
+		}
+
+		public bool isBusy
+		{
+			get {
+				return control.state > ELBuildControl.State.Planning;
+			}
+		}
+
+		public bool canOperate
+		{
+			get { return Operational; }
+			set {
+				Operational = value;
+				DetermineRange ();
 			}
 		}
 
@@ -384,9 +403,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (vs.host != vessel) {
 				return;
 			}
-			if (canBuild) {
-				StartCoroutine (WaitAndFindSites ());
-			}
+			DetermineRange ();
 		}
 
 		void onCrewTransferred (GameEvents.HostedFromToAction<ProtoCrewMember,Part> hft)

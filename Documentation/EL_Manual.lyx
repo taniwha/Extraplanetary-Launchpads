@@ -2164,8 +2164,25 @@ Overview
 \end_layout
 
 \begin_layout Description
+ELControlInterface Not actually a module, but an interface implemented by
+ some modules.
+ Used for external control of the operation of the implementing module.
+\end_layout
+
+\begin_layout Description
 ELRecycler Destroys anything it touches (including unfortunate kerbals),
  reclaiming what resources it can.
+ Implements 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
@@ -2173,6 +2190,17 @@ ELLaunchPad Builds complete vessels attached (pseudo-docked) to the current
  vessel.
  Allows post-build resource transfer without any extra fuss.
  Supports building both landed or in orbit.
+ Implements 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
@@ -2236,6 +2264,17 @@ key "KAS"
 
  is almost always installed with it, survey stations are probably the preferred
  tool for landed operations.
+ Implements 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
@@ -2252,6 +2291,93 @@ Configuration
 For the most part, EL places no restrictions on the models used for parts
  using EL's module, so unless otherwise stated, models are completely free-form
  as far as EL is concerned.
+\end_layout
+
+\begin_layout Subsubsection
+ELControlInterface
+\end_layout
+
+\begin_layout Standard
+This is not a part module, but rather a 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+C#
+\end_layout
+
+\end_inset
+
+ interface implemented by some part modules.
+ Its purpose is to allow other mods easy control and detection of the operationa
+l status of EL's modules.
+ For example, mods with inflatable parts can disable the EL module when
+ the part is deflated and block deflation when the EL part is busy.
+\end_layout
+
+\begin_layout Paragraph
+Fields
+\end_layout
+
+\begin_layout Standard
+Note that these are actually properties, so access via reflection needs
+ to be done using 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+GetProperty
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+PropertyInfo.GetValue
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+PropertyInfo.Setvalue
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+isBusy Read-only boolean that indicates whether the module is currently
+ busy processing something.
+ While not enforced, the module should not be disabled while it is busy
+ (i.e.
+ the part should not be deflated).
+\end_layout
+
+\begin_layout Description
+canOperate Boolean usable by other part modules to enable or disable (or
+ detect) the operational status of the EL part module.
+ Setting this may cause the implementing module to run other code (e.g.
+ the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELSurveyStation
+\end_layout
+
+\end_inset
+
+ module will recompute its range and possibly scan for sites), so mods must
+ invoke the property setter to guarantee correct behavior.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2298,6 +2424,31 @@ ReycleField
 RecycleRate Specifies the recycling rate in tons/second.
  Defaults to 
 \begin_inset Formula $1.0t/s$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+Operational Persistent backing for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface.canOperate
+\end_layout
+
+\end_inset
+
+.
+ Defaults to 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+true
+\end_layout
+
 \end_inset
 
 .
@@ -2379,6 +2530,31 @@ SpawnHeightOffset
 PadName Specifies the name of the launchpad.
  Note that this is editable by the user both in the editor (VAB/SPH) or
  in flight.
+\end_layout
+
+\begin_layout Description
+Operational Persistent backing for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface.canOperate
+\end_layout
+
+\end_inset
+
+.
+ Defaults to 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2530,6 +2706,26 @@ ion skill can contribute).
 \end_layout
 
 \begin_layout Description
+UnmannedProductivity Productivity of the workshop when unmanned.
+ Not affected by 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ProductivityFactor
+\end_layout
+
+\end_inset
+
+.
+ Defaults to 
+\begin_inset Formula $0.0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
 FullyEquipped If true, then even workshops with productivity factors less
  than 
 \begin_inset Formula $1.0$
@@ -2617,6 +2813,31 @@ Module Fields
 StationName Specifies the name of the survey station.
  Note that this is editable by the user both in the editor (VAB/SPH) or
  in flight.
+\end_layout
+
+\begin_layout Description
+Operational Persistent backing for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface.canOperate
+\end_layout
+
+\end_inset
+
+.
+ Defaults to 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3178,26 +3399,32 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
+
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3295,30 +3522,37 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3343,14 +3577,17 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3477,26 +3714,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3774,30 +4017,37 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3881,26 +4131,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3984,34 +4240,42 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
+
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
+
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 

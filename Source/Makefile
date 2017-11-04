@@ -62,6 +62,7 @@ EL_FILES := \
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\
 	BuildControl.cs						\
+	ControlInterface.cs					\
 	Settings.cs							\
 	$e
 

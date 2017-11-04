@@ -346,6 +346,14 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public bool isBusy
+		{
+			get {
+				return (fsm.CurrentState != state_off
+						&& fsm.CurrentState != state_idle);
+			}
+		}
+
 		public double ResourceMass
 		{
 			get {

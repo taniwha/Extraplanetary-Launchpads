@@ -45,7 +45,18 @@ public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlI
 	public bool canOperate
 	{
 		get { return Operational; }
-		set { Operational = value; }
+		set {
+			Operational = value;
+			Events["Activate"].active = value;
+			Events["Deactivate"].active = false;
+			if (sm != null) {
+				if (value) {
+					sm.Enable ();
+				} else {
+					sm.Disable ();
+				}
+			}
+		}
 	}
 
 	public override string GetInfo ()

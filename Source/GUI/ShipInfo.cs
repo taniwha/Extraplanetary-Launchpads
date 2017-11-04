@@ -25,7 +25,7 @@ using KSP.UI.Screens;
 
 namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
-	public class ExShipInfo : MonoBehaviour
+	public class ELShipInfo : MonoBehaviour
 	{
 		static Rect winpos;
 		public static bool showGUI = false;
@@ -86,7 +86,7 @@ namespace ExtraplanetaryLaunchpads {
 				yield return null;
 			}
 			ShipConstruct ship = EditorLogic.fetch.ship;
-			Debug.LogFormat ("ExShipInfo.WaitAndRebuildList: {0}", ship);
+			Debug.LogFormat ("ELShipInfo.WaitAndRebuildList: {0}", ship);
 
 			buildCost = null;
 			cashed_cost = null;
@@ -137,7 +137,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		private void onEditorLoad (ShipConstruct ship, CraftBrowserDialog.LoadType loadType)
 		{
-			Debug.LogFormat ("ExShipInfo.onEditorLoad: {0} {1}", ship, loadType);
+			Debug.LogFormat ("ELShipInfo.onEditorLoad: {0} {1}", ship, loadType);
 			RebuildList ();
 		}
 
@@ -242,7 +242,7 @@ namespace ExtraplanetaryLaunchpads {
 			scrollPosR = ResourcePanel ("Required", cost.required, scrollPosR);
 			scrollPosO = ResourcePanel ("Optional", cost.optional, scrollPosO);
 
-			string ver = ExVersionReport.GetVersion ();
+			string ver = ELVersionReport.GetVersion ();
 			GUILayout.Label(ver);
 			GUILayout.EndVertical ();
 			GUI.DragWindow ();

@@ -2164,19 +2164,19 @@ Overview
 \end_layout
 
 \begin_layout Description
-ExRecycler Destroys anything it touches (including unfortunate kerbals),
+ELRecycler Destroys anything it touches (including unfortunate kerbals),
  reclaiming what resources it can.
 \end_layout
 
 \begin_layout Description
-ExLaunchPad Builds complete vessels attached (pseudo-docked) to the current
+ELLaunchPad Builds complete vessels attached (pseudo-docked) to the current
  vessel.
  Allows post-build resource transfer without any extra fuss.
  Supports building both landed or in orbit.
 \end_layout
 
 \begin_layout Description
-ExTarget Allows a part to be targeted.
+ELTarget Allows a part to be targeted.
  Includes orientation so it works with any docking alignment mod (DPAI
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2202,18 +2202,18 @@ key "NAVHUD"
 \end_layout
 
 \begin_layout Description
-ExWorkshop Collect productivity from kerbals in the part.
+ELWorkshop Collect productivity from kerbals in the part.
  Works with either normal parts with crew capacity or command chairs.
 \end_layout
 
 \begin_layout Description
-ExSurveyStation Builds complete vessels at locations marked out using survey
+ELSurveyStation Builds complete vessels at locations marked out using survey
  stakes (parts with the 
 \begin_inset Flex Code
 status open
 
 \begin_layout Plain Layout
-ExSurveyStake
+ELSurveyStake
 \end_layout
 
 \end_inset
@@ -2239,7 +2239,7 @@ key "KAS"
 \end_layout
 
 \begin_layout Description
-ExSurveyStake Marks locations for survey station.
+ELSurveyStake Marks locations for survey station.
  In the current implementation, a stake must be the only part in the vessel
  for the survey station to recognize it.
 \end_layout
@@ -2255,7 +2255,7 @@ For the most part, EL places no restrictions on the models used for parts
 \end_layout
 
 \begin_layout Subsubsection
-ExRecycler
+ELRecycler
 \end_layout
 
 \begin_layout Paragraph
@@ -2304,7 +2304,7 @@ RecycleRate Specifies the recycling rate in tons/second.
 \end_layout
 
 \begin_layout Subsubsection
-ExLaunchPad
+ELLaunchPad
 \end_layout
 
 \begin_layout Paragraph
@@ -2382,7 +2382,7 @@ PadName Specifies the name of the launchpad.
 \end_layout
 
 \begin_layout Subsubsection
-ExTarget
+ELTarget
 \end_layout
 
 \begin_layout Paragraph
@@ -2424,7 +2424,7 @@ Target
 \end_layout
 
 \begin_layout Subsubsection
-ExWorkshop
+ELWorkshop
 \end_layout
 
 \begin_layout Paragraph
@@ -2569,7 +2569,7 @@ KerbalSeat
 \end_layout
 
 \begin_layout Subsubsection
-ExSurveyStation
+ELSurveyStation
 \end_layout
 
 \begin_layout Paragraph
@@ -2620,7 +2620,7 @@ StationName Specifies the name of the survey station.
 \end_layout
 
 \begin_layout Subsubsection
-ExSurveyStake
+ELSurveyStake
 \end_layout
 
 \begin_layout Paragraph
@@ -2649,7 +2649,7 @@ As the survey system will not look at vessels with more than one part to
 status open
 
 \begin_layout Plain Layout
-ExSurveyStake
+ELSurveyStake
 \end_layout
 
 \end_inset

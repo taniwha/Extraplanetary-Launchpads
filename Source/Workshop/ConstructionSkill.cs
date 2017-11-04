@@ -27,7 +27,7 @@ namespace ExtraplanetaryLaunchpads {
 
 using KerbalStats;
 
-	public class ExConstructionSkill : ExperienceEffect
+	public class ELConstructionSkill : ExperienceEffect
 	{
 		static string [] skills = new string [] {
 			" can work in a fully equipped workshop.",
@@ -69,11 +69,11 @@ using KerbalStats;
 		{
 		}
 
-		public ExConstructionSkill (ExperienceTrait parent) : base (parent)
+		public ELConstructionSkill (ExperienceTrait parent) : base (parent)
 		{
 		}
 
-		public ExConstructionSkill (ExperienceTrait parent, float[] modifiers) : base (parent, modifiers)
+		public ELConstructionSkill (ExperienceTrait parent, float[] modifiers) : base (parent, modifiers)
 		{
 		}
 	}

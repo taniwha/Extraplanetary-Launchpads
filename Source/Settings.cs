@@ -33,7 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 			GameScenes.TRACKSTATION,
 		})
 	]
-	public class ExSettings : ScenarioModule
+	public class ELSettings : ScenarioModule
 	{
 		static bool settings_loaded;
 		public static bool KIS_Present
@@ -76,11 +76,11 @@ namespace ExtraplanetaryLaunchpads {
 			"Pause Game"
 		};
 
-		public static ExSettings current
+		public static ELSettings current
 		{
 			get {
 				var game = HighLogic.CurrentGame;
-				return game.scenarios.Select (s => s.moduleRef).OfType<ExSettings> ().SingleOrDefault ();
+				return game.scenarios.Select (s => s.moduleRef).OfType<ELSettings> ().SingleOrDefault ();
 			}
 		}
 
@@ -126,9 +126,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void UpdateToolbarButton ()
 		{
-			ExAppButton.UpdateVisibility ();
-			if (ExToolbar_SettingsWindow.Instance != null) {
-				ExToolbar_SettingsWindow.Instance.UpdateVisibility ();
+			ELAppButton.UpdateVisibility ();
+			if (ELToolbar_SettingsWindow.Instance != null) {
+				ELToolbar_SettingsWindow.Instance.UpdateVisibility ();
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (settings.HasNode ("ShipInfo")) {
 				var node = settings.GetNode ("ShipInfo");
-				ExShipInfo.LoadSettings (node);
+				ELShipInfo.LoadSettings (node);
 			}
 		}
 
@@ -159,7 +159,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (settings.HasNode ("BuildWindow")) {
 				var node = settings.GetNode ("BuildWindow");
-				ExBuildWindow.LoadSettings (node);
+				ELBuildWindow.LoadSettings (node);
 			}
 		}
 
@@ -193,8 +193,8 @@ namespace ExtraplanetaryLaunchpads {
 			settings.AddValue ("KACAction", KACAction.ToString ());
 			settings.AddValue ("PreferBlizzy", PreferBlizzy);
 
-			ExShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
-			ExBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
+			ELShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
+			ELBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
 		}
 
 		void LoadGlobalSettings ()
@@ -246,9 +246,9 @@ namespace ExtraplanetaryLaunchpads {
 			uk = GUILayout.Toggle (uk, "Create alarms in Kerbal Alarm Clock");
 			use_KAC = uk;
 
-			bool si = ExShipInfo.showGUI;
+			bool si = ELShipInfo.showGUI;
 			si = GUILayout.Toggle (si, "Build Resources window currently visible in editor");
-			ExShipInfo.showGUI = si;
+			ELShipInfo.showGUI = si;
 
 			if (uk) {
 				int actionint;
@@ -315,7 +315,7 @@ namespace ExtraplanetaryLaunchpads {
 							Screen.height / 2 - 30, 0, 0);
 					}
 					string name = "Extraplanetary Launchpad";
-					string ver = ExVersionReport.GetVersion ();
+					string ver = ELVersionReport.GetVersion ();
 					windowpos = GUILayout.Window (GetInstanceID (),
 						windowpos, WindowGUI,
 						name + " " + ver,

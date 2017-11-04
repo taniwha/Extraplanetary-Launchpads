@@ -27,7 +27,7 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class AirstreamShield : IAirstreamShield
 	{
-		ExBuildControl.IBuilder builder;
+		ELBuildControl.IBuilder builder;
 		public bool ClosedAndLocked ()
 		{
 			return false;		// there is no shield
@@ -43,7 +43,7 @@ namespace ExtraplanetaryLaunchpads {
 			return builder.vessel;
 		}
 
-		public AirstreamShield (ExBuildControl.IBuilder builder)
+		public AirstreamShield (ELBuildControl.IBuilder builder)
 		{
 			this.builder = builder;
 		}

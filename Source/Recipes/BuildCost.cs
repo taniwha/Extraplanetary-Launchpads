@@ -37,17 +37,17 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void addPart (Part part)
 		{
-			if (ExSettings.KIS_Present) {
+			if (ELSettings.KIS_Present) {
 				KIS.KISWrapper.GetResources (part, container.resources);
 			}
-			ExRecipeDatabase.ProcessPart (part, hullResoures.resources);
+			ELRecipeDatabase.ProcessPart (part, hullResoures.resources);
 			resources.AddPart (part);
 			mass += part.mass;
 		}
 
 		public void removePart (Part part)
 		{
-			if (ExSettings.KIS_Present) {
+			if (ELSettings.KIS_Present) {
 				container.RemovePart (part);
 			}
 			hullResoures.RemovePart (part);
@@ -60,10 +60,10 @@ namespace ExtraplanetaryLaunchpads {
 			var reslist = resources.resources.Keys.ToList ();
 			foreach (string res in reslist) {
 				double amount = resources.ResourceAmount (res);
-				var recipe = ExRecipeDatabase.ResourceRecipe (res);
+				var recipe = ELRecipeDatabase.ResourceRecipe (res);
 
 				if (recipe != null) {
-					double density = ExRecipeDatabase.ResourceDensity (res);
+					double density = ELRecipeDatabase.ResourceDensity (res);
 					double mass = amount * density;
 					recipe = recipe.Bake (mass);
 					foreach (var ingredient in recipe.ingredients) {

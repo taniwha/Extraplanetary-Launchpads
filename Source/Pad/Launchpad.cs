@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExLaunchPad : PartModule, IModuleInfo, IPartMassModifier, ExBuildControl.IBuilder
+	public class ELLaunchPad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -71,7 +71,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public ExBuildControl control
+		public ELBuildControl control
 		{
 			get;
 			private set;
@@ -124,9 +124,9 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		[KSPEvent (guiActive=false, active = true)]
-		void ExDiscoverWorkshops (BaseEventDetails data)
+		void ELDiscoverWorkshops (BaseEventDetails data)
 		{
-			control.ExDiscoverWorkshops (data);
+			control.ELDiscoverWorkshops (data);
 		}
 
 		public void SetCraftMass (double mass)
@@ -144,7 +144,7 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
-		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
+		public Transform PlaceShip (ShipConstruct ship, ELBuildControl.Box vessel_bounds)
 		{
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
@@ -195,7 +195,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnAwake ()
 		{
-			control = new ExBuildControl (this);
+			control = new ELBuildControl (this);
 		}
 
 		public override void OnStart (PartModule.StartState state)
@@ -217,21 +217,21 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
-			ExBuildWindow.HideGUI ();
+			ELBuildWindow.HideGUI ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
-			ExBuildWindow.ShowGUI ();
-			ExBuildWindow.SelectPad (control);
+			ELBuildWindow.ShowGUI ();
+			ELBuildWindow.SelectPad (control);
 		}
 
 		[KSPEvent (guiActive = true, guiActiveEditor = true,
 				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
-			ExRenameWindow.ShowGUI (this);
+			ELRenameWindow.ShowGUI (this);
 		}
 
 		public void UpdateMenus (bool visible)

@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ExBuildControl.IBuilder
+	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder
 	{
 		[KSPField (isPersistant = true)]
 		public string StationName = "";
@@ -80,7 +80,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public ExBuildControl control
+		public ELBuildControl control
 		{
 			get;
 			private set;
@@ -115,8 +115,8 @@ namespace ExtraplanetaryLaunchpads {
 			if (site_list == null) {
 				return;
 			}
-			site_list.styleListItem = ExBuildWindow.Styles.listItem;
-			site_list.styleListBox = ExBuildWindow.Styles.listBox;
+			site_list.styleListItem = ELBuildWindow.Styles.listItem;
+			site_list.styleListBox = ELBuildWindow.Styles.listBox;
 			site_list.DrawBlockingSelector ();
 		}
 
@@ -153,9 +153,9 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (site_list == null) {
 				GUILayout.BeginHorizontal ();
-				if (control.state == ExBuildControl.State.Complete) {
+				if (control.state == ELBuildControl.State.Complete) {
 					GUILayout.Label ("No sites found. Explosions likely.",
-									 ExBuildWindow.Styles.red);
+									 ELBuildWindow.Styles.red);
 				} else {
 					GUILayout.Label ("No sites found.");
 				}
@@ -192,9 +192,9 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		[KSPEvent (guiActive=false, active = true)]
-		void ExDiscoverWorkshops (BaseEventDetails data)
+		void ELDiscoverWorkshops (BaseEventDetails data)
 		{
-			control.ExDiscoverWorkshops (data);
+			control.ELDiscoverWorkshops (data);
 		}
 
 		public void SetCraftMass (double mass)
@@ -212,7 +212,7 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
-		public Transform PlaceShip (ShipConstruct ship, ExBuildControl.Box vessel_bounds)
+		public Transform PlaceShip (ShipConstruct ship, ELBuildControl.Box vessel_bounds)
 		{
 			if (site == null) {
 				return part.transform;
@@ -258,7 +258,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void OnAwake ()
 		{
-			control = new ExBuildControl (this);
+			control = new ELBuildControl (this);
 		}
 
 		public override void OnStart (PartModule.StartState state)
@@ -271,9 +271,9 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
 			GameEvents.onCrewTransferred.Add (onCrewTransferred);
 			StartCoroutine (WaitAndDetermineRange ());
-			ExSurveyTracker.onSiteAdded.Add (onSiteAdded);
-			ExSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
-			ExSurveyTracker.onSiteModified.Add (onSiteModified);
+			ELSurveyTracker.onSiteAdded.Add (onSiteAdded);
+			ELSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
+			ELSurveyTracker.onSiteModified.Add (onSiteModified);
 		}
 
 		void OnDestroy ()
@@ -282,30 +282,30 @@ namespace ExtraplanetaryLaunchpads {
 				control.OnDestroy ();
 				GameEvents.onVesselSituationChange.Remove (onVesselSituationChange);
 				GameEvents.onCrewTransferred.Remove (onCrewTransferred);
-				ExSurveyTracker.onSiteAdded.Remove (onSiteAdded);
-				ExSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
-				ExSurveyTracker.onSiteModified.Remove (onSiteModified);
+				ELSurveyTracker.onSiteAdded.Remove (onSiteAdded);
+				ELSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
+				ELSurveyTracker.onSiteModified.Remove (onSiteModified);
 			}
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
-			ExBuildWindow.HideGUI ();
+			ELBuildWindow.HideGUI ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
-			ExBuildWindow.ShowGUI ();
-			ExBuildWindow.SelectPad (control);
+			ELBuildWindow.ShowGUI ();
+			ELBuildWindow.SelectPad (control);
 		}
 
 		[KSPEvent (guiActive = true, guiActiveEditor = true,
 				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
-			ExRenameWindow.ShowGUI (this);
+			ELRenameWindow.ShowGUI (this);
 		}
 
 		public void UpdateMenus (bool visible)
@@ -316,7 +316,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void FindSites ()
 		{
-			available_sites = ExSurveyTracker.instance.FindSites (vessel, range);
+			available_sites = ELSurveyTracker.instance.FindSites (vessel, range);
 			if (available_sites == null || available_sites.Count < 1) {
 				Highlight (false);
 				site_list = null;
@@ -357,7 +357,7 @@ namespace ExtraplanetaryLaunchpads {
 			int bestLevel = -2;
 			foreach (var crew in crewList) {
 				int level = -1;
-				if (crew.GetEffect<ExSurveySkill> () != null) {
+				if (crew.GetEffect<ELSurveySkill> () != null) {
 					level = crew.experienceLevel;
 				}
 				if (level > bestLevel) {
@@ -365,7 +365,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				Debug.LogFormat ("[EL SurveyStation] Kerbal: {0} {1} {2} {3}",
 								 crew.name,
-								 crew.GetEffect<ExSurveySkill> () != null,
+								 crew.GetEffect<ELSurveySkill> () != null,
 								 crew.experienceLevel, level);
 			}
 			if (bestLevel > 5) {
@@ -401,14 +401,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		void onSiteAdded (SurveySite s)
 		{
-			Debug.LogFormat ("[ExSurveyStation] onSiteAdded");
+			Debug.LogFormat ("[ELSurveyStation] onSiteAdded");
 			FindSites ();
 			SetSite (site);
 		}
 
 		void onSiteRemoved (SurveySite s)
 		{
-			Debug.LogFormat ("[ExSurveyStation] onSiteRemoved");
+			Debug.LogFormat ("[ELSurveyStation] onSiteRemoved");
 			if (s == site) {
 				site = null;
 			}
@@ -417,7 +417,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void onSiteModified (SurveySite s)
 		{
-			Debug.LogFormat ("[ExSurveyStation] onSiteModified");
+			Debug.LogFormat ("[ELSurveyStation] onSiteModified");
 			FindSites ();
 			SetSite (site);
 		}

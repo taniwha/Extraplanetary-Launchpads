@@ -116,7 +116,7 @@ namespace ExtraplanetaryLaunchpads {
 			yield return null;
 
 			for (int i = 0; i < 6; i++) {
-				string use = ExSurveyStake.StakeUses[i + 1];
+				string use = ELSurveyStake.StakeUses[i + 1];
 				Vector3d pos;
 				if (points.bounds.TryGetValue (use, out pos)) {
 					bounds[i].transform.position = points.center + pos;

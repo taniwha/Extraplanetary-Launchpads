@@ -27,7 +27,7 @@ using Highlighting;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExSurveyStake : PartModule, IModuleInfo
+	public class ELSurveyStake : PartModule, IModuleInfo
 	{
 		internal static string[] StakeUses = { "Origin",
 											   "+X", "+Y", "+Z",
@@ -109,7 +109,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void OnPartDie (Part p)
 		{
 			if (p == part) {
-				ExSurveyTracker.instance.RemoveStake (vessel);
+				ELSurveyTracker.instance.RemoveStake (vessel);
 			}
 		}
 

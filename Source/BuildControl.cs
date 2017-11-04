@@ -26,7 +26,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExBuildControl : ExWorkSink
+	public class ELBuildControl : ELWorkSink
 	{
 		public class Box
 		{
@@ -80,7 +80,7 @@ namespace ExtraplanetaryLaunchpads {
 			{
 				get;
 			}
-			ExBuildControl control
+			ELBuildControl control
 			{
 				get;
 			}
@@ -153,7 +153,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 		public string KACalarmID = "";
 
-		public ExWorkshop master
+		public ELWorkshop master
 		{
 			get;
 			private set;
@@ -233,7 +233,7 @@ namespace ExtraplanetaryLaunchpads {
 				var cost = buildCost.required;
 
 				foreach (var bres in built) {
-					var cres = ExBuildWindow.FindResource (cost, bres.name);
+					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					mass += (cres.amount - bres.amount) * bres.density;
 				}
 			}
@@ -300,7 +300,7 @@ namespace ExtraplanetaryLaunchpads {
 			do {
 				count = 0;
 				foreach (var bres in built) {
-					var cres = ExBuildWindow.FindResource (cost, bres.name);
+					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					if (cres.amount - bres.amount > 0) {
 						count++;
 					}
@@ -313,7 +313,7 @@ namespace ExtraplanetaryLaunchpads {
 				did_work = false;
 				count = 0;
 				foreach (var bres in built) {
-					var cres = ExBuildWindow.FindResource (cost, bres.name);
+					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
 					if (remaining < 0) {
 						continue;
@@ -361,10 +361,10 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void ExDiscoverWorkshops (BaseEventDetails data)
+		public void ELDiscoverWorkshops (BaseEventDetails data)
 		{
-			master = data.Get<ExWorkshop> ("master");
-			data.Get<List<ExWorkSink>> ("sinks").Add (this);
+			master = data.Get<ELWorkshop> ("master");
+			data.Get<List<ELWorkSink>> ("sinks").Add (this);
 		}
 
 		internal void SetupCraftResources (Vessel vsl)
@@ -714,7 +714,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public ExBuildControl (IBuilder builder)
+		public ELBuildControl (IBuilder builder)
 		{
 			this.builder = builder;
 		}
@@ -816,12 +816,12 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (Part part in craftVessel.parts) {
 				part.ModulesOnStart ();
 			}
-			if (ExSettings.B9Wings_Present) {
+			if (ELSettings.B9Wings_Present) {
 				if (!InitializeB9Wings (craftVessel)
-					&& ExSettings.FAR_Present) {
+					&& ELSettings.FAR_Present) {
 					InitializeFARSurfaces (craftVessel);
 				}
-			} else if (ExSettings.FAR_Present) {
+			} else if (ELSettings.FAR_Present) {
 				InitializeFARSurfaces (craftVessel);
 			}
 

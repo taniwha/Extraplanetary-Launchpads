@@ -45,7 +45,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			center = Vector3d.zero;
 			foreach (var stake in site) {
-				string key = ExSurveyStake.StakeUses[stake.use];
+				string key = ELSurveyStake.StakeUses[stake.use];
 				var pos = stake.vessel.GetWorldPos3D ();
 				center += pos;
 				count++;
@@ -69,7 +69,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			center /= (double) count;
-			foreach (var key in ExSurveyStake.StakeUses) {
+			foreach (var key in ELSurveyStake.StakeUses) {
 				if (points.ContainsKey (key)) {
 					points[key] /= (double) counts[key];
 				}
@@ -77,7 +77,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (points.ContainsKey ("Origin")) {
 				center = points["Origin"];
 			}
-			foreach (var key in ExSurveyStake.StakeUses) {
+			foreach (var key in ELSurveyStake.StakeUses) {
 				if (bounds.ContainsKey (key)) {
 					bounds[key] /= (double) bcounts[key];
 					bounds[key] -= center;
@@ -176,7 +176,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		public Vector3 ShiftBounds (Transform frame, Vector3 pos,
-									ExBuildControl.Box box)
+									ELBuildControl.Box box)
 		{
 			Vector3 shift = new Vector3 (-pos.x, -box.min.y, -pos.z);
 			Vector3 mins = box.min - pos;

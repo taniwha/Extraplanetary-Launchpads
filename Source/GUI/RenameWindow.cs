@@ -25,10 +25,10 @@ using KSP.IO;
 namespace ExtraplanetaryLaunchpads {
 
 	[KSPAddon (KSPAddon.Startup.EveryScene, false)]
-	public class ExRenameWindow: MonoBehaviour
+	public class ELRenameWindow: MonoBehaviour
 	{
-		private static ExBuildControl.IBuilder padInstance = null;
-		private static ExRenameWindow windowInstance = null;
+		private static ELBuildControl.IBuilder padInstance = null;
+		private static ELRenameWindow windowInstance = null;
 		private static bool gui_enabled = false;
 		private static Rect windowpos = new Rect(Screen.width * 0.35f,Screen.height * 0.1f,1,1);
 		private static string newName;
@@ -50,7 +50,7 @@ namespace ExtraplanetaryLaunchpads {
 			gui_enabled = false;
 		}
 
-		public static void ShowGUI (ExBuildControl.IBuilder pad)
+		public static void ShowGUI (ELBuildControl.IBuilder pad)
 		{
 			padInstance = pad;
 			newName = pad.Name;
@@ -74,7 +74,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (GUILayout.Button ("OK")) {
 				padInstance.Name = newName;
 				gui_enabled = false;
-				ExBuildWindow.updateCurrentPads ();
+				ELBuildWindow.updateCurrentPads ();
 			}
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("Cancel")) {

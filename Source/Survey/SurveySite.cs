@@ -27,10 +27,10 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		List<Vessel> stakes;
 
-		internal ExSurveyStake this[int index]
+		internal ELSurveyStake this[int index]
 		{
 			get {
-				var m = stakes[index][0].Modules.OfType<ExSurveyStake> ();
+				var m = stakes[index][0].Modules.OfType<ELSurveyStake> ();
 				return m.FirstOrDefault ();
 			}
 		}
@@ -102,7 +102,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void AddStake (Vessel stake)
 		{
 			stakes.Add (stake);
-			ExSurveyTracker.onSiteModified.Fire (this);
+			ELSurveyTracker.onSiteModified.Fire (this);
 		}
 
 		public void RemoveStake (Vessel stake)
@@ -129,15 +129,15 @@ namespace ExtraplanetaryLaunchpads {
 					SurveySite site = new SurveySite (stakes);
 					stakes = old_stakes;
 
-					ExSurveyTracker.instance.AddSite (site);
+					ELSurveyTracker.instance.AddSite (site);
 				} else {
 					break;
 				}
 			}
 			if (stakes.Count == 0) {
-				ExSurveyTracker.instance.RemoveSite (this);
+				ELSurveyTracker.instance.RemoveSite (this);
 			} else {
-				ExSurveyTracker.onSiteModified.Fire (this);
+				ELSurveyTracker.onSiteModified.Fire (this);
 			}
 		}
 
@@ -156,10 +156,10 @@ namespace ExtraplanetaryLaunchpads {
 			SiteName = stakes[0].vesselName;
 		}
 
-		public IEnumerator<ExSurveyStake> GetEnumerator ()
+		public IEnumerator<ELSurveyStake> GetEnumerator ()
 		{
 			foreach (var stake in stakes) {
-				var m = stake[0].Modules.OfType<ExSurveyStake> ();
+				var m = stake[0].Modules.OfType<ELSurveyStake> ();
 				yield return m.FirstOrDefault ();
 			}
 		}

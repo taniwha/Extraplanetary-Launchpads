@@ -26,12 +26,12 @@ using KSP.IO;
 namespace ExtraplanetaryLaunchpads {
 
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
-	public class ExSurveyTracker : MonoBehaviour
+	public class ELSurveyTracker : MonoBehaviour
 	{
 		internal static EventData<SurveySite> onSiteRemoved = new EventData<SurveySite> ("onSiteRemoved");
 		internal static EventData<SurveySite> onSiteAdded = new EventData<SurveySite> ("onSiteAdded");
 		internal static EventData<SurveySite> onSiteModified = new EventData<SurveySite> ("onSiteModified");
-		internal static ExSurveyTracker instance;
+		internal static ELSurveyTracker instance;
 
 		Dictionary<string, SiteBody> sites;
 
@@ -79,14 +79,14 @@ namespace ExtraplanetaryLaunchpads {
 				if (vessel.Parts.Count != 1)
 					return false;
 
-				if (vessel[0].Modules.OfType<ExSurveyStake> ().Count () < 1)
+				if (vessel[0].Modules.OfType<ELSurveyStake> ().Count () < 1)
 					return false;
 			} else {
 				var pvessel = vessel.protoVessel;
 				if (pvessel.protoPartSnapshots.Count != 1)
 					return false;
 				var ppart = pvessel.protoPartSnapshots[0];
-				if (ppart.modules.Where (m => m.moduleName == "ExSurveyStake").Count () < 1)
+				if (ppart.modules.Where (m => m.moduleName == "ELSurveyStake").Count () < 1)
 					return false;
 				Debug.Log (String.Format ("[EL ST] stake on rails {0}", vessel.vesselName));
 			}

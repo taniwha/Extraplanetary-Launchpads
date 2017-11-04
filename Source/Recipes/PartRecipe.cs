@@ -37,7 +37,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (recipe.HasNode ("Resources")) {
 				structure_recipe = new Recipe (recipe.GetNode ("Resources"));
 			} else {
-				structure_recipe = ExRecipeDatabase.default_structure_recipe;
+				structure_recipe = ELRecipeDatabase.default_structure_recipe;
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			part_recipe = new Recipe ();
 			part_recipe.AddIngredient (new Ingredient ("structure", 5));
-			structure_recipe = ExRecipeDatabase.default_structure_recipe;
+			structure_recipe = ELRecipeDatabase.default_structure_recipe;
 		}
 
 		public Recipe Bake (double mass)
@@ -58,7 +58,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (pi.name == "structure") {
 					rec = structure_recipe;
 				} else {
-					rec = ExRecipeDatabase.module_recipes[pi.name];
+					rec = ELRecipeDatabase.module_recipes[pi.name];
 				}
 				var subr = rec.Bake (pi.ratio);
 				for (int j = 0; j < subr.ingredients.Count; j++) {

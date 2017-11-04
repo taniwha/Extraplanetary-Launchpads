@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
+public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier
 {
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField] public string RecycleField_name = "RecycleField";
@@ -111,12 +111,12 @@ public class ExRecycler : PartModule, IModuleInfo, IPartMassModifier
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
-	void ExDiscoverWorkshops (BaseEventDetails data)
+	void ELDiscoverWorkshops (BaseEventDetails data)
 	{
 		// Recyclers are not actual work-sinks, but the master is needed
 		// to check the vessel producitivity
 		if (sm != null) {
-			sm.SetMaster (data.Get<ExWorkshop> ("master"));
+			sm.SetMaster (data.Get<ELWorkshop> ("master"));
 		}
 	}
 

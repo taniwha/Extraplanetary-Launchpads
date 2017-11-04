@@ -22,7 +22,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
-	public class ExConverter: BaseConverter, IModuleInfo
+	public class ELConverter: BaseConverter, IModuleInfo
 	{
 		ConversionRecipe ratio_recipe;
 

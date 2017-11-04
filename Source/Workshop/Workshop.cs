@@ -28,19 +28,19 @@ namespace ExtraplanetaryLaunchpads {
 
 using KerbalStats;
 
-public interface ExWorkSink
+public interface ELWorkSink
 {
 	void DoWork (double kerbalHours);
 	bool isActive { get; }
 }
 
-public interface ExWorkSource
+public interface ELWorkSource
 {
 	double GetProductivity (double timeDelta);
 	bool isActive { get; }
 }
 
-public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
+public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 {
 	[KSPField]
 	public float ProductivityFactor = 1.0f;
@@ -69,9 +69,9 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 		}
 	}
 	private bool workshop_started;
-	private ExWorkshop master;
-	private List<ExWorkshop> sources;
-	private List<ExWorkSink> sinks;
+	private ELWorkshop master;
+	private List<ELWorkshop> sources;
+	private List<ELWorkSink> sinks;
 	private bool functional;
 	public float vessel_productivity
 	{
@@ -102,9 +102,9 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 		return null;
 	}
 
-	private static ExWorkshop findFirstWorkshop (Part part)
+	private static ELWorkshop findFirstWorkshop (Part part)
 	{
-		var shop = part.Modules.OfType<ExWorkshop> ().FirstOrDefault ();
+		var shop = part.Modules.OfType<ELWorkshop> ().FirstOrDefault ();
 		if (shop != null && shop.functional) {
 			return shop;
 		}
@@ -119,16 +119,16 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 
 	private void DiscoverWorkshops ()
 	{
-		ExWorkshop shop = findFirstWorkshop (vessel.rootPart);
+		ELWorkshop shop = findFirstWorkshop (vessel.rootPart);
 		if (shop == this) {
 			//Debug.Log (String.Format ("[EL Workshop] master"));
 			var data = new BaseEventDetails (BaseEventDetails.Sender.USER);
-			data.Set<ExWorkshop> ("master", this);
-			sources = new List<ExWorkshop> ();
-			sinks = new List<ExWorkSink> ();
-			data.Set<List<ExWorkshop>> ("sources", sources);
-			data.Set<List<ExWorkSink>> ("sinks", sinks);
-			vessel.rootPart.SendEvent ("ExDiscoverWorkshops", data);
+			data.Set<ELWorkshop> ("master", this);
+			sources = new List<ELWorkshop> ();
+			sinks = new List<ELWorkSink> ();
+			data.Set<List<ELWorkshop>> ("sources", sources);
+			data.Set<List<ELWorkSink>> ("sinks", sinks);
+			vessel.rootPart.SendEvent ("ELDiscoverWorkshops", data);
 		} else {
 			sources = null;
 			sinks = null;
@@ -163,15 +163,15 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 	}
 
 	[KSPEvent (guiActive=false, active = true)]
-	void ExDiscoverWorkshops (BaseEventDetails data)
+	void ELDiscoverWorkshops (BaseEventDetails data)
 	{
 		if (!functional) {
 			return;
 		}
 		// Even the master workshop is its own slave.
 		//Debug.Log (String.Format ("[EL Workshop] slave"));
-		master = data.Get<ExWorkshop> ("master");
-		data.Get<List<ExWorkshop>> ("sources").Add (this);
+		master = data.Get<ELWorkshop> ("master");
+		data.Get<List<ELWorkshop>> ("sources").Add (this);
 	}
 
 	private float Normal (float stupidity, float courage, float experience)
@@ -219,7 +219,7 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 		} else {
 			contribution = Normal (crew.stupidity, crew.courage, experience);
 		}
-		bool hasConstructionSkill = crew.GetEffect<ExConstructionSkill> () != null;
+		bool hasConstructionSkill = crew.GetEffect<ELConstructionSkill> () != null;
 		if (useSkill) {
 			if (!hasConstructionSkill) {
 				if (!enableUnskilled) {
@@ -271,7 +271,7 @@ public class ExWorkshop : PartModule, IModuleInfo, ExWorkSource
 		var crewList = EL_Utils.GetCrewList (part);
 		if (useSkill) {
 			foreach (var crew in crewList) {
-				if (crew.GetEffect<ExConstructionSkill> () != null) {
+				if (crew.GetEffect<ELConstructionSkill> () != null) {
 					if (crew.experienceLevel >= 4) {
 						enableSkilled = true;
 					}

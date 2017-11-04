@@ -24,7 +24,7 @@ using KSP.IO;
 namespace ExtraplanetaryLaunchpads {
 
 	[KSPAddon(KSPAddon.Startup.Instantly, true)]
-	public class ExVersionReport : MonoBehaviour
+	public class ELVersionReport : MonoBehaviour
 	{
 		static string version = null;
 

@@ -61,12 +61,12 @@ namespace ExtraplanetaryLaunchpads {
 							var s = sites[j];
 							sites[i].Merge (sites[j]);
 							sites.RemoveAt (j);
-							ExSurveyTracker.onSiteRemoved.Fire (s);
+							ELSurveyTracker.onSiteRemoved.Fire (s);
 							continue;
 						}
 						j++;
 					}
-					ExSurveyTracker.onSiteModified.Fire (sites[i]);
+					ELSurveyTracker.onSiteModified.Fire (sites[i]);
 					return sites[i];
 				}
 			}

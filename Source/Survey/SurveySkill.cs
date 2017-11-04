@@ -27,7 +27,7 @@ namespace ExtraplanetaryLaunchpads {
 
 using KerbalStats;
 
-	public class ExSurveySkill : ExperienceEffect
+	public class ELSurveySkill : ExperienceEffect
 	{
 		protected override float GetDefaultValue ()
 		{
@@ -46,7 +46,7 @@ using KerbalStats;
 			int exp = Parent.CrewMemberExperienceLevel (6);
 			return String.Format ("{0} can use survey sites out to {1}m.",
 								  pronoun,
-								  ExSurveyStation.site_ranges[exp + 2]);
+								  ELSurveyStation.site_ranges[exp + 2]);
 		}
 
 		public int GetValue ()
@@ -62,11 +62,11 @@ using KerbalStats;
 		{
 		}
 
-		public ExSurveySkill (ExperienceTrait parent) : base (parent)
+		public ELSurveySkill (ExperienceTrait parent) : base (parent)
 		{
 		}
 
-		public ExSurveySkill (ExperienceTrait parent, float[] modifiers) : base (parent, modifiers)
+		public ELSurveySkill (ExperienceTrait parent, float[] modifiers) : base (parent, modifiers)
 		{
 		}
 	}

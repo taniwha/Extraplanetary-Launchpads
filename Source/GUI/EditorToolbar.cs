@@ -26,7 +26,7 @@ using KSP.UI.Screens;
 
 namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false) ]
-	public class ExEditorToolbar : MonoBehaviour
+	public class ELEditorToolbar : MonoBehaviour
 	{
 		static Texture texture;
 		static Icon icon;
@@ -87,7 +87,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			elItems.Add ("OMD");
-			elItems.Add ("ExMallet");
+			elItems.Add ("ELMallet");
 			elItems.Add ("Magnetometer");
 		}
 

@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
-	public class ExExtractor: BaseDrill, IResourceConsumer//, IModuleInfo
+	public class ELExtractor: BaseDrill, IResourceConsumer//, IModuleInfo
 	{
 		[KSPField(guiName = "", guiActive = true, guiActiveEditor = false)]
 		public string ResourceStatus = "n/a";

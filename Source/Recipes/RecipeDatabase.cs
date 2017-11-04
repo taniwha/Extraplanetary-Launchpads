@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.Instantly, false)]
-	public class ExRecipeDatabase: MonoBehaviour
+	public class ELRecipeDatabase: MonoBehaviour
 	{
 		public static Dictionary<string, PartRecipe> part_recipes;
 		public static Dictionary<string, Recipe> module_recipes;
@@ -93,7 +93,7 @@ namespace ExtraplanetaryLaunchpads {
 				name = "kerbalEVA";
 			}
 			if (!part_recipes.ContainsKey (name)) {
-				print ("ExRecipeDatabase.ProcessPart: no part recipe for " + name);
+				print ("ELRecipeDatabase.ProcessPart: no part recipe for " + name);
 				return;
 			}
 			var recipe = part_recipes[name].Bake (part.mass);
@@ -127,15 +127,15 @@ namespace ExtraplanetaryLaunchpads {
 			List<LoadingSystem> list = LoadingScreen.Instance.loaders;
 			if (list != null) {
 				for (int i = 0; i < list.Count; i++) {
-					if (list[i] is ExRecipeLoader) {
-						//print("[EL Recipes] found ExRecipeLoader: " + i);
-						(list[i] as ExRecipeLoader).done = false;
+					if (list[i] is ELRecipeLoader) {
+						//print("[EL Recipes] found ELRecipeLoader: " + i);
+						(list[i] as ELRecipeLoader).done = false;
 						break;
 					}
 					if (list[i] is PartLoader) {
 						//print("[EL Recipes] found PartLoader: " + i);
 						GameObject go = new GameObject();
-						ExRecipeLoader scanner = go.AddComponent<ExRecipeLoader>();
+						ELRecipeLoader scanner = go.AddComponent<ELRecipeLoader>();
 						list.Insert (i, scanner);
 						break;
 					}

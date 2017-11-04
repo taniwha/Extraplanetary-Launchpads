@@ -29,7 +29,7 @@ using ExtraplanetaryLaunchpads_KACWrapper;
 namespace ExtraplanetaryLaunchpads {
 
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
-	public class ExBuildWindow : MonoBehaviour
+	public class ELBuildWindow : MonoBehaviour
 	{
 		public class Styles {
 			public static GUIStyle normal;
@@ -109,7 +109,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		static ExBuildWindow instance;
+		static ELBuildWindow instance;
 		static bool hide_ui = false;
 		static bool gui_enabled = true;
 		static Rect windowpos;
@@ -125,9 +125,9 @@ namespace ExtraplanetaryLaunchpads {
 		static Texture2D flagTexture;
 
 
-		List<ExBuildControl> launchpads;
+		List<ELBuildControl> launchpads;
 		DropDownList pad_list;
-		ExBuildControl control;
+		ELBuildControl control;
 
 		internal void Start()
 		{
@@ -205,16 +205,16 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			launchpads = null;
 			pad_list = null;
-			var pads = new List<ExBuildControl.IBuilder> ();
+			var pads = new List<ELBuildControl.IBuilder> ();
 
 			for (int i = 0; i < v.Parts.Count; i++) {
 				var p = v.Parts[i];
-				pads.AddRange (p.Modules.OfType<ExBuildControl.IBuilder> ());
+				pads.AddRange (p.Modules.OfType<ELBuildControl.IBuilder> ());
 			}
 			if (pads.Count < 1) {
 				control = null;
 			} else {
-				launchpads = new List<ExBuildControl> ();
+				launchpads = new List<ELBuildControl> ();
 				int control_index = -1;
 				for (int i = 0; i < pads.Count; i++) {
 					launchpads.Add (pads[i].control);
@@ -463,12 +463,12 @@ namespace ExtraplanetaryLaunchpads {
 			control.builder.PadSelection_start ();
 		}
 
-		public static void SelectPad (ExBuildControl selected_pad)
+		public static void SelectPad (ELBuildControl selected_pad)
 		{
 			instance.Select_Pad (selected_pad);
 		}
 
-		void Select_Pad (ExBuildControl selected_pad)
+		void Select_Pad (ELBuildControl selected_pad)
 		{
 			if (control != null && control != selected_pad) {
 				control.builder.Highlight (false);
@@ -660,7 +660,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void UpdateAlarm (double mostFutureAlarmTime, bool forward)
 		{
-			if (KACWrapper.APIReady && ExSettings.use_KAC) {
+			if (KACWrapper.APIReady && ELSettings.use_KAC) {
 				if (control.paused) {
 					// It doesn't make sense to have an alarm for an event that will never happen
 					if (control.KACalarmID != "") {
@@ -701,7 +701,7 @@ namespace ExtraplanetaryLaunchpads {
 						if (control.KACalarmID != "") {
 							a = KACWrapper.KAC.Alarms.FirstOrDefault (z => z.ID == control.KACalarmID);
 							if (a != null) {
-								a.AlarmAction = ExSettings.KACAction;
+								a.AlarmAction = ELSettings.KACAction;
 								a.AlarmMargin = 0;
 								a.VesselID = FlightGlobals.ActiveVessel.id.ToString ();
 							}
@@ -764,7 +764,7 @@ namespace ExtraplanetaryLaunchpads {
 		};
 		void PauseButton ()
 		{
-			int ind = control.state == ExBuildControl.State.Building ? 0 : 1;
+			int ind = control.state == ELBuildControl.State.Building ? 0 : 1;
 			GUILayout.BeginHorizontal ();
 			if (control.paused) {
 				if (GUILayout.Button ("Resume " + state_str[ind], Styles.normal,
@@ -777,7 +777,7 @@ namespace ExtraplanetaryLaunchpads {
 					control.PauseBuild ();
 				}
 			}
-			if (control.state == ExBuildControl.State.Building) {
+			if (control.state == ELBuildControl.State.Building) {
 				if (GUILayout.Button ("Cancel Build", Styles.normal,
 									  GUILayout.ExpandWidth (true))) {
 					control.CancelBuild ();
@@ -821,10 +821,10 @@ namespace ExtraplanetaryLaunchpads {
 			SelectPad ();
 
 			switch (control.state) {
-			case ExBuildControl.State.Idle:
+			case ELBuildControl.State.Idle:
 				SelectCraft ();
 				break;
-			case ExBuildControl.State.Planning:
+			case ELBuildControl.State.Planning:
 				SelectCraft ();
 				SelectedCraft ();
 				if (control.lockedParts) {
@@ -837,25 +837,25 @@ namespace ExtraplanetaryLaunchpads {
 					BuildButton ();
 				}
 				break;
-			case ExBuildControl.State.Building:
+			case ELBuildControl.State.Building:
 				SelectedCraft ();
 				ResourceScroll_begin ();
 				BuildProgress (true);
 				ResourceScroll_end ();
 				PauseButton ();
 				break;
-			case ExBuildControl.State.Canceling:
+			case ELBuildControl.State.Canceling:
 				SelectedCraft ();
 				ResourceScroll_begin ();
 				BuildProgress (false);
 				ResourceScroll_end ();
 				PauseButton ();
 				break;
-			case ExBuildControl.State.Complete:
+			case ELBuildControl.State.Complete:
 				SpawnOffset ();
 				FinalizeButton ();
 				break;
-			case ExBuildControl.State.Transfer:
+			case ELBuildControl.State.Transfer:
 				SelectedCraft ();
 				ResourceScroll_begin ();
 				OptionalResources ();
@@ -904,7 +904,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			GUI.skin = HighLogic.Skin;
 			string name = "Extraplanetary Launchpad";
-			string ver = ExVersionReport.GetVersion ();
+			string ver = ELVersionReport.GetVersion ();
 			string sit = control.builder.vessel.situation.ToString ();
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,

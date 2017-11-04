@@ -57,11 +57,11 @@ namespace ExtraplanetaryLaunchpads {
 		KFSMEvent event_parts_exhausted;
 
 		bool recycler_active;
-		ExRecycler recycler;
+		ELRecycler recycler;
 		Collider RecycleField;
 		VesselResources recycler_resources;
 		Part active_part;
-		ExWorkshop master;
+		ELWorkshop master;
 		HashSet<uint> recycle_parts;
 		List<BuildResource> part_resources;
 		int res_index;
@@ -164,7 +164,7 @@ namespace ExtraplanetaryLaunchpads {
 			Debug.Log (String.Format ("[EL RSM] event: {0}", name));
 		}
 
-		public RecyclerFSM (ExRecycler recycler)
+		public RecyclerFSM (ELRecycler recycler)
 		{
 			this.recycler = recycler;
 
@@ -314,7 +314,7 @@ namespace ExtraplanetaryLaunchpads {
 			fsm.FixedUpdateFSM ();
 		}
 
-		public void SetMaster (ExWorkshop master)
+		public void SetMaster (ELWorkshop master)
 		{
 			this.master = master;
 		}
@@ -397,7 +397,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			float prod = 0;
 			if (master != null) {
-				prod = ExWorkshop.HyperCurve (master.vessel_productivity);
+				prod = ELWorkshop.HyperCurve (master.vessel_productivity);
 			}
 			Part p;
 			do {
@@ -426,10 +426,10 @@ namespace ExtraplanetaryLaunchpads {
 			// coming from the part body itself), then a transfer recipe will
 			// override a recycle recipe
 			if (xfer) {
-				recipe = ExRecipeDatabase.TransferRecipe (res);
+				recipe = ELRecipeDatabase.TransferRecipe (res);
 			}
 			if (recipe == null) {
-				recipe = ExRecipeDatabase.RecycleRecipe (res);
+				recipe = ELRecipeDatabase.RecycleRecipe (res);
 			}
 
 			if (recipe != null) {
@@ -441,7 +441,7 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			} else {
-				if (ExRecipeDatabase.ResourceRecipe (res) != null) {
+				if (ELRecipeDatabase.ResourceRecipe (res) != null) {
 				} else {
 					if (ingredient.isReal) {
 						var br = new BuildResource (ingredient);
@@ -454,7 +454,7 @@ namespace ExtraplanetaryLaunchpads {
 		void ProcessResource (VesselResources vr, string res, BuildResourceSet rd, bool xfer)
 		{
 			var amount = vr.ResourceAmount (res);
-			var mass = amount * ExRecipeDatabase.ResourceDensity (res);
+			var mass = amount * ELRecipeDatabase.ResourceDensity (res);
 
 			ProcessIngredient (new Ingredient (res, mass), rd, xfer);
 		}
@@ -464,7 +464,7 @@ namespace ExtraplanetaryLaunchpads {
 			string message = crew.name + " was mulched";
 			ScreenMessages.PostScreenMessage (message, 30.0f, ScreenMessageStyle.UPPER_CENTER);
 
-			var part_recipe = ExRecipeDatabase.KerbalRecipe ();
+			var part_recipe = ELRecipeDatabase.KerbalRecipe ();
 			if (part_recipe == null) {
 				return;
 			}

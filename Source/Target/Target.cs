@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ExTarget : PartModule, IModuleInfo, ITargetable
+	public class ELTarget : PartModule, IModuleInfo, ITargetable
 	{
 		[KSPField]
 		public string TargetName = "Target";

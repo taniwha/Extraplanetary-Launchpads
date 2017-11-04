@@ -24,7 +24,7 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
-	public class ExRecipeLoader: LoadingSystem
+	public class ELRecipeLoader: LoadingSystem
 	{
 		public bool done;
 
@@ -41,7 +41,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (node != null) {
 				var recipe = new Recipe (node);
 				if (recipe.ingredients.Count > 0) {
-					ExRecipeDatabase.default_structure_recipe = recipe;
+					ELRecipeDatabase.default_structure_recipe = recipe;
 				}
 			}
 		}
@@ -51,7 +51,7 @@ namespace ExtraplanetaryLaunchpads {
 			var node = LoadRecipeNode ("EL_KerbalRecipe");
 			if (node != null) {
 				var recipe = new PartRecipe (node);
-				ExRecipeDatabase.part_recipes["kerbalEVA"] = recipe;
+				ELRecipeDatabase.part_recipes["kerbalEVA"] = recipe;
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				var recipe = new Recipe (recipe_node);
 				//print ("[EL ResourceRecipe] " + name);
-				ExRecipeDatabase.resource_recipes[name] = recipe;
+				ELRecipeDatabase.resource_recipes[name] = recipe;
 				yield return null;
 			}
 		}
@@ -106,7 +106,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				var recipe = new Recipe (recipe_node);
 				//print ("[EL RecycleRecipe] " + name);
-				ExRecipeDatabase.recycle_recipes[name] = recipe;
+				ELRecipeDatabase.recycle_recipes[name] = recipe;
 				yield return null;
 			}
 		}
@@ -129,7 +129,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				var recipe = new Recipe (recipe_node);
 				//print ("[EL TransferRecipe] " + name);
-				ExRecipeDatabase.transfer_recipes[name] = recipe;
+				ELRecipeDatabase.transfer_recipes[name] = recipe;
 				yield return null;
 			}
 		}
@@ -158,7 +158,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				//print ("[EL ModuleRecipe] " + name);
 				var recipe = new Recipe (recipe_node);
-				ExRecipeDatabase.module_recipes[name] = recipe;
+				ELRecipeDatabase.module_recipes[name] = recipe;
 				yield return null;
 			}
 		}
@@ -168,7 +168,7 @@ namespace ExtraplanetaryLaunchpads {
 			//print ("[EL Recipes] LoadPartRecipes");
 			var dbase = GameDatabase.Instance;
 			var configurls = dbase.GetConfigs("PART");
-			var module_recipes = ExRecipeDatabase.module_recipes;
+			var module_recipes = ELRecipeDatabase.module_recipes;
 			foreach (var c in configurls) {
 				var node = c.config;
 				string name = node.GetValue("name");
@@ -181,7 +181,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (node.HasNode ("EL_Recipe")) {
 					var recipe_node = node.GetNode ("EL_Recipe");
 					var recipe = new PartRecipe (recipe_node);
-					ExRecipeDatabase.part_recipes[name] = recipe;
+					ELRecipeDatabase.part_recipes[name] = recipe;
 				} else {
 					var recipe = new PartRecipe ();
 					var modules = node.GetNodes ("MODULE");
@@ -197,7 +197,7 @@ namespace ExtraplanetaryLaunchpads {
 							recipe.part_recipe.AddIngredient (mod_ingredient);
 						}
 					}
-					ExRecipeDatabase.part_recipes[name] = recipe;
+					ELRecipeDatabase.part_recipes[name] = recipe;
 				}
 				yield return null;
 			}

@@ -2072,7 +2072,7 @@ Or is included in the same module as the smelter.
 \noun on
 MetalOre 
 \noun default
-can be flown in and processed into 
+to be flown in and processed into 
 \noun on
 Metal
 \noun default
@@ -2101,7 +2101,7 @@ Metal
 
 \begin_layout Itemize
 Fourthly, and finally, a recycling bin can be added to the station.
- The recycling bins do not look like much, but they are ravenous maws that
+ EL's recycling bins do not look like much, but they are ravenous maws that
  eat vessels of any size (except asteroids, but including unfortunate kerbals)
  and spit out resources.
  Most resources, except 
@@ -2149,6 +2149,181 @@ While more difficult to get going due to the need to fly to the location
  Thus once production facilities (as described in the orbital construction
  section) are in place, the base can be self-sufficient for a very long
  time.
+\end_layout
+
+\begin_layout Standard
+The main difference between orbital construction and grounded construction
+ is that gravity can make getting built vessels off the pad rather awkward.
+ Thus, instead of a launchpad, though launchpads can have its advantages
+ (such as resource transfer), the base can be equipped with a survey station,
+ a supply of survey stakes, a mallet to drive the stakes, and a KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+ container in which to store the stakes and mallet.
+ As KIS is require for the survey parts to be available, the container should
+ not be a problem
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Other mods might provide alternative 
+\begin_inset Quotes eld
+\end_inset
+
+stakes
+\begin_inset Quotes erd
+\end_inset
+
+ with a different planting mechanism thus removing the need or KIS.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Roughing It
+\end_layout
+
+\begin_layout Standard
+This is grounded construction the hard way
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+My preferred way.
+\end_layout
+
+\end_inset
+
+.
+ The absolute minimum is flown to a site and the first things constructed
+ are the modules needed to sustain construction.
+\end_layout
+
+\begin_layout Paragraph
+Parts and resources to be flown in:
+\end_layout
+
+\begin_layout Description
+Suvery
+\begin_inset space ~
+\end_inset
+
+Station Needed to do the building on the marked site.
+ This doubles as a workshop, though productivity is poor.
+\end_layout
+
+\begin_layout Description
+Survey
+\begin_inset space ~
+\end_inset
+
+Stakes Needed to mark where to build.
+\end_layout
+
+\begin_layout Description
+Mallet Needed to drive the stakes.
+\end_layout
+
+\begin_layout Description
+RocketParts Only a very small quantity is needed: 
+\begin_inset Formula $3.5328t$
+\end_inset
+
+ is the minimum, though a little more is recommended.
+\end_layout
+
+\begin_layout Description
+KAS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KAS"
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Pipe
+\begin_inset space ~
+\end_inset
+
+Connectors Needed to attach the build modules to allow resource transfer.
+\end_layout
+
+\begin_layout Description
+KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Screwdriver While the wrench may be sufficient for attaching pipe connecters,
+ the screwdriver is more versatile.
+\end_layout
+
+\begin_layout Paragraph
+Modules to be built first:
+\end_layout
+
+\begin_layout Description
+Tiny
+\begin_inset space ~
+\end_inset
+
+Auger 
+\begin_inset Formula $0.5328t$
+\end_inset
+
+ This is the smallest auger supplied by EL.
+ Needed to extract MetalOre.
+\end_layout
+
+\begin_layout Description
+Tiny
+\begin_inset space ~
+\end_inset
+
+Smelter 
+\begin_inset Formula $1.5t$
+\end_inset
+
+ This is the smallest smelter suppllied by EL.
+ Needed to convert MetalOre to Metal.
+\end_layout
+
+\begin_layout Description
+Rocket
+\begin_inset space ~
+\end_inset
+
+Workbench 
+\begin_inset Formula $1.5t$
+\end_inset
+
+ While this is needed for converting Metal to RocketParts, it is also a
+ fully equipped workshop with room for four kerbals.
+ Once this is built, construction kerbals can be moved from the survey station
+ to the workbench, significantly increasing productivity and thus allowing
+ later builds to progress at a faster rate.
+\end_layout
+
+\begin_layout Standard
+Once the required modules have been built, base production can go into full
+ swing, even the construction of larger resource production chain, including
+ recycling and the full-sized workshop.
 \end_layout
 
 \begin_layout Part
@@ -3399,32 +3574,26 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
-
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3522,37 +3691,30 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3577,17 +3739,14 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -3714,32 +3873,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -4017,37 +4170,30 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -4131,32 +4277,26 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -4240,42 +4380,34 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
-
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
-
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 

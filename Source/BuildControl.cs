@@ -171,7 +171,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		DockedVesselInfo vesselInfo;
 		Transform launchTransform;
-		Part craftRoot;
+		public Part craftRoot { get; private set; }
 		Vessel craftVessel;
 		Vector3 craftOffset;
 

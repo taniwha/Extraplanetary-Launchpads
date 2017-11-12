@@ -7,11 +7,10 @@ disposable pad
 	works like a normal pad except:
 		it is destroyed when the build is finalized
 		the build is permanently attached to the previous location of the pad
-			need part on build to specify attachment point?
-			use root part?
-				require spare stack node?
-				which stack node?
-				orientation?
+			use root part
+				require stack node
+					use top node
+				use "roll" of pad part to determine roll of build's root part
 
 recycler
 	pause instead of dump

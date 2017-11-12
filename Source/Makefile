@@ -23,10 +23,10 @@ EL_FILES := \
 	Recipes/RecipeResourceContainer.cs	\
 	Recipes/RecipeDatabase.cs			\
 	Recipes/RecipeLoader.cs				\
-	Resources/IResourceContainer.cs		\
-	Resources/KISResourceContainer.cs	\
-	Resources/PartResourceContainer.cs	\
-	Resources/Resources.cs				\
+	ResourceManager/IResourceContainer.cs		\
+	ResourceManager/KISResourceContainer.cs		\
+	ResourceManager/PartResourceContainer.cs	\
+	ResourceManager/Resources.cs				\
 	Survey/Billboard.cs					\
 	Survey/Points.cs					\
 	Survey/SiteBody.cs					\

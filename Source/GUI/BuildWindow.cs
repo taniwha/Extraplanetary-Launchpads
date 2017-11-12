@@ -607,10 +607,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		void BuildButton ()
 		{
+			GUI.enabled = control.builder.canBuild;
 			if (GUILayout.Button ("Build", Styles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.BuildCraft ();
 			}
+			GUI.enabled = true;
 		}
 
 		void SpawnOffset ()

@@ -28,6 +28,7 @@ EL_FILES := \
 	ResourceManager/KISResourceContainer.cs		\
 	ResourceManager/PartResourceContainer.cs	\
 	ResourceManager/ResourceInfo.cs				\
+	ResourceManager/ResourceManager.cs			\
 	ResourceManager/ResourceSet.cs				\
 	Survey/Billboard.cs					\
 	Survey/Points.cs					\

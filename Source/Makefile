@@ -13,6 +13,7 @@ EL_FILES := \
 	Converter/IResourceProvider.cs		\
 	Converter/KethaneResourceProvider.cs\
 	Converter/StockResourceProvider.cs	\
+	DisposablePad/DisposablePad.cs		\
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/BuildResourceSet.cs			\

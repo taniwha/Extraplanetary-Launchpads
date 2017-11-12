@@ -209,6 +209,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public void DestroyPad ()
+		{
+			state = State.Idle;
+			builder.part.Die ();
+		}
+
 		private IEnumerator DewarpAndBuildCraft ()
 		{
 			state = State.Dewarping;
@@ -433,6 +439,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public delegate void PostCaptureDelegate ();
+		public PostCaptureDelegate PostCapture = () => {};
+
 		private IEnumerator CaptureCraft ()
 		{
 			Vector3 pos;
@@ -461,6 +470,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			CoupleWithCraft ();
 			state = State.Transfer;
+			PostCapture ();
 		}
 
 		Collider[] get_colliders (Part p)
@@ -537,10 +547,6 @@ namespace ExtraplanetaryLaunchpads {
 			// build craft
 			ShipConstruct nship = new ShipConstruct ();
 			nship.LoadShip (craftConfig);
-
-			int numParts = builder.vessel.parts.Count;
-			if (craftType != ELCraftType.SubAss)
-				numParts = 0;
 
 			string landedAt = "External Launchpad";
 			string flag = flagname;

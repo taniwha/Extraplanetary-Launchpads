@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELLaunchPad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface
+	public class ELLaunchpad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;

@@ -121,12 +121,12 @@ namespace ExtraplanetaryLaunchpads {
 			get;
 			private set;
 		}
-		public VesselResources padResources
+		public RMResourceSet padResources
 		{
 			get;
 			private set;
 		}
-		public VesselResources craftResources
+		public RMResourceSet craftResources
 		{
 			get;
 			private set;
@@ -375,7 +375,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void SetupCraftResources (Vessel vsl)
 		{
-			craftResources = new VesselResources (vsl);
+			craftResources = new RMResourceSet (vsl);
 			foreach (var br in buildCost.optional) {
 				var amount = craftResources.ResourceAmount (br.name);
 				craftResources.TransferResource (br.name, -amount);
@@ -659,10 +659,10 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void FindVesselResources ()
 		{
-			padResources = new VesselResources (builder.vessel);
+			padResources = new RMResourceSet (builder.vessel);
 			var craft_parts = CraftParts ();
 			if (craft_parts.Count > 0) {
-				craftResources = new VesselResources ();
+				craftResources = new RMResourceSet ();
 			}
 			foreach (var part in craft_parts) {
 				padResources.RemovePart (part);
@@ -833,7 +833,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			// needed for displaying optional resources during the planning
 			// stage.
-			craftResources = new VesselResources (craftVessel);
+			craftResources = new RMResourceSet (craftVessel);
 
 			BuildCost resources = new BuildCost ();
 
@@ -855,7 +855,7 @@ namespace ExtraplanetaryLaunchpads {
 		void onVesselWasModified (Vessel v)
 		{
 			if (v == builder.vessel) {
-				padResources = new VesselResources (builder.vessel);
+				padResources = new RMResourceSet (builder.vessel);
 				if (craftRoot != null && craftRoot.vessel != builder.vessel) {
 					CleaupAfterRelease ();
 				}

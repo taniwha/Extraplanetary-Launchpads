@@ -59,7 +59,7 @@ namespace ExtraplanetaryLaunchpads {
 		bool recycler_active;
 		ELRecycler recycler;
 		Collider RecycleField;
-		VesselResources recycler_resources;
+		RMResourceSet recycler_resources;
 		Part active_part;
 		ELWorkshop master;
 		HashSet<uint> recycle_parts;
@@ -254,7 +254,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			RecycleField = field;
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
-			recycler_resources = new VesselResources (recycler.vessel, recycle_parts);
+			recycler_resources = new RMResourceSet (recycler.vessel, recycle_parts);
 			fsm.StartFSM (start_state);
 		}
 
@@ -322,7 +322,7 @@ namespace ExtraplanetaryLaunchpads {
 		void onVesselWasModified (Vessel v)
 		{
 			if (v == recycler.vessel) {
-				recycler_resources = new VesselResources (recycler.vessel, recycle_parts);
+				recycler_resources = new RMResourceSet (recycler.vessel, recycle_parts);
 			}
 		}
 
@@ -459,7 +459,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void ProcessResource (VesselResources vr, string res, BuildResourceSet rd, bool xfer)
+		void ProcessResource (RMResourceSet vr, string res, BuildResourceSet rd, bool xfer)
 		{
 			var amount = vr.ResourceAmount (res);
 			var mass = amount * ELRecipeDatabase.ResourceDensity (res);
@@ -493,7 +493,7 @@ namespace ExtraplanetaryLaunchpads {
 			bc.addPart (p);
 			var rd = new BuildResourceSet ();
 			bool xfer = true;
-			VesselResources.ResourceProcessor process = delegate (VesselResources vr, string res) {
+			RMResourceProcessor process = delegate (RMResourceSet vr, string res) {
 				ProcessResource (vr, res, rd, xfer);
 			};
 			bc.resources.Process (process);

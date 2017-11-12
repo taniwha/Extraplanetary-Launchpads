@@ -23,16 +23,16 @@ using UnityEngine;
 namespace ExtraplanetaryLaunchpads {
 	public class BuildCost
 	{
-		public VesselResources resources;
-		public VesselResources container;
-		public VesselResources hullResoures;
+		public RMResourceSet resources;
+		public RMResourceSet container;
+		public RMResourceSet hullResoures;
 		public double mass;
 
 		public BuildCost ()
 		{
-			resources = new VesselResources ();
-			container = new VesselResources ();
-			hullResoures = new VesselResources ();
+			resources = new RMResourceSet ();
+			container = new RMResourceSet ();
+			hullResoures = new RMResourceSet ();
 		}
 
 		public void addPart (Part part)
@@ -55,7 +55,7 @@ namespace ExtraplanetaryLaunchpads {
 			mass -= part.mass;
 		}
 
-		void ProcessResources (VesselResources resources, BuildResourceSet report_resources, BuildResourceSet required_resources = null)
+		void ProcessResources (RMResourceSet resources, BuildResourceSet report_resources, BuildResourceSet required_resources = null)
 		{
 			var reslist = resources.resources.Keys.ToList ();
 			foreach (string res in reslist) {

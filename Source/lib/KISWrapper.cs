@@ -167,16 +167,16 @@ namespace ExtraplanetaryLaunchpads.KIS {
 			return true;
 		}
 
-		static void GetResources (ModuleKISInventory inv, Dictionary<string, ResourceInfo> resources)
+		static void GetResources (ModuleKISInventory inv, Dictionary<string, RMResourceInfo> resources)
 		{
 			var items = inv.items;
 			foreach (var item in items.Values) {
 				var kis_resources = item.GetResources ();
 				foreach (var res in kis_resources) {
-					ResourceInfo resourceInfo;
+					RMResourceInfo resourceInfo;
 					var resourceName = res.resourceName;
 					if (!resources.ContainsKey (resourceName)) {
-						resourceInfo = new ResourceInfo ();
+						resourceInfo = new RMResourceInfo ();
 						resources[resourceName] = resourceInfo;
 					}
 					resourceInfo = resources[resourceName];
@@ -185,7 +185,7 @@ namespace ExtraplanetaryLaunchpads.KIS {
 			}
 		}
 
-		public static void GetResources (Part part, Dictionary<string, ResourceInfo> resources)
+		public static void GetResources (Part part, Dictionary<string, RMResourceInfo> resources)
 		{
 			foreach (PartModule mod in part.Modules) {
 				if (mod.moduleName == "ModuleKISInventory") {

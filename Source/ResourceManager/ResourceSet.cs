@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
+// Thanks to Taranis Elsu and his Fuel Balancer mod for the inspiration.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,21 +24,18 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
-	// Thanks to Taranis Elsu and his Fuel Balancer mod for the inspiration.
-	public class ResourceInfo {
-		public List<IResourceContainer> containers = new List<IResourceContainer>();
-	}
 
-	public class VesselResources {
-		public Dictionary<string, ResourceInfo> resources;
-		public delegate void ResourceProcessor (VesselResources vr, string resource);
+	public delegate void RMResourceProcessor (RMResourceSet vr, string resource);
+
+	public class RMResourceSet {
+		public Dictionary<string, RMResourceInfo> resources;
 
 		public void AddPart (Part part)
 		{
 			foreach (PartResource resource in part.Resources) {
-				ResourceInfo resourceInfo;
+				RMResourceInfo resourceInfo;
 				if (!resources.ContainsKey (resource.resourceName)) {
-					resourceInfo = new ResourceInfo ();
+					resourceInfo = new RMResourceInfo ();
 					resources[resource.resourceName] = resourceInfo;
 				}
 				resourceInfo = resources[resource.resourceName];
@@ -50,7 +48,7 @@ namespace ExtraplanetaryLaunchpads {
 			var remove_list = new List<string> ();
 			foreach (var resinfo in resources) {
 				string resource = resinfo.Key;
-				ResourceInfo resourceInfo = resinfo.Value;
+				RMResourceInfo resourceInfo = resinfo.Value;
 				for (int i = resourceInfo.containers.Count - 1; i >= 0; i--) {
 					var container = resourceInfo.containers[i];
 					if (container.part == part) {
@@ -66,28 +64,28 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public VesselResources ()
+		public RMResourceSet ()
 		{
-			resources = new Dictionary<string, ResourceInfo>();
+			resources = new Dictionary<string, RMResourceInfo>();
 		}
 
-		public VesselResources (Part rootPart)
+		public RMResourceSet (Part rootPart)
 		{
-			resources = new Dictionary<string, ResourceInfo>();
+			resources = new Dictionary<string, RMResourceInfo>();
 			AddPart (rootPart);
 		}
 
-		public VesselResources (Vessel vessel)
+		public RMResourceSet (Vessel vessel)
 		{
-			resources = new Dictionary<string, ResourceInfo>();
+			resources = new Dictionary<string, RMResourceInfo>();
 			foreach (Part part in vessel.parts) {
 				AddPart (part);
 			}
 		}
 
-		public VesselResources (Vessel vessel, HashSet<uint> blacklist)
+		public RMResourceSet (Vessel vessel, HashSet<uint> blacklist)
 		{
-			resources = new Dictionary<string, ResourceInfo>();
+			resources = new Dictionary<string, RMResourceInfo>();
 			foreach (Part part in vessel.parts) {
 				if (!blacklist.Contains (part.flightID)) {
 					AddPart (part);
@@ -96,14 +94,16 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		// Completely empty the vessel of any and all resources.
+		// However, if resources_to_remove is not null, only those resources specified
+		// will be removed.
 		public void RemoveAllResources (HashSet<string> resources_to_remove = null)
 		{
-			foreach (KeyValuePair<string, ResourceInfo> pair in resources) {
+			foreach (KeyValuePair<string, RMResourceInfo> pair in resources) {
 				string resource = pair.Key;
 				if (resources_to_remove != null && !resources_to_remove.Contains (resource)) {
 					continue;
 				}
-				ResourceInfo resourceInfo = pair.Value;
+				RMResourceInfo resourceInfo = pair.Value;
 				foreach (var container in resourceInfo.containers) {
 					container.amount = 0.0;
 				}
@@ -116,7 +116,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (!resources.ContainsKey (resource))
 				return 0.0;
-			ResourceInfo resourceInfo = resources[resource];
+			RMResourceInfo resourceInfo = resources[resource];
 			double capacity = 0.0;
 			foreach (var container in resourceInfo.containers) {
 				capacity += container.maxAmount;
@@ -130,7 +130,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (!resources.ContainsKey (resource))
 				return 0.0;
-			ResourceInfo resourceInfo = resources[resource];
+			RMResourceInfo resourceInfo = resources[resource];
 			double amount = 0.0;
 			foreach (var container in resourceInfo.containers) {
 				amount += container.amount;
@@ -149,7 +149,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (!resources.ContainsKey (resource))
 				return amount;
-			ResourceInfo resourceInfo = resources[resource];
+			RMResourceInfo resourceInfo = resources[resource];
 			foreach (var container in resourceInfo.containers) {
 				double adjust = amount;
 				double space = container.maxAmount - container.amount;
@@ -169,11 +169,11 @@ namespace ExtraplanetaryLaunchpads {
 		public double ResourceMass ()
 		{
 			double mass = 0;
-			foreach (KeyValuePair<string, ResourceInfo> pair in resources) {
+			foreach (KeyValuePair<string, RMResourceInfo> pair in resources) {
 				string resource = pair.Key;
 				var def = PartResourceLibrary.Instance.GetDefinition (resource);
 				float density = def.density;
-				ResourceInfo resourceInfo = pair.Value;
+				RMResourceInfo resourceInfo = pair.Value;
 				foreach (var container in resourceInfo.containers) {
 					mass += density * container.amount;
 				}
@@ -181,7 +181,7 @@ namespace ExtraplanetaryLaunchpads {
 			return mass;
 		}
 
-		public void Process (ResourceProcessor resProc)
+		public void Process (RMResourceProcessor resProc)
 		{
 			foreach (var resource in resources.Keys) {
 				resProc (this, resource);

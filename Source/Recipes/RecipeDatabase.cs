@@ -84,7 +84,7 @@ namespace ExtraplanetaryLaunchpads {
 			return pname;
 		}
 
-		public static void ProcessPart (Part part, Dictionary<string, ResourceInfo> resources)
+		public static void ProcessPart (Part part, Dictionary<string, RMResourceInfo> resources)
 		{
 			string name = GetPartName (part);
 			if (name.Contains ("kerbalEVA")) {
@@ -105,9 +105,9 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				ingredient.ratio /= ResourceDensity (ingredient.name);
 
-				ResourceInfo resourceInfo;
+				RMResourceInfo resourceInfo;
 				if (!resources.ContainsKey (ingredient.name)) {
-					resourceInfo = new ResourceInfo ();
+					resourceInfo = new RMResourceInfo ();
 					resources[ingredient.name] = resourceInfo;
 				}
 				resourceInfo = resources[ingredient.name];

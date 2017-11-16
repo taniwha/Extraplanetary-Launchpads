@@ -234,7 +234,7 @@ namespace ExtraplanetaryLaunchpads {
 		void SetPadMass ()
 		{
 			double mass = 0;
-			if (builtStuff != null && buildCost!= null) {
+			if (builtStuff != null && buildCost != null) {
 				var built = builtStuff.required;
 				var cost = buildCost.required;
 
@@ -749,7 +749,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			craftRoot = null;
 			vesselInfo = null;
-			buildCost = null;
 			builtStuff = null;
 			state = State.Idle;
 		}

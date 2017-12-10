@@ -29,6 +29,7 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class RMResourceSet {
 		public Dictionary<string, RMResourceInfo> resources;
+		public bool balanced;
 
 		public void AddPart (Part part)
 		{
@@ -94,8 +95,8 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		// Completely empty the vessel of any and all resources.
-		// However, if resources_to_remove is not null, only those resources specified
-		// will be removed.
+		// However, if resources_to_remove is not null, only those resources
+		// specified will be removed.
 		public void RemoveAllResources (HashSet<string> resources_to_remove = null)
 		{
 			foreach (KeyValuePair<string, RMResourceInfo> pair in resources) {
@@ -150,6 +151,15 @@ namespace ExtraplanetaryLaunchpads {
 			if (!resources.ContainsKey (resource))
 				return amount;
 			RMResourceInfo resourceInfo = resources[resource];
+			if (balanced) {
+				return BalancedTransfer (resourceInfo, amount);
+			} else {
+				return UnbalancedTransfer (resourceInfo, amount);
+			}
+		}
+
+		double UnbalancedTransfer (RMResourceInfo resourceInfo, double amount)
+		{
 			foreach (var container in resourceInfo.containers) {
 				double adjust = amount;
 				double space = container.maxAmount - container.amount;
@@ -162,6 +172,55 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				container.amount += adjust;
 				amount -= adjust;
+			}
+			return amount;
+		}
+
+		double BalancedTransfer (RMResourceInfo resourceInfo, double amount)
+		{
+			double setTotal = 0;
+			if (amount < 0) {
+				for (int i = 0; i < resourceInfo.containers.Count; i++) {
+					var container = resourceInfo.containers[i];
+					double avail = container.amount;
+					setTotal += avail;
+				}
+			} else {
+				for (int i = 0; i < resourceInfo.containers.Count; i++) {
+					var container = resourceInfo.containers[i];
+					double space = container.maxAmount - container.amount;
+					setTotal += space;
+				}
+			}
+			double adjust = amount;
+			if (adjust < 0  && -adjust > setTotal) {
+				// Ensure the resource amount never goes negative
+				adjust = -setTotal;
+			} else if (adjust > 0 && adjust > setTotal) {
+				// ensure the resource amount never excees the maximum
+				adjust = setTotal;
+			}
+			amount -= adjust;
+			if (adjust < 0) {
+				for (int i = 0; i < resourceInfo.containers.Count; i++) {
+					var container = resourceInfo.containers[i];
+					double avail = container.amount;
+					double adj = avail * adjust / setTotal;
+					if (-adj > avail) {
+						adj = -avail;
+					}
+					container.amount += adj;
+				}
+			} else {
+				for (int i = 0; i < resourceInfo.containers.Count; i++) {
+					var container = resourceInfo.containers[i];
+					double space = container.maxAmount - container.amount;
+					double adj = space * adjust / setTotal;
+					if (adj > space) {
+						adj = space;
+					}
+					container.amount += adj;
+				}
 			}
 			return amount;
 		}

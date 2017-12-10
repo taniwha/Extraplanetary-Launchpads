@@ -30,6 +30,7 @@ EL_FILES := \
 	ResourceManager/ResourceInfo.cs				\
 	ResourceManager/ResourceManager.cs			\
 	ResourceManager/ResourceSet.cs				\
+	ResourceManager/ResourceSetContainer.cs		\
 	Survey/Billboard.cs					\
 	Survey/Points.cs					\
 	Survey/SiteBody.cs					\

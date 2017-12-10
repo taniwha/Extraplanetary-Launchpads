@@ -29,7 +29,6 @@ namespace ExtraplanetaryLaunchpads {
 		double maxAmount
 		{
 			get;
-			set;
 		}
 		double amount
 		{

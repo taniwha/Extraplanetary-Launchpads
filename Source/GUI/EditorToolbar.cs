@@ -67,7 +67,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (ap.partPrefab.Modules != null) {
 					foreach (PartModule mod in ap.partPrefab.Modules) {
 						if (mod.moduleName != null
-							&& mod.moduleName.StartsWith ("Ex")) {
+							&& mod.moduleName.StartsWith ("EL")) {
 							isELItem = true;
 							break;
 						}

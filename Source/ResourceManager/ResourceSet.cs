@@ -29,10 +29,16 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class RMResourceSet {
 		public Dictionary<string, RMResourceInfo> resources;
+		public List<Part> parts;
+		public List<RMResourceSet> sets;
 		public bool balanced;
+		public string name;
 
 		public void AddPart (Part part)
 		{
+			if (part.Resources.Count > 0) {
+				parts.Add (part);
+			}
 			foreach (PartResource resource in part.Resources) {
 				RMResourceInfo resourceInfo;
 				if (!resources.ContainsKey (resource.resourceName)) {
@@ -44,8 +50,23 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public void AddSet (RMResourceSet set)
+		{
+			sets.Add (set);
+			foreach (var resource in set.resources.Keys) {
+				RMResourceInfo resourceInfo;
+				if (!resources.ContainsKey (resource)) {
+					resourceInfo = new RMResourceInfo ();
+					resources[resource] = resourceInfo;
+				}
+				resourceInfo = resources[resource];
+				resourceInfo.containers.Add (new ResourceSetContainer (resource, set));
+			}
+		}
+
 		public void RemovePart (Part part)
 		{
+			parts.Remove (part);
 			var remove_list = new List<string> ();
 			foreach (var resinfo in resources) {
 				string resource = resinfo.Key;
@@ -68,25 +89,24 @@ namespace ExtraplanetaryLaunchpads {
 		public RMResourceSet ()
 		{
 			resources = new Dictionary<string, RMResourceInfo>();
+			parts = new List<Part> ();
+			sets = new List<RMResourceSet> ();
 		}
 
-		public RMResourceSet (Part rootPart)
+		public RMResourceSet (Part rootPart) : this ()
 		{
-			resources = new Dictionary<string, RMResourceInfo>();
 			AddPart (rootPart);
 		}
 
-		public RMResourceSet (Vessel vessel)
+		public RMResourceSet (Vessel vessel) : this ()
 		{
-			resources = new Dictionary<string, RMResourceInfo>();
 			foreach (Part part in vessel.parts) {
 				AddPart (part);
 			}
 		}
 
-		public RMResourceSet (Vessel vessel, HashSet<uint> blacklist)
+		public RMResourceSet (Vessel vessel, HashSet<uint> blacklist) : this ()
 		{
-			resources = new Dictionary<string, RMResourceInfo>();
 			foreach (Part part in vessel.parts) {
 				if (!blacklist.Contains (part.flightID)) {
 					AddPart (part);

@@ -26,11 +26,13 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class RMResourceManager {
+	public class RMResourceManager
+	{
+		Dictionary<uint, Part> partMap;
 
-		/*Dictionary<uint, Part> CreatePartMap (List<Part> parts, bool useFlightID)
+		void CreatePartMap (List<Part> parts)
 		{
-			var partMap = new Dictionary<uint, Part>();
+			partMap = new Dictionary<uint, Part>();
 			for (int i = parts.Count; i-- > 0; ) {
 				Part p = parts[i];
 				// flightID is usable when the parts are from an existing
@@ -41,8 +43,7 @@ namespace ExtraplanetaryLaunchpads {
 				uint id = useFlightID ? p.flightID : p.craftID;
 				partMap[id] = p;
 			}
-			return partMap;
-		}*/
+		}
 
 		Part GetOtherPart (IStageSeparator separator)
 		{
@@ -161,8 +162,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		public RMResourceManager (List<Part> parts, bool useFlightID)
 		{
-			//var partMap = CreatePartMap (parts, useFlightID);
 			ProcessParts (parts[0].localRoot);
+			CreatePartMap (parts);
 		}
 	}
 }

@@ -28,7 +28,12 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class RMResourceManager
 	{
+		HashSet<uint> visitedParts;
 		Dictionary<uint, Part> partMap;
+		//Dictionary<uint, RMResourceSet> symmetryDict;
+		List<RMResourceSet> symmetrySets;
+		List<RMResourceSet> moduleSets;
+		bool useFlightID;
 
 		void CreatePartMap (List<Part> parts)
 		{
@@ -75,20 +80,20 @@ namespace ExtraplanetaryLaunchpads {
 			return node.attachedPart;
 		}
 
-		static FieldInfo grappleNodeField;
-		static FieldInfo GrappleNodeField
+		static FieldInfo _grappleNodeField;
+		static FieldInfo grappleNodeField
 		{
 			get {
-				if (grappleNodeField == null) {
+				if (_grappleNodeField == null) {
 					var fields = typeof (ModuleGrappleNode).GetFields (BindingFlags.NonPublic | BindingFlags.Instance);
 					for (int i = 0; i < fields.Length; i++) {
 						if (fields[i].FieldType == typeof (AttachNode)) {
-							grappleNodeField =  fields[i];
+							_grappleNodeField =  fields[i];
 							break;
 						}
 					}
 				}
-				return grappleNodeField;
+				return _grappleNodeField;
 			}
 		}
 		Part GetOtherPart (ModuleGrappleNode grapple)
@@ -139,31 +144,103 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		void ProcessParts (Part part)
+		RMResourceSet AddModule ()
+		{
+			var set = new RMResourceSet ();
+			set.name = "module";
+			moduleSets.Add (set);
+			return set;
+		}
+
+		void ProcessParts (Part part, RMResourceSet set)
 		{
 			var otherPart = GetOtherPart (part);
 
-			// need to check both parent and children as the parts may be reversed
 			if (part.parent != null && part.parent == otherPart) {
-				//StartNewModule ();
+				set = AddModule ();
 			}
+
+			set.AddPart(part);
+
 			for (int i = part.children.Count; i-- > 0; ) {
 				var child = part.children[i];
 				if (child == otherPart) {
-					//SaveModule ();
-					//StartNewModule ();
-					ProcessParts (child);
-					//RestoreModule ();
+					ProcessParts (child, AddModule ());
 				} else {
-					ProcessParts (child);
+					ProcessParts (child, set);
 				}
 			}
 		}
 
+		static uint GetID (Part p)
+		{
+			return p.flightID != 0 ? p.flightID : p.craftID;
+		}
+
+		// The dictionary is indexed by part id (flight or craft) such that
+		// the symmetry set can be found by the id of any part within the set.
+		// However, the sets consist of only those parts that hold resources.
+		void FindSymmetrySets (List<Part> parts)
+		{
+			var dict = new Dictionary<uint, RMResourceSet> ();
+			var sets = new List<RMResourceSet> ();
+			for (int i = 0; i < parts.Count; i++) {
+				Part p = parts[i];
+				uint id = GetID (p);
+				Debug.LogFormat ("{0} {1} {2}", i, p.name, p.symmetryCounterparts.Count);
+				if (p.Resources.Count < 1) {
+					// no resources, so no point worrying about symmetry
+					continue;
+				}
+				if (p.symmetryCounterparts.Count < 1) {
+					// not part of a symmetry set
+					continue;
+				}
+				if (visitedParts.Contains (id)) {
+					// already added this part
+					continue;
+				}
+				visitedParts.Add (id);
+				RMResourceSet symmetrySet = new RMResourceSet ();
+				symmetrySet.balanced = true;
+				symmetrySet.name = "sym " + id.ToString ();
+				symmetrySet.AddPart (p);
+				dict[id] = symmetrySet;
+				sets.Add (symmetrySet);
+				for (int j = 0; j < p.symmetryCounterparts.Count; j++) {
+					Part s = p.symmetryCounterparts[j];
+					id = GetID (s);
+					visitedParts.Add (id);
+					symmetrySet.AddPart (s);
+					dict[id] = symmetrySet;
+				}
+			}
+			//symmetryDict = dict;
+			symmetrySets = sets;
+		}
+
 		public RMResourceManager (List<Part> parts, bool useFlightID)
 		{
-			ProcessParts (parts[0].localRoot);
+			this.useFlightID = useFlightID;
 			CreatePartMap (parts);
+			visitedParts = new HashSet<uint> ();
+			FindSymmetrySets (parts);
+			foreach (var s in symmetrySets) {
+				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
+			}
+			visitedParts.Clear ();
+			moduleSets = new List<RMResourceSet> ();
+			ProcessParts (parts[0].localRoot, AddModule ());
+			for (int i = 0; i < moduleSets.Count; ) {
+				if (moduleSets[i].parts.Count > 0) {
+					i++;
+				} else {
+					moduleSets.RemoveAt (i);
+				}
+			}
+			foreach (var m in moduleSets) {
+				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", m.name, m.parts.Count, m.sets.Count, m.resources.Count);
+			}
 		}
 	}
 }

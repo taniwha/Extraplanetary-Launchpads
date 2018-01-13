@@ -30,9 +30,10 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		HashSet<uint> visitedParts;
 		Dictionary<uint, Part> partMap;
-		//Dictionary<uint, RMResourceSet> symmetryDict;
-		List<RMResourceSet> symmetrySets;
-		List<RMResourceSet> moduleSets;
+		Dictionary<uint, RMResourceSet> symmetryDict;
+		public List<RMResourceSet> symmetrySets;
+		public List<RMResourceSet> moduleSets;
+		public List<RMResourceSet> resourceSets;
 		bool useFlightID;
 
 		void CreatePartMap (List<Part> parts)
@@ -182,6 +183,7 @@ namespace ExtraplanetaryLaunchpads {
 		// However, the sets consist of only those parts that hold resources.
 		void FindSymmetrySets (List<Part> parts)
 		{
+			visitedParts.Clear ();
 			var dict = new Dictionary<uint, RMResourceSet> ();
 			var sets = new List<RMResourceSet> ();
 			for (int i = 0; i < parts.Count; i++) {
@@ -215,8 +217,41 @@ namespace ExtraplanetaryLaunchpads {
 					dict[id] = symmetrySet;
 				}
 			}
-			//symmetryDict = dict;
+			symmetryDict = dict;
 			symmetrySets = sets;
+		}
+
+		void BuildResourceSets ()
+		{
+			visitedParts.Clear ();
+			resourceSets = new List<RMResourceSet> ();
+			RMResourceSet set = null;
+			foreach (var m in moduleSets) {
+				if (set == null) {
+					set = new RMResourceSet ();
+				}
+				foreach (var p in m.parts) {
+					uint id = GetID (p);
+					if (visitedParts.Contains (id)) {
+						continue;
+					}
+					if (p.symmetryCounterparts.Count > 0) {
+						RMResourceSet sym = symmetryDict[id];
+						foreach (var s in sym.parts) {
+							uint sid = GetID (s);
+							visitedParts.Add (sid);
+						}
+						set.AddSet (sym);
+					} else {
+						visitedParts.Contains (id);
+						set.AddPart (p);
+					}
+				}
+				if (set.parts.Count > 0 || set.sets.Count > 0) {
+					resourceSets.Add (set);
+					set = null;
+				}
+			}
 		}
 
 		public RMResourceManager (List<Part> parts, bool useFlightID)
@@ -225,10 +260,6 @@ namespace ExtraplanetaryLaunchpads {
 			CreatePartMap (parts);
 			visitedParts = new HashSet<uint> ();
 			FindSymmetrySets (parts);
-			foreach (var s in symmetrySets) {
-				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
-			}
-			visitedParts.Clear ();
 			moduleSets = new List<RMResourceSet> ();
 			ProcessParts (parts[0].localRoot, AddModule ());
 			for (int i = 0; i < moduleSets.Count; ) {
@@ -238,9 +269,24 @@ namespace ExtraplanetaryLaunchpads {
 					moduleSets.RemoveAt (i);
 				}
 			}
+			BuildResourceSets ();
+/*
+			foreach (var s in symmetrySets) {
+				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
+			}
 			foreach (var m in moduleSets) {
 				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", m.name, m.parts.Count, m.sets.Count, m.resources.Count);
 			}
+			foreach (var r in resourceSets) {
+				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", r.name, r.parts.Count, r.sets.Count, r.resources.Count);
+				foreach (var s in r.sets) {
+					Debug.LogFormat ("[RMResourceManager]   {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
+				}
+				foreach (var res in r.resources.Keys) {
+					Debug.LogFormat ("[RMResourceManager] {0} {1} {2}", res, r.ResourceAmount (res), r.ResourceCapacity (res));
+				}
+			}
+*/
 		}
 	}
 }

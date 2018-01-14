@@ -399,19 +399,12 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateGUIState ();
 		}
 
-		void Situation ()
-		{
-			GUILayout.BeginHorizontal ();
-			GUILayout.Label (control.builder.vessel.situation.ToString ());
-			GUILayout.FlexibleSpace ();
-			GUILayout.EndHorizontal ();
-		}
-
 		void VesselName ()
 		{
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label (control.builder.vessel.vesselName);
 			GUILayout.FlexibleSpace ();
+			GUILayout.Label (control.builder.vessel.situation.ToString ());
 			double productivity = control.productivity;
 			GUIStyle prodStyle = ELStyles.green;
 			if (productivity <= 0) {
@@ -748,7 +741,6 @@ namespace ExtraplanetaryLaunchpads {
 			SelectPad_start ();
 
 			GUILayout.BeginVertical ();
-			Situation ();
 			VesselName ();
 			SelectPad ();
 

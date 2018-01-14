@@ -31,84 +31,6 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class ELBuildWindow : MonoBehaviour
 	{
-		public class Styles {
-			public static GUIStyle normal;
-			public static GUIStyle red;
-			public static GUIStyle yellow;
-			public static GUIStyle green;
-			public static GUIStyle white;
-			public static GUIStyle label;
-			public static GUIStyle slider;
-			public static GUIStyle sliderText;
-
-			public static GUIStyle listItem;
-			public static GUIStyle listBox;
-
-			public static ProgressBar bar;
-
-			private static bool initialized;
-
-			public static void Init ()
-			{
-				if (initialized)
-					return;
-				initialized = true;
-
-				normal = new GUIStyle (GUI.skin.button);
-				normal.normal.textColor = normal.focused.textColor = Color.white;
-				normal.hover.textColor = normal.active.textColor = Color.yellow;
-				normal.onNormal.textColor = normal.onFocused.textColor = normal.onHover.textColor = normal.onActive.textColor = Color.green;
-				normal.padding = new RectOffset (8, 8, 8, 8);
-
-				red = new GUIStyle (GUI.skin.box);
-				red.padding = new RectOffset (8, 8, 8, 8);
-				red.normal.textColor = red.focused.textColor = Color.red;
-
-				yellow = new GUIStyle (GUI.skin.box);
-				yellow.padding = new RectOffset (8, 8, 8, 8);
-				yellow.normal.textColor = yellow.focused.textColor = Color.yellow;
-
-				green = new GUIStyle (GUI.skin.box);
-				green.padding = new RectOffset (8, 8, 8, 8);
-				green.normal.textColor = green.focused.textColor = Color.green;
-				green.wordWrap = false;
-
-				white = new GUIStyle (GUI.skin.box);
-				white.padding = new RectOffset (8, 8, 8, 8);
-				white.normal.textColor = white.focused.textColor = Color.white;
-				white.wordWrap = false;
-
-				label = new GUIStyle (GUI.skin.label);
-				label.normal.textColor = label.focused.textColor = Color.white;
-				label.alignment = TextAnchor.MiddleCenter;
-				label.wordWrap = false;
-
-				slider = new GUIStyle (GUI.skin.horizontalSlider);
-				slider.margin = new RectOffset (0, 0, 0, 0);
-
-				sliderText = new GUIStyle (GUI.skin.label);
-				sliderText.alignment = TextAnchor.MiddleCenter;
-				sliderText.margin = new RectOffset (0, 0, 0, 0);
-
-				listItem = new GUIStyle ();
-				listItem.normal.textColor = Color.white;
-				Texture2D texInit = new Texture2D(1, 1);
-				texInit.SetPixel(0, 0, Color.white);
-				texInit.Apply();
-				listItem.hover.background = texInit;
-				listItem.onHover.background = texInit;
-				listItem.hover.textColor = Color.black;
-				listItem.onHover.textColor = Color.black;
-				listItem.padding = new RectOffset(4, 4, 4, 4);
-
-				listBox = new GUIStyle(GUI.skin.box);
-
-				bar = new ProgressBar (XKCDColors.Azure,
-									   XKCDColors.ElectricBlue,
-									   new Color(255, 255, 255, 0.8f));
-			}
-		}
-
 		static ELBuildWindow instance;
 		static bool hide_ui = false;
 		static bool gui_enabled = true;
@@ -123,7 +45,6 @@ namespace ExtraplanetaryLaunchpads {
 		static FlagBrowser flagBrowser;
 		static string flagURL;
 		static Texture2D flagTexture;
-
 
 		List<ELBuildControl> launchpads;
 		DropDownList pad_list;
@@ -331,7 +252,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 
 			// Resource name
-			GUILayout.Box (label, Styles.white, GUILayout.Width (125),
+			GUILayout.Box (label, ELStyles.white, GUILayout.Width (125),
 						   GUILayout.Height (40));
 
 			// Fill amount
@@ -343,14 +264,14 @@ namespace ExtraplanetaryLaunchpads {
 				fraction = 1.0F;
 			} else {
 				fraction = GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F,
-													   Styles.slider,
+													   ELStyles.slider,
 													   GUI.skin.horizontalSliderThumb,
 													   GUILayout.Width (300),
 													   GUILayout.Height (20));
 				fraction = (float)Math.Round (fraction, 3);
 				fraction = (Mathf.Floor (fraction * 200)) / 200;
 				GUILayout.Box ((fraction * 100).ToString () + "%",
-							   Styles.sliderText, GUILayout.Width (300),
+							   ELStyles.sliderText, GUILayout.Width (300),
 							   GUILayout.Height (20));
 			}
 			GUILayout.EndVertical ();
@@ -358,9 +279,9 @@ namespace ExtraplanetaryLaunchpads {
 			double required = minAmount + (maxAmount - minAmount) * fraction;
 
 			// Calculate if we have enough resources to build
-			GUIStyle requiredStyle = Styles.green;
+			GUIStyle requiredStyle = ELStyles.green;
 			if (available >= 0 && available < required) {
-				requiredStyle = Styles.yellow;
+				requiredStyle = ELStyles.yellow;
 			}
 			// Required and Available
 			GUILayout.Box (displayAmount(required),
@@ -368,10 +289,10 @@ namespace ExtraplanetaryLaunchpads {
 						   GUILayout.Height (40));
 			if (available >= 0) {
 				GUILayout.Box (displayAmount(available),
-							   Styles.white, GUILayout.Width (100),
+							   ELStyles.white, GUILayout.Width (100),
 							   GUILayout.Height (40));
 			} else {
-				GUILayout.Box ("N/A", Styles.white, GUILayout.Width (100),
+				GUILayout.Box ("N/A", ELStyles.white, GUILayout.Width (100),
 							   GUILayout.Height (40));
 			}
 
@@ -429,25 +350,25 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 
 			// Resource name
-			GUILayout.Box (label, Styles.white, GUILayout.Width (125),
+			GUILayout.Box (label, ELStyles.white, GUILayout.Width (125),
 						   GUILayout.Height (40));
 
 			GUILayout.BeginVertical ();
 
-			Styles.bar.Draw ((float) fraction, percent, 300);
+			ELStyles.bar.Draw ((float) fraction, percent, 300);
 			GUILayout.EndVertical ();
 
 			// Calculate if we have enough resources to build
-			GUIStyle requiredStyle = Styles.green;
+			GUIStyle requiredStyle = ELStyles.green;
 			if (required > available) {
-				requiredStyle = Styles.yellow;
+				requiredStyle = ELStyles.yellow;
 			}
 			// Required and Available
 			GUILayout.Box (displayAmount(required),
 						   requiredStyle, GUILayout.Width (100),
 						   GUILayout.Height (40));
 			GUILayout.Box (displayAmount(available),
-						   Styles.white, GUILayout.Width (100),
+						   ELStyles.white, GUILayout.Width (100),
 						   GUILayout.Height (40));
 			GUILayout.FlexibleSpace ();
 
@@ -457,8 +378,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		void SelectPad_start ()
 		{
-			pad_list.styleListItem = Styles.listItem;
-			pad_list.styleListBox = Styles.listBox;
+			pad_list.styleListItem = ELStyles.listItem;
+			pad_list.styleListBox = ELStyles.listBox;
 			pad_list.DrawBlockingSelector ();
 			control.builder.PadSelection_start ();
 		}
@@ -484,11 +405,11 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.Label (control.builder.vessel.vesselName);
 			GUILayout.FlexibleSpace ();
 			double productivity = control.productivity;
-			GUIStyle prodStyle = Styles.green;
+			GUIStyle prodStyle = ELStyles.green;
 			if (productivity <= 0) {
-				prodStyle = Styles.red;
+				prodStyle = ELStyles.red;
 			} else if (productivity < 1) {
-				prodStyle = Styles.yellow;
+				prodStyle = ELStyles.yellow;
 			}
 			GUILayout.Label ("Productivity: " + productivity.ToString("G3"),
 							 prodStyle);
@@ -520,7 +441,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			GUILayout.BeginHorizontal ();
 			GUI.enabled = craftlist == null;
-			if (GUILayout.Button ("Select Craft", Styles.normal,
+			if (GUILayout.Button ("Select Craft", ELStyles.normal,
 								  GUILayout.ExpandWidth (true))) {
 
 				//GUILayout.Button is "true" when clicked
@@ -531,17 +452,17 @@ namespace ExtraplanetaryLaunchpads {
 												  false);
 			}
 			GUI.enabled = flagBrowser == null;
-			if (GUILayout.Button (flagTexture, Styles.normal,
+			if (GUILayout.Button (flagTexture, ELStyles.normal,
 								  GUILayout.Width (48), GUILayout.Height (32),
 								  GUILayout.ExpandWidth (false))) {
 				CreateFlagBrowser ();
 			}
 			GUI.enabled = control.craftConfig != null;
-			if (GUILayout.Button ("Reload", Styles.normal,
+			if (GUILayout.Button ("Reload", ELStyles.normal,
 								  GUILayout.ExpandWidth (false))) {
 				control.LoadCraft (control.filename, control.flagname);
 			}
-			if (GUILayout.Button ("Clear", Styles.normal,
+			if (GUILayout.Button ("Clear", ELStyles.normal,
 								  GUILayout.ExpandWidth (false))) {
 				control.UnloadCraft ();
 			}
@@ -553,7 +474,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (control.craftConfig != null) {
 				var ship_name = control.craftConfig.GetValue ("ship");
-				GUILayout.Box ("Selected Craft:	" + ship_name, Styles.white);
+				GUILayout.Box ("Selected Craft:	" + ship_name, ELStyles.white);
 			}
 		}
 
@@ -568,10 +489,10 @@ namespace ExtraplanetaryLaunchpads {
 			var width300 = GUILayout.Width (300);
 			var width100 = GUILayout.Width (100);
 			GUILayout.BeginHorizontal ();
-			GUILayout.Label ("Resource", Styles.label, width120);
-			GUILayout.Label ("Fill Percentage", Styles.label, width300);
-			GUILayout.Label ("Required", Styles.label, width100);
-			GUILayout.Label ("Available", Styles.label, width100);
+			GUILayout.Label ("Resource", ELStyles.label, width120);
+			GUILayout.Label ("Fill Percentage", ELStyles.label, width300);
+			GUILayout.Label ("Required", ELStyles.label, width100);
+			GUILayout.Label ("Available", ELStyles.label, width100);
 			GUILayout.EndHorizontal ();
 		}
 
@@ -587,14 +508,14 @@ namespace ExtraplanetaryLaunchpads {
 		void ResourceScroll_end ()
 		{
 			GUILayout.EndVertical ();
-			GUILayout.Label ("", Styles.label, GUILayout.Width (15));
+			GUILayout.Label ("", ELStyles.label, GUILayout.Width (15));
 			GUILayout.EndHorizontal ();
 			GUILayout.EndScrollView ();
 		}
 
 		void RequiredResources ()
 		{
-			GUILayout.Label ("Resources required to build:", Styles.label,
+			GUILayout.Label ("Resources required to build:", ELStyles.label,
 							 GUILayout.ExpandWidth (true));
 			foreach (var br in control.buildCost.required) {
 				double a = br.amount;
@@ -608,7 +529,7 @@ namespace ExtraplanetaryLaunchpads {
 		void BuildButton ()
 		{
 			GUI.enabled = control.builder.canBuild;
-			if (GUILayout.Button ("Build", Styles.normal,
+			if (GUILayout.Button ("Build", ELStyles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.BuildCraft ();
 			}
@@ -621,14 +542,14 @@ namespace ExtraplanetaryLaunchpads {
 				GUILayout.BeginVertical();
 				GUILayout.Space(10.0f);
 				GUILayout.BeginHorizontal();
-				GUILayout.Box("Spawn Height Offset", Styles.white,
+				GUILayout.Box("Spawn Height Offset", ELStyles.white,
 							  GUILayout.Width(180), GUILayout.Height(40));
 				control.spawnOffset = GUILayout.HorizontalSlider(control.spawnOffset,
-					0.0F, 10.0F, Styles.slider, GUI.skin.horizontalSliderThumb,
+					0.0F, 10.0F, ELStyles.slider, GUI.skin.horizontalSliderThumb,
 					GUILayout.Width(300), GUILayout.Height(40));
 				control.spawnOffset = (float)Math.Round(control.spawnOffset, 1);
 				GUILayout.Box(control.spawnOffset.ToString() + "m",
-							  Styles.white, GUILayout.Width(75),
+							  ELStyles.white, GUILayout.Width(75),
 							  GUILayout.Height(40));
 				GUILayout.FlexibleSpace();
 
@@ -643,12 +564,12 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			GUILayout.BeginHorizontal ();
 			GUI.enabled = control.builder.canBuild;
-			if (GUILayout.Button ("Finalize Build", Styles.normal,
+			if (GUILayout.Button ("Finalize Build", ELStyles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.BuildAndLaunchCraft ();
 			}
 			GUI.enabled = true;
-			if (GUILayout.Button ("Teardown Build", Styles.normal,
+			if (GUILayout.Button ("Teardown Build", ELStyles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.CancelBuild ();
 			}
@@ -769,23 +690,23 @@ namespace ExtraplanetaryLaunchpads {
 			int ind = control.state == ELBuildControl.State.Building ? 0 : 1;
 			GUILayout.BeginHorizontal ();
 			if (control.paused) {
-				if (GUILayout.Button ("Resume " + state_str[ind], Styles.normal,
+				if (GUILayout.Button ("Resume " + state_str[ind], ELStyles.normal,
 									  GUILayout.ExpandWidth (true))) {
 					control.ResumeBuild ();
 				}
 			} else {
-				if (GUILayout.Button ("Pause " + state_str[ind], Styles.normal,
+				if (GUILayout.Button ("Pause " + state_str[ind], ELStyles.normal,
 									  GUILayout.ExpandWidth (true))) {
 					control.PauseBuild ();
 				}
 			}
 			if (control.state == ELBuildControl.State.Building) {
-				if (GUILayout.Button ("Cancel Build", Styles.normal,
+				if (GUILayout.Button ("Cancel Build", ELStyles.normal,
 									  GUILayout.ExpandWidth (true))) {
 					control.CancelBuild ();
 				}
 			} else {
-				if (GUILayout.Button ("Restart Build", Styles.normal,
+				if (GUILayout.Button ("Restart Build", ELStyles.normal,
 									  GUILayout.ExpandWidth (true))) {
 					control.UnCancelBuild ();
 				}
@@ -795,7 +716,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void ReleaseButton ()
 		{
-			if (GUILayout.Button ("Release", Styles.normal,
+			if (GUILayout.Button ("Release", ELStyles.normal,
 								  GUILayout.ExpandWidth (true))) {
 				control.ReleaseVessel ();
 			}
@@ -814,7 +735,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void WindowGUI (int windowID)
 		{
-			Styles.Init ();
+			ELStyles.Init ();
 
 			SelectPad_start ();
 

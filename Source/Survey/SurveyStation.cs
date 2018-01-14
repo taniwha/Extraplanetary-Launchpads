@@ -134,8 +134,8 @@ namespace ExtraplanetaryLaunchpads {
 			if (site_list == null) {
 				return;
 			}
-			site_list.styleListItem = ELBuildWindow.Styles.listItem;
-			site_list.styleListBox = ELBuildWindow.Styles.listBox;
+			site_list.styleListItem = ELStyles.listItem;
+			site_list.styleListBox = ELStyles.listBox;
 			site_list.DrawBlockingSelector ();
 		}
 
@@ -174,7 +174,7 @@ namespace ExtraplanetaryLaunchpads {
 				GUILayout.BeginHorizontal ();
 				if (control.state == ELBuildControl.State.Complete) {
 					GUILayout.Label ("No sites found. Explosions likely.",
-									 ELBuildWindow.Styles.red);
+									 ELStyles.red);
 				} else {
 					GUILayout.Label ("No sites found.");
 				}

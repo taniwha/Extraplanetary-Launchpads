@@ -50,6 +50,7 @@ EL_FILES := \
 	GUI/EditorToolbar.cs				\
 	GUI/RenameWindow.cs					\
 	GUI/ShipInfo.cs						\
+	GUI/Styles.cs						\
 	GUI/ProgressBar.cs					\
 	LaunchClamp/LaunchClamp.cs			\
 	Pad/Launchpad.cs					\

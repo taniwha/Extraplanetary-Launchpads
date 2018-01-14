@@ -399,6 +399,14 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateGUIState ();
 		}
 
+		void Situation ()
+		{
+			GUILayout.BeginHorizontal ();
+			GUILayout.Label (control.builder.vessel.situation.ToString ());
+			GUILayout.FlexibleSpace ();
+			GUILayout.EndHorizontal ();
+		}
+
 		void VesselName ()
 		{
 			GUILayout.BeginHorizontal ();
@@ -740,6 +748,7 @@ namespace ExtraplanetaryLaunchpads {
 			SelectPad_start ();
 
 			GUILayout.BeginVertical ();
+			Situation ();
 			VesselName ();
 			SelectPad ();
 
@@ -826,12 +835,9 @@ namespace ExtraplanetaryLaunchpads {
 		void OnGUI ()
 		{
 			GUI.skin = HighLogic.Skin;
-			string name = "Extraplanetary Launchpad";
-			string ver = ELVersionReport.GetVersion ();
-			string sit = control.builder.vessel.situation.ToString ();
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,
-										  name + " " + ver + ": " + sit,
+										  ELVersionReport.GetVersion (),
 										  GUILayout.Width (695));
 		}
 	}

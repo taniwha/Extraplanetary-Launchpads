@@ -49,6 +49,7 @@ EL_FILES := \
 	GUI/DropDownList.cs					\
 	GUI/EditorToolbar.cs				\
 	GUI/RenameWindow.cs					\
+	GUI/ResourceWindow.cs				\
 	GUI/ShipInfo.cs						\
 	GUI/Styles.cs						\
 	GUI/ProgressBar.cs					\

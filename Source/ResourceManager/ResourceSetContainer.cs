@@ -51,6 +51,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public RMResourceSet set { get { return resourceSet; } }
+
 		public ResourceSetContainer (string resource, RMResourceSet resourceSet)
 		{
 			this.resourceSet = resourceSet;

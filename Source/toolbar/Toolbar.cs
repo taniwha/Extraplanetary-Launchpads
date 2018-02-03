@@ -31,6 +31,7 @@ namespace ExtraplanetaryLaunchpads {
 		private static ApplicationLauncherButton button = null;
 
 		public static Callback Toggle = delegate {};
+		public static Callback RightToggle = delegate {};
 
 		static bool buttonVisible
 		{
@@ -54,6 +55,11 @@ namespace ExtraplanetaryLaunchpads {
 			Toggle();
 		}
 
+		private void onRightClick ()
+		{
+			RightToggle();
+		}
+
 		public void Start()
 		{
 			GameObject.DontDestroyOnLoad(this);
@@ -70,6 +76,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (ApplicationLauncher.Ready && button == null) {
 				var tex = GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/icon_button", false);
 				button = ApplicationLauncher.Instance.AddModApplication(onToggle, onToggle, null, null, null, null, buttonScenes, tex);
+				button.onRightClick += onRightClick;
 				UpdateVisibility ();
 			}
 		}
@@ -111,6 +118,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void Awake ()
 		{
 			ELAppButton.Toggle += ELBuildWindow.ToggleGUI;
+			ELAppButton.RightToggle += ELResourceWindow.ToggleGUI;
 
 			if (ToolbarManager.Instance == null) {
 				return;
@@ -128,6 +136,7 @@ namespace ExtraplanetaryLaunchpads {
 				ELBuildWindowButton.Destroy ();
 			}
 			ELAppButton.Toggle -= ELBuildWindow.ToggleGUI;
+			ELAppButton.RightToggle -= ELResourceWindow.ToggleGUI;
 		}
 	}
 

@@ -28,6 +28,32 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class RMResourceManager
 	{
+		class ConnectedPartSet {
+			Dictionary<uint, string> parts;
+			public ConnectedPartSet ()
+			{
+				parts = new Dictionary<uint, string>();
+			}
+			public void Add (Part part, string name)
+			{
+				uint id = RMResourceManager.GetID (part);
+				parts[id] = name;
+			}
+			public bool Has (Part part)
+			{
+				uint id = RMResourceManager.GetID (part);
+				return parts.ContainsKey (id);
+			}
+			public string Name (Part part)
+			{
+				uint id = RMResourceManager.GetID (part);
+				return parts[id];
+			}
+			public void Clear ()
+			{
+				parts.Clear ();
+			}
+		}
 		HashSet<uint> visitedParts;
 		Dictionary<uint, Part> partMap;
 		Dictionary<uint, RMResourceSet> symmetryDict;
@@ -51,7 +77,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		Part GetOtherPart (IStageSeparator separator)
+		void GetOtherPart (IStageSeparator separator, ConnectedPartSet cp)
 		{
 			AttachNode node = null;
 			if (separator is ModuleAnchoredDecoupler) {
@@ -65,20 +91,32 @@ namespace ExtraplanetaryLaunchpads {
 				// if referenceNode itself is null, then the port cannot be
 				// docked in the editor (eg, inline docking port)
 				var port = separator as ModuleDockingNode;
-				node = port.referenceNode;
-				if (node == null || node.attachedPart) {
-					if (port.otherNode != null) {
-						return port.otherNode.part;
+				Part otherPart = null;
+				if (partMap.TryGetValue (port.dockedPartUId, out otherPart)) {
+					if (port.vesselInfo != null) {
+						var vi = port.vesselInfo;
+						cp.Add (otherPart, vi.name);
+						return;
 					}
-					return null;
+				}
+				node = port.referenceNode;
+				if (node == null) {
+					//Debug.LogFormat ("[RMResourceManager] docking port null");
+					return;
 				}
 			}
 			if (node == null) {
 				// separators detach on both ends (and all surface attachments?)
 				// and thus don't keep track of the node(s), so return the parent
-				return (separator as PartModule).part.parent;
+				Part p = (separator as PartModule).part;
+				if (p.parent != null) {
+					cp.Add (p.parent, "separator");
+				}
+				return;
 			}
-			return node.attachedPart;
+			if (node.attachedPart != null) {
+				cp.Add (node.attachedPart, "decoupler");
+			}
 		}
 
 		static FieldInfo _grappleNodeField;
@@ -97,76 +135,91 @@ namespace ExtraplanetaryLaunchpads {
 				return _grappleNodeField;
 			}
 		}
-		Part GetOtherPart (ModuleGrappleNode grapple)
+		void GetOtherPart (ModuleGrappleNode grapple, ConnectedPartSet cp)
 		{
 			// The claw is a very unfriendly part. All the important fields
 			// private.
 			AttachNode grappleNode = (AttachNode) grappleNodeField.GetValue (grapple);
-			if (grappleNode != null) {
-				return grappleNode.attachedPart;
+			if (grappleNode != null && grappleNode.attachedPart != null) {
+				var vi = grapple.vesselInfo;
+				cp.Add (grappleNode.attachedPart, vi.name);
 			}
-			return null;
 		}
 
-		Part GetOtherPart (ELLaunchpad pad)
+		void GetOtherPart (ELLaunchpad pad, ConnectedPartSet cp)
 		{
 			// no need to worry about something attached via a node as
 			// hopefully that part is a decoupler of some sort, otherwise
 			// the pad is probably unusable, and surface attached parts
 			// don't matter too much, either.
 			// if pad.control is ever null, bigger problems are afoot
-			return pad.control.craftRoot;
+			if (pad.control.craftRoot != null) {
+				var vi = pad.control.vesselInfo;
+				cp.Add (pad.control.craftRoot, vi.name);
+			}
 		}
 
-		Part GetOtherPart (Part part)
+		//FIXME rework for multiple connections
+		ConnectedPartSet ConnectedParts (Part part)
 		{
-			// This covers radial and stack decouplers and separators, launch
-			// clamps, and docking ports.
-			var separator = part.FindModuleImplementing<IStageSeparator> ();
-			if (separator != null) {
-				return GetOtherPart (separator);
-			} else {
-				// The claw is on its own as it is never staged (I guess).
-				var grapple = part.FindModuleImplementing<ModuleGrappleNode> ();
-				if (grapple != null) {
-					return GetOtherPart (grapple);
-				} else {
-					// EL's launchpad module is very much on its own. No need
-					// to worry about survey stations as the built vessel is
-					// never attached, nor disposable pads as they self
-					// destruct.
-					var pad = part.FindModuleImplementing<ELLaunchpad> ();
-					if (pad != null) {
-						return GetOtherPart (pad);
-					}
+			var connectedParts = new ConnectedPartSet ();
+
+			for (int i = part.Modules.Count; i-- > 0; ) {
+				var module = part.Modules[i];
+				// This covers radial and stack decouplers and separators,
+				// launch clamps, and docking ports.
+				var separator = module as IStageSeparator;
+				if (separator != null) {
+					GetOtherPart (separator, connectedParts);
+					continue;
 				}
+
+				// The claw is on its own as it is never staged (I guess).
+				var grapple = module as ModuleGrappleNode;
+				if (grapple != null) {
+					GetOtherPart (grapple, connectedParts);
+					continue;
+				}
+
+				// EL's launchpad module is very much on its own. No need
+				// to worry about survey stations as the built vessel is
+				// never attached, nor disposable pads as they self
+				// destruct.
+				var pad = module as ELLaunchpad;
+				if (pad != null) {
+					GetOtherPart (pad, connectedParts);
+					continue;
+				}
+
 				//FIXME need to add KAS connectors
 			}
-			return null;
+			return connectedParts;
 		}
 
-		RMResourceSet AddModule ()
+		RMResourceSet AddModule (string name)
 		{
 			var set = new RMResourceSet ();
-			set.name = "module";
+			set.name = name;
 			moduleSets.Add (set);
 			return set;
 		}
 
 		void ProcessParts (Part part, RMResourceSet set)
 		{
-			var otherPart = GetOtherPart (part);
+			var cp = ConnectedParts (part);
 
-			if (part.parent != null && part.parent == otherPart) {
-				set = AddModule ();
+			if (part.parent != null && cp.Has (part.parent)) {
+				//Debug.LogFormat("[RMResourceSet] ProcessParts: parent {0}", part.parent);
+				set = AddModule (cp.Name (part.parent));
 			}
 
 			set.AddPart(part);
 
 			for (int i = part.children.Count; i-- > 0; ) {
 				var child = part.children[i];
-				if (child == otherPart) {
-					ProcessParts (child, AddModule ());
+				if (cp.Has (child)) {
+					//Debug.LogFormat("[RMResourceSet] ProcessParts: child {0}", child);
+					ProcessParts (child, AddModule (cp.Name (child)));
 				} else {
 					ProcessParts (child, set);
 				}
@@ -189,7 +242,7 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < parts.Count; i++) {
 				Part p = parts[i];
 				uint id = GetID (p);
-				Debug.LogFormat ("{0} {1} {2}", i, p.name, p.symmetryCounterparts.Count);
+				//Debug.LogFormat ("{0} {1} {2}", i, p.name, p.symmetryCounterparts.Count);
 				if (p.Resources.Count < 1) {
 					// no resources, so no point worrying about symmetry
 					continue;
@@ -229,6 +282,7 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (var m in moduleSets) {
 				if (set == null) {
 					set = new RMResourceSet ();
+					set.name = m.name;
 				}
 				foreach (var p in m.parts) {
 					uint id = GetID (p);
@@ -256,12 +310,16 @@ namespace ExtraplanetaryLaunchpads {
 
 		public RMResourceManager (List<Part> parts, bool useFlightID)
 		{
+			string vesselName = "root";
+			if (parts[0].vessel != null) {
+				vesselName = parts[0].vessel.vesselName;
+			}
 			this.useFlightID = useFlightID;
 			CreatePartMap (parts);
 			visitedParts = new HashSet<uint> ();
 			FindSymmetrySets (parts);
 			moduleSets = new List<RMResourceSet> ();
-			ProcessParts (parts[0].localRoot, AddModule ());
+			ProcessParts (parts[0].localRoot, AddModule (vesselName));
 			for (int i = 0; i < moduleSets.Count; ) {
 				if (moduleSets[i].parts.Count > 0) {
 					i++;
@@ -270,23 +328,23 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			BuildResourceSets ();
-/*
+#if false
 			foreach (var s in symmetrySets) {
-				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
+				Debug.LogFormat ("[RMResourceManager]  s {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
 			}
 			foreach (var m in moduleSets) {
-				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", m.name, m.parts.Count, m.sets.Count, m.resources.Count);
+				Debug.LogFormat ("[RMResourceManager]  m {0} {1} {2} {3}", m.name, m.parts.Count, m.sets.Count, m.resources.Count);
 			}
 			foreach (var r in resourceSets) {
-				Debug.LogFormat ("[RMResourceManager] {0} {1} {2} {3}", r.name, r.parts.Count, r.sets.Count, r.resources.Count);
+				Debug.LogFormat ("[RMResourceManager]  r {0} {1} {2} {3}", r.name, r.parts.Count, r.sets.Count, r.resources.Count);
 				foreach (var s in r.sets) {
-					Debug.LogFormat ("[RMResourceManager]   {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
+					Debug.LogFormat ("[RMResourceManager] rs  {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
 				}
 				foreach (var res in r.resources.Keys) {
-					Debug.LogFormat ("[RMResourceManager] {0} {1} {2}", res, r.ResourceAmount (res), r.ResourceCapacity (res));
+					Debug.LogFormat ("[RMResourceManager] rr {0} {1} {2}", res, r.ResourceAmount (res), r.ResourceCapacity (res));
 				}
 			}
-*/
+#endif
 		}
 	}
 }

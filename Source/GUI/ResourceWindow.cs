@@ -206,7 +206,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void ModuleResourceLine (int ind, RMResourceSet set, string res)
+		void ModuleResourceLine (int ind, RMResourceSet set, string res,
+								 bool highlight)
 		{
 			double amount = set.ResourceAmount (res);
 			double maxAmount = set.ResourceCapacity (res);
@@ -220,7 +221,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (setSelected != null
 				&& Event.current.type == EventType.Repaint) {
 				var rect = GUILayoutUtility.GetLastRect();
-				if (rect.Contains(Event.current.mousePosition)) {
+				if (highlight && rect.Contains(Event.current.mousePosition)) {
 					if (!setSelected[ind]) {
 						setSelected[ind] = true;
 						HighlightSet (set, res, true);
@@ -234,7 +235,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void ResourceModules ()
+		void ResourceModules (bool highlight)
 		{
 			int ind = 0;
 			for (int i = 0; i < resources.Count; i++) {
@@ -245,7 +246,7 @@ namespace ExtraplanetaryLaunchpads {
 					if (!set.resources.ContainsKey (res)) {
 						continue;
 					}
-					ModuleResourceLine (ind++, set, res);
+					ModuleResourceLine (ind++, set, res, highlight);
 				}
 			}
 			if (setSelected == null && ind > 0) {
@@ -262,13 +263,21 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginVertical ();
 		}
 
-		void Scroll_end ()
+		void Scroll_end (ref Rect rect, ref bool contained)
 		{
 			GUILayout.EndVertical ();
 			GUILayout.Label ("", ELStyles.label, GUILayout.Width (15));
 			GUILayout.EndHorizontal ();
 			GUILayout.EndScrollView ();
+			if (Event.current.type == EventType.Repaint) {
+				rect = GUILayoutUtility.GetLastRect();
+				Debug.LogFormat ("{0} {1}", rect, Event.current.mousePosition);
+				contained = rect.Contains(Event.current.mousePosition);
+			}
 		}
+
+		Rect rmRect;
+		bool rmHighlight = false;
 
 		void WindowGUI (int windowID)
 		{
@@ -277,8 +286,8 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginVertical ();
 
 			Scroll_begin ();
-			ResourceModules ();
-			Scroll_end ();
+			ResourceModules (rmHighlight);
+			Scroll_end (ref rmRect, ref rmHighlight);
 
 			GUILayout.EndVertical ();
 

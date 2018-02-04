@@ -271,7 +271,6 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.EndScrollView ();
 			if (Event.current.type == EventType.Repaint) {
 				rect = GUILayoutUtility.GetLastRect();
-				Debug.LogFormat ("{0} {1}", rect, Event.current.mousePosition);
 				contained = rect.Contains(Event.current.mousePosition);
 			}
 		}

@@ -36,7 +36,7 @@ namespace ExtraplanetaryLaunchpads {
 		static bool gui_enabled = true;
 		static Rect windowpos;
 		static bool link_lfo_sliders = true;
-		static Vector2 resscroll;
+		static ScrollView resscroll = new ScrollView (680, 300);
 
 		RMResourceManager resourceManager;
 		bool []setSelected;
@@ -106,6 +106,7 @@ namespace ExtraplanetaryLaunchpads {
 		void onVesselChange (Vessel v)
 		{
 			resourceManager = new RMResourceManager (v.parts, true);
+			resscroll.Reset ();
 			var set = new HashSet<string> ();
 			setSelected = null;
 			foreach (var s in resourceManager.resourceSets) {
@@ -254,39 +255,15 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void Scroll_begin ()
-		{
-			resscroll = GUILayout.BeginScrollView (resscroll,
-												   GUILayout.Width (680),
-												   GUILayout.Height (300));
-			GUILayout.BeginHorizontal ();
-			GUILayout.BeginVertical ();
-		}
-
-		void Scroll_end (ref Rect rect, ref bool contained)
-		{
-			GUILayout.EndVertical ();
-			GUILayout.Label ("", ELStyles.label, GUILayout.Width (15));
-			GUILayout.EndHorizontal ();
-			GUILayout.EndScrollView ();
-			if (Event.current.type == EventType.Repaint) {
-				rect = GUILayoutUtility.GetLastRect();
-				contained = rect.Contains(Event.current.mousePosition);
-			}
-		}
-
-		Rect rmRect;
-		bool rmHighlight = false;
-
 		void WindowGUI (int windowID)
 		{
 			ELStyles.Init ();
 
 			GUILayout.BeginVertical ();
 
-			Scroll_begin ();
-			ResourceModules (rmHighlight);
-			Scroll_end (ref rmRect, ref rmHighlight);
+			resscroll.Begin ();
+			ResourceModules (resscroll.mouseOver);
+			resscroll.End ();
 
 			GUILayout.EndVertical ();
 

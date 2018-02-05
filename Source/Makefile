@@ -50,6 +50,7 @@ EL_FILES := \
 	GUI/EditorToolbar.cs				\
 	GUI/RenameWindow.cs					\
 	GUI/ResourceWindow.cs				\
+	GUI/ScrollView.cs					\
 	GUI/ShipInfo.cs						\
 	GUI/Styles.cs						\
 	GUI/ProgressBar.cs					\

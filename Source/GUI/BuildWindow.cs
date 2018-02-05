@@ -39,7 +39,7 @@ namespace ExtraplanetaryLaunchpads {
 		static bool link_lfo_sliders = true;
 
 		static ELCraftBrowser craftlist = null;
-		static Vector2 resscroll;
+		static ScrollView resScroll = new ScrollView (680,300);
 
 		static FlagBrowser flagBrowserPrefab;
 		static FlagBrowser flagBrowser;
@@ -497,23 +497,6 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.EndHorizontal ();
 		}
 
-		void ResourceScroll_begin ()
-		{
-			resscroll = GUILayout.BeginScrollView (resscroll,
-												   GUILayout.Width (680),
-												   GUILayout.Height (300));
-			GUILayout.BeginHorizontal ();
-			GUILayout.BeginVertical ();
-		}
-
-		void ResourceScroll_end ()
-		{
-			GUILayout.EndVertical ();
-			GUILayout.Label ("", ELStyles.label, GUILayout.Width (15));
-			GUILayout.EndHorizontal ();
-			GUILayout.EndScrollView ();
-		}
-
 		void RequiredResources ()
 		{
 			GUILayout.Label ("Resources required to build:", ELStyles.label,
@@ -754,25 +737,25 @@ namespace ExtraplanetaryLaunchpads {
 				if (control.lockedParts) {
 					LockedParts ();
 				} else {
-					ResourceScroll_begin ();
+					resScroll.Begin ();
 					RequiredResources ();
 					OptionalResources ();
-					ResourceScroll_end ();
+					resScroll.End ();
 					BuildButton ();
 				}
 				break;
 			case ELBuildControl.State.Building:
 				SelectedCraft ();
-				ResourceScroll_begin ();
+				resScroll.Begin ();
 				BuildProgress (true);
-				ResourceScroll_end ();
+				resScroll.End ();
 				PauseButton ();
 				break;
 			case ELBuildControl.State.Canceling:
 				SelectedCraft ();
-				ResourceScroll_begin ();
+				resScroll.Begin ();
 				BuildProgress (false);
-				ResourceScroll_end ();
+				resScroll.End ();
 				PauseButton ();
 				break;
 			case ELBuildControl.State.Complete:
@@ -781,9 +764,9 @@ namespace ExtraplanetaryLaunchpads {
 				break;
 			case ELBuildControl.State.Transfer:
 				SelectedCraft ();
-				ResourceScroll_begin ();
+				resScroll.Begin ();
 				OptionalResources ();
-				ResourceScroll_end ();
+				resScroll.End ();
 				ReleaseButton ();
 				break;
 			}

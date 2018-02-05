@@ -33,7 +33,8 @@ namespace ExtraplanetaryLaunchpads {
 		int parts_count;
 		public BuildCost buildCost;
 		CostReport cashed_cost;
-		Vector2 scrollPosR, scrollPosO;
+		ScrollView reqScroll = new ScrollView (100);
+		ScrollView optScroll = new ScrollView (100);
 
 		public static void ToggleGUI ()
 		{
@@ -194,13 +195,13 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.EndHorizontal();
 		}
 
-		private Vector2 ResourcePanel (string title,
-									   List<BuildResource> resources,
-									   Vector2 scrollPos)
+		private void ResourcePanel (string title,
+									List<BuildResource> resources,
+									ScrollView scroll)
 		{
 			GUILayout.Label (title + ":");
 			GUILayout.BeginVertical (GUILayout.Height (100));
-			scrollPos = GUILayout.BeginScrollView (scrollPos);
+			scroll.Begin ();
 			foreach (var res in resources) {
 				GUILayout.BeginHorizontal ();
 				GUILayout.Label (String.Format ("{0}:", res.name));
@@ -208,13 +209,14 @@ namespace ExtraplanetaryLaunchpads {
 				GUILayout.Label (String.Format ("{0} ({1})", res.amount.ToStringSI(4, unit:"u"), EL_Utils.FormatMass(res.mass, 4)));
 				GUILayout.EndHorizontal ();
 			}
-			GUILayout.EndScrollView ();
+			scroll.End ();
 			GUILayout.EndVertical ();
-			return scrollPos;
 		}
 
 		void InfoWindow (int windowID)
 		{
+			ELStyles.Init ();
+
 			var cost = cashed_cost;
 			double required_mass = 0;
 			double resource_mass = 0;
@@ -239,8 +241,8 @@ namespace ExtraplanetaryLaunchpads {
 
 			cost.optional.Sort ();
 			GUILayout.Label (" ");
-			scrollPosR = ResourcePanel ("Required", cost.required, scrollPosR);
-			scrollPosO = ResourcePanel ("Optional", cost.optional, scrollPosO);
+			ResourcePanel ("Required", cost.required, reqScroll);
+			ResourcePanel ("Optional", cost.optional, optScroll);
 
 			string ver = ELVersionReport.GetVersion ();
 			GUILayout.Label(ver);

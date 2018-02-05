@@ -207,6 +207,15 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void FlowState (RMResourceSet set, string res)
+		{
+			bool curFlow = set.GetFlowState (res);
+			bool newFlow = GUILayout.Toggle (curFlow, "flow");
+			if (newFlow != curFlow) {
+				set.SetFlowState (res, newFlow);
+			}
+		}
+
 		void ModuleResourceLine (int ind, RMResourceSet set, string res,
 								 bool highlight)
 		{
@@ -218,6 +227,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.Label (amount.ToString(), ELStyles.label);
 			GUILayout.Label ("/", ELStyles.label);
 			GUILayout.Label (maxAmount.ToString(), ELStyles.label);
+			FlowState (set, res);
 			GUILayout.EndHorizontal ();
 			if (setSelected != null
 				&& Event.current.type == EventType.Repaint) {

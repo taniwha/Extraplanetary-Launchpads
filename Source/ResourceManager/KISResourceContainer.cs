@@ -15,14 +15,6 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-
-using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 	public class KISResourceContainer : IResourceContainer {
@@ -44,6 +36,12 @@ namespace ExtraplanetaryLaunchpads {
 			set {
 				resource.amount = value;
 			}
+		}
+
+		public bool flowState
+		{
+			get { return false; }
+			set { }
 		}
 
 		public Part part

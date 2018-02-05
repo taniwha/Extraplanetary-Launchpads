@@ -46,6 +46,15 @@ namespace ExtraplanetaryLaunchpads {
 				throw new NotSupportedException ("Recipe resources are read-only");
 			}
 		}
+		public bool flowState
+		{
+			get {
+				return true;
+			}
+			set {
+				throw new NotSupportedException ("Recipe resources are read-only");
+			}
+		}
 		public Part part
 		{
 			get {

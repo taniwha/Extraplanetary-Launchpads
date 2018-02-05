@@ -34,6 +34,29 @@ namespace ExtraplanetaryLaunchpads {
 		public bool balanced;
 		public string name;
 
+		public bool GetFlowState (string res)
+		{
+			if (resources.ContainsKey (res)) {
+				RMResourceInfo info = resources[res];
+				for (int i = info.containers.Count; i-- > 0; ) {
+					if (info.containers[i].flowState) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public void SetFlowState (string res, bool state)
+		{
+			if (resources.ContainsKey (res)) {
+				RMResourceInfo info = resources[res];
+				for (int i = info.containers.Count; i-- > 0; ) {
+					info.containers[i].flowState = state;
+				}
+			}
+		}
+
 		public void AddPart (Part part)
 		{
 			if (part.Resources.Count > 0) {

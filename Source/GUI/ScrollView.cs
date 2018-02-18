@@ -31,13 +31,11 @@ namespace ExtraplanetaryLaunchpads {
 		public bool mouseOver { get; private set; }
 		GUILayoutOption width;
 		GUILayoutOption height;
-		GUILayoutOption sbWidth;
 
 		public ScrollView (int width, int height)
 		{
 			this.width = GUILayout.Width (width);
 			this.height = GUILayout.Height (height);
-			this.sbWidth = GUILayout.Width (15);
 
 			Begin = BeginWidthHeight;
 			End = EndWidthHeight;
@@ -67,7 +65,7 @@ namespace ExtraplanetaryLaunchpads {
 		void EndWidthHeight ()
 		{
 			GUILayout.EndVertical ();
-			GUILayout.Label ("", ELStyles.label, sbWidth);
+			GUILayout.Space (15);
 			GUILayout.EndHorizontal ();
 			GUILayout.EndScrollView ();
 			if (Event.current.type == EventType.Repaint) {

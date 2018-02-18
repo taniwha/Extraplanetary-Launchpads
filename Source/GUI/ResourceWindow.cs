@@ -17,6 +17,7 @@ along with Extraplanetary Launchpads.  If not, see
 */
 using System;
 using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -37,10 +38,22 @@ namespace ExtraplanetaryLaunchpads {
 		static Rect windowpos;
 		static bool link_lfo_sliders = true;
 		static ScrollView resscroll = new ScrollView (680, 300);
+		static GUILayoutOption toggleWidth = GUILayout.Width (80);
+
+		public enum XferState {
+			Hold,
+			In,
+			Out,
+		};
 
 		RMResourceManager resourceManager;
 		bool []setSelected;
+		XferState []xferState;
+		Dictionary<string, RMResourceSet> dstSets;
+		Dictionary<string, RMResourceSet> srcSets;
+		bool canTransfer;
 		List<string> resources;
+		bool transferring;
 
 		internal void Start()
 		{
@@ -109,6 +122,9 @@ namespace ExtraplanetaryLaunchpads {
 			resscroll.Reset ();
 			var set = new HashSet<string> ();
 			setSelected = null;
+			xferState = null;
+			dstSets.Clear ();
+			srcSets.Clear ();
 			foreach (var s in resourceManager.resourceSets) {
 				foreach (string r in s.resources.Keys) {
 					set.Add (r);
@@ -151,6 +167,9 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onHideUI.Add (onHideUI);
 			GameEvents.onShowUI.Add (onShowUI);
 			enabled = false;
+
+			dstSets = new Dictionary<string, RMResourceSet> ();
+			srcSets = new Dictionary<string, RMResourceSet> ();
 		}
 
 		void OnDestroy ()
@@ -160,6 +179,58 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onHideUI.Remove (onHideUI);
 			GameEvents.onShowUI.Remove (onShowUI);
+		}
+
+		IEnumerator TransferResources ()
+		{
+			while (transferring) {
+				bool didSomething = false;
+				foreach (string res in dstSets.Keys) {
+					var dst = dstSets[res];
+					if (!srcSets.ContainsKey (res)) {
+						continue;
+					}
+					var src = srcSets[res];
+					double amount = dst.ResourceCapacity (res);
+					amount *= Time.deltaTime;
+					double srem = src.TransferResource (res, -amount);
+					// srem (amount not pulled) will be negative
+					if (srem == -amount) {
+						// could not pull any
+						continue;
+					}
+					amount += srem;
+					double drem = dst.TransferResource (res, amount);
+					if (drem != amount) {
+						didSomething = true;
+					}
+					// return any untransfered amount back to source
+					src.TransferResource (res, drem);
+				}
+				if (!didSomething) {
+					transferring = false;
+					break;
+				}
+				yield return new WaitForFixedUpdate ();
+			}
+		}
+
+		void TransferButtons ()
+		{
+			bool gui_enabled = GUI.enabled;
+
+			GUI.enabled = canTransfer;
+			if (transferring) {
+				if (GUILayout.Button ("Stop Transfer")) {
+					transferring = false;
+				}
+			} else {
+				if (GUILayout.Button ("Start Transfer")) {
+					transferring = true;
+					StartCoroutine (TransferResources ());
+				}
+			}
+			GUI.enabled = gui_enabled;
 		}
 
 		void CloseButton ()
@@ -207,10 +278,71 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void ToggleXferState (int ind, XferState state, string label)
+		{
+			bool on = false;
+			if (xferState != null) {
+				on = xferState[ind] == state;
+			}
+			if (GUILayout.Toggle (on, label, toggleWidth)) {
+				if (xferState != null) {
+					xferState[ind] = state;
+				}
+			}
+		}
+
+		void RemoveSet (Dictionary<string, RMResourceSet> dict, RMResourceSet set, string res)
+		{
+			var s = dict[res];
+			s.RemoveSet (set);
+			if (s.resources.Count < 1) {
+				dict.Remove (res);
+			}
+		}
+
+		void AddSet (Dictionary<string, RMResourceSet> dict, RMResourceSet set, string res)
+		{
+			if (!dict.ContainsKey (res)) {
+				dict[res] = new RMResourceSet ();
+			}
+			dict[res].AddSet (set);
+		}
+
+		void TransferState (int ind, RMResourceSet set, string res)
+		{
+			XferState old = XferState.Hold;
+			if (xferState != null) {
+				old = xferState[ind];
+			}
+			ToggleXferState (ind, XferState.Hold, "Hold");
+			ToggleXferState (ind, XferState.In, "In");
+			ToggleXferState (ind, XferState.Out, "Out");
+			GUILayout.Space (40);
+			if (xferState != null && xferState[ind] != old) {
+				if (old == XferState.In) {
+					RemoveSet (dstSets, set, res);
+				} else if (old == XferState.Out) {
+					RemoveSet (srcSets, set, res);
+				}
+				if (xferState[ind] == XferState.In) {
+					AddSet (dstSets, set, res);
+				} else if (xferState[ind] == XferState.Out) {
+					AddSet (srcSets, set, res);
+				}
+				canTransfer = false;
+				foreach (string r in dstSets.Keys) {
+					if (srcSets.ContainsKey (r)) {
+						canTransfer = true;
+						break;
+					}
+				}
+			}
+		}
+
 		void FlowState (RMResourceSet set, string res)
 		{
 			bool curFlow = set.GetFlowState (res);
-			bool newFlow = GUILayout.Toggle (curFlow, "flow");
+			bool newFlow = GUILayout.Toggle (curFlow, "");
 			if (newFlow != curFlow) {
 				set.SetFlowState (res, newFlow);
 			}
@@ -227,8 +359,10 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.Label (amount.ToString(), ELStyles.label);
 			GUILayout.Label ("/", ELStyles.label);
 			GUILayout.Label (maxAmount.ToString(), ELStyles.label);
+			TransferState (ind, set, res);
 			FlowState (set, res);
 			GUILayout.EndHorizontal ();
+
 			if (setSelected != null
 				&& Event.current.type == EventType.Repaint) {
 				var rect = GUILayoutUtility.GetLastRect();
@@ -262,6 +396,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (setSelected == null && ind > 0) {
 				setSelected = new bool[ind];
+				xferState = new XferState[ind];
 			}
 		}
 
@@ -277,6 +412,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			GUILayout.EndVertical ();
 
+			TransferButtons ();
 			CloseButton ();
 
 			GUI.DragWindow (new Rect (0, 0, 10000, 20));

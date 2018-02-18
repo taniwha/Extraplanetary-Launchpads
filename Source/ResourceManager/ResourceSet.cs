@@ -109,6 +109,28 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public void RemoveSet (RMResourceSet set)
+		{
+			sets.Remove (set);
+			var remove_list = new List<string> ();
+			foreach (var resinfo in resources) {
+				string resource = resinfo.Key;
+				RMResourceInfo resourceInfo = resinfo.Value;
+				for (int i = resourceInfo.containers.Count - 1; i >= 0; i--) {
+					var container = resourceInfo.containers[i] as ResourceSetContainer;
+					if (container != null && container.set == set) {
+						resourceInfo.containers.Remove (container);
+					}
+				}
+				if (resourceInfo.containers.Count == 0) {
+					remove_list.Add (resource);
+				}
+			}
+			foreach (string resource in remove_list) {
+				resources.Remove (resource);
+			}
+		}
+
 		public RMResourceSet ()
 		{
 			resources = new Dictionary<string, RMResourceInfo>();

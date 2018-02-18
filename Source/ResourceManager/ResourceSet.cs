@@ -266,25 +266,27 @@ namespace ExtraplanetaryLaunchpads {
 				adjust = setTotal;
 			}
 			amount -= adjust;
-			if (adjust < 0) {
-				for (int i = 0; i < resourceInfo.containers.Count; i++) {
-					var container = resourceInfo.containers[i];
-					double avail = container.amount;
-					double adj = avail * adjust / setTotal;
-					if (-adj > avail) {
-						adj = -avail;
+			if (setTotal > 0) {
+				if (adjust < 0) {
+					for (int i = 0; i < resourceInfo.containers.Count; i++) {
+						var container = resourceInfo.containers[i];
+						double avail = container.amount;
+						double adj = avail * adjust / setTotal;
+						if (-adj > avail) {
+							adj = -avail;
+						}
+						container.amount += adj;
 					}
-					container.amount += adj;
-				}
-			} else {
-				for (int i = 0; i < resourceInfo.containers.Count; i++) {
-					var container = resourceInfo.containers[i];
-					double space = container.maxAmount - container.amount;
-					double adj = space * adjust / setTotal;
-					if (adj > space) {
-						adj = space;
+				} else {
+					for (int i = 0; i < resourceInfo.containers.Count; i++) {
+						var container = resourceInfo.containers[i];
+						double space = container.maxAmount - container.amount;
+						double adj = space * adjust / setTotal;
+						if (adj > space) {
+							adj = space;
+						}
+						container.amount += adj;
 					}
-					container.amount += adj;
 				}
 			}
 			return amount;

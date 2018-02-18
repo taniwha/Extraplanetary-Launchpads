@@ -53,6 +53,8 @@ namespace ExtraplanetaryLaunchpads {
 		Dictionary<string, RMResourceSet> srcSets;
 		bool canTransfer;
 		List<string> resources;
+		bool []resourceStates;
+		bool resourceStatesChanged;
 		bool transferring;
 
 		internal void Start()
@@ -131,6 +133,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			resources = set.ToList ();
+			resourceStates = new bool [resources.Count];
 
 			UpdateGUIState ();
 		}
@@ -244,12 +247,18 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.EndHorizontal ();
 		}
 
-		void ResourceLine (string res)
+		bool ResourceLine (int ind)
 		{
+			string res = resources[ind];
+			bool state = resourceStates[ind];
 			GUILayout.BeginHorizontal ();
-			GUILayout.Label (res, ELStyles.label);
+			resourceStates[ind] = GUILayout.Toggle (state, res);
+			if (state != resourceStates[ind]) {
+				resourceStatesChanged = true;
+			}
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
+			return state;
 		}
 
 		void HighlightPart (Part part, bool on)
@@ -354,11 +363,20 @@ namespace ExtraplanetaryLaunchpads {
 			double amount = set.ResourceAmount (res);
 			double maxAmount = set.ResourceCapacity (res);
 			GUILayout.BeginHorizontal ();
+			GUILayout.Space (40);
 			GUILayout.Label (set.name, ELStyles.label);
 			GUILayout.FlexibleSpace ();
-			GUILayout.Label (amount.ToString(), ELStyles.label);
+			string amountFmt = "F0";
+			string maxAmountFmt = "F0";
+			if (amount < 100) {
+				amountFmt = "F2";
+			}
+			if (maxAmount < 100) {
+				maxAmountFmt = "F2";
+			}
+			GUILayout.Label (amount.ToString(amountFmt), ELStyles.label);
 			GUILayout.Label ("/", ELStyles.label);
-			GUILayout.Label (maxAmount.ToString(), ELStyles.label);
+			GUILayout.Label (maxAmount.ToString(maxAmountFmt), ELStyles.label);
 			TransferState (ind, set, res);
 			FlowState (set, res);
 			GUILayout.EndHorizontal ();
@@ -385,18 +403,25 @@ namespace ExtraplanetaryLaunchpads {
 			int ind = 0;
 			for (int i = 0; i < resources.Count; i++) {
 				string res = resources[i];
-				ResourceLine (res);
-				for (int j = 0; j < resourceManager.resourceSets.Count; j++) {
-					var set = resourceManager.resourceSets[j];
-					if (!set.resources.ContainsKey (res)) {
-						continue;
+				if (ResourceLine (i)) {
+					for (int j = 0; j < resourceManager.resourceSets.Count; j++) {
+						var set = resourceManager.resourceSets[j];
+						if (!set.resources.ContainsKey (res)) {
+							continue;
+						}
+						ModuleResourceLine (ind++, set, res, highlight);
 					}
-					ModuleResourceLine (ind++, set, res, highlight);
 				}
 			}
-			if (setSelected == null && ind > 0) {
-				setSelected = new bool[ind];
-				xferState = new XferState[ind];
+			if (resourceStatesChanged) {
+				resourceStatesChanged = false;
+				setSelected = null;
+				xferState = null;
+			} else {
+				if (setSelected == null && ind > 0) {
+					setSelected = new bool[ind];
+					xferState = new XferState[ind];
+				}
 			}
 		}
 

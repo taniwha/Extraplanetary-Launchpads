@@ -313,6 +313,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (!dict.ContainsKey (res)) {
 				dict[res] = new RMResourceSet ();
+				dict[res].balanced = true;
 			}
 			dict[res].AddSet (set);
 		}

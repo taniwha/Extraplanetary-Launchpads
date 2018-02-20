@@ -171,6 +171,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (FlightGlobals.ActiveVessel == v) {
 				BuildPadList (v);
+				UpdateGUIState ();
 			}
 		}
 
@@ -378,10 +379,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		void SelectPad_start ()
 		{
-			pad_list.styleListItem = ELStyles.listItem;
-			pad_list.styleListBox = ELStyles.listBox;
-			pad_list.DrawBlockingSelector ();
-			control.builder.PadSelection_start ();
+			if (pad_list != null) {
+				pad_list.styleListItem = ELStyles.listItem;
+				pad_list.styleListBox = ELStyles.listBox;
+				pad_list.DrawBlockingSelector ();
+				control.builder.PadSelection_start ();
+			}
 		}
 
 		public static void SelectPad (ELBuildControl selected_pad)

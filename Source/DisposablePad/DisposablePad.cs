@@ -160,9 +160,10 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
-		void PostCapture ()
+		ELBuildControl.State PostCapture ()
 		{
 			control.DestroyPad ();
+			return ELBuildControl.State.Idle;
 		}
 
 		void DisableModel ()
@@ -262,6 +263,7 @@ namespace ExtraplanetaryLaunchpads {
 		public override void OnAwake ()
 		{
 			control = new ELBuildControl (this);
+			control.PostCapture = PostCapture;
 		}
 
 		public override void OnStart (PartModule.StartState state)

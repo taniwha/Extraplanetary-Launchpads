@@ -439,8 +439,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public delegate void PostCaptureDelegate ();
-		public PostCaptureDelegate PostCapture = () => {};
+		public delegate State PostCaptureDelegate ();
+		public PostCaptureDelegate PostCapture = ()=>{ return State.Transfer; };
 
 		private IEnumerator CaptureCraft ()
 		{
@@ -469,8 +469,7 @@ namespace ExtraplanetaryLaunchpads {
 			builder.SetCraftMass (0);
 
 			CoupleWithCraft ();
-			state = State.Transfer;
-			PostCapture ();
+			state = PostCapture ();
 		}
 
 		Collider[] get_colliders (Part p)

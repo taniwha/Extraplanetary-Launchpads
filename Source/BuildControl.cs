@@ -470,6 +470,7 @@ namespace ExtraplanetaryLaunchpads {
 			builder.SetCraftMass (0);
 
 			CoupleWithCraft ();
+			state = State.Transfer;
 			PostCapture ();
 		}
 

@@ -121,7 +121,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 	{
 		ELWorkshop shop = findFirstWorkshop (vessel.rootPart);
 		if (shop == this) {
-			//Debug.Log (String.Format ("[EL Workshop] master"));
+			//Debug.LogFormat ("[EL Workshop] master {0}", part);
 			var data = new BaseEventDetails (BaseEventDetails.Sender.USER);
 			data.Set<ELWorkshop> ("master", this);
 			sources = new List<ELWorkshop> ();
@@ -133,6 +133,16 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			sources = null;
 			sinks = null;
 		}
+	}
+
+	public void RemoveSource (ELWorkshop source)
+	{
+		sources.Remove (source);
+	}
+
+	public void RemoveSink (ELWorkSink sink)
+	{
+		sinks.Remove (sink);
 	}
 
 	private IEnumerator UpdateNetwork ()
@@ -169,7 +179,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			return;
 		}
 		// Even the master workshop is its own slave.
-		//Debug.Log (String.Format ("[EL Workshop] slave"));
+		//Debug.LogFormat ("[EL Workshop] slave");
 		master = data.Get<ELWorkshop> ("master");
 		data.Get<List<ELWorkshop>> ("sources").Add (this);
 	}
@@ -291,8 +301,8 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 	{
 		if (hft.from != part && hft.to != part)
 			return;
-		Debug.Log (String.Format ("[EL Workshop] transfer: {0} {1} {2}",
-								  hft.host, hft.from, hft.to));
+		Debug.LogFormat ("[EL Workshop] transfer: {0} {1} {2}",
+						  hft.host, hft.from, hft.to);
 		DetermineProductivity ();
 	}
 
@@ -304,8 +314,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 
 	void onPartCouple (GameEvents.FromToAction<Part,Part> hft)
 	{
-		Debug.Log (String.Format ("[EL Workshop] couple: {0} {1}",
-								  hft.from, hft.to));
+		Debug.LogFormat ("[EL Workshop] couple: {0} {1}", hft.from, hft.to);
 		if (hft.to != part)
 			return;
 		StartCoroutine (WaitAndDetermineProductivity ());
@@ -313,8 +322,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 
 	void onPartUndock (Part p)
 	{
-		Debug.Log (String.Format ("[EL Workshop] undock: {0} {1}",
-								  p, p.parent));
+		Debug.LogFormat ("[EL Workshop] undock: {0} {1}", p, p.parent);
 		if (p.parent != part)
 			return;
 		StartCoroutine (WaitAndDetermineProductivity ());
@@ -323,9 +331,9 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 	public override void OnLoad (ConfigNode node)
 	{
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
-			Debug.Log (String.Format ("[EL Workshop] {0} cap: {1} seats: {2}",
+			Debug.LogFormat ("[EL Workshop] {0} cap: {1} seats: {2}",
 					  part, part.CrewCapacity,
-					  part.FindModulesImplementing<KerbalSeat> ().Count));
+					  part.FindModulesImplementing<KerbalSeat> ().Count);
 			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
 				GameEvents.onCrewTransferred.Add (onCrewTransferred);
 				GameEvents.onVesselWasModified.Add (onVesselWasModified);
@@ -426,8 +434,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 					vessel_productivity += source.Productivity;
 				}
 			}
-			//Debug.Log (String.Format ("[EL Workshop] KerbalHours: {0}",
-			//						  hours));
+			//Debug.LogFormat ("[EL Workshop] KerbalHours: {0}", hours);
 			int num_sinks = 0;
 			for (int i = 0; i < sinks.Count; i++) {
 				var sink = sinks[i];

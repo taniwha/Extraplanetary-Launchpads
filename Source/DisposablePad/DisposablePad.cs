@@ -160,10 +160,40 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
-		ELBuildControl.State PostCapture ()
+		Part AttachmentPart ()
 		{
+			AttachNode node = part.FindAttachNode ("bottom");
+			if (node == null || node.attachedPart == null) {
+				node = part.srfAttachNode;
+			}
+			return node.attachedPart;
+		}
+
+		void PostCapture ()
+		{
+			Part attachPart = AttachmentPart ();
+			if (vessel.rootPart == part) {
+				// the pad is (somehow) the vessel's root part that will
+				// cause problems when the pad is destroyed, so set the part
+				// to which the spawn will be attached as the root
+				attachPart.SetHierarchyRoot (attachPart);
+			}
+			Part spawnRoot = control.craftRoot;
+			part.children.Remove (spawnRoot);
+
+			attachPart.addChild (spawnRoot);
+			spawnRoot.parent = attachPart;
+
+			AttachNode spawnNode = FindNode (spawnRoot);
+			spawnNode.attachedPart = attachPart;
+			AttachNode attachNode = attachPart.FindAttachNodeByPart (part);
+			if (attachNode != null) {
+				attachNode.attachedPart = spawnRoot;
+			}
+
+			spawnRoot.CreateAttachJoint (attachPart.attachMode);
+
 			control.DestroyPad ();
-			return ELBuildControl.State.Idle;
 		}
 
 		void DisableModel ()

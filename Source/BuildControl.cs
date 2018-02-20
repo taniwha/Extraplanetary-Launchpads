@@ -212,7 +212,8 @@ namespace ExtraplanetaryLaunchpads {
 		public void DestroyPad ()
 		{
 			state = State.Idle;
-			builder.part.Die ();
+			builder.part.explosionPotential = 0.1f;
+			builder.part.explode ();
 		}
 
 		private IEnumerator DewarpAndBuildCraft ()
@@ -439,8 +440,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public delegate State PostCaptureDelegate ();
-		public PostCaptureDelegate PostCapture = ()=>{ return State.Transfer; };
+		public delegate void PostCaptureDelegate ();
+		public PostCaptureDelegate PostCapture = () => { };
 
 		private IEnumerator CaptureCraft ()
 		{
@@ -469,7 +470,7 @@ namespace ExtraplanetaryLaunchpads {
 			builder.SetCraftMass (0);
 
 			CoupleWithCraft ();
-			state = PostCapture ();
+			PostCapture ();
 		}
 
 		Collider[] get_colliders (Part p)
@@ -740,6 +741,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void OnDestroy ()
 		{
+			if (master != null) {
+				master.RemoveSink (this);
+			}
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
 		}

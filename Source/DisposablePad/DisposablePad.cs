@@ -202,23 +202,50 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		AttachNode FindNode (Part p)
+		{
+			AttachNode node;
+
+			if ((node = p.FindAttachNode ("top")) != null) {
+				if (node.attachedPart == null) {
+					return node;
+				}
+			}
+			if ((node = p.FindAttachNode ("bottom")) != null) {
+				if (node.attachedPart == null) {
+					return node;
+				}
+			}
+			for (int i = 0; i < p.attachNodes.Count; i++) {
+				if (node.attachedPart == null) {
+					return node;
+				}
+			}
+			return null;
+		}
+
 		public Transform PlaceShip (ShipConstruct ship, ELBuildControl.Box vessel_bounds)
 		{
 			SetLaunchTransform ();
 
 			float angle;
 			Vector3 axis;
-			launchTransform.rotation.ToAngleAxis (out angle, out axis);
 
 			Part rootPart = ship.parts[0].localRoot;
-			Vector3 pos = rootPart.transform.position;
-			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
+			Transform rootXform = rootPart.transform;
+			AttachNode n = FindNode (rootPart);
+
+			Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
+			Quaternion launchRot = launchTransform.rotation;
+			launchRot *= Quaternion.FromToRotation (nodeAxis, Vector3.up);
+			launchRot.ToAngleAxis (out angle, out axis);
+			Vector3 pos = rootXform.TransformPoint (n.position);
+			Vector3 shift = -pos;
 			//Debug.Log (String.Format ("[EL] pos: {0} shift: {1}", pos, shift));
 			shift += launchTransform.position;
 			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
-			rootPart.transform.Translate (shift, Space.World);
-			rootPart.transform.RotateAround (launchTransform.position, axis,
-											 angle);
+			rootXform.Translate (shift, Space.World);
+			rootXform.RotateAround (launchTransform.position, axis, angle);
 			return launchTransform;
 		}
 

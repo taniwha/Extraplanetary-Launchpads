@@ -36,7 +36,8 @@ public interface ELWorkSink
 
 public interface ELWorkSource
 {
-	double GetProductivity (double timeDelta);
+	void UpdateProductivity ();
+	double Productivity { get; }
 	bool isActive { get; }
 }
 
@@ -55,12 +56,15 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 	public bool IgnoreCrewCapacity = true;
 
 	[KSPField (guiName = "Productivity", guiActive = true)]
-	public float Productivity;
+	double _Productivity;
+	public double Productivity
+	{
+		get { return _Productivity; }
+		private set { _Productivity = value; }
+	}
 
 	[KSPField (guiName = "Vessel Productivity", guiActive = true)]
-	public float VesselProductivity;
-
-	public double lastUpdate = 0.0;
+	public double VesselProductivity;
 
 	public bool SupportInexperienced
 	{
@@ -68,16 +72,9 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			return FullyEquipped || ProductivityFactor >= 1;
 		}
 	}
-	private bool workshop_started;
-	private ELWorkshop master;
-	private List<ELWorkshop> sources;
-	private List<ELWorkSink> sinks;
+	public bool isActive { get; private set; }
+	private EL_VesselWorkNet workNet;
 	private bool functional;
-	public float vessel_productivity
-	{
-		get;
-		private set;
-	}
 	private bool enableSkilled;
 	private bool enableUnskilled;
 	private bool useSkill;
@@ -117,104 +114,37 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		return null;
 	}
 
-	private void DiscoverWorkshops ()
+	private double Normal (float stupidity, float courage, float experience)
 	{
-		ELWorkshop shop = findFirstWorkshop (vessel.rootPart);
-		if (shop == this) {
-			//Debug.LogFormat ("[EL Workshop] master {0}", part);
-			var data = new BaseEventDetails (BaseEventDetails.Sender.USER);
-			data.Set<ELWorkshop> ("master", this);
-			sources = new List<ELWorkshop> ();
-			sinks = new List<ELWorkSink> ();
-			data.Set<List<ELWorkshop>> ("sources", sources);
-			data.Set<List<ELWorkSink>> ("sinks", sinks);
-			vessel.rootPart.SendEvent ("ELDiscoverWorkshops", data);
-		} else {
-			sources = null;
-			sinks = null;
-		}
+		double s = stupidity;
+		double c = courage;
+		double e = experience;
+
+		double w = e / 3.6e5 * (1-0.8*s);
+
+		return 1 - s * (1 + c * c) + (0.5+s)*(1-Math.Exp(-w));
 	}
 
-	public void RemoveSource (ELWorkshop source)
+	private double Baddass (float stupidity, float courage, float experience)
 	{
-		sources.Remove (source);
+		double s = stupidity;
+		double c = courage;
+		double e = experience;
+
+		double a = -2;
+		double v = 2 * (1 - s);
+		double y = 1 - 2 * s;
+		double w = e / 3.6e5 * (1-0.8*s);
+
+		return y + (v + a * c / 2) * c + (1+2*s)*(1-Math.Exp(-w));
 	}
 
-	public void RemoveSink (ELWorkSink sink)
+	public static double HyperCurve (double x)
 	{
-		sinks.Remove (sink);
+		return (Math.Sqrt (x * x + 1) + x) / 2;
 	}
 
-	private IEnumerator UpdateNetwork ()
-	{
-		yield return null;
-		DiscoverWorkshops ();
-	}
-
-	private void onVesselWasModified (Vessel v)
-	{
-		if (v == vessel) {
-			StartCoroutine (UpdateNetwork ());
-		}
-	}
-
-	public double GetProductivity (double timeDelta)
-	{
-		double prod = Productivity * timeDelta / 3600.0;
-		//Debug.log ("GetProductivity: lastupdate = " + lastUpdate.ToString ("F3") + ", currentTime = " + currentTime.ToString ("F3") + ", --> " + prod.ToString ());
-		return prod;
-	}
-
-	public bool isActive
-	{
-		get {
-			return true;
-		}
-	}
-
-	[KSPEvent (guiActive=false, active = true)]
-	void ELDiscoverWorkshops (BaseEventDetails data)
-	{
-		if (!functional) {
-			return;
-		}
-		// Even the master workshop is its own slave.
-		//Debug.LogFormat ("[EL Workshop] slave");
-		master = data.Get<ELWorkshop> ("master");
-		data.Get<List<ELWorkshop>> ("sources").Add (this);
-	}
-
-	private float Normal (float stupidity, float courage, float experience)
-	{
-		float s = stupidity;
-		float c = courage;
-		float e = experience;
-
-		float w = e / 3.6e5f * (1-0.8f*s);
-
-		return 1 - s * (1 + c * c) + (0.5f+s)*(1-Mathf.Exp(-w));
-	}
-
-	private float Baddass (float stupidity, float courage, float experience)
-	{
-		float s = stupidity;
-		float c = courage;
-		float e = experience;
-
-		float a = -2;
-		float v = 2 * (1 - s);
-		float y = 1 - 2 * s;
-		float w = e / 3.6e5f * (1-0.8f*s);
-
-		return y + (v + a * c / 2) * c + (1+2*s)*(1-Mathf.Exp(-w));
-	}
-
-	public static float HyperCurve (float x)
-	{
-		return (Mathf.Sqrt (x * x + 1) + x) / 2;
-	}
-
-	private float KerbalContribution (ProtoCrewMember crew)
+	private double KerbalContribution (ProtoCrewMember crew)
 	{
 		string expstr = KerbalExt.Get (crew, "experience:task=Workshop");
 		float experience = 0;
@@ -222,7 +152,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			float.TryParse (expstr, out experience);
 		}
 
-		float contribution;
+		double contribution;
 
 		if (crew.isBadass) {
 			contribution = Baddass (crew.stupidity, crew.courage, experience);
@@ -234,11 +164,11 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			if (!hasConstructionSkill) {
 				if (!enableUnskilled) {
 					// can't work here, but may not know to keep out of the way.
-					contribution = Mathf.Min (contribution, 0);
+					contribution = Math.Min (contribution, 0);
 				}
 				if (crew.experienceLevel >= 3) {
 					// can resist "ooh, what does this button do?"
-					contribution = Mathf.Max (contribution, 0);
+					contribution = Math.Max (contribution, 0);
 				}
 			} else {
 				switch (crew.experienceLevel) {
@@ -263,6 +193,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 				}
 			}
 		}
+		/*
 		Debug.LogFormat ("[EL Workshop] Kerbal: "
 						 + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
 						 crew.name, crew.stupidity, crew.courage,
@@ -270,12 +201,13 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 						 contribution, hasConstructionSkill,
 						 crew.experienceLevel,
 						 enableSkilled, SupportInexperienced);
+		*/
 		return contribution;
 	}
 
-	private void DetermineProductivity ()
+	public void UpdateProductivity ()
 	{
-		float kh = 0;
+		double kh = 0;
 		enableSkilled = false;
 		enableUnskilled = false;
 		var crewList = EL_Utils.GetCrewList (part);
@@ -303,13 +235,13 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			return;
 		Debug.LogFormat ("[EL Workshop] transfer: {0} {1} {2}",
 						  hft.host, hft.from, hft.to);
-		DetermineProductivity ();
+		UpdateProductivity ();
 	}
 
-	private IEnumerator WaitAndDetermineProductivity ()
+	private IEnumerator WaitAndUpdateProductivity ()
 	{
 		yield return null;
-		DetermineProductivity ();
+		UpdateProductivity ();
 	}
 
 	void onPartCouple (GameEvents.FromToAction<Part,Part> hft)
@@ -317,7 +249,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		Debug.LogFormat ("[EL Workshop] couple: {0} {1}", hft.from, hft.to);
 		if (hft.to != part)
 			return;
-		StartCoroutine (WaitAndDetermineProductivity ());
+		StartCoroutine (WaitAndUpdateProductivity ());
 	}
 
 	void onPartUndock (Part p)
@@ -325,7 +257,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		Debug.LogFormat ("[EL Workshop] undock: {0} {1}", p, p.parent);
 		if (p.parent != part)
 			return;
-		StartCoroutine (WaitAndDetermineProductivity ());
+		StartCoroutine (WaitAndUpdateProductivity ());
 	}
 
 	public override void OnLoad (ConfigNode node)
@@ -336,12 +268,10 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 					  part.FindModulesImplementing<KerbalSeat> ().Count);
 			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
 				GameEvents.onCrewTransferred.Add (onCrewTransferred);
-				GameEvents.onVesselWasModified.Add (onVesselWasModified);
 				functional = true;
 			} else if (part.FindModulesImplementing<KerbalSeat> ().Count > 0) {
 				GameEvents.onPartCouple.Add (onPartCouple);
 				GameEvents.onPartUndock.Add (onPartUndock);
-				GameEvents.onVesselWasModified.Add (onVesselWasModified);
 				functional = true;
 			} else {
 				functional = false;
@@ -349,14 +279,10 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 				Fields["VesselProductivity"].guiActive = false;
 			}
 		}
-		if (node.HasValue ("lastUpdateString")) {
-			double.TryParse (node.GetValue ("lastUpdateString"), out lastUpdate);
-		}
 	}
 
 	public override void OnSave (ConfigNode node)
 	{
-		node.AddValue ("lastUpdateString", lastUpdate.ToString ("G17"));
 	}
 
 	void OnDestroy ()
@@ -364,19 +290,19 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		GameEvents.onCrewTransferred.Remove (onCrewTransferred);
 		GameEvents.onPartCouple.Remove (onPartCouple);
 		GameEvents.onPartUndock.Remove (onPartUndock);
-		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 
 	private IEnumerator WaitAndStartWorkshop ()
 	{
 		yield return null;
 		yield return null;
-		workshop_started = true;
+		isActive = true;
 	}
 
 	public override void OnStart (PartModule.StartState state)
 	{
-		workshop_started = false;
+		workNet = vessel.FindVesselModuleImplementing<EL_VesselWorkNet> ();
+		isActive = false;
 		if (!functional) {
 			enabled = false;
 			return;
@@ -384,73 +310,15 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		if (state == PartModule.StartState.None
 			|| state == PartModule.StartState.Editor)
 			return;
-		DiscoverWorkshops ();
 		useSkill = true;
-		StartCoroutine (WaitAndDetermineProductivity ());
+		StartCoroutine (WaitAndUpdateProductivity ());
 		StartCoroutine (WaitAndStartWorkshop ());
 	}
 
 	private void Update ()
 	{
-		if (master != null) {
-			VesselProductivity = master.vessel_productivity;
-		}
-	}
-
-	double GetDeltaTime ()
-	{
-		double delta = -1;
-		if (Time.timeSinceLevelLoad >= 1
-			&& FlightGlobals.ready
-			&& ResourceScenario.Instance != null) {
-			if (lastUpdate < 1e-9) {
-				lastUpdate = Planetarium.GetUniversalTime ();
-			} else {
-				var currentTime = Planetarium.GetUniversalTime ();
-				delta = currentTime - lastUpdate;
-				delta = Math.Min (delta, ResourceUtilities.GetMaxDeltaTime ());
-				lastUpdate += delta;
-			}
-		}
-		return delta;
-	}
-
-	public void FixedUpdate ()
-	{
-		if (!workshop_started) {
-			return;
-		}
-		double timeDelta = GetDeltaTime ();
-		if (timeDelta < 1e-9) {
-			return;
-		}
-		if (this == master) {
-			double hours = 0;
-			vessel_productivity = 0;
-			for (int i = 0; i < sources.Count; i++) {
-				var source = sources[i];
-				if (source.isActive) {
-					hours += source.GetProductivity (timeDelta);
-					vessel_productivity += source.Productivity;
-				}
-			}
-			//Debug.LogFormat ("[EL Workshop] KerbalHours: {0}", hours);
-			int num_sinks = 0;
-			for (int i = 0; i < sinks.Count; i++) {
-				var sink = sinks[i];
-				if (sink.isActive) {
-					num_sinks++;
-				}
-			}
-			if (num_sinks > 0) {
-				double work = hours / num_sinks;
-				for (int i = 0; i < sinks.Count; i++) {
-					var sink = sinks[i];
-					if (sink.isActive) {
-						sink.DoWork (work);
-					}
-				}
-			}
+		if (workNet != null) {
+			VesselProductivity = workNet.Productivity;
 		}
 	}
 }

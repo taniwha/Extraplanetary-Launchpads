@@ -135,16 +135,6 @@ public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlI
 		}
 	}
 
-	[KSPEvent (guiActive=false, active = true)]
-	void ELDiscoverWorkshops (BaseEventDetails data)
-	{
-		// Recyclers are not actual work-sinks, but the master is needed
-		// to check the vessel producitivity
-		if (sm != null) {
-			sm.SetMaster (data.Get<ELWorkshop> ("master"));
-		}
-	}
-
 	public override void OnStart (StartState state)
 	{
 		RecycleField = part.FindModelComponent<Collider> (RecycleField_name);

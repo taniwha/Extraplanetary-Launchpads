@@ -153,7 +153,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 		public string KACalarmID = "";
 
-		public ELWorkshop master
+		public EL_VesselWorkNet workNet
 		{
 			get;
 			private set;
@@ -162,8 +162,8 @@ namespace ExtraplanetaryLaunchpads {
 		public double productivity
 		{
 			get {
-				if (master != null) {
-					return master.VesselProductivity;
+				if (workNet != null) {
+					return workNet.Productivity;
 				}
 				return 0;
 			}
@@ -366,12 +366,6 @@ namespace ExtraplanetaryLaunchpads {
 			} else if (state == State.Canceling) {
 				DoWork_Cancel (kerbalHours);
 			}
-		}
-
-		public void ELDiscoverWorkshops (BaseEventDetails data)
-		{
-			master = data.Get<ELWorkshop> ("master");
-			data.Get<List<ELWorkSink>> ("sinks").Add (this);
 		}
 
 		internal void SetupCraftResources (Vessel vsl)
@@ -728,6 +722,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void OnStart ()
 		{
+			workNet = builder.vessel.FindVesselModuleImplementing<EL_VesselWorkNet> ();
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 			GameEvents.onPartDie.Add (onPartDie);
 			if (vesselInfo != null) {
@@ -742,9 +737,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void OnDestroy ()
 		{
-			if (master != null) {
-				master.RemoveSink (this);
-			}
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
 		}

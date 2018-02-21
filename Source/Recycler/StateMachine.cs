@@ -61,7 +61,7 @@ namespace ExtraplanetaryLaunchpads {
 		Collider RecycleField;
 		RMResourceSet recycler_resources;
 		Part active_part;
-		ELWorkshop master;
+		EL_VesselWorkNet workNet;
 		HashSet<uint> recycle_parts;
 		List<BuildResource> part_resources;
 		int res_index;
@@ -252,6 +252,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Start (Collider field)
 		{
+			workNet = recycler.vessel.FindVesselModuleImplementing<EL_VesselWorkNet> ();
 			RecycleField = field;
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 			recycler_resources = new RMResourceSet (recycler.vessel, recycle_parts);
@@ -312,11 +313,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			deltat = TimeWarp.fixedDeltaTime;
 			fsm.FixedUpdateFSM ();
-		}
-
-		public void SetMaster (ELWorkshop master)
-		{
-			this.master = master;
 		}
 
 		void onVesselWasModified (Vessel v)
@@ -403,9 +399,9 @@ namespace ExtraplanetaryLaunchpads {
 			if (count < 1) {
 				return null;
 			}
-			float prod = 0;
-			if (master != null) {
-				prod = ELWorkshop.HyperCurve (master.vessel_productivity);
+			double prod = 0;
+			if (workNet != null) {
+				prod = ELWorkshop.HyperCurve (workNet.Productivity);
 			}
 			Part p;
 			do {

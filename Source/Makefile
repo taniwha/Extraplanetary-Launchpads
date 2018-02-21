@@ -60,6 +60,7 @@ EL_FILES := \
 	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
 	Workshop/ConstructionSkill.cs		\
+	Workshop/VesselWorkNet.cs			\
 	Workshop/Workshop.cs				\
 	lib/KISWrapper.cs					\
 	lib/KACWrapper.cs					\

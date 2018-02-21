@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface
+	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink
 	{
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string StationName = "";
@@ -208,12 +208,6 @@ namespace ExtraplanetaryLaunchpads {
 					stake.Highlight (on);
 				}
 			}
-		}
-
-		[KSPEvent (guiActive=false, active = true)]
-		void ELDiscoverWorkshops (BaseEventDetails data)
-		{
-			control.ELDiscoverWorkshops (data);
 		}
 
 		public void SetCraftMass (double mass)
@@ -437,6 +431,18 @@ namespace ExtraplanetaryLaunchpads {
 			Debug.LogFormat ("[ELSurveyStation] onSiteModified");
 			FindSites ();
 			SetSite (site);
+		}
+
+		public void DoWork (double kerbalHours)
+		{
+			control.DoWork (kerbalHours);
+		}
+
+		public bool isActive
+		{
+			get {
+				return control.isActive;
+			}
 		}
 	}
 }

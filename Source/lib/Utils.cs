@@ -29,6 +29,17 @@ using Experience;
 namespace ExtraplanetaryLaunchpads {
 
 	public static class EL_Utils {
+		public static T FindVesselModuleImplementing<T> (this Vessel vessel) where T : class
+		{
+			for (int i = vessel.vesselModules.Count; i-- > 0; ) {
+				VesselModule vm = vessel.vesselModules[i];
+				if (vm is T) {
+					return vm as T;
+				}
+			}
+			return null;
+		}
+
 		public static Vector3d LocalUp (this CelestialBody body, Vector3d pos)
 		{
 			return (pos - body.position).normalized;

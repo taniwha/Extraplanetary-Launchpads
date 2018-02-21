@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELDisposablePad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface
+	public class ELDisposablePad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -137,12 +137,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			get { return Operational; }
 			set { Operational = value; }
-		}
-
-		[KSPEvent (guiActive=false, active = true)]
-		void ELDiscoverWorkshops (BaseEventDetails data)
-		{
-			control.ELDiscoverWorkshops (data);
 		}
 
 		public void SetCraftMass (double mass)
@@ -336,6 +330,18 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			Events["HideUI"].active = visible;
 			Events["ShowUI"].active = !visible;
+		}
+
+		public void DoWork (double kerbalHours)
+		{
+			control.DoWork (kerbalHours);
+		}
+
+		public bool isActive
+		{
+			get {
+				return control.isActive;
+			}
 		}
 	}
 }

@@ -301,6 +301,10 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 
 	public override void OnStart (PartModule.StartState state)
 	{
+		if (vessel == null) {
+			// in an editor
+			return;
+		}
 		workNet = vessel.FindVesselModuleImplementing<EL_VesselWorkNet> ();
 		isActive = false;
 		if (!functional) {

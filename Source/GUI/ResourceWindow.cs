@@ -194,7 +194,7 @@ namespace ExtraplanetaryLaunchpads {
 						continue;
 					}
 					var src = srcSets[res];
-					double amount = dst.ResourceCapacity (res);
+					double amount = dst.ResourceCapacity (res) / 20;
 					amount *= Time.deltaTime;
 					double srem = src.TransferResource (res, -amount);
 					// srem (amount not pulled) will be negative

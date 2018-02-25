@@ -25,7 +25,7 @@ using Experience;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class EL_VesselWorkNet : VesselModule
+public class ELVesselWorkNet : VesselModule
 {
 	List<ELWorkSource> sources;
 	List<ELWorkSink> sinks;

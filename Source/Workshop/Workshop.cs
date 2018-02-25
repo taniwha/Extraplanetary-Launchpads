@@ -73,7 +73,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		}
 	}
 	public bool isActive { get; private set; }
-	private EL_VesselWorkNet workNet;
+	private ELVesselWorkNet workNet;
 	private bool functional;
 	private bool enableSkilled;
 	private bool enableUnskilled;
@@ -305,7 +305,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			// in an editor
 			return;
 		}
-		workNet = vessel.FindVesselModuleImplementing<EL_VesselWorkNet> ();
+		workNet = vessel.FindVesselModuleImplementing<ELVesselWorkNet> ();
 		isActive = false;
 		if (!functional) {
 			enabled = false;

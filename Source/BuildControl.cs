@@ -153,7 +153,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 		public string KACalarmID = "";
 
-		public EL_VesselWorkNet workNet
+		public ELVesselWorkNet workNet
 		{
 			get;
 			private set;
@@ -722,7 +722,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void OnStart ()
 		{
-			workNet = builder.vessel.FindVesselModuleImplementing<EL_VesselWorkNet> ();
+			workNet = builder.vessel.FindVesselModuleImplementing<ELVesselWorkNet> ();
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 			GameEvents.onPartDie.Add (onPartDie);
 			if (vesselInfo != null) {

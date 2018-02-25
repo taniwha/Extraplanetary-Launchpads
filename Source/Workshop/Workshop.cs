@@ -247,15 +247,17 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			//Debug.LogFormat ("[EL Workshop] {0} cap: {1} seats: {2}",
 			//		  part, part.CrewCapacity,
 			//		  part.FindModulesImplementing<KerbalSeat> ().Count);
+			bool functional = false;
 			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
 				GameEvents.onCrewTransferred.Add (onCrewTransferred);
 				functional = true;
-			} else if (part.FindModulesImplementing<KerbalSeat> ().Count > 0) {
+			}
+			if (part.FindModulesImplementing<KerbalSeat> ().Count > 0) {
 				GameEvents.onPartCouple.Add (onPartCouple);
 				GameEvents.onPartUndock.Add (onPartUndock);
 				functional = true;
-			} else {
-				functional = false;
+			}
+			if (!functional) {
 				Fields["Productivity"].guiActive = false;
 				Fields["VesselProductivity"].guiActive = false;
 			}

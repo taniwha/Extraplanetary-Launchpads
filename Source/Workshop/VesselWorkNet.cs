@@ -25,10 +25,99 @@ using Experience;
 
 namespace ExtraplanetaryLaunchpads {
 
+public class ELProtoWorkSink : ELWorkSink
+{
+	double workedHours;
+	double maxHours;
+
+	public void DoWork (double kerbalHours)
+	{
+		if (kerbalHours > 0) {
+			if (kerbalHours > maxHours - workedHours) {
+				kerbalHours = maxHours - workedHours;
+				isActive = false;
+			}
+		} else {
+			if (kerbalHours < -maxHours - workedHours) {
+				kerbalHours = -maxHours - workedHours;
+				isActive = false;
+			}
+		}
+		//Debug.LogFormat ("[ELProtoWorkSink] DoWork: {0} {1} {2}", kerbalHours, maxHours, workedHours);
+		workedHours += kerbalHours;
+	}
+
+	public bool isActive { get; private set; }
+	public double CalculateWork ()
+	{
+		return maxHours;
+	}
+
+	public ELProtoWorkSink (ConfigNode node)
+	{
+		workedHours = 0;
+		maxHours = 0;
+		isActive = false;
+
+		string s;
+		if (node.HasValue ("workedHours")) {
+			s = node.GetValue ("workedHours");
+			double.TryParse (s, out workedHours);
+		}
+		if (node.HasValue ("maxHours")) {
+			s = node.GetValue ("maxHours");
+			double.TryParse (s, out maxHours);
+		}
+		if (node.HasValue ("isActive")) {
+			s = node.GetValue ("isActive");
+			bool active;
+			bool.TryParse (s, out active);
+			isActive = active;
+		}
+	}
+
+	public void Save (ConfigNode node)
+	{
+		ConfigNode n = node.AddNode ("WorkSink");
+		n.AddValue ("workedHours", workedHours);
+		n.AddValue ("maxHours", maxHours);
+		n.AddValue ("isActive", isActive);
+	}
+
+	public ELProtoWorkSink (ELWorkSink sink)
+	{
+		workedHours = 0;
+		maxHours = 0;
+		if (isActive = sink.isActive) {
+			maxHours = sink.CalculateWork ();
+		}
+	}
+
+	public void CatchUpBacklog (ELWorkSink sink, double hours)
+	{
+		if (hours > 0) {
+			if (hours > workedHours) {
+				hours = workedHours;
+				isActive = false;
+			}
+		} else {
+			// vessel productivity is negative
+			if (hours < workedHours) {
+				hours = workedHours;
+				isActive = false;
+			}
+		}
+		workedHours -= hours;
+		sink.DoWork (hours);
+	}
+}
+
 public class ELVesselWorkNet : VesselModule
 {
 	List<ELWorkSource> sources;
 	List<ELWorkSink> sinks;
+	List<ELProtoWorkSink> protoSinks;
+
 	[KSPField (isPersistant = true)]
 	public double lastUpdate;
 	public double Productivity { get; private set; }
@@ -38,18 +127,58 @@ public class ELVesselWorkNet : VesselModule
 
 	void BuildNetwork ()
 	{
-		sources = vessel.FindPartModulesImplementing<ELWorkSource> ();
-		sinks = vessel.FindPartModulesImplementing<ELWorkSink> ();
+		Productivity = 0;
+		if (vessel.loaded) {
+			sources = vessel.FindPartModulesImplementing<ELWorkSource> ();
+			sinks = vessel.FindPartModulesImplementing<ELWorkSink> ();
 
-		for (int i = 0; i < sources.Count; i++) {
-			var source = sources[i];
-			source.UpdateProductivity ();
+			UpdateProductivity (true);
+		}
+		Debug.LogFormat ("[ELVesselWorkNet] productivity {0}:{1}", vessel.vesselName, Productivity);
+		if (sources.Count < 1) {
+			enabled = false;
+		}
+	}
+
+	protected override void OnLoad (ConfigNode node)
+	{
+		if (node.HasValue ("Productivity")) {
+			string s = node.GetValue ("Productivity");
+			double p;
+			double.TryParse (s, out p);
+			Productivity = p;
+		}
+		sinks = new List<ELWorkSink> ();
+		protoSinks = new List<ELProtoWorkSink> ();
+		for (int i = 0; i < node.nodes.Count; i++) {
+			ConfigNode n = node.nodes[i];
+			if (n.name == "WorkSink") {
+				var sink = new ELProtoWorkSink (n);
+				protoSinks.Add (sink);
+				sinks.Add (sink);
+			}
+		}
+	}
+
+	protected override void OnSave (ConfigNode node)
+	{
+		node.AddValue ("Productivity", Productivity);
+		if (vessel.loaded) {
+			for (int i = 0; i < sinks.Count; i++) {
+				var ps = new ELProtoWorkSink (sinks[i]);
+				ps.Save (node);
+			}
+		} else {
+			for (int i = 0; i < protoSinks.Count; i++) {
+				protoSinks[i].Save (node);
+			}
 		}
 	}
 
 	void onVesselWasModified (Vessel v)
 	{
 		if (v == vessel) {
+			Debug.LogFormat ("[ELVesselWorkNet] onVesselWasModified {0}", vessel.vesselName);
 			BuildNetwork ();
 		}
 	}
@@ -64,73 +193,129 @@ public class ELVesselWorkNet : VesselModule
 		GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 	}
 
+	bool ValidVesselType (VesselType type)
+	{
+		if (type > VesselType.Base) {
+			// EVA and Flag
+			return false;
+		}
+		if (type == VesselType.SpaceObject
+			|| type == VesselType.Unknown) {
+			// asteroids
+			return false;
+		}
+		// Debris, Probe, Relay, Rover, Lander, Ship, Plane, Station, Base
+		return true;
+	}
+
 	protected override void OnStart ()
 	{
-		BuildNetwork ();
+		if (!ValidVesselType (vessel.vesselType)) {
+			vessel.vesselModules.Remove (this);
+			Destroy (this);
+			return;
+		}
 	}
 
 	public override void OnLoadVessel ()
 	{
 		updateIndex = 0;
 		updateTimer = 0;
+		Debug.LogFormat ("[ELVesselWorkNet] OnLoadVessel {0}", vessel.vesselName);
+		BuildNetwork ();
 	}
 
-	double GetDeltaTime ()
+	public override void OnUnloadVessel ()
 	{
-		double delta = -1;
-		if (Time.timeSinceLevelLoad >= 1
-			&& FlightGlobals.ready
-			&& ResourceScenario.Instance != null) {
-			if (lastUpdate < 1e-9) {
-				lastUpdate = Planetarium.GetUniversalTime ();
-			} else {
-				var currentTime = Planetarium.GetUniversalTime ();
-				delta = currentTime - lastUpdate;
-				delta = Math.Min (delta, ResourceUtilities.GetMaxDeltaTime ());
-				lastUpdate += delta;
-			}
+		protoSinks = new List<ELProtoWorkSink> ();
+		for (int i = 0; i < sinks.Count; i++) {
+			var ps = new ELProtoWorkSink (sinks[i]);
+			protoSinks.Add (ps);
+			sinks[i] = ps;
 		}
-		return delta;
 	}
 
-	void FixedUpdate ()
+	void UpdateProductivity (bool forceUpdate)
 	{
-		if (sources.Count < 1) {
-			return;
-		}
-
-		double timeDelta = GetDeltaTime ();
-		if (timeDelta < 1e-9) {
-			return;
-		}
-
-		bool doUpdate = false;
-		if (updateTimer > 0) {
-			updateTimer -= Time.deltaTime;
-		} else {
-			doUpdate = true;
-			updateTimer += 10;
-		}
-
-		double hours = 0;
 		Productivity = 0;
 		for (int i = 0; i < sources.Count; i++) {
 			var source = sources[i];
-			if (doUpdate && i == updateIndex) {
+			if (forceUpdate || i == updateIndex) {
 				source.UpdateProductivity ();
 			}
 			if (source.isActive) {
 				double prod = source.Productivity;
-				hours += prod * timeDelta / 3600.0;
 				Productivity += prod;
 			}
 		}
-		if (doUpdate) {
+		if (!forceUpdate) {
 			if (++updateIndex >= sources.Count) {
 				updateIndex = 0;
 			}
 		}
-		//Debug.LogFormat ("[EL Workshop] KerbalHours: {0}", hours);
+	}
+
+	bool CatchUpBacklog ()
+	{
+		//if (Time.timeSinceLevelLoad < 1
+		//	|| ResourceScenario.Instance == null) {
+		if (ResourceScenario.Instance == null) {
+			return true;
+		}
+
+		double currentTime = Planetarium.GetUniversalTime ();
+		double delta = currentTime - lastUpdate;
+		delta = Math.Min (delta, ResourceUtilities.GetMaxDeltaTime ());
+		lastUpdate += delta;
+
+		int num_sinks = 0;
+		for (int i = 0; i < protoSinks.Count; i++) {
+			if (protoSinks[i].isActive) {
+				num_sinks++;
+			}
+		}
+		double hours = Productivity * delta / 3600.0;
+		if (num_sinks > 0) {
+			double work = hours / num_sinks;
+			for (int i = 0; i < protoSinks.Count; i++) {
+				var ps = protoSinks[i];
+				if (ps.isActive) {
+					ps.CatchUpBacklog (sinks[i], work);
+				}
+			}
+			return true;
+		} else {
+			protoSinks = null;
+			return false;
+		}
+	}
+
+	void FixedUpdate ()
+	{
+		if (sinks == null) {
+			// worknet hasn't been created yet
+			return;
+		}
+
+		double timeDelta = TimeWarp.fixedDeltaTime;
+
+		if (vessel.loaded) {
+			if (updateTimer > 0) {
+				updateTimer -= timeDelta;
+			} else {
+				updateTimer = 10;
+				UpdateProductivity (false);
+			}
+			if (protoSinks != null) {
+				if (CatchUpBacklog ()) {
+					return;
+				}
+			}
+			lastUpdate = Planetarium.GetUniversalTime ();
+		}
+
+		double hours = Productivity * timeDelta / 3600.0;
+		//Debug.LogFormat ("[ELVesselWorkNet] KerbalHours: {0} {1}", vessel.vesselName, hours);
 		int num_sinks = 0;
 		for (int i = 0; i < sinks.Count; i++) {
 			var sink = sinks[i];

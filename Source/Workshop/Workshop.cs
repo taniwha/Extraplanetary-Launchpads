@@ -32,6 +32,7 @@ public interface ELWorkSink
 {
 	void DoWork (double kerbalHours);
 	bool isActive { get; }
+	double CalculateWork ();
 }
 
 public interface ELWorkSource
@@ -74,10 +75,8 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 	}
 	public bool isActive { get; private set; }
 	private ELVesselWorkNet workNet;
-	private bool functional;
 	private bool enableSkilled;
 	private bool enableUnskilled;
-	private bool useSkill;
 
 	public override string GetInfo ()
 	{
@@ -96,21 +95,6 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 
 	public Callback<Rect> GetDrawModulePanelCallback ()
 	{
-		return null;
-	}
-
-	private static ELWorkshop findFirstWorkshop (Part part)
-	{
-		var shop = part.Modules.OfType<ELWorkshop> ().FirstOrDefault ();
-		if (shop != null && shop.functional) {
-			return shop;
-		}
-		foreach (Part p in part.children) {
-			shop = findFirstWorkshop (p);
-			if (shop != null) {
-				return shop;
-			}
-		}
 		return null;
 	}
 
@@ -160,42 +144,40 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			contribution = Normal (crew.stupidity, crew.courage, experience);
 		}
 		bool hasConstructionSkill = crew.GetEffect<ELConstructionSkill> () != null;
-		if (useSkill) {
-			if (!hasConstructionSkill) {
-				if (!enableUnskilled) {
-					// can't work here, but may not know to keep out of the way.
-					contribution = Math.Min (contribution, 0);
+		if (!hasConstructionSkill) {
+			if (!enableUnskilled) {
+				// can't work here, but may not know to keep out of the way.
+				contribution = Math.Min (contribution, 0);
+			}
+			if (crew.experienceLevel >= 3) {
+				// can resist "ooh, what does this button do?"
+				contribution = Math.Max (contribution, 0);
+			}
+		} else {
+			switch (crew.experienceLevel) {
+			case 0:
+				if (!enableSkilled && !SupportInexperienced) {
+					// can't work here, but knows to keep out of the way.
+					contribution = 0;
 				}
-				if (crew.experienceLevel >= 3) {
-					// can resist "ooh, what does this button do?"
-					contribution = Math.Max (contribution, 0);
-				}
-			} else {
-				switch (crew.experienceLevel) {
-				case 0:
-					if (!enableSkilled && !SupportInexperienced) {
-						// can't work here, but knows to keep out of the way.
-						contribution = 0;
-					}
-					break;
-				case 1:
-					break;
-				case 2:
-					if (SupportInexperienced) {
-						// He's learned the ropes.
-						contribution = HyperCurve (contribution);
-					}
-					break;
-				default:
-					// He's learned the ropes very well.
+				break;
+			case 1:
+				break;
+			case 2:
+				if (SupportInexperienced) {
+					// He's learned the ropes.
 					contribution = HyperCurve (contribution);
-					break;
 				}
+				break;
+			default:
+				// He's learned the ropes very well.
+				contribution = HyperCurve (contribution);
+				break;
 			}
 		}
 		/*
 		Debug.LogFormat ("[EL Workshop] Kerbal: "
-						 + "{0} {1} {2} {3} {4}({5}) {6} {7} {8} {9} {10}",
+						 + "{0} s:{1} c:{2} b:{3} e:{4}({5}) c:{6} hs:{7} l:{8} es:{9} si:{10}",
 						 crew.name, crew.stupidity, crew.courage,
 						 crew.isBadass, experience, expstr,
 						 contribution, hasConstructionSkill,
@@ -211,15 +193,13 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		enableSkilled = false;
 		enableUnskilled = false;
 		var crewList = EL_Utils.GetCrewList (part);
-		if (useSkill) {
-			foreach (var crew in crewList) {
-				if (crew.GetEffect<ELConstructionSkill> () != null) {
-					if (crew.experienceLevel >= 4) {
-						enableSkilled = true;
-					}
-					if (crew.experienceLevel >= 5) {
-						enableUnskilled = true;
-					}
+		foreach (var crew in crewList) {
+			if (crew.GetEffect<ELConstructionSkill> () != null) {
+				if (crew.experienceLevel >= 4) {
+					enableSkilled = true;
+				}
+				if (crew.experienceLevel >= 5) {
+					enableUnskilled = true;
 				}
 			}
 		}
@@ -227,14 +207,15 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			kh += KerbalContribution (crew);
 		}
 		Productivity = kh * ProductivityFactor + UnmannedProductivity;
+		//Debug.LogFormat("[ELWorkshop] UpdateProductivity: {0}", Productivity);
 	}
 
 	void onCrewTransferred (GameEvents.HostedFromToAction<ProtoCrewMember,Part> hft)
 	{
 		if (hft.from != part && hft.to != part)
 			return;
-		Debug.LogFormat ("[EL Workshop] transfer: {0} {1} {2}",
-						  hft.host, hft.from, hft.to);
+		//Debug.LogFormat ("[EL Workshop] transfer: {0} {1} {2}",
+		//				  hft.host, hft.from, hft.to);
 		UpdateProductivity ();
 	}
 
@@ -246,7 +227,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 
 	void onPartCouple (GameEvents.FromToAction<Part,Part> hft)
 	{
-		Debug.LogFormat ("[EL Workshop] couple: {0} {1}", hft.from, hft.to);
+		//Debug.LogFormat ("[EL Workshop] couple: {0} {1}", hft.from, hft.to);
 		if (hft.to != part)
 			return;
 		StartCoroutine (WaitAndUpdateProductivity ());
@@ -254,7 +235,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 
 	void onPartUndock (Part p)
 	{
-		Debug.LogFormat ("[EL Workshop] undock: {0} {1}", p, p.parent);
+		//Debug.LogFormat ("[EL Workshop] undock: {0} {1}", p, p.parent);
 		if (p.parent != part)
 			return;
 		StartCoroutine (WaitAndUpdateProductivity ());
@@ -263,9 +244,9 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 	public override void OnLoad (ConfigNode node)
 	{
 		if (HighLogic.LoadedScene == GameScenes.FLIGHT) {
-			Debug.LogFormat ("[EL Workshop] {0} cap: {1} seats: {2}",
-					  part, part.CrewCapacity,
-					  part.FindModulesImplementing<KerbalSeat> ().Count);
+			//Debug.LogFormat ("[EL Workshop] {0} cap: {1} seats: {2}",
+			//		  part, part.CrewCapacity,
+			//		  part.FindModulesImplementing<KerbalSeat> ().Count);
 			if (IgnoreCrewCapacity || part.CrewCapacity > 0) {
 				GameEvents.onCrewTransferred.Add (onCrewTransferred);
 				functional = true;
@@ -278,6 +259,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 				Fields["Productivity"].guiActive = false;
 				Fields["VesselProductivity"].guiActive = false;
 			}
+			isActive = functional;
 		}
 	}
 
@@ -292,13 +274,6 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		GameEvents.onPartUndock.Remove (onPartUndock);
 	}
 
-	private IEnumerator WaitAndStartWorkshop ()
-	{
-		yield return null;
-		yield return null;
-		isActive = true;
-	}
-
 	public override void OnStart (PartModule.StartState state)
 	{
 		if (vessel == null) {
@@ -306,17 +281,6 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			return;
 		}
 		workNet = vessel.FindVesselModuleImplementing<ELVesselWorkNet> ();
-		isActive = false;
-		if (!functional) {
-			enabled = false;
-			return;
-		}
-		if (state == PartModule.StartState.None
-			|| state == PartModule.StartState.Editor)
-			return;
-		useSkill = true;
-		StartCoroutine (WaitAndUpdateProductivity ());
-		StartCoroutine (WaitAndStartWorkshop ());
 	}
 
 	private void Update ()

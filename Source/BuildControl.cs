@@ -209,6 +209,29 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public double CalculateWork ()
+		{
+			if (paused) {
+				return 0;
+			}
+			double hours = 0;
+			var built = builtStuff.required;
+			var cost = buildCost.required;
+			if (state == State.Building) {
+				for (int i = built.Count; i-- > 0; ) {
+					var res = built[i];
+					hours += res.kerbalHours * res.amount;
+				}
+			} else if (state == State.Canceling) {
+				for (int i = built.Count; i-- > 0; ) {
+					var res = built[i];
+					var cres = ELBuildWindow.FindResource (cost, res.name);
+					hours += res.kerbalHours * (cres.amount - res.amount);
+				}
+			}
+			return hours;
+		}
+
 		public void DestroyPad ()
 		{
 			state = State.Idle;

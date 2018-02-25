@@ -444,5 +444,10 @@ namespace ExtraplanetaryLaunchpads {
 				return control.isActive;
 			}
 		}
+
+		public double CalculateWork ()
+		{
+			return control.CalculateWork();
+		}
 	}
 }

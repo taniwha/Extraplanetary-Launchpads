@@ -47,6 +47,13 @@ public class ELProtoWorkSink : ELWorkSink
 		workedHours += kerbalHours;
 	}
 
+	public void OnLoadVessel ()
+	{
+		if (workedHours != 0) {
+			isActive = true;
+		}
+	}
+
 	public bool isActive { get; private set; }
 	public double CalculateWork ()
 	{
@@ -124,6 +131,9 @@ public class ELVesselWorkNet : VesselModule
 
 	int updateIndex;
 	double updateTimer;
+	bool haveWork;
+	bool started;
+	bool partModulesStarted;
 
 	void BuildNetwork ()
 	{
@@ -134,10 +144,16 @@ public class ELVesselWorkNet : VesselModule
 
 			UpdateProductivity (true);
 		}
-		Debug.LogFormat ("[ELVesselWorkNet] productivity {0}:{1}", vessel.vesselName, Productivity);
-		if (sources.Count < 1) {
-			enabled = false;
+		//Debug.LogFormat ("[ELVesselWorkNet] productivity {0}:{1}", vessel.vesselName, Productivity);
+	}
+
+	public override bool ShouldBeActive ()
+	{
+		bool active = base.ShouldBeActive ();
+		if (!vessel.loaded) {
+			active &= (!started || (haveWork && Productivity != 0));
 		}
+		return active;
 	}
 
 	protected override void OnLoad (ConfigNode node)
@@ -158,10 +174,13 @@ public class ELVesselWorkNet : VesselModule
 				sinks.Add (sink);
 			}
 		}
+		// ensure the worknet runs at least once when the vessel is not loaded
+		haveWork = true;
 	}
 
 	protected override void OnSave (ConfigNode node)
 	{
+		//Debug.LogFormat ("[ELVesselWorkNet] OnSave {0}", vessel.vesselName);
 		node.AddValue ("Productivity", Productivity);
 		if (vessel.loaded) {
 			for (int i = 0; i < sinks.Count; i++) {
@@ -178,7 +197,7 @@ public class ELVesselWorkNet : VesselModule
 	void onVesselWasModified (Vessel v)
 	{
 		if (v == vessel) {
-			Debug.LogFormat ("[ELVesselWorkNet] onVesselWasModified {0}", vessel.vesselName);
+			//Debug.LogFormat ("[ELVesselWorkNet] onVesselWasModified {0}", vessel.vesselName);
 			BuildNetwork ();
 		}
 	}
@@ -210,7 +229,10 @@ public class ELVesselWorkNet : VesselModule
 
 	protected override void OnStart ()
 	{
+		started = true;
+		//Debug.LogFormat ("[ELVesselWorkNet] OnStart {0}", vessel.vesselName);
 		if (!ValidVesselType (vessel.vesselType)) {
+			//Debug.LogFormat ("[ELVesselWorkNet] OnStart removing: {0}", vessel.vesselType);
 			vessel.vesselModules.Remove (this);
 			Destroy (this);
 			return;
@@ -221,12 +243,22 @@ public class ELVesselWorkNet : VesselModule
 	{
 		updateIndex = 0;
 		updateTimer = 0;
-		Debug.LogFormat ("[ELVesselWorkNet] OnLoadVessel {0}", vessel.vesselName);
+		//Debug.LogFormat ("[ELVesselWorkNet] OnLoadVessel {0}", vessel.vesselName);
 		BuildNetwork ();
+		// part modules start after vessel modules, so make FixedUpdate wait
+		// a frame to give the works sinks a chance to initialize
+		partModulesStarted = false;
+
+		if (protoSinks != null) {
+			for (int i = 0; i < protoSinks.Count; i++) {
+				protoSinks[i].OnLoadVessel ();
+			}
+		}
 	}
 
 	public override void OnUnloadVessel ()
 	{
+		//Debug.LogFormat ("[ELVesselWorkNet] OnUnloadVessel {0}", vessel.vesselName);
 		protoSinks = new List<ELProtoWorkSink> ();
 		for (int i = 0; i < sinks.Count; i++) {
 			var ps = new ELProtoWorkSink (sinks[i]);
@@ -300,6 +332,10 @@ public class ELVesselWorkNet : VesselModule
 		double timeDelta = TimeWarp.fixedDeltaTime;
 
 		if (vessel.loaded) {
+			if (!partModulesStarted) {
+				partModulesStarted = true;
+				return;
+			}
 			if (updateTimer > 0) {
 				updateTimer -= timeDelta;
 			} else {
@@ -331,6 +367,13 @@ public class ELVesselWorkNet : VesselModule
 				if (sink.isActive) {
 					sink.DoWork (work);
 				}
+			}
+		} else {
+			//Debug.LogFormat ("[EL Workshop] loaded: {0}", vessel.loaded);
+			if (!vessel.loaded) {
+				// run out of work to do, so shut down until the vessel is next
+				// loaded
+				haveWork = false;
 			}
 		}
 	}

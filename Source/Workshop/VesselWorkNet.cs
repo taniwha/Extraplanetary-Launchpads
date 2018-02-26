@@ -188,8 +188,10 @@ public class ELVesselWorkNet : VesselModule
 				ps.Save (node);
 			}
 		} else {
-			for (int i = 0; i < protoSinks.Count; i++) {
-				protoSinks[i].Save (node);
+			if (protoSinks != null) {
+				for (int i = 0; i < protoSinks.Count; i++) {
+					protoSinks[i].Save (node);
+				}
 			}
 		}
 	}

@@ -58,7 +58,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (loaded != null) {
 					KethaneAssembly = loaded.assembly;
 					MapOverlay = KethaneAssembly.GetTypes().Where (t => t.Name.Equals ("MapOverlay")).FirstOrDefault ();
-					GetCellUnder = MapOverlay.GetMethod ("GetCellUnder");
+					GetCellUnder = MapOverlay.GetMethod ("GetCellUnder", new Type[] {typeof (CelestialBody), typeof (Vector3)});
 					KethaneData = KethaneAssembly.GetTypes().Where (t => t.Name.Equals ("KethaneData")).FirstOrDefault ();
 					KDCurrent = KethaneData.GetProperty ("Current");
 					KDIndexer = KethaneData.GetProperties().Single(p => p.GetIndexParameters().Length == 1 && p.GetIndexParameters()[0].ParameterType == typeof(string));

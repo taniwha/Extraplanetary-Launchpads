@@ -50,6 +50,17 @@ namespace ExtraplanetaryLaunchpads {
 		DropDownList pad_list;
 		ELBuildControl control;
 
+		//FIXME this is a workaround for a bug in KSP 1.3.1 and earlier
+		void VMSaveHack (Vessel o, Vessel n)
+		{
+			for (int i = 0; i < FlightGlobals.Vessels.Count; i++) {
+				Vessel v = FlightGlobals.Vessels[i];
+				if (!v.loaded) {
+					v.protoVessel.SaveVesselModules ();
+				}
+			}
+		}
+
 		internal void Start()
 		{
 			KACWrapper.InitKACWrapper();
@@ -239,6 +250,7 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 			GameEvents.onHideUI.Add (onHideUI);
 			GameEvents.onShowUI.Add (onShowUI);
+			GameEvents.onVesselSwitchingToUnloaded.Add (VMSaveHack);
 			enabled = false;
 		}
 
@@ -249,6 +261,7 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onHideUI.Remove (onHideUI);
 			GameEvents.onShowUI.Remove (onShowUI);
+			GameEvents.onVesselSwitchingToUnloaded.Remove (VMSaveHack);
 		}
 
 		float ResourceLine (string label, string resourceName, float fraction,

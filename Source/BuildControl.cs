@@ -273,7 +273,6 @@ namespace ExtraplanetaryLaunchpads {
 		private void DoWork_Build (double kerbalHours)
 		{
 			var required = builtStuff.required;
-			var base_kerbalHours = Math.Abs (kerbalHours);
 
 			//Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
 			//						  kerbalHours));
@@ -296,7 +295,7 @@ namespace ExtraplanetaryLaunchpads {
 						amount = avail;
 					//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}:{3}:{4}",
 					//						  res.name, res.kerbalHours, res.amount, avail, amount));
-					if (amount / base_amount < 1e-10)
+					if (amount == 0)
 						continue;
 					did_work = true;
 					// do only the work required to process the actual amount
@@ -309,7 +308,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}",
 				//						  did_work, kerbalHours, kerbalHours/base_kerbalHours));
-			} while (did_work && kerbalHours / base_kerbalHours > 1e-10);
+			} while (did_work);
 
 			SetPadMass ();
 
@@ -323,7 +322,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var built = builtStuff.required;
 			var cost = buildCost.required;
-			var base_kerbalHours = Math.Abs (kerbalHours);
 
 			bool did_work;
 			int count;
@@ -345,7 +343,7 @@ namespace ExtraplanetaryLaunchpads {
 				foreach (var bres in built) {
 					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
-					if (remaining < 0) {
+					if (remaining <= 0) {
 						continue;
 					}
 					double amount = work / bres.kerbalHours;
@@ -368,11 +366,11 @@ namespace ExtraplanetaryLaunchpads {
 					if (amount > capacity) {
 						amount = capacity;
 					}
-					if (amount / base_amount <= 1e-10)
+					if (amount == 0)
 						continue;
 					padResources.TransferResource (bres.name, amount);
 				}
-			} while (did_work && kerbalHours / base_kerbalHours > 1e-10);
+			} while (did_work);
 
 			SetPadMass ();
 

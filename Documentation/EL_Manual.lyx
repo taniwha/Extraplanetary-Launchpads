@@ -1879,6 +1879,50 @@ and
  
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways true
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename base4.svg
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Hillside survey site, somewhere on Minmus.
+ This is one possibility for placing stakes for building a large structure
+ on the side of a hill.
+ From left to right, there's a -Y Bounds stake, a +X Direction stake, a
+ +Z Bounds stake with a +X Bounds stake hiding behind it, a flag and kerbal
+ (not relevant to the site), and near the far right launch clamp, an Origin
+ stake (direction, but bounds would have the same effect).
+ Although the top of the structure is not directly visible, it is horizontal.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Designing a construction capable vessel
 \end_layout

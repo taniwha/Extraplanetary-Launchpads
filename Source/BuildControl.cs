@@ -295,7 +295,7 @@ namespace ExtraplanetaryLaunchpads {
 						amount = avail;
 					//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}:{3}:{4}",
 					//						  res.name, res.kerbalHours, res.amount, avail, amount));
-					if (amount == 0)
+					if (amount <= 0)
 						continue;
 					did_work = true;
 					// do only the work required to process the actual amount
@@ -366,7 +366,7 @@ namespace ExtraplanetaryLaunchpads {
 					if (amount > capacity) {
 						amount = capacity;
 					}
-					if (amount == 0)
+					if (amount <= 0)
 						continue;
 					padResources.TransferResource (bres.name, amount);
 				}

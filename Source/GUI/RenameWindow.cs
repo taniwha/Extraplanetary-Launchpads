@@ -30,7 +30,8 @@ namespace ExtraplanetaryLaunchpads {
 		private static ELBuildControl.IBuilder padInstance = null;
 		private static ELRenameWindow windowInstance = null;
 		private static Rect windowpos = new Rect(Screen.width * 0.35f,Screen.height * 0.1f,1,1);
-		private static string newName;
+		const string fieldName = "RenameWindow.ExtraplanetaryLaunchpads";
+		private static TextField nameField = new TextField (fieldName);
 
 		void Awake ()
 		{
@@ -44,6 +45,7 @@ namespace ExtraplanetaryLaunchpads {
 			windowInstance = null;
 			padInstance = null;
 		}
+
 		public static void HideGUI ()
 		{
 			if (windowInstance != null) {
@@ -55,26 +57,39 @@ namespace ExtraplanetaryLaunchpads {
 		public static void ShowGUI (ELBuildControl.IBuilder pad)
 		{
 			padInstance = pad;
-			newName = pad.Name;
+			nameField.text = pad.Name;
 			if (windowInstance != null) {
 				windowInstance.enabled = true;
 			}
 		}
 
-		void WindowGUI (int windowID)
+		void RenamePad ()
 		{
-			GUILayout.BeginVertical ();
+			if (padInstance.Name != nameField.text) {
+				padInstance.Name = nameField.text;
+				ELBuildWindow.updateCurrentPads ();
+			}
+		}
 
+		void RenameField ()
+		{
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Rename launchpad: ");
-			newName = GUILayout.TextField (newName);
-			GUILayout.EndHorizontal ();
 
+			if (nameField.HandleInput ()) {
+				RenamePad ();
+				HideGUI ();
+			}
+			GUILayout.EndHorizontal ();
+		}
+
+		void OKCancelButtons ()
+		{
 			GUILayout.BeginHorizontal ();
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("OK")) {
-				padInstance.Name = newName;
-				ELBuildWindow.updateCurrentPads ();
+				nameField.AcceptInput ();
+				RenamePad ();
 				HideGUI ();
 			}
 			GUILayout.FlexibleSpace ();
@@ -83,6 +98,14 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
+		}
+
+		void WindowGUI (int windowID)
+		{
+			GUILayout.BeginVertical ();
+
+			RenameField ();
+			OKCancelButtons ();
 
 			GUILayout.EndVertical ();
 

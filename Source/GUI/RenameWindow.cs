@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	[KSPAddon (KSPAddon.Startup.EveryScene, false)]
+	[KSPAddon (KSPAddon.Startup.FlightAndEditor, false)]
 	public class ELRenameWindow: MonoBehaviour
 	{
 		private static ELBuildControl.IBuilder padInstance = null;
@@ -34,15 +34,16 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Awake ()
 		{
-			if (!HighLogic.LoadedSceneIsEditor
-				&& !HighLogic.LoadedSceneIsFlight) {
-				Destroy (this);
-				return;
-			}
 			windowInstance = this;
 			enabled = false;
 		}
 
+		void OnDestroy ()
+		{
+			Debug.Log("[ELRenameWindow] OnDestroy");
+			windowInstance = null;
+			padInstance = null;
+		}
 		public static void HideGUI ()
 		{
 			if (windowInstance != null) {

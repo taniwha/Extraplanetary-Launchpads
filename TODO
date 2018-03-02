@@ -1,9 +1,15 @@
 refurbish
 	Solid Fuel
 	Ablator
+	Parachutes
 	... (resources with resource recipes)
 
-disposable pad
+rebalance converters
+	use LFO (+EC?) to power smelter
+		assuming LF is RP-1, the mix seems to be pretty good for supplying
+		the needed carbon and about half the heat energy.
+
+disposable pad DONE
 	works like a normal pad except:
 		it is destroyed when the build is finalized
 		the build is permanently attached to the previous location of the pad

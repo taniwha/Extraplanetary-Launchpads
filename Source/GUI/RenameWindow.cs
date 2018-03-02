@@ -29,7 +29,6 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		private static ELBuildControl.IBuilder padInstance = null;
 		private static ELRenameWindow windowInstance = null;
-		private static bool gui_enabled = false;
 		private static Rect windowpos = new Rect(Screen.width * 0.35f,Screen.height * 0.1f,1,1);
 		private static string newName;
 
@@ -41,20 +40,21 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			windowInstance = this;
-			enabled = true;
-			gui_enabled = false;
+			enabled = false;
 		}
 
 		public static void HideGUI ()
 		{
-			gui_enabled = false;
+			if (windowInstance != null) {
+				windowInstance.enabled = false;
+			}
+			ClearControlLock ();
 		}
 
 		public static void ShowGUI (ELBuildControl.IBuilder pad)
 		{
 			padInstance = pad;
 			newName = pad.Name;
-			gui_enabled = true;
 			if (windowInstance != null) {
 				windowInstance.enabled = true;
 			}
@@ -73,12 +73,12 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("OK")) {
 				padInstance.Name = newName;
-				gui_enabled = false;
 				ELBuildWindow.updateCurrentPads ();
+				HideGUI ();
 			}
 			GUILayout.FlexibleSpace ();
 			if (GUILayout.Button ("Cancel")) {
-				gui_enabled = false;
+				HideGUI ();
 			}
 			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
@@ -89,20 +89,27 @@ namespace ExtraplanetaryLaunchpads {
 
 		}
 
+		static void SetControlLock ()
+		{
+			InputLockManager.SetControlLock ("EL_Rename_window_lock");
+		}
+
+		static void ClearControlLock ()
+		{
+			InputLockManager.RemoveControlLock ("EL_Rename_window_lock");
+		}
+
 		void OnGUI ()
 		{
-			if (gui_enabled) {
-				//enabled = true;
-				GUI.skin = HighLogic.Skin;
-				windowpos = GUILayout.Window (GetInstanceID (),
-					windowpos, WindowGUI,
-					"Rename Launchpad",
-					GUILayout.Width(500));
-			}
-			if (enabled && windowpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
-				InputLockManager.SetControlLock ("EL_Rename_window_lock");
+			GUI.skin = HighLogic.Skin;
+			windowpos = GUILayout.Window (GetInstanceID (),
+				windowpos, WindowGUI,
+				"Rename Launchpad",
+				GUILayout.Width(500));
+			if (windowpos.Contains(Event.current.mousePosition)) {
+				SetControlLock ();
 			} else {
-				InputLockManager.RemoveControlLock ("EL_Rename_window_lock");
+				ClearControlLock ();
 			}
 		}
 	}

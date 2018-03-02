@@ -1,2 +1,5 @@
 FeO(OH) B-Akaganeite solid 3.52
 FeO(Cl) A-Akaganeite solid 3.52
+C12H16 RP-1 liquid 0.81
+O2 lox liquid 1.141
+H2 lhyd liquid 0.07

@@ -192,7 +192,9 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		static public void updateCurrentPads() {
-			instance.BuildPadList (FlightGlobals.ActiveVessel);
+			if (instance != null) {
+				instance.BuildPadList (FlightGlobals.ActiveVessel);
+			}
 		}
 
 		void UpdateGUIState ()
@@ -407,7 +409,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static void SelectPad (ELBuildControl selected_pad)
 		{
-			instance.Select_Pad (selected_pad);
+			if (instance != null) {
+				instance.Select_Pad (selected_pad);
+			}
 		}
 
 		void Select_Pad (ELBuildControl selected_pad)

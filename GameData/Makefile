@@ -11,7 +11,10 @@ GIT		:= git
 TAR		:= tar
 ZIP		:= zip
 
-SUBDIRS=ExtraplanetaryLaunchpads/Parts/MicroPad
+SUBDIRS=\
+	ExtraplanetaryLaunchpads/Parts/ControlReference	\
+	ExtraplanetaryLaunchpads/Parts/MicroPad	\
+	$e
 
 all clean:
 	@for dir in ${SUBDIRS}; do \

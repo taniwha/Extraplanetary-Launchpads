@@ -27,8 +27,6 @@ namespace ExtraplanetaryLaunchpads {
 	public class ELDisposablePad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink
 	{
 		[KSPField (isPersistant = false)]
-		public float SpawnHeightOffset = 0.0f;
-		[KSPField (isPersistant = false)]
 		public string SpawnTransform;
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string PadName = "";
@@ -36,7 +34,6 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
 
-		public float spawnOffset = 0;
 		Transform launchTransform;
 		double craft_mass;
 
@@ -207,23 +204,20 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
-				//Debug.Log (String.Format ("[EL] launchTransform:{0}:{1}",
-				//						  launchTransform, SpawnTransform));
+				//Debug.LogFormat ("[EL] launchTransform:{0}:{1}",
+				//				   launchTransform, SpawnTransform);
 			}
 			if (launchTransform == null) {
 				launchTransform = part.FindModelTransform ("EL launch pos");
 			}
 			if (launchTransform == null) {
-				Vector3 offset = Vector3.up * (SpawnHeightOffset + spawnOffset);
 				Transform t = part.transform;
 				GameObject launchPos = new GameObject ("EL launch pos");
 				launchPos.transform.parent = t;
 				launchPos.transform.position = t.position;
 				launchPos.transform.rotation = t.rotation;
-				launchPos.transform.position += t.TransformDirection (offset);
 				launchTransform = launchPos.transform;
-				//Debug.Log (String.Format ("[EL] launchPos {0}",
-				//						  launchTransform));
+				//Debug.LogFormat ("[EL] launchPos {0}", launchTransform);
 			}
 		}
 

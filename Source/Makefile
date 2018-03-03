@@ -7,6 +7,7 @@ export PLUGINDIR	:= ${ELGAMEDATA}/Plugins
 TARGETS		:= bin/Launchpad.dll
 
 EL_FILES := \
+	CommandSeat/ControlReference.cs		\
 	CommandSeat/NoControlSwitch.cs		\
 	Converter/Converter.cs				\
 	Converter/Extractor.cs				\

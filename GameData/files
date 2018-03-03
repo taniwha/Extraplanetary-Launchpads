@@ -6,6 +6,10 @@ ExtraplanetaryLaunchpads/Resources/Asteroid_MetalOre.cfg
 ExtraplanetaryLaunchpads/Resources/ExtraSpaceCenters.cfg
 ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
 ExtraplanetaryLaunchpads/Resources/Recipes.cfg
+ExtraplanetaryLaunchpads/Parts/ControlReference/ControlReference.cfg
+ExtraplanetaryLaunchpads/Parts/ControlReference/ControlReference.mu
+ExtraplanetaryLaunchpads/Parts/ControlReference/ControlReference.png
+ExtraplanetaryLaunchpads/Parts/ControlReference/Emissive.png
 ExtraplanetaryLaunchpads/Parts/OMD/model.mu
 ExtraplanetaryLaunchpads/Parts/OMD/OMD.tga
 ExtraplanetaryLaunchpads/Parts/OMD/part.cfg

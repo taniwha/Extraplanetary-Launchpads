@@ -1,0 +1,49 @@
+values {
+	mass = ${math.floor(7.8 * modelSkinVolume * 1000 + 0.5)/1000}
+	capacity = ${math.floor((modelExtVolume-modelSkinVolume) * 1000)/1000}
+	resourceCapacity = ${math.floor(capacity*200)}
+}
+PART
+{
+	name = ELControlReference
+	module = Part
+	author = Bill Currie
+
+	MODEL {
+		model = ExtraplanetaryLaunchpads/Parts/ControlReference/ControlReference
+		//texture = ControlReference, ExtraplanetaryLaunchpads/Parts/ControlReference/ControlReference
+		//texture = Emissive, Squad/Props/NavBall/model001
+		position = 0, 0, 0
+		rotation = 0, 0, 0
+		scale = 1, 1, 1
+	}
+	rescaleFactor = 1.0
+	scale = 1.0
+
+
+	TechRequired = advConstruction
+	entryCost = 400
+	cost = ${mass * 600 * 2.5}
+	category = Utility
+	subcategory = 0
+	title = KS-CR Control Reference
+	manufacturer = Kairyuu Shipping
+	description = Mark where built modules will be permanently attached to the construting vessel. The build replaces the pad. The built module must have a free stack node on its root part (top or bottom, top takes priority if both are available).
+
+	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
+	attachRules = 1,1,1,1,0
+
+	mass = ${mass}
+	dragModelType = default
+	maximum_drag = 0.2
+	minimum_drag = 0.15
+	angularDrag = 2
+	crashTolerance = 8
+	breakingForce = 200
+	breakingTorque = 200
+	maxTemp = 1700
+
+	MODULE {
+		name = ELControlReference
+	}
+}

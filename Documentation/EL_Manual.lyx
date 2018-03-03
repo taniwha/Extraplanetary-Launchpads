@@ -1517,8 +1517,8 @@ pads
 \begin_inset Quotes erd
 \end_inset
 
-, whether the pad is an orbital dock, a launchpad, or a survey site (marked
- out using survey stakes and managed by a survey station).
+, whether the pad is an orbital dock, a launchpad, a survey site (marked
+ out using survey stakes and managed by a survey station), or a micro-pad.
 \end_layout
 
 \begin_layout Standard
@@ -1563,7 +1563,7 @@ Technically, there is no difference between a launchpad and an orbital dock:
 
 \begin_layout Standard
 Adjusting the optional resources in the preview will set the defaults for
- the amounts to be transfered upon release.
+ the amounts to be transferred upon release.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1609,7 +1609,67 @@ Valentina Kerman Base
 
 \begin_layout Standard
 Adjusting the optional resources in the preview will have no effect as no
- resources will be transfered.
+ resources will be transferred.
+\end_layout
+
+\begin_layout Subsubsection
+Micro-Pad
+\end_layout
+
+\begin_layout Standard
+The micro-pad is a single-use construction point.
+ When the build is finalized, the pad self-destructs and the build is attached
+ to the parent vessel as if the build had been placed there in the editor
+ (VAB or SPH).
+ Also, the micro-pad can be carried on a kerbal's back using KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The orientation and position of the build is controlled by the combination
+ orientation and position of the micro-pad, and the automatically selected
+ attach node of the root part.
+ The colored diamonds on the micro-pad indicate the orientation of the root
+ part when its top node is selected (red = +X, green = +Y, magenta = -X,
+ cyan = -Y
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Hopefully the colors are distinct enough that any suffering from colorblindness
+ can distinguish at least one diamond.
+ The pad's default orientation in the VAB is such that red (+X) points to
+ the VAB door, green (+Y) points to the north wall, magenta (-X) to the
+ west and cyan (-Y) to the south.
+\end_layout
+
+\end_inset
+
+.
+ It is important to remember that when the micro-pad is facing up, the root
+ part's selected node will be facing down, having been rotated around the
+ part's Y axis.
+\end_layout
+
+\begin_layout Standard
+The micro-pad automatically selects the attach node of the root part by
+ searching for the first available (unattached) node.
+ First the top node is checked, then the bottom node, then any remaining
+ nodes in the order they are found.
+ Thus a small amount of control over which node is selected can be obtained
+ simply by attaching parts to the undesired nodes.
+\end_layout
+
+\begin_layout Standard
+Adjusting the optional resources in the preview will have no effect as no
+ resources will be transferred.
+ Nor is there any need for them to be automatically transferred.
 \end_layout
 
 \begin_layout Section
@@ -1691,6 +1751,93 @@ If you're thinking KSP parts, then it's three: survey station, survey stake,
 
 \begin_layout Subsection
 Survey Station
+\end_layout
+
+\begin_layout Subsubsection
+Survey Skill
+\end_layout
+
+\begin_layout Standard
+Kerbals with the survey skill (by default, pilots, but hereon referred to
+ as survey kerbals) affect the range of a survey station according to their
+ stock experience level.
+ The experience level of the most skilled survey kerbal in the survey station
+ is used.
+ However, even an unskilled kerbal can man a survey station, and an unmanned
+ survey station is still operational.
+\end_layout
+
+\begin_layout Description
+unmanned 20 meters.
+\end_layout
+
+\begin_layout Description
+unskilled 50 meters.
+\end_layout
+
+\begin_layout Description
+0
+\begin_inset space ~
+\end_inset
+
+stars 100 meters.
+\end_layout
+
+\begin_layout Description
+1
+\begin_inset space ~
+\end_inset
+
+star 200 meters.
+\end_layout
+
+\begin_layout Description
+2
+\begin_inset space ~
+\end_inset
+
+stars 400 meters.
+\end_layout
+
+\begin_layout Description
+3
+\begin_inset space ~
+\end_inset
+
+stars 800 meters.
+\end_layout
+
+\begin_layout Description
+4
+\begin_inset space ~
+\end_inset
+
+stars 1600 meters.
+\end_layout
+
+\begin_layout Description
+5
+\begin_inset space ~
+\end_inset
+
+stars 2000 meters.
+\end_layout
+
+\begin_layout Standard
+Note that the range is from the survey vessel's center of mass to the nearest
+ stake of the survey site, but stakes may be separated by up to 200 meters
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This is a bit of a misfeature: the range should be from the survey station
+ part and the maximum separation of the stakes should be dependent on the
+ skill as well.
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -1886,10 +2033,6 @@ sideways true
 status open
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
 \begin_inset Graphics
 	filename base4.svg
 	width 100text%
@@ -1935,7 +2078,7 @@ Orbital Construction
 \begin_inset Wrap figure
 lines 0
 placement O
-overhang 0in
+overhang 20mm
 width "30col%"
 status collapsed
 
@@ -1989,7 +2132,7 @@ there are mods that supply suitably configured crewed parts
 \noun on
 RocketParts
 \noun default
- container, and the orbital dock.
+ container, and either the orbital dock.
  When extending an existing station, a suitable docking port would be required
  as well, and means to get the 
 \begin_inset Quotes eld
@@ -2000,9 +2143,55 @@ construction unit
 \end_inset
 
  to the station.
+ However, if the micro-pad is used, then the micro-pad needs to be attached
+ to the station somewhere using KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+.
+ In fact, the micro-pad can be an excellent way of attaching an orbital
+ dock to a station.
 \end_layout
 
 \begin_layout Standard
+\begin_inset Wrap figure
+lines 0
+placement O
+overhang 20mm
+width "30col%"
+status collapsed
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename MicroPad.svg
+	lyxscale 25
+	width 50col%
+	BoundingBox 0bp 0bp 960bp 540bp
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Micro-Pad
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
 It can, however, be the most difficult to maintain due to the need for supplies
  to be flown to the station.
  That said, maintaining an orbital construction station can be quite interesting
@@ -2198,7 +2387,7 @@ While more difficult to get going due to the need to fly to the location
 \begin_layout Standard
 The main difference between orbital construction and grounded construction
  is that gravity can make getting built vessels off the pad rather awkward.
- Thus, instead of a launchpad, though launchpads can have its advantages
+ Thus, instead of a launchpad, though launchpads can have their advantages
  (such as resource transfer), the base can be equipped with a survey station,
  a supply of survey stakes, a mallet to drive the stakes, and a KIS
 \begin_inset CommandInset citation
@@ -2222,7 +2411,7 @@ stakes
 \begin_inset Quotes erd
 \end_inset
 
- with a different planting mechanism thus removing the need or KIS.
+ with a different planting mechanism thus removing the need for KIS.
 \end_layout
 
 \end_inset
@@ -2375,135 +2564,11 @@ Modding Extraplanetary Launchpads
 \end_layout
 
 \begin_layout Section
-Modules provided by EL
-\end_layout
-
-\begin_layout Subsection
-Overview
-\end_layout
-
-\begin_layout Description
-ELControlInterface Not actually a module, but an interface implemented by
- some modules.
- Used for external control of the operation of the implementing module.
-\end_layout
-
-\begin_layout Description
-ELRecycler Destroys anything it touches (including unfortunate kerbals),
- reclaiming what resources it can.
- Implements 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELControlInterface
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Description
-ELLaunchPad Builds complete vessels attached (pseudo-docked) to the current
- vessel.
- Allows post-build resource transfer without any extra fuss.
- Supports building both landed or in orbit.
- Implements 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELControlInterface
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Description
-ELTarget Allows a part to be targeted.
- Includes orientation so it works with any docking alignment mod (DPAI
-\begin_inset CommandInset citation
-LatexCommand cite
-key "DPAI"
-
-\end_inset
-
-, navball
-\begin_inset CommandInset citation
-LatexCommand cite
-key "NBDOCK"
-
-\end_inset
-
-, and navhud
-\begin_inset CommandInset citation
-LatexCommand cite
-key "NAVHUD"
-
-\end_inset
-
- are known to work).
-\end_layout
-
-\begin_layout Description
-ELWorkshop Collect productivity from kerbals in the part.
- Works with either normal parts with crew capacity or command chairs.
-\end_layout
-
-\begin_layout Description
-ELSurveyStation Builds complete vessels at locations marked out using survey
- stakes (parts with the 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELSurveyStake
-\end_layout
-
-\end_inset
-
- module).
- Does not allow post-build resource transfer (freedom is not free), but
- as KIS
-\begin_inset CommandInset citation
-LatexCommand cite
-key "KIS"
-
-\end_inset
-
- is required to place the stakes, and KAS
-\begin_inset CommandInset citation
-LatexCommand cite
-key "KAS"
-
-\end_inset
-
- is almost always installed with it, survey stations are probably the preferred
- tool for landed operations.
- Implements 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELControlInterface
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Description
-ELSurveyStake Marks locations for survey station.
- In the current implementation, a stake must be the only part in the vessel
- for the survey station to recognize it.
-\end_layout
-
-\begin_layout Subsection
 Configuration
+\end_layout
+
+\begin_layout Subsection
+Part Modules
 \end_layout
 
 \begin_layout Standard
@@ -2513,94 +2578,20 @@ For the most part, EL places no restrictions on the models used for parts
 \end_layout
 
 \begin_layout Subsubsection
-ELControlInterface
+ELConverter
 \end_layout
 
 \begin_layout Standard
-This is not a part module, but rather a 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-C#
-\end_layout
-
-\end_inset
-
- interface implemented by some part modules.
- Its purpose is to allow other mods easy control and detection of the operationa
-l status of EL's modules.
- For example, mods with inflatable parts can disable the EL module when
- the part is deflated and block deflation when the EL part is busy.
-\end_layout
-
-\begin_layout Paragraph
-Fields
-\end_layout
-
-\begin_layout Standard
-Note that these are actually properties, so access via reflection needs
- to be done using 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-GetProperty
-\end_layout
-
-\end_inset
-
-, 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-PropertyInfo.GetValue
-\end_layout
-
-\end_inset
-
- and 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-PropertyInfo.Setvalue
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Description
-isBusy Read-only boolean that indicates whether the module is currently
- busy processing something.
- While not enforced, the module should not be disabled while it is busy
- (i.e.
- the part should not be deflated).
-\end_layout
-
-\begin_layout Description
-canOperate Boolean usable by other part modules to enable or disable (or
- detect) the operational status of the EL part module.
- Setting this may cause the implementing module to run other code (e.g.
- the 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELSurveyStation
-\end_layout
-
-\end_inset
-
- module will recompute its range and possibly scan for sites), so mods must
- invoke the property setter to guarantee correct behavior.
+Consumes a set of input resources to produce a set of output resources.
 \end_layout
 
 \begin_layout Subsubsection
-ELRecycler
+ELDisposablePad
+\end_layout
+
+\begin_layout Standard
+Special one-shot launchpad that replaces itself with the built vessel, attaching
+ the built vessel to the vessel owning the pad.
 \end_layout
 
 \begin_layout Paragraph
@@ -2608,9 +2599,20 @@ Model Requirements
 \end_layout
 
 \begin_layout Standard
-The only requirement is the recycle field.
- The recycle field must be a trigger collider and should (must?) not touch
- any other collider.
+The only requirement is the model provides a transform with the up axis
+ (positive Y-axis in KSP/Unity, Z-axis in Blender) pointing 
+\series bold
+\emph on
+away
+\series default
+\emph default
+ from where the spawned vessel will be as it will be used to align the selected
+ attach node of the vessel's root part.
+ This is the opposite direction of the transform used by 
+\noun on
+ELLaunchPad
+\noun default
+.
 \end_layout
 
 \begin_layout Paragraph
@@ -2626,26 +2628,15 @@ Module Fields
 \end_layout
 
 \begin_layout Description
-RecycleField_name Specifies the name of the transform for the recycle field
- collider.
- Defaults to 
-\begin_inset Quotes eld
-\end_inset
-
-ReycleField
-\begin_inset Quotes erd
-\end_inset
-
-.
+SpawnTransform Specifies the model transform to be used as the launch transform.
+ Optional, but using a spawn transform makes the virtual attach node independent
+ of the part's transform.
 \end_layout
 
 \begin_layout Description
-RecycleRate Specifies the recycling rate in tons/second.
- Defaults to 
-\begin_inset Formula $1.0t/s$
-\end_inset
-
-.
+PadName Specifies the name of the launchpad.
+ Note that this is editable by the user both in the editor (VAB/SPH) or
+ in flight.
 \end_layout
 
 \begin_layout Description
@@ -2674,7 +2665,32 @@ true
 \end_layout
 
 \begin_layout Subsubsection
+ELExtractor
+\end_layout
+
+\begin_layout Standard
+Extracts resources from the environment.
+\end_layout
+
+\begin_layout Subsubsection
 ELLaunchPad
+\end_layout
+
+\begin_layout Standard
+Builds complete vessels attached (pseudo-docked) to the current vessel.
+ Allows post-build resource transfer without any extra fuss.
+ Supports building both landed or in orbit.
+ Implements 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Paragraph
@@ -2777,7 +2793,353 @@ true
 \end_layout
 
 \begin_layout Subsubsection
+ELNoControlSwitch
+\end_layout
+
+\begin_layout Standard
+Resets the vessel's control reference to what it was before a kerbal boards
+ the external command seat.
+ Used by the rocket workbench to prevent the vessel getting weird control
+ references
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Imagine how annoying this can be when using SAS hold option on a bendy station.
+ Now imagine the motivation for creating this part module.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+Somewhere for a kerbal to sit.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+At least one 
+\noun on
+KerbalSeat
+\noun default
+ module.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Subsubsection
+ELRecycler
+\end_layout
+
+\begin_layout Standard
+Destroys anything it touches (including unfortunate kerbals), reclaiming
+ what resources it can.
+ Implements 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+The only requirement is the recycle field.
+ The recycle field must be a trigger collider and should (must?) not touch
+ any other collider.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+RecycleField_name Specifies the name of the transform for the recycle field
+ collider.
+ Defaults to 
+\begin_inset Quotes eld
+\end_inset
+
+ReycleField
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+RecycleRate Specifies the recycling rate in tons/second.
+ Defaults to 
+\begin_inset Formula $1.0t/s$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+Operational Persistent backing for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface.canOperate
+\end_layout
+
+\end_inset
+
+.
+ Defaults to 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+ELSurveyStake
+\end_layout
+
+\begin_layout Standard
+Marks locations for survey station.
+ In the current implementation, a stake must be the only part in the vessel
+ for the survey station to recognize it.
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None except any required by KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+ for ground attachment.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+As the survey system will not look at vessels with more than one part to
+ check for the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELSurveyStake
+\end_layout
+
+\end_inset
+
+ module, the part should be configured to be ground attached using KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+.
+ However, parts designed to be dropped via staging or decoupling will work,
+ too, so long as the resulting vessel consists of only the one part.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Subsubsection
+ELSurveyStation
+\end_layout
+
+\begin_layout Standard
+Builds complete vessels at locations marked out using survey stakes (parts
+ with the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELSurveyStake
+\end_layout
+
+\end_inset
+
+ module).
+ Does not allow post-build resource transfer (freedom is not free), but
+ as KIS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KIS"
+
+\end_inset
+
+ is required to place the stakes, and KAS
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KAS"
+
+\end_inset
+
+ is almost always installed with it, survey stations are probably the preferred
+ tool for landed operations.
+ Implements 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+No requirements, but as kerbals improve its range, having crew capacity
+ (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+crewCapacity
+\end_layout
+
+\end_inset
+
+ > 0 or 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+KerbalSeat
+\end_layout
+
+\end_inset
+
+ modules) is recommended.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+StationName Specifies the name of the survey station.
+ Note that this is editable by the user both in the editor (VAB/SPH) or
+ in flight.
+\end_layout
+
+\begin_layout Description
+Operational Persistent backing for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELControlInterface.canOperate
+\end_layout
+
+\end_inset
+
+.
+ Defaults to 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
 ELTarget
+\end_layout
+
+\begin_layout Standard
+Allows a part to be targeted.
+ Includes orientation so it works with any docking alignment mod (DPAI
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DPAI"
+
+\end_inset
+
+, navball
+\begin_inset CommandInset citation
+LatexCommand cite
+key "NBDOCK"
+
+\end_inset
+
+, and navhud
+\begin_inset CommandInset citation
+LatexCommand cite
+key "NAVHUD"
+
+\end_inset
+
+ are known to work).
 \end_layout
 
 \begin_layout Paragraph
@@ -2822,6 +3184,11 @@ Target
 ELWorkshop
 \end_layout
 
+\begin_layout Standard
+Collect productivity from kerbals in the part.
+ Works with either normal parts with crew capacity or command chairs.
+\end_layout
+
 \begin_layout Paragraph
 Model Requirements
 \end_layout
@@ -2856,27 +3223,7 @@ KerbalSeat
 
 \end_inset
 
- (stock KSP) modules (currently, not both: for 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-KerbalSeat
-\end_layout
-
-\end_inset
-
- to be checked, the 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-crewCapacity
-\end_layout
-
-\end_inset
-
- must be 0).
+ (stock KSP) modules, or both.
  Note that parts may have multiple 
 \begin_inset Flex Code
 status open
@@ -2983,138 +3330,7 @@ KerbalSeat
  This is most useful on parts with dynamic crew capacities (eg, inflatables).
 \end_layout
 
-\begin_layout Subsubsection
-ELSurveyStation
-\end_layout
-
-\begin_layout Paragraph
-Model Requirements
-\end_layout
-
-\begin_layout Standard
-None.
-\end_layout
-
-\begin_layout Paragraph
-Part Requirements
-\end_layout
-
-\begin_layout Standard
-No requirements, but as kerbals improve its range, having crew capacity
- (
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-crewCapacity
-\end_layout
-
-\end_inset
-
- > 0 or 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-KerbalSeat
-\end_layout
-
-\end_inset
-
- modules) is recommended.
-\end_layout
-
-\begin_layout Paragraph
-Module Fields
-\end_layout
-
-\begin_layout Description
-StationName Specifies the name of the survey station.
- Note that this is editable by the user both in the editor (VAB/SPH) or
- in flight.
-\end_layout
-
-\begin_layout Description
-Operational Persistent backing for 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELControlInterface.canOperate
-\end_layout
-
-\end_inset
-
-.
- Defaults to 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-true
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsubsection
-ELSurveyStake
-\end_layout
-
-\begin_layout Paragraph
-Model Requirements
-\end_layout
-
-\begin_layout Standard
-None except any required by KIS
-\begin_inset CommandInset citation
-LatexCommand cite
-key "KIS"
-
-\end_inset
-
- for ground attachment.
-\end_layout
-
-\begin_layout Paragraph
-Part Requirements
-\end_layout
-
-\begin_layout Standard
-As the survey system will not look at vessels with more than one part to
- check for the 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELSurveyStake
-\end_layout
-
-\end_inset
-
- module, the part should be configured to be ground attached using KIS
-\begin_inset CommandInset citation
-LatexCommand cite
-key "KIS"
-
-\end_inset
-
-.
- However, parts designed to be dropped via staging or decoupling will work,
- too, so long as the resulting vessel consists of only the one part.
-\end_layout
-
-\begin_layout Paragraph
-Module Fields
-\end_layout
-
-\begin_layout Standard
-None.
-\end_layout
-
-\begin_layout Section
+\begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Recipes"
@@ -3381,7 +3597,7 @@ Unknown ingredients contribute to the total ratio and thus affect the ratios
  recycling (i.e., unknown ingredients simply evaporate when a part is recycled).
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Recipes for Building
 \end_layout
 
@@ -3618,26 +3834,32 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
+
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3735,30 +3957,37 @@ key "elker"
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3783,14 +4012,17 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -3917,31 +4149,37 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
 \end_deeper
-\begin_layout Subsection
+\begin_layout Subsubsection
 Recipes for Recycling
 \end_layout
 
@@ -4214,30 +4452,37 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -4321,26 +4566,32 @@ key "elrec"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -4424,38 +4675,269 @@ key "elker"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
+
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
+
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
 \end_deeper
+\begin_layout Section
+EL API
+\end_layout
+
+\begin_layout Standard
+Calling it an API might be stretching things, but...
+\end_layout
+
+\begin_layout Subsection
+Interfaces
+\end_layout
+
+\begin_layout Subsubsection
+ELBuildControl.IBuilder 
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+ELBuildControl
+\noun default
+ is the actual workhorse for building vessels, the various pad modules all
+ use 
+\noun on
+ELBuildControl
+\noun default
+ for the common functionality.
+ The 
+\noun on
+IBuilder
+\noun default
+ interface is the methods and properties that 
+\noun on
+ELBuildControl
+\noun default
+ requires of the pad modules.
+\end_layout
+
+\begin_layout Subsubsection
+ELControlInterface
+\end_layout
+
+\begin_layout Standard
+Its purpose is to allow other mods easy control and detection of the operational
+ status of EL's modules.
+ For example, mods with inflatable parts can disable the EL module when
+ the part is deflated and block deflation when the EL part is busy.
+\end_layout
+
+\begin_layout Paragraph
+Fields
+\end_layout
+
+\begin_layout Standard
+Note that these are actually properties, so access via reflection needs
+ to be done using 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+GetProperty
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+PropertyInfo.GetValue
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+PropertyInfo.Setvalue
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+isBusy Read-only boolean that indicates whether the module is currently
+ busy processing something.
+ While not enforced, the module should not be disabled while it is busy
+ (i.e.
+ the part should not be deflated).
+\end_layout
+
+\begin_layout Description
+canOperate Boolean usable by other part modules to enable or disable (or
+ detect) the operational status of the EL part module.
+ Setting this may cause the implementing module to run other code (e.g.
+ the 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELSurveyStation
+\end_layout
+
+\end_inset
+
+ module will recompute its range and possibly scan for sites), so mods must
+ invoke the property setter to guarantee correct behavior.
+\end_layout
+
+\begin_layout Subsubsection
+ELWorkSink 
+\end_layout
+
+\begin_layout Standard
+Consumes vessel productivity to get something done.
+\end_layout
+
+\begin_layout Subsubsection
+ELWorkSource 
+\end_layout
+
+\begin_layout Standard
+Provides vessel productivity.
+\end_layout
+
+\begin_layout Subsubsection
+IResourceProvider 
+\end_layout
+
+\begin_layout Standard
+Interface used by 
+\noun on
+ELExtractor
+\noun default
+ for querying environmental resource availability and extracting a resource
+ from the environment.
+\end_layout
+
+\begin_layout Subsection
+Part Modules
+\end_layout
+
+\begin_layout Subsubsection
+ELConverter
+\end_layout
+
+\begin_layout Subsubsection
+ELDisposablePad
+\end_layout
+
+\begin_layout Subsubsection
+ELExtractor
+\end_layout
+
+\begin_layout Subsubsection
+ELLaunchPad
+\end_layout
+
+\begin_layout Subsubsection
+ELNoControlSwitch
+\end_layout
+
+\begin_layout Subsubsection
+ELRecycler
+\end_layout
+
+\begin_layout Subsubsection
+ELSurveyStake
+\end_layout
+
+\begin_layout Subsubsection
+ELSurveyStation
+\end_layout
+
+\begin_layout Subsubsection
+ELTarget
+\end_layout
+
+\begin_layout Subsubsection
+ELWorkshop
+\end_layout
+
+\begin_layout Subsection
+Vessel Modules
+\end_layout
+
+\begin_layout Subsubsection
+ELVesselWorkNet
+\end_layout
+
+\begin_layout Standard
+Central control of productivity for the entire vessel.
+ Keeps track of output from work sources (eg, workshops) and distributes
+ the productivity over active work sinks (eg, pads).
+ Operates on unloaded vessels as well as loaded vessels so that work is
+ properly distributed when multiple work sinks are operating but they finish
+ at different times while the vessel is unloaded.
+ Also prevents erroneous productivity credit caused by leaving a vessel
+ unattended for several game years
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Background building was implemented by keeping track of how long the vessel
+ was unloaded.
+ When the vessel was loaded, the time was processed in chunks of (default)
+ 21600 seconds every physics frame.
+ This works out to fifty Kerbin days per second, so if a vessel had not
+ been visited for ten Kerbin years, there would be an 85 second (game-time,
+ worse for low FPS real-time) window after switching to the vessel in which
+ new builds would finish instantly (assuming resource availability).
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset

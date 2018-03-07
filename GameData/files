@@ -69,11 +69,11 @@ ExtraplanetaryLaunchpads/Parts/Workshop/Workstation_Screen-16x9.png
 ExtraplanetaryLaunchpads/Parts/Workshop/Workstation_Screen-4x3.png
 ExtraplanetaryLaunchpads/Parts/Workshop/part.cfg
 ExtraplanetaryLaunchpads/Parts/Workshop/workshop.mu
-ExtraplanetaryLaunchpads/Parts/smelter/model.mu
-ExtraplanetaryLaunchpads/Parts/smelter/part.cfg
-ExtraplanetaryLaunchpads/Parts/smelter/model002.mbm
-ExtraplanetaryLaunchpads/Parts/smelter/model000.mbm
-ExtraplanetaryLaunchpads/Parts/smelter/model001.mbm
+ExtraplanetaryLaunchpads/Parts/smelter/Smelter.mu
+ExtraplanetaryLaunchpads/Parts/smelter/Smelter.cfg
+ExtraplanetaryLaunchpads/Parts/smelter/Smelter_Diffuse.png
+ExtraplanetaryLaunchpads/Parts/smelter/Smelter_NRM.png
+ExtraplanetaryLaunchpads/Parts/smelter/Smelter_Emit.png
 ExtraplanetaryLaunchpads/Parts/HexCanMetal/Small.cfg
 ExtraplanetaryLaunchpads/Parts/HexCanMetal/model.mu
 ExtraplanetaryLaunchpads/Parts/HexCanMetal/model000.png

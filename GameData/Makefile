@@ -14,6 +14,7 @@ ZIP		:= zip
 SUBDIRS=\
 	ExtraplanetaryLaunchpads/Parts/ControlReference	\
 	ExtraplanetaryLaunchpads/Parts/MicroPad	\
+	ExtraplanetaryLaunchpads/Parts/smelter	\
 	$e
 
 all clean:

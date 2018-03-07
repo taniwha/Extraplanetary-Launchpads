@@ -1,0 +1,364 @@
+//NOTE: the large smelter has a total volume of 57.669m^3 according to
+//Blender's mesh volume utility. The volume dedicated to resource storage is
+//currentlly 24.28m^3 which seems to be pretty good as the rest would be taken
+//up by thermal insulation, the reaction chamber and other interal equipment.
+//The smaller sizes are scaled appropriately.
+values {
+	// modelSkinVolume is semi-bogus (too thin, but I don't feel like fighting
+	// the model right now). 0.2 is meant to repesent the insulation which is
+	// assumed to be much less dense than metal (if nothing else, there's a lot
+	// of porosity)
+	mass = ${math.floor(0.2 * 7.8 * modelSkinVolume + 0.5)}
+	cost = ${mass * 600 * 20}
+	cost = ${math.floor(cost * 10 + 0.5)/10}
+	// not used
+	capacity = ${math.floor((modelExtVolume-modelSkinVolume) * 1000)/1000}
+	resourceCapacity = ${math.floor(capacity*200)}
+	metal = ${256}
+	ore = ${3600}
+	scrap = ${1000}
+	resourceCost = ${metal * 9.36 + ore * 1.056 + scrap * 0.384}
+	cost = ${cost + resourceCost}
+	scale1 = ${1}
+	scale2 = ${0.5}
+	scale3 = ${0.064}
+}
+PART {
+	name = Smelter
+	module = Part
+	author = Skyler Lehmkuhl
+
+    MODEL {
+		model = ExtraplanetaryLaunchpads/Parts/smelter/Smelter
+		position = 0, 0, 0
+		rotation = 0, 0, 0
+		scale = 1, 1, 1
+	}
+	scale = 1
+	rescaleFactor = ${math.pow(scale1, 1.0/3)}
+
+	TechRequired = advConstruction
+	entryCost = 0
+	cost = ${cost * scale1}
+	category = Utility
+	subcategory = 0
+	title = KS-S-10 Smelter
+	manufacturer = Kairyuu Shipping
+	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	attachRules = 1,1,1,1,0
+
+	// --- standard part parameters ---
+	mass = ${mass * scale1}
+	dragModelType = override
+	maximum_drag = 0
+	minimum_drag = 0
+	angularDrag = 0
+	crashTolerance = 7
+	breakingForce = 200
+	breakingTorque = 200
+	maxTemp = 5000
+
+	MODULE {
+		name = ELConverter
+		ConverterName = Smelter
+		EVARange = 3
+		StartActionName = Start Metal Conversion
+		StopActionName = Stop Metal Conversion
+		INPUT_RESOURCE {
+			ResourceName = MetalOre
+			// MetalOre has mass and so Ratio is interpreted as tons/second
+			// and internally converted to resource units/second.
+			Ratio = 0.09581		// ~96kg/s (very fast!)
+		}
+		INPUT_RESOURCE {
+			ResourceName = ElectricCharge
+			// EC has no mass (RESOURCE_DEFINITION density is 0) so Ratio is
+			// interpreted as resource units.
+			Ratio = 10
+		}
+		OUTPUT_RESOURCE {
+			// From http://en.wikipedia.org/wiki/Iron_ore
+			// Stage One: 3 Fe2O3 + CO → 2 Fe3O4 + CO2
+			// Stage Two: Fe3O4 + CO → 3 FeO + CO2
+			// Stage Three: FeO + CO → Fe + CO2
+			//
+			// Until parts can be made, ignore CO/CO2.
+			//
+			// So 3Fe2O3 + 9CO → 6Fe + 9CO2, Fe = 55.845, O = 15.999 which
+			// means 479.061g of ore will produce 335.070g of iron. The
+			// converter takes care of the relative densities for us, thus
+			// the ratio is just 355.07/479.061.
+			ResourceName = Metal
+			Ratio = 0.699431
+		}
+	}
+
+	MODULE {
+		name = ELConverter
+		ConverterName = Scrap Metal Remelter
+		EVARange = 3
+		StartActionName = Start Scrap Metal Remelter
+		StopActionName = Stop Scrap Metal Remelter
+		INPUT_RESOURCE {
+			ResourceName = ScrapMetal
+			Ratio = 0.02
+		}
+		INPUT_RESOURCE {
+			ResourceName = ElectricCharge
+			Ratio = 7.5
+		}
+		OUTPUT_RESOURCE {
+			ResourceName = Metal
+			Ratio = 1				// no loss
+		}
+	}
+
+	RESOURCE {
+		name = Metal
+		amount = 0
+		// a bit less than 10t (but a nice round number)
+		// 1.28m^3
+		maxAmount = ${metal * scale1}
+	}
+
+	RESOURCE {
+		name = MetalOre
+		amount = 0
+		// a bit less than 100t
+		// 18m^3
+		maxAmount = ${ore * scale1}
+	}
+
+	RESOURCE {
+		name = ScrapMetal
+		amount = 0
+		// 5m^3
+		maxAmount = ${scrap * scale1}
+	}
+}
+
+PART {
+	name = SmallSmelter
+	module = Part
+	author = Skyler Lehmkuhl
+
+    MODEL {
+		model = ExtraplanetaryLaunchpads/Parts/smelter/Smelter
+		position = 0, 0, 0
+		rotation = 0, 0, 0
+		scale = 1, 1, 1
+	}
+	scale = 1
+	rescaleFactor = ${math.pow(scale2, 1.0/3)}
+
+	TechRequired = advConstruction
+	entryCost = 0
+	cost = ${cost * scale2}
+	category = Utility
+	subcategory = 0
+	title = KS-S-05 Smelter
+	manufacturer = Kairyuu Shipping
+	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	attachRules = 1,1,1,1,0
+
+	// --- standard part parameters ---
+	mass = ${mass * scale2}
+	dragModelType = override
+	maximum_drag = 0
+	minimum_drag = 0
+	angularDrag = 0
+	crashTolerance = 7
+	breakingForce = 200
+	breakingTorque = 200
+	maxTemp = 5000
+
+	MODULE {
+		name = ELConverter
+		ConverterName = Smelter
+		EVARange = 2
+		StartActionName = Start Metal Conversion
+		StopActionName = Stop Metal Conversion
+		INPUT_RESOURCE {
+			ResourceName = MetalOre
+			// MetalOre has mass and so Ratio is interpreted as tons/second
+			// and internally converted to resource units/second.
+			Ratio = 0.047905
+		}
+		INPUT_RESOURCE {
+			ResourceName = ElectricCharge
+			// EC has no mass (RESOURCE_DEFINITION density is 0) so Ratio is
+			// interpreted as resource units.
+			Ratio = 7.5
+		}
+		OUTPUT_RESOURCE {
+			// From http://en.wikipedia.org/wiki/Iron_ore
+			// Stage One: 3 Fe2O3 + CO → 2 Fe3O4 + CO2
+			// Stage Two: Fe3O4 + CO → 3 FeO + CO2
+			// Stage Three: FeO + CO → Fe + CO2
+			//
+			// Until parts can be made, ignore CO/CO2.
+			//
+			// So 3Fe2O3 + 9CO → 6Fe + 9CO2, Fe = 55.845, O = 15.999 which
+			// means 479.061g of ore will produce 335.070g of iron. The
+			// converter takes care of the relative densities for us, thus
+			// the ratio is just 355.07/479.061.
+			ResourceName = Metal
+			Ratio = 0.699431
+		}
+	}
+
+	MODULE {
+		name = ELConverter
+		ConverterName = Scrap Metal Remelter
+		EVARange = 2
+		StartActionName = Start Scrap Metal Remelter
+		StopActionName = Stop Scrap Metal Remelter
+		INPUT_RESOURCE {
+			ResourceName = ScrapMetal
+			Ratio = 0.01
+		}
+		INPUT_RESOURCE {
+			ResourceName = ElectricCharge
+			Ratio = 5
+		}
+		OUTPUT_RESOURCE {
+			ResourceName = Metal
+			Ratio = 1				// no loss
+		}
+	}
+
+	RESOURCE {
+		name = Metal
+		amount = 0
+		// a bit less than 10t (but a nice round number)
+		// 1.28m^3
+		maxAmount = ${metal * scale2}
+	}
+
+	RESOURCE {
+		name = MetalOre
+		amount = 0
+		// a bit less than 100t
+		// 18m^3
+		maxAmount = ${ore * scale2}
+	}
+
+	RESOURCE {
+		name = ScrapMetal
+		amount = 0
+		// 5m^3
+		maxAmount = ${scrap * scale2}
+	}
+}
+
+PART {
+	name = TinySmelter
+	module = Part
+	author = Skyler Lehmkuhl
+
+    MODEL {
+		model = ExtraplanetaryLaunchpads/Parts/smelter/Smelter
+		position = 0, 0, 0
+		rotation = 0, 0, 0
+		scale = 1, 1, 1
+	}
+	scale = 1
+	rescaleFactor = ${math.pow(scale3, 1.0/3)}
+
+	TechRequired = advConstruction
+	entryCost = 0
+	cost = ${cost * scale3}
+	category = Utility
+	subcategory = 0
+	title = KS-S-01 Smelter
+	manufacturer = Kairyuu Shipping
+	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	attachRules = 1,1,1,1,0
+
+	// --- standard part parameters ---
+	mass = ${mass * scale3}
+	dragModelType = override
+	maximum_drag = 0
+	minimum_drag = 0
+	angularDrag = 0
+	crashTolerance = 7
+	breakingForce = 200
+	breakingTorque = 200
+	maxTemp = 5000
+
+	MODULE {
+		name = ELConverter
+		ConverterName = Smelter
+		StartActionName = Start Metal Conversion
+		StopActionName = Stop Metal Conversion
+		INPUT_RESOURCE {
+			ResourceName = MetalOre
+			// MetalOre has mass and so Ratio is interpreted as tons/second
+			// and internally converted to resource units/second.
+			Ratio = 0.00825
+		}
+		INPUT_RESOURCE {
+			ResourceName = ElectricCharge
+			// EC has no mass (RESOURCE_DEFINITION density is 0) so Ratio is
+			// interpreted as resource units.
+			Ratio = 1.0
+		}
+		OUTPUT_RESOURCE {
+			// From http://en.wikipedia.org/wiki/Iron_ore
+			// Stage One: 3 Fe2O3 + CO → 2 Fe3O4 + CO2
+			// Stage Two: Fe3O4 + CO → 3 FeO + CO2
+			// Stage Three: FeO + CO → Fe + CO2
+			//
+			// Until parts can be made, ignore CO/CO2.
+			//
+			// So 3Fe2O3 + 9CO → 6Fe + 9CO2, Fe = 55.845, O = 15.999 which
+			// means 479.061g of ore will produce 335.070g of iron. The
+			// converter takes care of the relative densities for us, thus
+			// the ratio is just 355.07/479.061.
+			ResourceName = Metal
+			Ratio = 0.699431
+		}
+	}
+
+	MODULE {
+		name = ELConverter
+		ConverterName = Scrap Metal Remelter
+		StartActionName = Start Scrap Metal Remelter
+		StopActionName = Stop Scrap Metal Remelter
+		INPUT_RESOURCE {
+			ResourceName = ScrapMetal
+			Ratio = 0.00172
+		}
+		INPUT_RESOURCE {
+			ResourceName = ElectricCharge
+			Ratio = 1
+		}
+		OUTPUT_RESOURCE {
+			ResourceName = Metal
+			Ratio = 1				// no loss
+		}
+	}
+
+	RESOURCE {
+		name = Metal
+		amount = 0
+		// a bit less than 10t (but a nice round number)
+		// 1.28m^3
+		maxAmount = ${metal * scale3}
+	}
+
+	RESOURCE {
+		name = MetalOre
+		amount = 0
+		// a bit less than 100t
+		// 18m^3
+		maxAmount = ${ore * scale3}
+	}
+
+	RESOURCE {
+		name = ScrapMetal
+		amount = 0
+		// 5m^3
+		maxAmount = ${scrap * scale3}
+	}
+}

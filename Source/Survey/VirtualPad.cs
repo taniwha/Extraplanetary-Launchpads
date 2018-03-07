@@ -70,9 +70,11 @@ namespace ExtraplanetaryLaunchpads {
 			Renderer rend = go.GetComponent<Renderer> ();
 			rend.material = new Material (Shader.Find("Particles/Additive"));
 			line.useWorldSpace = false;
-			line.SetWidth (0.5f, 0.5f);
-			line.SetVertexCount (2);
-			line.SetColors (color, color);
+			line.startWidth = 0.5f;
+			line.endWidth = 0.5f;
+			line.positionCount = 2;
+			line.startColor = color;
+			line.endColor = color;
 			line.SetPosition (0, Vector3.zero);
 			line.SetPosition (1, end * 5);
 		}

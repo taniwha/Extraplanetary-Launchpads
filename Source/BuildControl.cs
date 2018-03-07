@@ -491,7 +491,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		Collider[] get_colliders (Part p)
 		{
-			var o = p.transform.FindChild("model");
+			var o = p.transform.Find("model");
 			return o.GetComponentsInChildren<Collider> ();
 		}
 

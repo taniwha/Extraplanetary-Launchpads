@@ -205,7 +205,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (site != null) {
 				foreach (var stake in site) {
-					stake.Highlight (on);
+					if (stake.stake != null) {
+						stake.stake.Highlight (on);
+					}
 				}
 			}
 		}

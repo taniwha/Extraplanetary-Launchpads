@@ -29,6 +29,35 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELSurveyStake : PartModule, IModuleInfo
 	{
+		public struct Data
+		{
+			public bool bound;
+			public int use;
+			public Vessel vessel;
+			public ELSurveyStake stake;
+		}
+
+		public static Data GetData (ProtoPartModuleSnapshot stake, Vessel vessel)
+		{
+			Data data = new Data ();
+			ConfigNode node = stake.moduleValues;
+			bool.TryParse (node.GetValue ("bound"), out data.bound);
+			int.TryParse (node.GetValue ("use"), out data.use);
+			data.vessel = vessel;
+			data.stake = null;	// part not loaded
+			return data;
+		}
+
+		public Data GetData ()
+		{
+			Data data = new Data ();
+			data.bound = bound;
+			data.use = use;
+			data.vessel = vessel;
+			data.stake = this;
+			return data;
+		}
+
 		internal static string[] StakeUses = { "Origin",
 											   "+X", "+Y", "+Z",
 											   "-X", "-Y", "-Z"};

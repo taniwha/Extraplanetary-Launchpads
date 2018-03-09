@@ -86,9 +86,11 @@ namespace ExtraplanetaryLaunchpads {
 				if (pvessel.protoPartSnapshots.Count != 1)
 					return false;
 				var ppart = pvessel.protoPartSnapshots[0];
-				if (ppart.modules.Where (m => m.moduleName == "ELSurveyStake").Count () < 1)
+				var mod = ppart.FindModule ("ELSurveyStake");
+				if (mod == null)
 					return false;
-				Debug.Log (String.Format ("[EL ST] stake on rails {0}", vessel.vesselName));
+				Debug.LogFormat ("[EL ST] stake on rails {0}",
+								 vessel.vesselName);
 			}
 			return true;
 		}

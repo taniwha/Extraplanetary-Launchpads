@@ -27,11 +27,18 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		List<Vessel> stakes;
 
-		internal ELSurveyStake this[int index]
+		internal ELSurveyStake.Data this[int index]
 		{
 			get {
-				var m = stakes[index][0].Modules.OfType<ELSurveyStake> ();
-				return m.FirstOrDefault ();
+				Vessel v = stakes[index];
+				if (v.loaded) {
+					var stake = v[0].FindModuleImplementing<ELSurveyStake> ();
+					return stake.GetData ();
+				} else {
+					var ppart = v.protoVessel.protoPartSnapshots[0];
+					var stake = ppart.FindModule ("ELSurveyStake");
+					return ELSurveyStake.GetData (stake, v);
+				}
 			}
 		}
 
@@ -156,11 +163,10 @@ namespace ExtraplanetaryLaunchpads {
 			SiteName = stakes[0].vesselName;
 		}
 
-		public IEnumerator<ELSurveyStake> GetEnumerator ()
+		public IEnumerator<ELSurveyStake.Data> GetEnumerator ()
 		{
-			foreach (var stake in stakes) {
-				var m = stake[0].Modules.OfType<ELSurveyStake> ();
-				yield return m.FirstOrDefault ();
+			for (int i = 0; i < stakes.Count; i++) {
+				yield return this[i];
 			}
 		}
 	}

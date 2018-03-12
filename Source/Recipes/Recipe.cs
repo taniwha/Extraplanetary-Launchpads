@@ -54,10 +54,33 @@ namespace ExtraplanetaryLaunchpads {
 		{
 		}
 
+		public Ingredient this[string ingredient]
+		{
+			get {
+				for (int i = 0; i < ingredients.Count; i++) {
+					if (ingredients[i].name == ingredient) {
+						return ingredients[i];
+					}
+				}
+				return null;
+			}
+		}
+
 		public bool HasIngredient (string ingredient)
 		{
 			for (int i = 0; i < ingredients.Count; i++) {
 				if (ingredients[i].name == ingredient) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool RemoveIngredient (string ingredient)
+		{
+			for (int i = 0; i < ingredients.Count; i++) {
+				if (ingredients[i].name == ingredient) {
+					ingredients.RemoveAt (i);
 					return true;
 				}
 			}

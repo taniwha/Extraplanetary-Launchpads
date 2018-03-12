@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -35,6 +35,8 @@ logicalmkup
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -64,6 +66,7 @@ logicalmkup
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -72,7 +75,10 @@ logicalmkup
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -265,6 +271,7 @@ Download the zip file for the latest version via the EL forum thread
 \begin_inset CommandInset citation
 LatexCommand cite
 key "EL"
+literal "true"
 
 \end_inset
 
@@ -294,6 +301,7 @@ Ok, folder.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "MM"
+literal "true"
 
 \end_inset
 
@@ -313,6 +321,7 @@ In order to support survey builds, Kerbal Inventory System
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -340,6 +349,7 @@ Clock
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KAC"
+literal "true"
 
 \end_inset
 
@@ -353,6 +363,7 @@ KerbalStats
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KS"
+literal "true"
 
 \end_inset
 
@@ -365,6 +376,7 @@ Kethane
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Keth"
+literal "true"
 
 \end_inset
 
@@ -389,6 +401,7 @@ Tanks
 \begin_inset CommandInset citation
 LatexCommand cite
 key "MFT"
+literal "true"
 
 \end_inset
 
@@ -404,6 +417,7 @@ Parts
 \begin_inset CommandInset citation
 LatexCommand cite
 key "TP"
+literal "true"
 
 \end_inset
 
@@ -427,6 +441,7 @@ System
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KAS"
+literal "true"
 
 \end_inset
 
@@ -446,6 +461,7 @@ Balancer
 \begin_inset CommandInset citation
 LatexCommand cite
 key "TACFB"
+literal "true"
 
 \end_inset
 
@@ -473,6 +489,7 @@ Systems
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kpbs"
+literal "true"
 
 \end_inset
 
@@ -485,6 +502,7 @@ Pathfinder
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Path"
+literal "true"
 
 \end_inset
 
@@ -496,6 +514,7 @@ SimpleConstuction
 \begin_inset CommandInset citation
 LatexCommand cite
 key "SC"
+literal "true"
 
 \end_inset
 
@@ -763,6 +782,7 @@ Prior to KSP 1.0, EL relied solely on Kethane
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Keth"
+literal "true"
 
 \end_inset
 
@@ -771,6 +791,7 @@ key "Keth"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "karb"
+literal "true"
 
 \end_inset
 
@@ -1333,6 +1354,7 @@ If the KerbalStats
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KS"
+literal "true"
 
 \end_inset
 
@@ -1491,6 +1513,7 @@ All stock crewed parts act as under-equipped workshops.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "MKS"
+literal "true"
 
 \end_inset
 
@@ -1498,6 +1521,7 @@ key "MKS"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Path"
+literal "true"
 
 \end_inset
 
@@ -1527,6 +1551,7 @@ Initiating construction is the same for everything: open the build window
 \begin_inset CommandInset citation
 LatexCommand cite
 key "TB"
+literal "true"
 
 \end_inset
 
@@ -1625,6 +1650,7 @@ The micro-pad is a single-use construction point.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -1698,6 +1724,7 @@ not
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -1705,6 +1732,7 @@ key "KIS"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KAS"
+literal "true"
 
 \end_inset
 
@@ -1717,6 +1745,7 @@ It can, however, lead to good entertainment:
 \begin_inset CommandInset citation
 LatexCommand cite
 key "HMV1"
+literal "true"
 
 \end_inset
 
@@ -2148,6 +2177,7 @@ construction unit
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -2393,6 +2423,7 @@ The main difference between orbital construction and grounded construction
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -2477,6 +2508,7 @@ KAS
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KAS"
+literal "true"
 
 \end_inset
 
@@ -2496,6 +2528,7 @@ KIS
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -2951,6 +2984,7 @@ None except any required by KIS
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -2977,6 +3011,7 @@ ELSurveyStake
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -3015,6 +3050,7 @@ ELSurveyStake
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KIS"
+literal "true"
 
 \end_inset
 
@@ -3022,6 +3058,7 @@ key "KIS"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "KAS"
+literal "true"
 
 \end_inset
 
@@ -3122,6 +3159,7 @@ Allows a part to be targeted.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "DPAI"
+literal "true"
 
 \end_inset
 
@@ -3129,6 +3167,7 @@ key "DPAI"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "NBDOCK"
+literal "true"
 
 \end_inset
 
@@ -3136,6 +3175,7 @@ key "NBDOCK"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "NAVHUD"
+literal "true"
 
 \end_inset
 
@@ -3950,6 +3990,7 @@ Kerbal.cfg
 \begin_inset CommandInset citation
 LatexCommand cite
 key "elker"
+literal "true"
 
 \end_inset
 
@@ -4141,6 +4182,7 @@ Recipes.cfg
 \begin_inset CommandInset citation
 LatexCommand cite
 key "elrec"
+literal "true"
 
 \end_inset
 
@@ -4444,6 +4486,7 @@ Recipes.cfg
 \begin_inset CommandInset citation
 LatexCommand cite
 key "elrec"
+literal "true"
 
 \end_inset
 
@@ -4558,6 +4601,7 @@ Recipes.cfg
 \begin_inset CommandInset citation
 LatexCommand cite
 key "elrec"
+literal "true"
 
 \end_inset
 
@@ -4667,6 +4711,7 @@ Kerbal.cfg
 \begin_inset CommandInset citation
 LatexCommand cite
 key "elker"
+literal "true"
 
 \end_inset
 
@@ -4702,6 +4747,311 @@ EL_KerbalRecipe {
 \begin_layout Verbatim
 
         loss = -29
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Recipes for Converting
+\end_layout
+
+\begin_layout Quotation
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+STILL UNDER HEAVY DEVELOPMENT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+EL_ConverterRecipe Conversion recipes make configuring chemically correct
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Or reasonable approximations thereof.
+\end_layout
+
+\end_inset
+
+ resource converters fairly simple as they allow the conversion rate to
+ be separated from the resource ratios.
+ Each conversion recipe provides a name which can be referenced by the converter
+ config, a set of input recipes, and a set of output recipes.
+ At least one of each recipe set must be present for the converter recipe
+ to be valid, but there is no need for the two sets to have the same number
+ of recipes.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+All ingredients in an input recipe must be either a defined KSP resource,
+ or an 
+\noun on
+EL_ResourceRecipe
+\noun default
+.
+ Any ingredients in a referenced 
+\noun on
+EL_ResourceRecipe
+\noun default
+ also must be defined.
+ In the example below, 
+\noun on
+LFOMix
+\noun default
+ is such.
+ It is used because stock KSP 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ densities are incorrect for RP-1 (0.81kg/L) and LOX (1.141kg/L) which makes
+ getting the rates correct difficult.
+ Thus 
+\noun on
+LFOMix
+\noun default
+ is a workaround.
+\end_layout
+
+\begin_layout Standard
+Any undefined ingredients in an output recipe simply evaporate (i.e., they
+ are jettisoned).
+\end_layout
+
+\begin_layout Standard
+Both input recipes and output recipes have two special ingredients: 
+\noun on
+efficiency
+\noun default
+ and 
+\noun on
+heat
+\noun default
+.
+ The 
+\noun on
+efficiency
+\noun default
+ ingredient is used to calculate the actual recipe used by the converter
+ based on the converter's current efficiency, acting as keys in an efficiency
+ curve.
+ The ratios of the other ingredients are interpolated between those specified
+ by the recipes with efficiencies on either side of the converter's current
+ recipe.
+ The 
+\noun on
+heat
+\noun default
+ ingredient specifies the amount of heat consumed (input recipes) or produced
+ (output recipes).
+ If the ingredient ratios are in grams, then 
+\noun on
+heat
+\noun default
+ is assumed to be in kilo-joules.
+\end_layout
+
+\begin_layout Verbatim
+
+EL_ConverterRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    name = LFOFiredSmelter
+\end_layout
+
+\begin_layout Verbatim
+
+    Input {
+\end_layout
+
+\begin_layout Verbatim
+
+        efficiency = 1
+\end_layout
+
+\begin_layout Verbatim
+
+        heat = 9627.678
+\end_layout
+
+\begin_layout Verbatim
+
+        LFOMix = 864.49048
+\end_layout
+
+\begin_layout Verbatim
+
+        MetalOre = 1596.882
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+    Output {
+\end_layout
+
+\begin_layout Verbatim
+
+        efficiency = 1
+\end_layout
+
+\begin_layout Verbatim
+
+        heat = 0
+\end_layout
+
+\begin_layout Verbatim
+
+        CarbonDioxide = 1056.228
+\end_layout
+
+\begin_layout Verbatim
+
+        Water = 288.24448
+\end_layout
+
+\begin_layout Verbatim
+
+        Metal = 1116.9
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+    Input {
+\end_layout
+
+\begin_layout Verbatim
+
+        efficiency = 0
+\end_layout
+
+\begin_layout Verbatim
+
+        heat = 0
+\end_layout
+
+\begin_layout Verbatim
+
+        LFOMix = 864.49048
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+    Output {
+\end_layout
+
+\begin_layout Verbatim
+
+        efficiency = 0
+\end_layout
+
+\begin_layout Verbatim
+
+        heat = 5186.94288
+\end_layout
+
+\begin_layout Verbatim
+
+        Carbon = 24.0214
+\end_layout
+
+\begin_layout Verbatim
+
+        CarbonDioxide = 176.038
+\end_layout
+
+\begin_layout Verbatim
+
+        CarbonMonoxide = 476.1717
+\end_layout
+
+\begin_layout Verbatim
+
+        Formaldehyde = 30.02598
+\end_layout
+
+\begin_layout Verbatim
+
+        Hydrogen = 14.11116
+\end_layout
+
+\begin_layout Verbatim
+
+        Water = 144.12224
+\end_layout
+
+\begin_layout Verbatim
+
+    }
+\end_layout
+
+\begin_layout Verbatim
+
+}
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+EL_ResourceRecipe {
+\end_layout
+
+\begin_layout Verbatim
+
+    name = LFOMix
+\end_layout
+
+\begin_layout Verbatim
+
+    Resources {
+\end_layout
+
+\begin_layout Verbatim
+
+        LiquidFuel = 9
+\end_layout
+
+\begin_layout Verbatim
+
+        Oxidizer = 11
 \end_layout
 
 \begin_layout Verbatim

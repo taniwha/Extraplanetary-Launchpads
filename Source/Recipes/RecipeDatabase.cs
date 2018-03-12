@@ -26,6 +26,7 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.Instantly, false)]
 	public class ELRecipeDatabase: MonoBehaviour
 	{
+		public static Dictionary<string, ConverterRecipe> converter_recipes;
 		public static Dictionary<string, PartRecipe> part_recipes;
 		public static Dictionary<string, Recipe> module_recipes;
 		public static Dictionary<string, Recipe> resource_recipes;
@@ -117,6 +118,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Awake ()
 		{
+			converter_recipes = new Dictionary<string, ConverterRecipe> ();
 			part_recipes = new Dictionary<string, PartRecipe> ();
 			module_recipes = new Dictionary<string, Recipe> ();
 			resource_recipes = new Dictionary<string, Recipe> ();

@@ -18,6 +18,7 @@ EL_FILES := \
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/BuildResourceSet.cs			\
+	Recipes/ConverterRecipe.cs			\
 	Recipes/CostReport.cs				\
 	Recipes/Ingredient.cs				\
 	Recipes/PartRecipe.cs				\

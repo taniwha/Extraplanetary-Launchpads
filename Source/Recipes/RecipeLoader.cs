@@ -201,7 +201,24 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				yield return null;
 			}
-			done = true;
+		}
+
+		IEnumerator LoadConverterRecipes()
+		{
+			var dbase = GameDatabase.Instance;
+			var node_list = dbase.GetConfigNodes ("EL_ConverterRecipe");
+			for (int i = 0; i < node_list.Length; i++) {
+				var node = node_list[i];
+				string name = node.GetValue ("name");
+				if (String.IsNullOrEmpty (name)) {
+					print ("[EL Recipes] skipping unnamed EL_ConverterRecipe");
+					continue;
+				}
+				print ("[EL ConverterRecipe] " + name);
+				var recipe = new ConverterRecipe (node);
+				ELRecipeDatabase.converter_recipes[name] = recipe;
+				yield return null;
+			}
 		}
 
 		IEnumerator LoadRecipes()
@@ -213,6 +230,8 @@ namespace ExtraplanetaryLaunchpads {
 			yield return StartCoroutine (LoadTransferRecipes ());
 			yield return StartCoroutine (LoadModuleRecipes ());
 			yield return StartCoroutine (LoadPartRecipes ());
+			yield return StartCoroutine (LoadConverterRecipes ());
+			done = true;
 		}
 
 		public override bool IsReady ()

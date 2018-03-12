@@ -38,9 +38,6 @@ namespace ExtraplanetaryLaunchpads {
 			var resdict = new Dictionary<string,Ingredient>();
 			foreach (ConfigNode.Value res in recipe.values) {
 				var ingredient = new Ingredient (res);
-				if (ingredient.ratio == 0) {
-					continue;
-				}
 				if (resdict.ContainsKey (ingredient.name)) {
 					resdict[ingredient.name].ratio += ingredient.ratio;
 				} else {

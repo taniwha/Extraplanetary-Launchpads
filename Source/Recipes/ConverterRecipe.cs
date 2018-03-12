@@ -64,8 +64,33 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void SetupRecipes (Recipe[] recipes, out double[] efficiences, out double[] heats)
+		static bool ResourceDefined (string resource)
 		{
+			var resdef = PartResourceLibrary.Instance.GetDefinition (resource);
+			return resdef != null;
+		}
+
+		void ExpandResourceRecipes (Recipe recipe)
+		{
+			for (int i = recipe.ingredients.Count; i-- > 0; ) {
+				Ingredient ingredient = recipe.ingredients[i];
+				if (!ResourceDefined (ingredient.name)) {
+					var resRecipe = ELRecipeDatabase.ResourceRecipe (ingredient.name);
+					if (resRecipe != null) {
+						resRecipe = resRecipe.Bake (ingredient.ratio);
+						recipe.ingredients.RemoveAt (i);
+						for (int j = resRecipe.ingredients.Count; j-- > 0; ) {
+							recipe.AddIngredient (resRecipe.ingredients[j]);
+						}
+					}
+				}
+			}
+		}
+
+		void SetupRecipes (Recipe[] recipes, out double[] efficiences,
+						   out double[] heats, bool expand)
+		{
+			var resourceSet = new HashSet<string> ();
 			efficiences = new double[recipes.Length];
 			heats = new double[recipes.Length];
 			for (int i = 0; i < recipes.Length; i++) {
@@ -74,6 +99,20 @@ namespace ExtraplanetaryLaunchpads {
 				if (recipes[i].HasIngredient ("heat")) {
 					heats[i] = recipes[i]["heat"].ratio;
 					recipes[i].RemoveIngredient ("heat");
+				}
+				if (expand) {
+					ExpandResourceRecipes (recipes[i]);
+				}
+				for (int j = recipes[i].ingredients.Count; j-- > 0; ) {
+					resourceSet.Add (recipes[i].ingredients[j].name);
+				}
+			}
+			// ensure all recipes have all ingredients
+			for (int i = 0; i < recipes.Length; i++) {
+				foreach (string res in resourceSet) {
+					// new ingredients will have ratios of 0, already existing
+					// ingredients will not be affected
+					recipes[i].AddIngredient (new Ingredient (res, 0));
 				}
 			}
 		}
@@ -97,13 +136,25 @@ namespace ExtraplanetaryLaunchpads {
 			OutputRecipes = LoadRecipes (outputs, "output");
 			SortRecipes (InputRecipes);
 			SortRecipes (OutputRecipes);
-			SetupRecipes (InputRecipes, out InputEfficiencies, out InputHeats);
-			SetupRecipes (OutputRecipes, out OutputEfficiencies, out OutputHeats);
+			SetupRecipes (InputRecipes, out InputEfficiencies,
+						  out InputHeats, true);
+			SetupRecipes (OutputRecipes, out OutputEfficiencies,
+						  out OutputHeats, false);
 			for (int i = 0; i < InputRecipes.Length; i++) {
-				Debug.LogFormat ("[ConverterRecipe] {0} input {1} {2} {3}", name, InputEfficiencies[i], InputHeats[i], InputRecipes[i]);
+				Debug.LogFormat ("[ConverterRecipe] {0} input {1} {2}",
+								 name, InputEfficiencies[i], InputHeats[i]);
+				for (int j = 0; j < InputRecipes[i].ingredients.Count; j++) {
+					var ing = InputRecipes[i].ingredients[j];
+					Debug.LogFormat ("    {0}: {1}", ing.name, ing.ratio);
+				}
 			}
 			for (int i = 0; i < OutputRecipes.Length; i++) {
-				Debug.LogFormat ("[ConverterRecipe] {0} output {1} {2} {3}", name, OutputEfficiencies[i], OutputHeats[i], OutputRecipes[i]);
+				Debug.LogFormat ("[ConverterRecipe] {0} output {1} {2}",
+								 name, OutputEfficiencies[i], OutputHeats[i]);
+				for (int j = 0; j < OutputRecipes[i].ingredients.Count; j++) {
+					var ing = OutputRecipes[i].ingredients[j];
+					Debug.LogFormat ("    {0}: {1}", ing.name, ing.ratio);
+				}
 			}
 		}
 	}

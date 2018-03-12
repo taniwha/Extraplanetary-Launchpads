@@ -18,6 +18,7 @@ for l in lines:
     l = l.strip()
     if not l:
         continue
-    formula, percent = l.split()
+    print(l)
+    formula, name, state, density = l.split()
     r = Resource(name, formula, state, density)
     print r.name, r.formula, r.mass()

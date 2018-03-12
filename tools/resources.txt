@@ -3,3 +3,11 @@ FeO(Cl) A-Akaganeite solid 3.52
 C12H16 RP-1 liquid 0.81
 O2 lox liquid 1.141
 H2 lhyd liquid 0.07
+CH2O Formaldehyde liquid 0.8153
+Fe2O3 Hematite solid 5.26
+Fe3O4 Magnetite solid 5.175
+H2O Water liquid 1
+CO2 CarbonDioxide gas 0.001
+CO CarbonMonoxide gas 0.001
+Fe Iron solid 7.8
+C Carbon solid 2

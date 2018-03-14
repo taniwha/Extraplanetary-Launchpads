@@ -187,19 +187,6 @@ namespace ExtraplanetaryLaunchpads {
 			control.DestroyPad ();
 		}
 
-		void DisableModel ()
-		{
-			Transform modelXform = part.partTransform.FindChild ("model");
-			if (modelXform == null) {
-				// why would it be null? something went wrong?
-				return;
-			}
-			for (int i = 0; i < modelXform.childCount; i++) {
-				Transform child = modelXform.GetChild (i);
-				child.gameObject.SetActive (false);
-			}
-		}
-
 		void SetLaunchTransform ()
 		{
 			if (SpawnTransform != "") {

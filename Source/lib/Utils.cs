@@ -165,5 +165,19 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			sb.AppendFormat (" {0:0.00} {1}/{2}", rate, unit, period);
 		}
+
+		public static void PrintIngredient (StringBuilder sb, Ingredient ingredient)
+		{
+			string name = ingredient.name;
+			double ratio = ingredient.ratio;
+			ResourceRatio Ratio = new ResourceRatio (name, ratio, false);
+			var def = PartResourceLibrary.Instance.GetDefinition (name);
+			if (def != null) {
+				if (def.density > 0) {
+					Ratio.Ratio /= def.density;
+				}
+				PrintResource (sb, Ratio);
+			}
+		}
 	}
 }

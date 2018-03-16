@@ -41,6 +41,14 @@ namespace ExtraplanetaryLaunchpads {
 			return res_def.density;
 		}
 
+		public static ConverterRecipe ConverterRecipe (string name)
+		{
+			if (converter_recipes.ContainsKey (name)) {
+				return converter_recipes[name];
+			}
+			return null;
+		}
+
 		public static Recipe ResourceRecipe (string name)
 		{
 			if (resource_recipes.ContainsKey (name)) {

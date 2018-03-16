@@ -24,10 +24,16 @@ using UnityEngine;
 namespace ExtraplanetaryLaunchpads {
 	public class ELConverter: BaseConverter, IModuleInfo
 	{
+		ConverterRecipe converter_recipe;
+		ConverterRecipe current_recipe;
+
 		ConversionRecipe ratio_recipe;
 
 		[KSPField]
 		public float EVARange = 1.5f;
+
+		[KSPField]
+		public string ConverterRecipe = "";
 
 		public override void OnStart(PartModule.StartState state)
 		{
@@ -36,13 +42,39 @@ namespace ExtraplanetaryLaunchpads {
 			EL_Utils.SetupEVAEvent (Events["StopResourceConverter"], EVARange);
 		}
 
-		public ConversionRecipe Recipe
+		void RemoveConflictingNodes (ConfigNode node, string name)
 		{
-			get {
-				if (ratio_recipe == null) {
-					ratio_recipe = LoadRecipe ();
-				}
-				return ratio_recipe;
+			if (node.HasNode (name)) {
+				Debug.LogFormat ("[ELConverter] removing conflicting {0} nodes",
+								 name);
+				node.RemoveNodes (name);
+			}
+		}
+
+		public override void OnLoad (ConfigNode node)
+		{
+			converter_recipe = ELRecipeDatabase.ConverterRecipe (ConverterRecipe);
+			if (converter_recipe == null) {
+				Debug.LogFormat ("[ELConverter] unknown recipe \"{0}\"",
+								 ConverterRecipe);
+			} else {
+				Debug.LogFormat ("[ELConverter] found recipe \"{0}\"",
+								 ConverterRecipe);
+				current_recipe = converter_recipe.Bake (0.5, current_recipe);
+			}
+			PrepareRecipe (0);
+			// two birds with one stone: make it clear that the config is
+			// broken and ensure the stock converter doesn't mess with us
+			RemoveConflictingNodes (node, "INPUT_RESOURCE");
+			RemoveConflictingNodes (node, "OUTPUT_RESOURCE");
+			RemoveConflictingNodes (node, "REQUIRED_RESOURCE");
+			base.OnLoad (node);
+		}
+
+		void PrintRecipe (StringBuilder sb, Recipe recipe)
+		{
+			for (int i = 0, c = recipe.ingredients.Count; i < c; i++) {
+				EL_Utils.PrintIngredient (sb, recipe.ingredients[i]);
 			}
 		}
 
@@ -50,23 +82,16 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			StringBuilder sb = StringBuilderCache.Acquire ();
 			sb.Append (ConverterName);
-			if (Recipe.Inputs.Count > 0) {
+			sb.Append (" at 50% efficiency");
+
+			if (current_recipe != null) {
+				sb.AppendFormat ("\n\n<color=#bada55>Mass flow: {0:0.00} {1}/{2}</color>", current_recipe.Masses[0], "t", "s");
+				sb.AppendFormat ("\n\n<color=#bada55>Heat flow: {0:0.00} {1}/{2}</color>", current_recipe.OutputHeats[0] - current_recipe.InputHeats[0], "MJ", "s");
 				sb.Append ("\n\n<color=#bada55>Inputs:</color>");
-				for (int i = 0, c = Recipe.Inputs.Count; i < c; i++) {
-					EL_Utils.PrintResource (sb, Recipe.Inputs[i]);
-				}
-			}
-			if (Recipe.Outputs.Count > 0) {
+				PrintRecipe (sb, current_recipe.InputRecipes[0]);
+
 				sb.Append ("\n<color=#bada55>Outputs:</color>");
-				for (int i = 0, c = Recipe.Outputs.Count; i < c; i++) {
-					EL_Utils.PrintResource (sb, Recipe.Outputs[i]);
-				}
-			}
-			if (Recipe.Requirements.Count > 0) {
-				sb.Append ("\n<color=#bada55>Requirements:</color>");
-				for (int i = 0, c = Recipe.Requirements.Count; i < c; i++) {
-					EL_Utils.PrintResource (sb, Recipe.Requirements[i]);
-				}
+				PrintRecipe (sb, current_recipe.OutputRecipes[0]);
 			}
 			return sb.ToStringAndRelease ();
 		}
@@ -86,55 +111,34 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		List<ResourceRatio> ProcessRatio (List<ResourceRatio> mass_ratios, double mass = 1)
+		void SetRatios (Recipe recipe, List<ResourceRatio> ratios)
 		{
-			var unit_ratios = new List<ResourceRatio> ();
-			for (int i = 0; i < mass_ratios.Count; i++) {
-				var ratio = new ResourceRatio ();
-				var def = PartResourceLibrary.Instance.GetDefinition (mass_ratios[i].ResourceName);
-				if (def == null) {
-					Debug.LogError (String.Format ("[EL Converter] unknown resource '{0}'", mass_ratios[i].ResourceName));
-					continue;
-				}
-				ratio.ResourceName = mass_ratios[i].ResourceName;
-				ratio.Ratio = mass * mass_ratios[i].Ratio;
-				if (def.density > 0) {
-					ratio.Ratio /= def.density;
-				}
-				ratio.DumpExcess = mass_ratios[i].DumpExcess;
-				ratio.FlowMode = mass_ratios[i].FlowMode;
-				unit_ratios.Add (ratio);
+			if (ratios.Count < 1) {
+				ratios.AddRange (new ResourceRatio[recipe.ingredients.Count]);
 			}
-			return unit_ratios;
-		}
-
-		double GetResourceMass (List<ResourceRatio> ratios)
-		{
-			double mass = 0;
-			for (int i = 0; i < ratios.Count; i++) {
-				var def = PartResourceLibrary.Instance.GetDefinition (ratios[i].ResourceName);
-				mass += ratios[i].Ratio * def.density;
+			for (int i = recipe.ingredients.Count; i-- > 0; ) {
+				var ingredient = recipe.ingredients[i];
+				var r = ratios[i];
+				r.ResourceName = ingredient.name;
+				r.Ratio = ingredient.ratio;
+				r.DumpExcess = false; //FIXME
 			}
-			return mass;
-		}
-
-		ConversionRecipe LoadRecipe ()
-		{
-			var recipe = new ConversionRecipe ();
-			recipe.Inputs.AddRange (ProcessRatio (inputList));
-			var inputMass = GetResourceMass (recipe.Inputs);
-			recipe.Outputs.AddRange (ProcessRatio (outputList, inputMass));
-			recipe.Requirements.AddRange (ProcessRatio (reqList));
-			return recipe;
+			for (int i = recipe.ingredients.Count; i-- > 0; ) {
+				Debug.LogFormat("[ELConverter] {0}", ratios[i].ResourceName);
+			}
 		}
 
 		protected override ConversionRecipe PrepareRecipe(double deltatime)
 		{
-			UpdateConverterStatus();
 			if (!IsActivated) {
 				return null;
 			}
-			return Recipe;
+			if (ratio_recipe == null) {
+				ratio_recipe = new ConversionRecipe ();
+			}
+			SetRatios (current_recipe.InputRecipes[0], ratio_recipe.Inputs);
+			SetRatios (current_recipe.OutputRecipes[0], ratio_recipe.Outputs);
+			return ratio_recipe;
 		}
 	}
 }

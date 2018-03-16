@@ -71,10 +71,13 @@ namespace ExtraplanetaryLaunchpads {
 			base.OnLoad (node);
 		}
 
-		void PrintRecipe (StringBuilder sb, Recipe recipe)
+		void PrintRecipe (StringBuilder sb, Recipe recipe, bool []disc = null)
 		{
 			for (int i = 0, c = recipe.ingredients.Count; i < c; i++) {
-				EL_Utils.PrintIngredient (sb, recipe.ingredients[i]);
+				if (EL_Utils.PrintIngredient (sb, recipe.ingredients[i])
+					&& disc != null && disc[i]) {
+					sb.Append("+");
+				}
 			}
 		}
 
@@ -91,7 +94,8 @@ namespace ExtraplanetaryLaunchpads {
 				PrintRecipe (sb, current_recipe.InputRecipes[0]);
 
 				sb.Append ("\n<color=#bada55>Outputs:</color>");
-				PrintRecipe (sb, current_recipe.OutputRecipes[0]);
+				PrintRecipe (sb, current_recipe.OutputRecipes[0],
+							 current_recipe.Discardable);
 			}
 			return sb.ToStringAndRelease ();
 		}

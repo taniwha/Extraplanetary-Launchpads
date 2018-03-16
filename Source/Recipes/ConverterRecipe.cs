@@ -40,6 +40,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		// input mass ratios relative to smallest input mass
 		public double[] Masses;
+		// discardable outputs. NOTE: per output ingredient, not per recipe
+		public bool[] Discardable;
 
 		Recipe[] LoadRecipes (ConfigNode []nodes, string type)
 		{
@@ -178,12 +180,17 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < InputRecipes.Length; i++) {
 				Masses[i] /= smallest;
 			}
+			Discardable = new bool[OutputRecipes[0].ingredients.Count];
 			for (int i = 0; i < OutputRecipes.Length; i++) {
 				Debug.LogFormat ("[ConverterRecipe] {0} output {1} {2}",
 								 name, OutputEfficiencies[i], OutputHeats[i]);
 				double total = 0;
 				for (int j = 0; j < OutputRecipes[i].ingredients.Count; j++) {
 					var ing = OutputRecipes[i].ingredients[j];
+					Discardable[j] = ing.name.EndsWith ("*");
+					if (Discardable[j]) {
+						ing.name = ing.name.Substring (0, ing.name.Length - 1);
+					}
 					Debug.LogFormat ("    {0}: {1}", ing.name, ing.ratio);
 					total += ing.ratio;
 				}
@@ -254,6 +261,8 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (recipe == null) {
 				recipe = new ConverterRecipe ();
+				//FIXME better to copy?
+				recipe.Discardable = Discardable;
 				recipe.InputRecipes[0].ingredients.AddRange (InputRecipes[0].ingredients);
 				recipe.OutputRecipes[0].ingredients.AddRange (OutputRecipes[0].ingredients);
 			}

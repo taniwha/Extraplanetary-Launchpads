@@ -21,4 +21,4 @@ for l in lines:
     print(l)
     formula, name, state, density = l.split()
     r = Resource(name, formula, state, density)
-    print r.name, r.formula, r.mass()
+    print(r.name, r.formula, r.mass())

@@ -27,17 +27,31 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		public string name;
 		public double ratio;
+		public double heat;
+		public bool discardable;
 
-		public Ingredient (string name, double ratio)
+		public Ingredient (string name, double ratio, double heat = 0, bool discardable = false)
 		{
 			this.name = name;
 			this.ratio = ratio;
+			this.heat = heat;
+			this.discardable = discardable;
 		}
 		public Ingredient (ConfigNode.Value ingredient)
 		{
 			name = ingredient.name;
-			if (!double.TryParse (ingredient.value, out ratio)) {
-				ratio = 0;
+			discardable = name.EndsWith ("*");
+			if (discardable) {
+				name = name.Substring (0, name.Length - 1);
+			}
+			ratio = 0;
+			heat = 0;
+			string []values = ingredient.value.Split (new char[]{' '});
+			if (values.Length > 0) {
+				double.TryParse (values[0], out ratio);
+			}
+			if (values.Length > 1) {
+				double.TryParse (values[1], out heat);
 			}
 		}
 		public bool isReal

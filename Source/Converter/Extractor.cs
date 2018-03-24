@@ -57,19 +57,19 @@ namespace ExtraplanetaryLaunchpads {
 			if (recipe.Inputs.Count > 0) {
 				sb.Append ("\n\n<color=#bada55>Inputs:</color>");
 				for (int i = 0, c = recipe.Inputs.Count; i < c; i++) {
-					EL_Utils.PrintResource (sb, recipe.Inputs[i]);
+					EL_Utils.PrintResource (sb, recipe.Inputs[i], "t");
 				}
 			}
 			if (recipe.Outputs.Count > 0) {
 				sb.Append ("\n<color=#bada55>Outputs:</color>");
 				for (int i = 0, c = recipe.Outputs.Count; i < c; i++) {
-					EL_Utils.PrintResource (sb, recipe.Outputs[i]);
+					EL_Utils.PrintResource (sb, recipe.Outputs[i], "t");
 				}
 			}
 			if (recipe.Requirements.Count > 0) {
 				sb.Append ("\n<color=#bada55>Requirements:</color>");
 				for (int i = 0, c = recipe.Requirements.Count; i < c; i++) {
-					EL_Utils.PrintResource (sb, recipe.Requirements[i]);
+					EL_Utils.PrintResource (sb, recipe.Requirements[i], "t");
 				}
 			}
 			return sb.ToStringAndRelease ();

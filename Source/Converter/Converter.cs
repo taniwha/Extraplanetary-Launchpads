@@ -35,6 +35,9 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField]
 		public string ConverterRecipe = "";
 
+		[KSPField]
+		public double Rate;
+
 		public override void OnStart(PartModule.StartState state)
 		{
 			base.OnStart (state);
@@ -71,11 +74,11 @@ namespace ExtraplanetaryLaunchpads {
 			base.OnLoad (node);
 		}
 
-		void PrintRecipe (StringBuilder sb, Recipe recipe, bool []disc = null)
+		void PrintRecipe (StringBuilder sb, Recipe recipe, bool disc = false)
 		{
 			for (int i = 0, c = recipe.ingredients.Count; i < c; i++) {
-				if (EL_Utils.PrintIngredient (sb, recipe.ingredients[i])
-					&& disc != null && disc[i]) {
+				if (EL_Utils.PrintIngredient (sb, recipe.ingredients[i], "kg")
+					&& disc && recipe.ingredients[i].discardable) {
 					sb.Append("+");
 				}
 			}
@@ -84,18 +87,31 @@ namespace ExtraplanetaryLaunchpads {
 		public override string GetInfo ()
 		{
 			StringBuilder sb = StringBuilderCache.Acquire ();
-			sb.Append (ConverterName);
-			sb.Append (" at 50% efficiency");
-
 			if (current_recipe != null) {
-				sb.AppendFormat ("\n\n<color=#bada55>Mass flow: {0:0.00} {1}/{2}</color>", current_recipe.Masses[0], "t", "s");
-				sb.AppendFormat ("\n\n<color=#bada55>Heat flow: {0:0.00} {1}/{2}</color>", current_recipe.OutputHeats[0] - current_recipe.InputHeats[0], "MJ", "s");
+				double mass = current_recipe.Masses[0] * Rate;
+				Recipe inputs = current_recipe.InputRecipes[0].Bake (mass);
+				Recipe outputs = current_recipe.OutputRecipes[0].Bake (mass);
+				double heat = 0;
+				for (int i = inputs.ingredients.Count; i-- > 0; ) {
+					Debug.LogFormat ("input: {0} {1}", inputs.ingredients[i].name, inputs.ingredients[i].heat);
+					heat -= inputs.ingredients[i].heat;
+				}
+				for (int i = outputs.ingredients.Count; i-- > 0; ) {
+					Debug.LogFormat ("output: {0} {1}", outputs.ingredients[i].name, outputs.ingredients[i].heat);
+					heat += outputs.ingredients[i].heat;
+				}
+				sb.Append (ConverterName);
+				sb.Append (" at 50% efficiency");
+
+				sb.AppendFormat ("\n\n<color=#bada55>Mass flow: {0:0.00} {1}/{2}</color>", mass, "kg", "s");
+				sb.AppendFormat ("\n\n<color=#bada55>Heat flow: {0:0.00} {1}/{2}</color>", heat, "MJ", "s");
 				sb.Append ("\n\n<color=#bada55>Inputs:</color>");
-				PrintRecipe (sb, current_recipe.InputRecipes[0]);
+				PrintRecipe (sb, inputs);
 
 				sb.Append ("\n<color=#bada55>Outputs:</color>");
-				PrintRecipe (sb, current_recipe.OutputRecipes[0],
-							 current_recipe.Discardable);
+				PrintRecipe (sb, outputs, true);
+			} else {
+				sb.Append ("broken configuration");
 			}
 			return sb.ToStringAndRelease ();
 		}

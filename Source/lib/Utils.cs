@@ -137,16 +137,15 @@ namespace ExtraplanetaryLaunchpads {
 				dumpxform (c, comps, n + t.name + "/");
 		}
 
-		public static void PrintResource (StringBuilder sb, ResourceRatio ratio)
+		public static void PrintResource (StringBuilder sb, ResourceRatio ratio, string unit)
 		{
 			var def = PartResourceLibrary.Instance.GetDefinition (ratio.ResourceName);
 			sb.Append ("\n - ");
 			sb.Append (ratio.ResourceName);
-			string unit, period;
+			string period;
 			double rate;
 			if (def.density > 0) {
 				rate = ratio.Ratio * def.density;
-				unit = "t";
 			} else {
 				rate = ratio.Ratio;
 				unit = "u";
@@ -166,7 +165,7 @@ namespace ExtraplanetaryLaunchpads {
 			sb.AppendFormat (" {0:0.00} {1}/{2}", rate, unit, period);
 		}
 
-		public static bool PrintIngredient (StringBuilder sb, Ingredient ingredient)
+		public static bool PrintIngredient (StringBuilder sb, Ingredient ingredient, string unit)
 		{
 			string name = ingredient.name;
 			double ratio = ingredient.ratio;
@@ -176,7 +175,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (def.density > 0) {
 					Ratio.Ratio /= def.density;
 				}
-				PrintResource (sb, Ratio);
+				PrintResource (sb, Ratio, unit);
 				return true;
 			}
 			return false;

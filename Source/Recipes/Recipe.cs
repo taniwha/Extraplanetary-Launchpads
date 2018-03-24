@@ -39,7 +39,10 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (ConfigNode.Value res in recipe.values) {
 				var ingredient = new Ingredient (res);
 				if (resdict.ContainsKey (ingredient.name)) {
-					resdict[ingredient.name].ratio += ingredient.ratio;
+					var ing = resdict[ingredient.name];
+					ing.ratio += ingredient.ratio;
+					ing.heat += ingredient.heat;
+					ing.discardable |= ingredient.discardable;
 				} else {
 					resdict[ingredient.name] = ingredient;
 				}
@@ -89,6 +92,8 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < ingredients.Count; i++) {
 				if (ingredients[i].name == ingredient.name) {
 					ingredients[i].ratio += ingredient.ratio;
+					ingredients[i].heat += ingredient.heat;
+					ingredients[i].discardable |= ingredient.discardable;
 					return;
 				}
 			}
@@ -106,8 +111,10 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < ingredients.Count; i++) {
 				var name = ingredients[i].name;
 				var ratio = mass * ingredients[i].ratio / total;
-				//Debug.Log(String.Format("Bake: {0} {1} {2} {3}", name, ratio, ingredients[i].ratio, total));
-				var ingredient = new Ingredient (name, ratio);
+				var heat = mass * ingredients[i].heat / total;
+				var discard = ingredients[i].discardable;
+				//Debug.Log(String.Format("Bake: {0} {1} {2} {3} {4} {5}", name, ratio, heat, ingredients[i].ratio, ingredients[i].heat, total));
+				var ingredient = new Ingredient (name, ratio, heat, discard);
 				bake.ingredients.Add (ingredient);
 			}
 			return bake;

@@ -35,13 +35,8 @@ namespace ExtraplanetaryLaunchpads {
 		public double[] InputEfficiencies;
 		public double[] OutputEfficiencies;
 
-		public double[] InputHeats;
-		public double[] OutputHeats;
-
 		// input mass ratios relative to smallest input mass
 		public double[] Masses;
-		// discardable outputs. NOTE: per output ingredient, not per recipe
-		public bool[] Discardable;
 
 		Recipe[] LoadRecipes (ConfigNode []nodes, string type)
 		{
@@ -96,6 +91,7 @@ namespace ExtraplanetaryLaunchpads {
 					var resRecipe = ELRecipeDatabase.ResourceRecipe (ingredient.name);
 					if (resRecipe != null) {
 						resRecipe = resRecipe.Bake (ingredient.ratio);
+						resRecipe.ingredients[0].heat = ingredient.heat;
 						recipe.ingredients.RemoveAt (i);
 						for (int j = resRecipe.ingredients.Count; j-- > 0; ) {
 							recipe.AddIngredient (resRecipe.ingredients[j]);
@@ -106,16 +102,14 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		void SetupRecipes (Recipe[] recipes, out double[] efficiences,
-						   out double[] heats, bool expand)
+						   bool expand)
 		{
 			var resourceSet = new HashSet<string> ();
 			efficiences = new double[recipes.Length];
-			heats = new double[recipes.Length];
 			for (int i = 0; i < recipes.Length; i++) {
 				efficiences[i] = recipes[i]["efficiency"].ratio;
 				recipes[i].RemoveIngredient ("efficiency");
 				if (recipes[i].HasIngredient ("heat")) {
-					heats[i] = recipes[i]["heat"].ratio;
 					recipes[i].RemoveIngredient ("heat");
 				}
 				if (expand) {
@@ -155,47 +149,40 @@ namespace ExtraplanetaryLaunchpads {
 			OutputRecipes = LoadRecipes (outputs, "output");
 			SortRecipes (InputRecipes);
 			SortRecipes (OutputRecipes);
-			SetupRecipes (InputRecipes, out InputEfficiencies,
-						  out InputHeats, true);
-			SetupRecipes (OutputRecipes, out OutputEfficiencies,
-						  out OutputHeats, false);
+			SetupRecipes (InputRecipes, out InputEfficiencies, true);
+			SetupRecipes (OutputRecipes, out OutputEfficiencies, false);
 			Masses = new double[InputRecipes.Length];
 			double smallest = double.PositiveInfinity;
 			for (int i = 0; i < InputRecipes.Length; i++) {
-				Debug.LogFormat ("[ConverterRecipe] {0} input {1} {2}",
-								 name, InputEfficiencies[i], InputHeats[i]);
+				Debug.LogFormat ("[ConverterRecipe] {0} input {1}",
+								 name, InputEfficiencies[i]);
 				double total = 0;
 				for (int j = 0; j < InputRecipes[i].ingredients.Count; j++) {
 					var ing = InputRecipes[i].ingredients[j];
-					Debug.LogFormat ("    {0}: {1}", ing.name, ing.ratio);
+					Debug.LogFormat ("    {0}: {1} {2}", ing.name, ing.ratio,
+									 ing.heat);
 					total += ing.ratio;
 				}
 				if (total > 0 && total < smallest) {
 					smallest = total;
 				}
-				InputHeats[i] /= total;
 				Masses[i] = total;
-				Debug.LogFormat("    total: {0} {1}", total, InputHeats[i]);
+				Debug.LogFormat("    total: {0}", total);
 			}
 			for (int i = 0; i < InputRecipes.Length; i++) {
 				Masses[i] /= smallest;
 			}
-			Discardable = new bool[OutputRecipes[0].ingredients.Count];
 			for (int i = 0; i < OutputRecipes.Length; i++) {
-				Debug.LogFormat ("[ConverterRecipe] {0} output {1} {2}",
-								 name, OutputEfficiencies[i], OutputHeats[i]);
+				Debug.LogFormat ("[ConverterRecipe] {0} output {1}",
+								 name, OutputEfficiencies[i]);
 				double total = 0;
 				for (int j = 0; j < OutputRecipes[i].ingredients.Count; j++) {
 					var ing = OutputRecipes[i].ingredients[j];
-					Discardable[j] = ing.name.EndsWith ("*");
-					if (Discardable[j]) {
-						ing.name = ing.name.Substring (0, ing.name.Length - 1);
-					}
-					Debug.LogFormat ("    {0}: {1}", ing.name, ing.ratio);
+					Debug.LogFormat ("    {0}: {1} {2}", ing.name, ing.ratio,
+									 ing.heat);
 					total += ing.ratio;
 				}
-				OutputHeats[i] /= total;
-				Debug.LogFormat("    total: {0} {1}", total, OutputHeats[i]);
+				Debug.LogFormat("    total: {0}", total);
 			}
 		}
 
@@ -207,8 +194,6 @@ namespace ExtraplanetaryLaunchpads {
 			OutputRecipes[0] = new Recipe ();
 			InputEfficiencies = new double[1];
 			OutputEfficiencies = new double[1];
-			InputHeats = new double[1];
-			OutputHeats = new double[1];
 			Masses = new double[1];
 		}
 
@@ -235,6 +220,8 @@ namespace ExtraplanetaryLaunchpads {
 				Ingredient in2 = r2.ingredients[i];
 				outi.name = in1.name;
 				outi.ratio = Blend (blend, in1.ratio, in2.ratio);
+				outi.heat = Blend (blend, in1.heat, in2.heat);
+				outi.discardable = in1.discardable;
 			}
 		}
 
@@ -243,8 +230,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			BlendRecipes (recipe.InputRecipes[0], blend,
 						  InputRecipes[ind1], InputRecipes[ind2]);
-			recipe.InputHeats[0] = Blend (blend,
-										  InputHeats[ind1], InputHeats[ind2]);
 			recipe.Masses[0] = Blend (blend, Masses[ind1], Masses[ind2]);
 		}
 
@@ -253,16 +238,12 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			BlendRecipes (recipe.OutputRecipes[0], blend,
 						  OutputRecipes[ind1], OutputRecipes[ind2]);
-			recipe.OutputHeats[0] = Blend (blend,
-										  OutputHeats[ind1], OutputHeats[ind2]);
 		}
 
 		public ConverterRecipe Bake (double efficiency, ConverterRecipe recipe)
 		{
 			if (recipe == null) {
 				recipe = new ConverterRecipe ();
-				//FIXME better to copy?
-				recipe.Discardable = Discardable;
 				recipe.InputRecipes[0].ingredients.AddRange (InputRecipes[0].ingredients);
 				recipe.OutputRecipes[0].ingredients.AddRange (OutputRecipes[0].ingredients);
 			}

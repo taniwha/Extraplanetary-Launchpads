@@ -119,5 +119,19 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			return bake;
 		}
+
+		public double[] IngredientDensities ()
+		{
+			var densities = new double[ingredients.Count];
+			for (int i = ingredients.Count; i-- > 0; ) {
+				var ingredient = ingredients[i];
+				if (ingredient.isReal) {
+					densities[i] = ingredient.Density;
+				} else {
+					densities[i] = -1;
+				}
+			}
+			return densities;
+		}
 	}
 }

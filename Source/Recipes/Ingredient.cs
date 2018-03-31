@@ -30,6 +30,10 @@ namespace ExtraplanetaryLaunchpads {
 		public double heat;
 		public bool discardable;
 
+		public Ingredient ()
+		{
+		}
+
 		public Ingredient (string name, double ratio, double heat = 0, bool discardable = false)
 		{
 			this.name = name;
@@ -60,6 +64,15 @@ namespace ExtraplanetaryLaunchpads {
 				PartResourceDefinition res_def;
 				res_def = PartResourceLibrary.Instance.GetDefinition (name);
 				return res_def != null;
+			}
+		}
+
+		public double Density
+		{
+			get {
+				PartResourceDefinition res_def;
+				res_def = PartResourceLibrary.Instance.GetDefinition (name);
+				return res_def.density;
 			}
 		}
 	}

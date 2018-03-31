@@ -175,7 +175,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		protected override void PostProcess (ConverterResults result, double deltaTime)
 		{
-			base.PostProcess (result, deltaTime);
+			if (result.TimeFactor < ResourceUtilities.FLOAT_TOLERANCE) {
+				status = result.Status;
+			} else {
+				double eff = efficiency * 100;
+				status = eff.ToString("0.00") + "% eff.";
+			}
 			part.thermalInternalFlux += heatFlux * result.TimeFactor;
 		}
 

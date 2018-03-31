@@ -69,7 +69,7 @@ PART {
 		StartActionName = Start Metal Conversion
 		StopActionName = Stop Metal Conversion
 		ConverterRecipe = LFOFiredSmelter
-		// kg/s might be fast?
+		// kg/s (of LFO) might be fast?
 		Rate = 5
 	}
 
@@ -79,18 +79,9 @@ PART {
 		EVARange = 3
 		StartActionName = Start Scrap Metal Remelter
 		StopActionName = Stop Scrap Metal Remelter
-		INPUT_RESOURCE {
-			ResourceName = ScrapMetal
-			Ratio = 0.02
-		}
-		INPUT_RESOURCE {
-			ResourceName = ElectricCharge
-			Ratio = 7.5
-		}
-		OUTPUT_RESOURCE {
-			ResourceName = Metal
-			Ratio = 1				// no loss
-		}
+		ConverterRecipe = LFOFiredRemelter
+		// kg/s (of LFO) might be fast?
+		Rate = 5
 	}
 
 	RESOURCE {

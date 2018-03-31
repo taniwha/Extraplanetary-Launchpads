@@ -26,6 +26,12 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		ConverterRecipe converter_recipe;
 		ConverterRecipe current_recipe;
+		double []input_densities;
+		double []output_densities;
+		double heatFlux;
+		double efficiency;
+		double prevEfficiency = -1;
+		double prevDeltaTime = -1;
 
 		ConversionRecipe ratio_recipe;
 
@@ -63,8 +69,10 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				Debug.LogFormat ("[ELConverter] found recipe \"{0}\"",
 								 ConverterRecipe);
-				current_recipe = converter_recipe.Bake (0.5, current_recipe);
+				current_recipe = converter_recipe.Bake (0.0182151919838267, current_recipe);
 			}
+			input_densities = converter_recipe.InputRecipes[0].IngredientDensities ();
+			output_densities = converter_recipe.OutputRecipes[0].IngredientDensities ();
 			PrepareRecipe (0);
 			// two birds with one stone: make it clear that the config is
 			// broken and ensure the stock converter doesn't mess with us
@@ -93,11 +101,9 @@ namespace ExtraplanetaryLaunchpads {
 				Recipe outputs = current_recipe.OutputRecipes[0].Bake (mass);
 				double heat = 0;
 				for (int i = inputs.ingredients.Count; i-- > 0; ) {
-					Debug.LogFormat ("input: {0} {1}", inputs.ingredients[i].name, inputs.ingredients[i].heat);
 					heat -= inputs.ingredients[i].heat;
 				}
 				for (int i = outputs.ingredients.Count; i-- > 0; ) {
-					Debug.LogFormat ("output: {0} {1}", outputs.ingredients[i].name, outputs.ingredients[i].heat);
 					heat += outputs.ingredients[i].heat;
 				}
 				sb.Append (ConverterName);
@@ -131,33 +137,85 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		void SetRatios (Recipe recipe, List<ResourceRatio> ratios)
+		double SetRatios (Recipe recipe, List<ResourceRatio> ratios, double[] densities)
 		{
-			if (ratios.Count < 1) {
-				ratios.AddRange (new ResourceRatio[recipe.ingredients.Count]);
-			}
-			for (int i = recipe.ingredients.Count; i-- > 0; ) {
+			double heat = 0;
+			for (int i = recipe.ingredients.Count, j = ratios.Count; i-- > 0; ) {
 				var ingredient = recipe.ingredients[i];
-				var r = ratios[i];
+				// non-real ingredients might still have heat associated with them
+				heat += ingredient.heat;
+				if (densities[i] < 0) {
+					continue;
+				}
+				j--;
+				var r = ratios[j];
 				r.ResourceName = ingredient.name;
-				r.Ratio = ingredient.ratio;
-				r.DumpExcess = false; //FIXME
+				if (densities[i] > 0) {
+					r.Ratio = ingredient.ratio / densities[i];
+				} else {
+					r.Ratio = ingredient.ratio;
+				}
+				r.DumpExcess = ingredient.discardable;
+				r.FlowMode = ResourceFlowMode.ALL_VESSEL;
+				ratios[j] = r;
 			}
+			return heat;
+		}
+
+		int RealIngredients (Recipe recipe)
+		{
+			int real_ingredients = 0;
 			for (int i = recipe.ingredients.Count; i-- > 0; ) {
-				Debug.LogFormat("[ELConverter] {0}", ratios[i].ResourceName);
+				if (recipe.ingredients[i].isReal) {
+					real_ingredients += 1;
+				}
 			}
+			return real_ingredients;
+		}
+
+		protected override void PostProcess (ConverterResults result, double deltaTime)
+		{
+			base.PostProcess (result, deltaTime);
+			part.thermalInternalFlux += heatFlux * result.TimeFactor;
+		}
+
+		double DetermineEfficiency (double temperature)
+		{
+			//FIXME should not be hardcoded (this is for iron, and probably wrong on minTemp)
+			//use curves?
+			double minTemp = 273.15;
+			double maxTemp = 1873;
+			double k = (temperature - minTemp) / (maxTemp - minTemp);
+			return Math.Max (0, Math.Min (k, 1));
 		}
 
 		protected override ConversionRecipe PrepareRecipe(double deltatime)
 		{
-			if (!IsActivated) {
-				return null;
-			}
 			if (ratio_recipe == null) {
 				ratio_recipe = new ConversionRecipe ();
+				int real_inputs = RealIngredients (current_recipe.InputRecipes[0]);
+				int real_outputs = RealIngredients (current_recipe.OutputRecipes[0]);
+				ratio_recipe.Inputs.AddRange (new ResourceRatio[real_inputs]);
+				ratio_recipe.Outputs.AddRange (new ResourceRatio[real_outputs]);
 			}
-			SetRatios (current_recipe.InputRecipes[0], ratio_recipe.Inputs);
-			SetRatios (current_recipe.OutputRecipes[0], ratio_recipe.Outputs);
+			efficiency = DetermineEfficiency (part.temperature);
+			if (efficiency != prevEfficiency) {
+				prevEfficiency = efficiency;
+				prevDeltaTime = -1;		//force rebake
+				current_recipe = converter_recipe.Bake (efficiency, current_recipe);
+			}
+			if (deltatime != prevDeltaTime) {
+				prevDeltaTime = deltatime;
+				double mass = current_recipe.Masses[0] * Rate / 1000;
+				Recipe inputs = current_recipe.InputRecipes[0].Bake (mass);
+				Recipe outputs = current_recipe.OutputRecipes[0].Bake (mass);
+				heatFlux = 0;
+				// positive input heat consumes heat
+				heatFlux -= SetRatios (inputs, ratio_recipe.Inputs, input_densities);
+				// positive output heat generates heat
+				heatFlux += SetRatios (outputs, ratio_recipe.Outputs, output_densities);
+				heatFlux *= 1e6;
+			}
 			return ratio_recipe;
 		}
 	}

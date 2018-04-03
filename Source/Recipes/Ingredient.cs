@@ -30,8 +30,15 @@ namespace ExtraplanetaryLaunchpads {
 		public double heat;
 		public bool discardable;
 
-		public Ingredient ()
+		public Ingredient (Ingredient ingredient)
 		{
+			name = ingredient.name;
+			ratio = ingredient.ratio;
+			heat = ingredient.heat;
+			discardable = ingredient.discardable;
+			isReal = ingredient.isReal;
+			Density = ingredient.Density;
+			hasMass = ingredient.hasMass;
 		}
 
 		public Ingredient (string name, double ratio, double heat = 0, bool discardable = false)
@@ -40,6 +47,7 @@ namespace ExtraplanetaryLaunchpads {
 			this.ratio = ratio;
 			this.heat = heat;
 			this.discardable = discardable;
+			SetProperties ();
 		}
 		public Ingredient (ConfigNode.Value ingredient)
 		{
@@ -57,23 +65,26 @@ namespace ExtraplanetaryLaunchpads {
 			if (values.Length > 1) {
 				double.TryParse (values[1], out heat);
 			}
+			SetProperties ();
 		}
-		public bool isReal
+
+		void SetProperties ()
 		{
-			get {
-				PartResourceDefinition res_def;
-				res_def = PartResourceLibrary.Instance.GetDefinition (name);
-				return res_def != null;
+			PartResourceDefinition res_def;
+			res_def = PartResourceLibrary.Instance.GetDefinition (name);
+			if (res_def != null) {
+				isReal = true;
+				Density = res_def.density;
+				hasMass = res_def.density != 0;
+			} else {
+				isReal = false;
+				Density = 1;	// unknown, but need something
+				hasMass = true;	// assume undefined resources have mass
 			}
 		}
 
-		public double Density
-		{
-			get {
-				PartResourceDefinition res_def;
-				res_def = PartResourceLibrary.Instance.GetDefinition (name);
-				return res_def.density;
-			}
-		}
+		public bool hasMass { get; private set; }
+		public bool isReal { get; private set; }
+		public double Density { get; private set; }
 	}
 }

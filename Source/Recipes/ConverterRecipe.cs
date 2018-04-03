@@ -245,12 +245,8 @@ namespace ExtraplanetaryLaunchpads {
 			if (recipe == null) {
 				recipe = new ConverterRecipe ();
 
-				for (int i = InputRecipes[0].ingredients.Count; i-- > 0; ) {
-					recipe.InputRecipes[0].ingredients.Add (new Ingredient ());
-				}
-				for (int i = OutputRecipes[0].ingredients.Count; i-- > 0; ) {
-					recipe.OutputRecipes[0].ingredients.Add (new Ingredient ());
-				}
+				recipe.InputRecipes[0] = new Recipe (InputRecipes[0]);
+				recipe.OutputRecipes[0] = new Recipe (OutputRecipes[0]);
 			}
 			int maxI = InputRecipes.Length - 1;
 			if (efficiency <= InputEfficiencies[0]) {

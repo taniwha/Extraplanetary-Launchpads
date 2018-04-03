@@ -33,6 +33,14 @@ namespace ExtraplanetaryLaunchpads {
 			ingredients = new List<Ingredient> ();
 		}
 
+		public Recipe (Recipe recipe)
+		{
+			ingredients = new List<Ingredient> ();
+			for (int i = 0; i < recipe.ingredients.Count; i++) {
+				ingredients.Add (new Ingredient (recipe.ingredients[i]));
+			}
+		}
+
 		public Recipe (ConfigNode recipe)
 		{
 			var resdict = new Dictionary<string,Ingredient>();

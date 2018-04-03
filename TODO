@@ -4,7 +4,7 @@ refurbish
 	Parachutes
 	... (resources with resource recipes)
 
-rebalance converters
+rebalance converters DONE
 	use LFO (+EC?) to power smelter
 		assuming LF is RP-1, the mix seems to be pretty good for supplying
 		the needed carbon and about half the heat energy.

@@ -193,6 +193,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		protected override ConversionRecipe PrepareRecipe(double deltatime)
 		{
+			if (!IsActivated && ratio_recipe != null) {
+				return null;
+			}
 			if (ratio_recipe == null) {
 				ratio_recipe = new ConversionRecipe ();
 				int real_inputs = RealIngredients (current_recipe.InputRecipes[0]);

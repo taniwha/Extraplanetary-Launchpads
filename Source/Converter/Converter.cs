@@ -26,8 +26,6 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		ConverterRecipe converter_recipe;
 		ConverterRecipe current_recipe;
-		double []input_densities;
-		double []output_densities;
 		double heatFlux;
 		double efficiency;
 		double prevEfficiency = -1;
@@ -69,10 +67,8 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				Debug.LogFormat ("[ELConverter] found recipe \"{0}\"",
 								 ConverterRecipe);
-				current_recipe = converter_recipe.Bake (0.0182151919838267, current_recipe);
+				current_recipe = converter_recipe.Bake (0.5, current_recipe);
 			}
-			input_densities = converter_recipe.InputRecipes[0].IngredientDensities ();
-			output_densities = converter_recipe.OutputRecipes[0].IngredientDensities ();
 			PrepareRecipe (0);
 			// two birds with one stone: make it clear that the config is
 			// broken and ensure the stock converter doesn't mess with us
@@ -137,21 +133,22 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		double SetRatios (Recipe recipe, List<ResourceRatio> ratios, double[] densities)
+		double SetRatios (Recipe recipe, List<ResourceRatio> ratios)
 		{
 			double heat = 0;
 			for (int i = recipe.ingredients.Count, j = ratios.Count; i-- > 0; ) {
 				var ingredient = recipe.ingredients[i];
 				// non-real ingredients might still have heat associated with them
 				heat += ingredient.heat;
-				if (densities[i] < 0) {
+				if (!ingredient.isReal) {
 					continue;
 				}
 				j--;
 				var r = ratios[j];
 				r.ResourceName = ingredient.name;
-				if (densities[i] > 0) {
-					r.Ratio = ingredient.ratio / densities[i];
+				if (ingredient.Density > 0) {
+					r.Ratio = ingredient.ratio / ingredient.Density;
+					r.Ratio /= 1000;	// convert from kg/s to t/s
 				} else {
 					r.Ratio = ingredient.ratio;
 				}
@@ -211,15 +208,15 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (deltatime != prevDeltaTime) {
 				prevDeltaTime = deltatime;
-				double mass = current_recipe.Masses[0] * Rate / 1000;
+				double mass = current_recipe.Masses[0] * Rate;
 				Recipe inputs = current_recipe.InputRecipes[0].Bake (mass);
 				Recipe outputs = current_recipe.OutputRecipes[0].Bake (mass);
 				heatFlux = 0;
 				// positive input heat consumes heat
-				heatFlux -= SetRatios (inputs, ratio_recipe.Inputs, input_densities);
+				heatFlux -= SetRatios (inputs, ratio_recipe.Inputs);
 				// positive output heat generates heat
-				heatFlux += SetRatios (outputs, ratio_recipe.Outputs, output_densities);
-				heatFlux *= 1e6;
+				heatFlux += SetRatios (outputs, ratio_recipe.Outputs);
+				heatFlux *= 1e3;
 			}
 			return ratio_recipe;
 		}

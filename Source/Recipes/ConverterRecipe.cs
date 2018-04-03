@@ -156,12 +156,11 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < InputRecipes.Length; i++) {
 				Debug.LogFormat ("[ConverterRecipe] {0} input {1}",
 								 name, InputEfficiencies[i]);
-				double total = 0;
+				double total = InputRecipes[i].Mass ();
 				for (int j = 0; j < InputRecipes[i].ingredients.Count; j++) {
 					var ing = InputRecipes[i].ingredients[j];
 					Debug.LogFormat ("    {0}: {1} {2}", ing.name, ing.ratio,
 									 ing.heat);
-					total += ing.ratio;
 				}
 				if (total > 0 && total < smallest) {
 					smallest = total;
@@ -175,12 +174,11 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < OutputRecipes.Length; i++) {
 				Debug.LogFormat ("[ConverterRecipe] {0} output {1}",
 								 name, OutputEfficiencies[i]);
-				double total = 0;
+				double total = OutputRecipes[i].Mass ();
 				for (int j = 0; j < OutputRecipes[i].ingredients.Count; j++) {
 					var ing = OutputRecipes[i].ingredients[j];
 					Debug.LogFormat ("    {0}: {1} {2}", ing.name, ing.ratio,
 									 ing.heat);
-					total += ing.ratio;
 				}
 				Debug.LogFormat("    total: {0}", total);
 			}

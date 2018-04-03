@@ -112,7 +112,9 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			double total = 0;
 			for (int i = 0; i < ingredients.Count; i++) {
-				total += ingredients[i].ratio;
+				if (ingredients[i].hasMass) {
+					total += ingredients[i].ratio;
+				}
 			}
 
 			Recipe bake = new Recipe ();
@@ -128,18 +130,16 @@ namespace ExtraplanetaryLaunchpads {
 			return bake;
 		}
 
-		public double[] IngredientDensities ()
+		public double Mass ()
 		{
-			var densities = new double[ingredients.Count];
+			double mass = 0;
 			for (int i = ingredients.Count; i-- > 0; ) {
 				var ingredient = ingredients[i];
-				if (ingredient.isReal) {
-					densities[i] = ingredient.Density;
-				} else {
-					densities[i] = -1;
+				if (ingredient.hasMass) {
+					mass += ingredient.ratio;
 				}
 			}
-			return densities;
+			return mass;
 		}
 	}
 }

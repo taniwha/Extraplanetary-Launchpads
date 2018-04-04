@@ -69,7 +69,6 @@ namespace ExtraplanetaryLaunchpads {
 								 ConverterRecipe);
 				current_recipe = converter_recipe.Bake (0.5, current_recipe);
 			}
-			PrepareRecipe (0);
 			// two birds with one stone: make it clear that the config is
 			// broken and ensure the stock converter doesn't mess with us
 			RemoveConflictingNodes (node, "INPUT_RESOURCE");
@@ -126,6 +125,11 @@ namespace ExtraplanetaryLaunchpads {
 		public string GetModuleTitle ()
 		{
 			return "EL Converter";
+		}
+
+		public override string GetModuleDisplayName ()
+		{
+			return GetModuleTitle ();
 		}
 
 		public Callback<Rect> GetDrawModulePanelCallback ()

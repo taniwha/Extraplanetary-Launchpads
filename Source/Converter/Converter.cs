@@ -31,6 +31,8 @@ namespace ExtraplanetaryLaunchpads {
 		double prevEfficiency = -1;
 		double prevDeltaTime = -1;
 
+		Vector2d[] efficiencyCurve;
+
 		ConversionRecipe ratio_recipe;
 
 		[KSPField]
@@ -58,9 +60,49 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		Vector2d[] SinglePoint (double y)
+		{
+			var v = new Vector2d (0, y);
+			return new Vector2d[] { v };
+		}
+
+		Vector2d[] MulitplePoints (string []values)
+		{
+			var v = new Vector2d[values.Length];
+			for (int i = values.Length; i-- > 0; ) {
+				ParseExtensions.TryParseVector2d (values[i], out v[i]);
+			}
+			return v;
+		}
+
 		public override void OnLoad (ConfigNode node)
 		{
+			var effKeys = node.GetValues("efficiency");
+			if (effKeys.Length == 1) {
+				double eff;
+				double.TryParse (effKeys[0], out eff);
+				efficiencyCurve = SinglePoint (eff);
+			} else if (effKeys.Length > 1) {
+				efficiencyCurve = MulitplePoints (effKeys);
+			} else {
+				ELConverter prefab = null;
+				// loading in-flight?
+				if (part.partInfo != null
+					&& part.partInfo.partPrefab != null) {
+					int index = part.Modules.IndexOf (this);
+					PartModule module = part.partInfo.partPrefab.Modules[index];
+					prefab = module as ELConverter;
+				}
+				if (prefab != null) {
+					efficiencyCurve = prefab.efficiencyCurve;
+				} else {
+					efficiencyCurve = SinglePoint (1);
+				}
+			}
 			converter_recipe = ELRecipeDatabase.ConverterRecipe (ConverterRecipe);
+			for (int i = 0; i < efficiencyCurve.Length; i++) {
+				Debug.LogFormat ("efficiency: {0}", efficiencyCurve[i]);
+			}
 			if (converter_recipe == null) {
 				Debug.LogFormat ("[ELConverter] unknown recipe \"{0}\"",
 								 ConverterRecipe);
@@ -187,12 +229,26 @@ namespace ExtraplanetaryLaunchpads {
 
 		double DetermineEfficiency (double temperature)
 		{
-			//FIXME should not be hardcoded (this is for iron, and probably wrong on minTemp)
-			//use curves?
-			double minTemp = 273.15;
-			double maxTemp = 1873;
-			double k = (temperature - minTemp) / (maxTemp - minTemp);
-			return Math.Max (0, Math.Min (k, 1));
+			//FIXME ensure sorted
+			//smooth curves
+			if (efficiencyCurve.Length == 0) {
+				return 1;
+			}
+			if (temperature <= efficiencyCurve[0].x) {
+				return efficiencyCurve[0].y;
+			}
+			int max = efficiencyCurve.Length - 1;
+			if (temperature >= efficiencyCurve[max].x) {
+				return efficiencyCurve[max].y;
+			}
+			int i = max;
+			while (i > 0 && temperature < efficiencyCurve[--i].x) { }
+			double x1 = efficiencyCurve[i].x;
+			double x2 = efficiencyCurve[i + 1].x;
+			double y1 = efficiencyCurve[i].y;
+			double y2 = efficiencyCurve[i + 1].y;
+			double a = (temperature - x1) / (x2 - x1);
+			return y1 * (1 - a) + y2 * a;
 		}
 
 		protected override ConversionRecipe PrepareRecipe(double deltatime)

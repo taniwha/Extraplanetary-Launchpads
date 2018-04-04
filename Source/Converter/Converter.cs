@@ -221,8 +221,12 @@ namespace ExtraplanetaryLaunchpads {
 			if (result.TimeFactor < ResourceUtilities.FLOAT_TOLERANCE) {
 				status = result.Status;
 			} else {
-				double eff = efficiency * 100;
-				status = eff.ToString("0.00") + "% eff.";
+				if (efficiencyCurve.Length > 1) {
+					double eff = efficiency * 100;
+					status = eff.ToString("0.00") + "% eff.";
+				} else {
+					status = "Operating";
+				}
 			}
 			part.thermalInternalFlux += heatFlux * result.TimeFactor;
 		}

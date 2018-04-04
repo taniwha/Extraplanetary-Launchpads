@@ -49,6 +49,7 @@ namespace ExtraplanetaryLaunchpads {
 			this.discardable = discardable;
 			SetProperties ();
 		}
+
 		public Ingredient (ConfigNode.Value ingredient)
 		{
 			name = ingredient.name;
@@ -58,7 +59,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			ratio = 0;
 			heat = 0;
-			string []values = ingredient.value.Split (new char[]{' '});
+			string value = ingredient.value;
+			var values = ParseExtensions.ParseArray (value, ',', ' ', '\t');
 			if (values.Length > 0) {
 				double.TryParse (values[0], out ratio);
 			}

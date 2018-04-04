@@ -4838,13 +4838,9 @@ Any undefined ingredients in an output recipe simply evaporate (i.e., they
 \end_layout
 
 \begin_layout Standard
-Both input recipes and output recipes have two special ingredients: 
+Both input recipes and output recipes have a special ingredient: 
 \noun on
 efficiency
-\noun default
- and 
-\noun on
-heat
 \noun default
 .
  The 
@@ -4857,17 +4853,13 @@ efficiency
  The ratios of the other ingredients are interpolated between those specified
  by the recipes with efficiencies on either side of the converter's current
  recipe.
- The 
-\noun on
-heat
-\noun default
- ingredient specifies the amount of heat consumed (input recipes) or produced
- (output recipes).
- If the ingredient ratios are in grams, then 
-\noun on
-heat
-\noun default
- is assumed to be in kilo-joules.
+ Ingredients in converter recipes support an optional heat parameter which
+ defaults to 0 and is scaled with the ingredient when the recipe is baked.
+ Output heats are added to the part's internal flux while input heats are
+ subtracted from the part's internal flux.
+ If the ingredient ratios are in grams, then the heats are in kilo-joules.
+ The mass flow of the conversion process is governed by the input recipe
+ with the smallest mass.
 \end_layout
 
 \begin_layout Verbatim
@@ -4892,12 +4884,7 @@ EL_ConverterRecipe {
 
 \begin_layout Verbatim
 
-        heat = 9627.678
-\end_layout
-
-\begin_layout Verbatim
-
-        LFOMix = 864.49048
+        LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
@@ -4922,11 +4909,6 @@ EL_ConverterRecipe {
 
 \begin_layout Verbatim
 
-        heat = 0
-\end_layout
-
-\begin_layout Verbatim
-
         CarbonDioxide = 1056.228
 \end_layout
 
@@ -4937,7 +4919,7 @@ EL_ConverterRecipe {
 
 \begin_layout Verbatim
 
-        Metal = 1116.9
+        Metal = 1116.9 -9627.678
 \end_layout
 
 \begin_layout Verbatim
@@ -4962,7 +4944,7 @@ EL_ConverterRecipe {
 
 \begin_layout Verbatim
 
-        LFOMix = 864.49048
+        LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
@@ -4978,11 +4960,6 @@ EL_ConverterRecipe {
 \begin_layout Verbatim
 
         efficiency = 0
-\end_layout
-
-\begin_layout Verbatim
-
-        heat = 5186.94288
 \end_layout
 
 \begin_layout Verbatim

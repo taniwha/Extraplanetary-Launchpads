@@ -34,7 +34,7 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		static ELResourceWindow instance;
 		static bool hide_ui = false;
-		static bool gui_enabled = true;
+		static bool gui_enabled = false;
 		static Rect windowpos;
 		static bool link_lfo_sliders = true;
 		static ScrollView resscroll = new ScrollView (680, 300);

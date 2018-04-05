@@ -1051,46 +1051,6 @@ Fe has a molar mass of
 \begin_inset Formula $15.999g/mol$
 \end_inset
 
- 
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-EL currently does not model CO consumption or CO
-\begin_inset script subscript
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-
- production, but C has a molar mass of 
-\begin_inset Formula $12.0107g/mol$
-\end_inset
-
- giving CO a molar mass of 
-\begin_inset Formula $28.0097g/mol$
-\end_inset
-
- and CO
-\begin_inset script subscript
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-
- a molar mass of 
-\begin_inset Formula $44.0087g/mol$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
 , so 
 \begin_inset Formula $479.061g$
 \end_inset
@@ -1140,6 +1100,448 @@ status collapsed
 
  volume (resource unit) conversion rate.
 \end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In order to model the CO consumption, EL assumes that LiquidFuel is RP-1
+ (C
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+
+H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+16
+\end_layout
+
+\end_inset
+
+) and that Oxidizer is liquid oxygen (O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+).
+ The stoichiometric equation for burning RP-1 is:
+\end_layout
+
+\begin_layout Standard
+C
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+
+H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+16
+\end_layout
+
+\end_inset
+
+ + 16O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ → 12CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ + 8H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\end_layout
+
+\begin_layout Standard
+However, rockets tend to burn rich (reduced oxidizer quantity) in order
+ to avoid oxidizing the engine, keep the engine cooler, and increase the
+ number of lighter molecules in the exhaust.
+ KSP's standard 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ mix of 9:11 by volume very closely approximates the following when 
+\noun on
+LiquidFuel
+\noun default
+ is assumed to be RP-1 and 
+\noun on
+Oxidizer
+\noun default
+ is assumed to be liquid oxygen
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Note that the exact ratios of the products were arbitrarily chosen but chemicall
+y 
+\begin_inset Quotes eld
+\end_inset
+
+correct
+\begin_inset Quotes erd
+\end_inset
+
+ (plausible), and that the inclusion of formaldehyde is the result of 
+\begin_inset Quotes eld
+\end_inset
+
+Hmm, wonder if there's a CH
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O .
+ Oh, there is, and it does appear in partial combustion of hydrocarbons.
+ Neat.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ (used for 0% efficient smelting):
+\end_layout
+
+\begin_layout Standard
+2C
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+
+H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+16
+\end_layout
+
+\end_inset
+
+ + 17O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ → 2C + 17CO + 4CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ + CH
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O + 7H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ + 8H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\end_layout
+
+\begin_layout Standard
+The resulting equation for 100% efficient
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Arbitrary assumption.
+\end_layout
+
+\end_inset
+
+ smelting thus becomes:
+\end_layout
+
+\begin_layout Standard
+10Fe
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+
+ + 2C
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+
+H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+16
+\end_layout
+
+\end_inset
+
+ + 17O
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+→ 20Fe + 24CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ + 16H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O
+\end_layout
+
+\begin_layout Standard
+C
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+
+H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+16
+\end_layout
+
+\end_inset
+
+ has a molar mass of 
+\begin_inset Formula $160.25544g/mol$
+\end_inset
+
+, CO
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ has a molar mass of 
+\begin_inset Formula $44.0095g/mol$
+\end_inset
+
+, H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O has a molar mass of 
+\begin_inset Formula $18.01528g/mol$
+\end_inset
+
+, C 
+\begin_inset Formula $12.0107g/mol$
+\end_inset
+
+, CO 
+\begin_inset Formula $28.0101g/mol$
+\end_inset
+
+, CH
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+O 
+\begin_inset Formula $30.02598g/mol$
+\end_inset
+
+, H
+\begin_inset script subscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $2.01588g/mol$
+\end_inset
+
+.
+ Thus the two equations become the following when viewed as masses:
+\end_layout
+
+\begin_layout Standard
+320.51088 + 543.9796 → 24.0214 + 476.1717 + 176.038 + 30.02598 + 14.11116 + 144.12224
+\end_layout
+
+\begin_layout Standard
+1596.882 + 320.51088 + 543.9796 → 1116.9 + 1056.228 + 288.24448.
+\end_layout
+
+\begin_layout Standard
+The mass conversion rate of 
+\noun on
+MetalOre
+\noun default
+ to 
+\noun on
+Metal
+\noun default
+ is 0.6994255 in this case
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Not sure whence the discrepancy.
+ Probably different rounding.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The combustion of 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ is assumed to produce 
+\begin_inset Formula $6MJ/k$
+\end_inset
+
+g.
+ Smelting is assumed to consume 
+\begin_inset Formula $8.62MJ/kg$
+\end_inset
+
+ of produced 
+\noun on
+Metal
+\noun default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "TMETPS"
+literal "false"
 
 \end_inset
 
@@ -2340,7 +2742,7 @@ to be flown in and processed into
 Metal
 \noun default
 .
- While this does further increase the power requirements of the station,
+ While this does significantly increase the fuel requirements of the station,
  the smelter is actually dual-use: not only can it convert 
 \noun on
 MetalOre
@@ -2611,11 +3013,311 @@ For the most part, EL places no restrictions on the models used for parts
 \end_layout
 
 \begin_layout Subsubsection
+ELControlReference
+\end_layout
+
+\begin_layout Standard
+Allows the part to become a control reference (
+\begin_inset Quotes eld
+\end_inset
+
+Control From Here
+\begin_inset Quotes erd
+\end_inset
+
+ in the part's PAW).
+ Also provides a 
+\begin_inset Quotes eld
+\end_inset
+
+Toggle Reference
+\begin_inset Quotes erd
+\end_inset
+
+ action group that saves the previous control reference when becoming the
+ reference and returns the vessel to the previous reference when toggled
+ again.
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+The model's mesh needs an emissive material with _EmissiveColor set with
+ appropriate RGB values.
+ The alpha value is used for turning the emission on and off as a status
+ indicator.
+ The part's root game object is used as the reference transform consistent
+ with command pods and docking ports, so the model should be shaped appropriatel
+y.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Standard
+None
+\end_layout
+
+\begin_layout Subsubsection
 ELConverter
 \end_layout
 
 \begin_layout Standard
 Consumes a set of input resources to produce a set of output resources.
+ An EL converter uses a converter recipe (see 
+\begin_inset CommandInset ref
+LatexCommand vref
+reference "subsec:Recipes-for-Converting"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) to specify the inputs and outputs while controlling the rate of flow of
+ the resources specified by the active input recipe and distributing the
+ recipes specified by the active output recipe.
+ The active input and output recipes are selected by the current efficiency
+ of the converter, and may be a blend between two specified recipes.
+ The efficiency of the converter is either fixed, or determined by the temperatu
+re of the converter part.
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+ELConverter
+\noun default
+ subtracts the total input heat from the part and adds the total output
+ heat to the part (use negative heats to have heating associated with input
+ ingredients and cooling with output ingredients).
+\begin_inset Marginal
+status collapsed
+
+\begin_layout Plain Layout
+Note that KSP's thermal data in the PAW does not directly show the effects
+ of resource transfer on the part's temperature, so there may be significant
+ thermal flux despite the temperature being fairly stable.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If an efficiency curve
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+For certain values of 
+\begin_inset Quotes eld
+\end_inset
+
+curve
+\begin_inset Quotes erd
+\end_inset
+
+: it's piece-wise linear.
+\end_layout
+
+\end_inset
+
+ has been specified, then the converter's efficiency is determined by the
+ part's internal temperature (otherwise the efficiency is constant).
+ The converter's efficiency is then used to bake the converter recipe into
+ a specific conversion recipe.
+\end_layout
+
+\begin_layout Standard
+Once the specific conversion recipe has been obtained, ELConverter then
+ bakes that recipe using the current mass flow rate.
+ The current mass flow rate is the specified rate of the converter scaled
+ by the relative mass of the active input recipe compared to the smallest
+ mass input recipe in the converter recipe.
+ This keeps the mass flow of certain resources constant while varying the
+ flow of others appropriately
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+For example, in a smelter, 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ flow at a constant rate, while 
+\noun on
+MetalOre
+\noun default
+ is not consumed at all at 0% efficnecy, but is consumed at the maximum
+ rate at 100%.
+ Thus the actual mass flow rate might vary from 864.49048g/s to 2461.37248g/s.
+\end_layout
+
+\end_inset
+
+ when suitable ratios are specified.
+ The mass flow rate of the output recipe is always the same as that of the
+ input recipe
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Conservation of mass.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+None
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+ However, it is strongly recommended to use appropriate thermal settings
+ for converters that use heat.
+ In particular, 
+\noun on
+skinInternalConductionMult
+\noun default
+ and 
+\noun on
+heatConductivity
+\noun default
+ should be adjusted to provided sufficient insulation when keeping the part
+ hot is necessary.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+EVARange Adjust the range (in meters) from which an EVA kerbal can activate
+ or deactivate the converter.
+ Default is 
+\begin_inset Formula $1.5m$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+ConverterRecipe The name of the converter recipe to use.
+ Required.
+\end_layout
+
+\begin_layout Description
+Rate The base mass flow rate of the converter, in 
+\begin_inset Formula $kg/s$
+\end_inset
+
+.
+ Defaults to 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ The base mass flow rate is that of the smallest mass input recipe in the
+ converter recipe.
+\end_layout
+
+\begin_layout Description
+efficiency Specify the efficiency/temperature curve of the converter.
+ Defaults to constant 
+\begin_inset Formula $1.0$
+\end_inset
+
+ (100%).
+ If a single 
+\noun on
+efficiency
+\noun default
+ entry is given, then it specifies a constant efficiency and is of the form
+ 
+\begin_inset Formula $efficiency=0.9$
+\end_inset
+
+ (90%).
+ If multiple 
+\noun on
+efficiency
+\noun default
+ entries are given, then they form keys in a piece-wise linear 
+\begin_inset Quotes eld
+\end_inset
+
+curve
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Each entry is of the form 
+\begin_inset Formula $efficiency=temp,eff$
+\end_inset
+
+ where 
+\noun on
+temp
+\noun default
+ is the part's internal temperature in Kelvin and 
+\noun on
+eff
+\noun default
+ is the converter's efficiency at that temperature.
+ Note that the keys need to be specified in ascending order of temperature
+ and 
+\noun on
+eff
+\noun default
+ should be between 
+\begin_inset Formula $0.0$
+\end_inset
+
+ and 
+\begin_inset Formula $1.0$
+\end_inset
+
+ (inclusive)
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+No checking is performed, so expect rhinodaemons should this rule be broken.
+\end_layout
+
+\end_inset
+
+.
+ For temperatures outside the range of the curve, the nearest key is extrapolate
+d with a constant efficiency.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3635,6 +4337,14 @@ Unknown ingredients contribute to the total ratio and thus affect the ratios
  of known ingredients.
  Their effects when building are undefined, but they operate as losses when
  recycling (i.e., unknown ingredients simply evaporate when a part is recycled).
+\end_layout
+
+\begin_layout Standard
+Ingredients specifying KSP resources that have no mass do not contribute
+ their ratios to the recipes total, but will be scaled by the same amount
+ as the ingredients that do have mass.
+ Unknown ingredients are assumed to have mass.
+ A recipe consisting of only ingredients that have no mass will cause headaches.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4761,20 +5471,13 @@ EL_KerbalRecipe {
 
 \end_deeper
 \begin_layout Subsubsection
-Recipes for Converting
-\end_layout
-
-\begin_layout Quotation
-\begin_inset Note Greyedout
-status open
-
-\begin_layout Plain Layout
-STILL UNDER HEAVY DEVELOPMENT
-\end_layout
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Recipes-for-Converting"
 
 \end_inset
 
-
+Recipes for Converting
 \end_layout
 
 \begin_layout Description
@@ -4939,11 +5642,6 @@ EL_ConverterRecipe {
 
 \begin_layout Verbatim
 
-        heat = 0
-\end_layout
-
-\begin_layout Verbatim
-
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
@@ -5078,6 +5776,16 @@ IBuilder
 ELBuildControl
 \noun default
  requires of the pad modules.
+ There are several methods and properties, but main property of interest
+ is 
+\noun on
+control
+\noun default
+ which provides access to the 
+\noun on
+ELBuildControl
+\noun default
+ object attached to the pad.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5187,6 +5895,10 @@ ELExtractor
 
 \begin_layout Subsection
 Part Modules
+\end_layout
+
+\begin_layout Subsubsection
+ELControlReference
 \end_layout
 
 \begin_layout Subsubsection

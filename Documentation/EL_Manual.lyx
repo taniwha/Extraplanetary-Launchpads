@@ -244,6 +244,22 @@ LatexCommand tableofcontents
 \end_layout
 
 \begin_layout Standard
+\begin_inset FloatList figure
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FloatList table
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
 
@@ -668,16 +684,21 @@ reference "sec:Recipes"
 \noun on
 MetalOre
 \noun default
- Assumed to be iron ore (but not explicitly stated as such) but with a slightly
- higher density (
-\begin_inset Formula $5.5t/m^{3}$
+ Assumed to be hematite
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+A common form of iron ore.
+\end_layout
+
 \end_inset
 
- vs 
-\begin_inset Formula $4.5t/m^{3}-5.3t/m^{3}$
+ (but not explicitly stated as such) and thus has a density of 
+\begin_inset Formula $5.2t/m^{3}$
 \end_inset
 
-).
+.
 \end_layout
 
 \begin_layout Description
@@ -1012,7 +1033,11 @@ Three FeO + CO → Fe + CO
 
 \begin_layout Standard
 However, this really happens all at once in a smelter so the effective process
- is 3Fe
+ is:
+\end_layout
+
+\begin_layout Standard
+3Fe
 \begin_inset script subscript
 
 \begin_layout Plain Layout
@@ -1048,14 +1073,14 @@ Fe has a molar mass of
 \end_inset
 
 , O has a molar mass of 
-\begin_inset Formula $15.999g/mol$
+\begin_inset Formula $15.9994g/mol$
 \end_inset
 
 , so 
-\begin_inset Formula $479.061g$
+\begin_inset Formula $479.0646g$
 \end_inset
 
- of 3Fe
+ of Fe
 \begin_inset script subscript
 
 \begin_layout Plain Layout
@@ -1087,7 +1112,7 @@ MetalOre
 Metal
 \noun default
  mass conversion rate of 
-\begin_inset Formula $0.699431$
+\begin_inset Formula $0.6994255$
 \end_inset
 
 
@@ -1095,7 +1120,7 @@ Metal
 status collapsed
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.493188$
+\begin_inset Formula $0.46628367$
 \end_inset
 
  volume (resource unit) conversion rate.
@@ -1501,14 +1526,23 @@ MetalOre
 \noun on
 Metal
 \noun default
- is 0.6994255 in this case
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Not sure whence the discrepancy.
- Probably different rounding.
+ is still 0.6994255.
 \end_layout
+
+\begin_layout Standard
+Smelting is assumed to consume 
+\begin_inset Formula $8.62MJ/kg$
+\end_inset
+
+ of produced 
+\noun on
+Metal
+\noun default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "TMETPS"
+literal "false"
 
 \end_inset
 
@@ -1529,23 +1563,1352 @@ Oxidizer
 \end_inset
 
 g.
- Smelting is assumed to consume 
-\begin_inset Formula $8.62MJ/kg$
+ The justification for this comes from analyzing the properties of KSP's
+ stock LFO engines and noting that the Poodle (the most efficient) gets
+ 5.9MJ/kg of 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ (see table 
+\begin_inset CommandInset ref
+LatexCommand vref
+reference "tab:Comparison-of-stock"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
- of produced 
-\noun on
-Metal
-\noun default
+).
+\end_layout
 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "TMETPS"
-literal "false"
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status collapsed
 
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="19" columns="7">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="right" valignment="top" width="0pt">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Thrust (N)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Isp(s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ve (m/s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+flow (kg/s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+power (W)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Esp (J/kg)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24-77
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+290
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2843.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+22.8M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.0M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+48-7S
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+320
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3138.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+31.4M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.9M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aerospike
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+180k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+340
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3334.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+54.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+300.1M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5.6M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LV-1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+315
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3089.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3.1M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.8M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LV-1R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+290
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2843.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.8M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.0M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LV-909
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+60k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+345
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3383.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+101.5M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5.7M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LV-T30
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+240k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+310
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3040.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+78.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+364.8M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.6M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LV-T45
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+215k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+320
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3138.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+68.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+337.3M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.9M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mainsail
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1500k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+310
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3040.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+493.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.6M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mk55
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+120k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+305
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2991.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+40.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+179.5M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.5M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+poodle
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+250k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+350
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3432.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+429.0M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5.9M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SSME
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+315
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3089.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+323.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.5G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.8M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+skipper
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+650k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+320
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3138.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+207.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.0G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.9M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+twin-boar
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2000k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+300
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2942.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+679.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.9G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.3M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+rhino
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2000k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+340
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3334.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+599.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3.3G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5.6M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mammoth
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4000k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+315
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3089.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1294.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6.2G
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.8M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+rapier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+180k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+305
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2991.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+60.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+269.2M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.8M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+vernor
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+260
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2549.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15.3M
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3.3M
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Comparison-of-stock"
+
+\end_inset
+
+Comparison of stock KSP LFO engines.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $Thrust$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{sp}$
+\end_inset
+
+ are from the config files.
+ 
+\begin_inset Formula $V_{e}$
+\end_inset
+
+ (exhaust velocity) is 
+\begin_inset Formula $I_{sp}*g_{0}$
+\end_inset
+
+ (9.8066).
+ Flow is 
+\begin_inset Formula $\frac{thrust}{V_{e}}$
 \end_inset
 
 .
+ Power is 
+\begin_inset Formula $\frac{1}{2}thrust*V_{e}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $E_{sp}$
+\end_inset
+
+ (energy per kg) is 
+\begin_inset Formula $\frac{power}{flow}$
+\end_inset
+
+ or 
+\begin_inset Formula $\frac{1}{2}V_{e}^{2}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -1574,7 +2937,7 @@ RocketParts
 \noun on
 Metal
 \noun default
- is used for for everything, and the conversion speed is far too fast.
+ is used for for everything, and the conversion speed is probably too fast.
  However, the efficiency (
 \begin_inset Formula $0.7$
 \end_inset
@@ -1588,7 +2951,7 @@ Metal
 ScrapMetal
 \noun default
  is produced at a rate of 
-\begin_inset Formula $0.2995$
+\begin_inset Formula $0.295$
 \end_inset
 
  by mass (some scraps are lost).
@@ -1715,8 +3078,8 @@ LiquidFuel
 Oxidizer
 \noun default
 ), and those resources will evaporate, be broken down into other resources
- to be reclaimed, or transfered and thus reclaimed depending on the resource
- (most will be transfered).
+ to be reclaimed, or transferred and thus reclaimed depending on the resource
+ (most will be transferred).
  Once the part has been drained, it will be broken down from 
 \noun on
 RocketParts
@@ -1911,11 +3274,11 @@ Other parts
 All stock crewed parts act as under-equipped workshops.
  In addition, all crewed command pods, including those from other mods,
  act as under-equipped workshops.
- Many base-building mods (eg, USI-MKS
+ Many base-building mods (eg, KPBS
 \begin_inset CommandInset citation
 LatexCommand cite
-key "MKS"
-literal "true"
+key "kpbs"
+literal "false"
 
 \end_inset
 
@@ -2061,11 +3424,11 @@ literal "true"
 
 \begin_layout Standard
 The orientation and position of the build is controlled by the combination
- orientation and position of the micro-pad, and the automatically selected
- attach node of the root part.
+ of the orientation and position of the micro-pad, and the automatically
+ selected attach node of the root part.
  The colored diamonds on the micro-pad indicate the orientation of the root
- part when its top node is selected (red = +X, green = +Y, magenta = -X,
- cyan = -Y
+ part when its top node is selected (red = +X, blue = +Z, cyan = -X, yellow
+ = -Z
 \begin_inset Foot
 status collapsed
 
@@ -2073,8 +3436,8 @@ status collapsed
 Hopefully the colors are distinct enough that any suffering from colorblindness
  can distinguish at least one diamond.
  The pad's default orientation in the VAB is such that red (+X) points to
- the VAB door, green (+Y) points to the north wall, magenta (-X) to the
- west and cyan (-Y) to the south.
+ the VAB door, blue (+Z) points to the north wall, magenta (-X) to the west
+ and yellow (-Z) to the south.
 \end_layout
 
 \end_inset
@@ -2082,7 +3445,7 @@ Hopefully the colors are distinct enough that any suffering from colorblindness
 .
  It is important to remember that when the micro-pad is facing up, the root
  part's selected node will be facing down, having been rotated around the
- part's Y axis.
+ part's Z axis.
 \end_layout
 
 \begin_layout Standard
@@ -2107,7 +3470,7 @@ Survey System
 \begin_layout Standard
 When landed, orbital docks can be awkward for building as they tend to be
  on top of the building vessel (especially awkward for building rovers as
- getting the rover to the ground can be an issue), and lauchpads are highly
+ getting the rover to the ground can be an issue), and launchpads are highly
  sensitive to ground conditions, and and have their own issues when building
  large vessels.
  Also, they provide no flexibility in placement or orientation of the build.
@@ -2478,18 +3841,21 @@ status open
 
 \begin_layout Plain Layout
 Hillside survey site, somewhere on Minmus.
- This is one possibility for placing stakes for building a large structure
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+This is one possibility for placing stakes for building a large structure
  on the side of a hill.
  From left to right, there's a -Y Bounds stake, a +X Direction stake, a
  +Z Bounds stake with a +X Bounds stake hiding behind it, a flag and kerbal
  (not relevant to the site), and near the far right launch clamp, an Origin
  stake (direction, but bounds would have the same effect).
  Although the top of the structure is not directly visible, it is horizontal.
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \end_inset
@@ -2563,7 +3929,7 @@ there are mods that supply suitably configured crewed parts
 \noun on
 RocketParts
 \noun default
- container, and either the orbital dock.
+ container, and either the orbital dock or the micro-pad.
  When extending an existing station, a suitable docking port would be required
  as well, and means to get the 
 \begin_inset Quotes eld
@@ -2830,8 +4196,8 @@ literal "true"
 \end_inset
 
  container in which to store the stakes and mallet.
- As KIS is require for the survey parts to be available, the container should
- not be a problem
+ As KIS is required for the survey parts to be available, the container
+ should not be a problem
 \begin_inset Foot
 status collapsed
 
@@ -2854,6 +4220,33 @@ stakes
 
 \begin_layout Subsection
 Roughing It
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+NOTE: this section is out of date as it is relevant for when smelters required
+ only 
+\noun on
+ElectricCharge
+\noun default
+ and not 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+.
+ However, it should still server as inspiration.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3044,8 +4437,17 @@ Model Requirements
 \end_layout
 
 \begin_layout Standard
-The model's mesh needs an emissive material with _EmissiveColor set with
- appropriate RGB values.
+The model's mesh needs an emissive material with 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+_EmissiveColor
+\end_layout
+
+\end_inset
+
+ set with appropriate RGB values.
  The alpha value is used for turning the emission on and off as a status
  indicator.
  The part's root game object is used as the reference transform consistent
@@ -3095,10 +4497,15 @@ re of the converter part.
 \end_layout
 
 \begin_layout Standard
+\begin_inset Flex Code
+status open
 
-\noun on
+\begin_layout Plain Layout
 ELConverter
-\noun default
+\end_layout
+
+\end_inset
+
  subtracts the total input heat from the part and adds the total output
  heat to the part (use negative heats to have heating associated with input
  ingredients and cooling with output ingredients).
@@ -3142,8 +4549,23 @@ curve
 \end_layout
 
 \begin_layout Standard
-Once the specific conversion recipe has been obtained, ELConverter then
- bakes that recipe using the current mass flow rate.
+Once the specific conversion recipe has been obtained, 
+\noun on
+
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+
+\noun off
+ELConverter
+\end_layout
+
+\end_inset
+
+
+\noun default
+ then bakes that recipe using the current mass flow rate.
  The current mass flow rate is the specified rate of the converter scaled
  by the relative mass of the active input recipe compared to the smallest
  mass input recipe in the converter recipe.
@@ -3165,7 +4587,7 @@ Oxidizer
 \noun on
 MetalOre
 \noun default
- is not consumed at all at 0% efficnecy, but is consumed at the maximum
+ is not consumed at all at 0% efficiency, but is consumed at the maximum
  rate at 100%.
  Thus the actual mass flow rate might vary from 864.49048g/s to 2461.37248g/s.
 \end_layout
@@ -3204,13 +4626,25 @@ None.
  However, it is strongly recommended to use appropriate thermal settings
  for converters that use heat.
  In particular, 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 skinInternalConductionMult
-\noun default
+\end_layout
+
+\end_inset
+
  and 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 heatConductivity
-\noun default
+\end_layout
+
+\end_inset
+
  should be adjusted to provided sufficient insulation when keeping the part
  hot is necessary.
 \end_layout
@@ -3257,14 +4691,65 @@ efficiency Specify the efficiency/temperature curve of the converter.
 
  (100%).
  If a single 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 efficiency
-\noun default
- entry is given, then it specifies a constant efficiency and is of the form
- 
-\begin_inset Formula $efficiency=0.9$
+\end_layout
+
 \end_inset
 
+ entry is given, then it specifies a constant efficiency and is of the form
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+efficiency = 0.9
+\end_layout
+
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
  (90%).
  If multiple 
 \noun on
@@ -3280,23 +4765,86 @@ curve
 
 .
  Each entry is of the form 
-\begin_inset Formula $efficiency=temp,eff$
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+efficiency = temp, eff
+\end_layout
+
 \end_inset
 
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
  where 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 temp
-\noun default
+\end_layout
+
+\end_inset
+
  is the part's internal temperature in Kelvin and 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 eff
-\noun default
+\end_layout
+
+\end_inset
+
  is the converter's efficiency at that temperature.
  Note that the keys need to be specified in ascending order of temperature
  and 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 eff
-\noun default
+\end_layout
+
+\end_inset
+
  should be between 
 \begin_inset Formula $0.0$
 \end_inset
@@ -3344,9 +4892,15 @@ away
  from where the spawned vessel will be as it will be used to align the selected
  attach node of the vessel's root part.
  This is the opposite direction of the transform used by 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 ELLaunchPad
-\noun default
+\end_layout
+
+\end_inset
+
 .
 \end_layout
 
@@ -3415,17 +4969,6 @@ ELLaunchPad
 Builds complete vessels attached (pseudo-docked) to the current vessel.
  Allows post-build resource transfer without any extra fuss.
  Supports building both landed or in orbit.
- Implements 
-\begin_inset Flex Code
-status open
-
-\begin_layout Plain Layout
-ELControlInterface
-\end_layout
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Paragraph

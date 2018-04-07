@@ -1235,11 +1235,11 @@ Oxidizer
 \noun default
  is assumed to be liquid oxygen
 \begin_inset Foot
-status collapsed
+status open
 
 \begin_layout Plain Layout
-Note that the exact ratios of the products were arbitrarily chosen but chemicall
-y 
+Note that the exact ratios of the products were arbitrarily chosen but are
+ chemically 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1247,7 +1247,7 @@ correct
 \begin_inset Quotes erd
 \end_inset
 
- (plausible), and that the inclusion of formaldehyde is the result of 
+ (balanced), and that the inclusion of formaldehyde is the result of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1530,63 +1530,6 @@ Metal
 \end_layout
 
 \begin_layout Standard
-Smelting is assumed to consume 
-\begin_inset Formula $8.62MJ/kg$
-\end_inset
-
- of produced 
-\noun on
-Metal
-\noun default
-
-\begin_inset CommandInset citation
-LatexCommand cite
-key "TMETPS"
-literal "false"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-The combustion of 
-\noun on
-LiquidFuel
-\noun default
- and 
-\noun on
-Oxidizer
-\noun default
- is assumed to produce 
-\begin_inset Formula $6MJ/k$
-\end_inset
-
-g.
- The justification for this comes from analyzing the properties of KSP's
- stock LFO engines and noting that the Poodle (the most efficient) gets
- 5.9MJ/kg of 
-\noun on
-LiquidFuel
-\noun default
- and 
-\noun on
-Oxidizer
-\noun default
- (see table 
-\begin_inset CommandInset ref
-LatexCommand vref
-reference "tab:Comparison-of-stock"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float table
 wide false
 sideways false
@@ -1608,7 +1551,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+Engine
 \end_layout
 
 \end_inset
@@ -2909,6 +2852,145 @@ Comparison of stock KSP LFO engines.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Smelting is assumed to consume 
+\begin_inset Formula $8.62MJ/kg$
+\end_inset
+
+ of produced 
+\noun on
+Metal
+\noun default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "TMETPS"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The combustion of 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ is assumed to produce 
+\begin_inset Formula $6MJ/kg$
+\end_inset
+
+.
+ The justification for this comes from analyzing the properties of KSP's
+ stock LFO engines and noting that the Poodle (the most efficient) gets
+ 
+\begin_inset Formula $5.9MJ/kg$
+\end_inset
+
+ of 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ (see table 
+\begin_inset CommandInset ref
+LatexCommand vref
+reference "tab:Comparison-of-stock"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Thus, EL's smelters nominally
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The actual rates vary with the smelter: 
+\begin_inset Formula $800g/s$
+\end_inset
+
+, 
+\begin_inset Formula $3149.8g/s$
+\end_inset
+
+ and 
+\begin_inset Formula $5000g/s$
+\end_inset
+
+ of LFO, with the other rates scaled accordingly.
+\end_layout
+
+\end_inset
+
+ consume 
+\begin_inset Formula $864.49048g/s$
+\end_inset
+
+ of 
+\noun on
+LiquidFuel
+\noun default
+ and 
+\noun on
+Oxidizer
+\noun default
+ to produce 
+\begin_inset Formula $5186.94288kJ/s$
+\end_inset
+
+ of heating along with the products necessary for smelting.
+ At 100% efficiency, they consume 
+\begin_inset Formula $1596.882g/s$
+\end_inset
+
+ of 
+\noun on
+MetalOre
+\noun default
+ and 
+\begin_inset Formula $9627.678kJ/s$
+\end_inset
+
+ of heat while producing 
+\begin_inset Formula $1116.9g/s$
+\end_inset
+
+ of 
+\noun on
+Metal
+\noun default
+.
+ Thus 100% efficiency is unobtainable as there is insufficient heat supplied
+ buy the LFO mix.
+ In theory, the attainable efficiency is a bit less than 53.9%, but due to
+ transferred resources cooling the smelter
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+And an engineering mistake in the smelter design.
+ Some kerbals will miss out on snacks.
+\end_layout
+
+\end_inset
+
+, the maximum efficiency appears to be about 40%.
 \end_layout
 
 \begin_layout Subsubsection

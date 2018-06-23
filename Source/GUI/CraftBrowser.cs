@@ -21,8 +21,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 using KSP.IO;
+using KSP.UI;
 using KSP.UI.Screens;
 
 using ExtraplanetaryLaunchpads_KACWrapper;
@@ -36,6 +38,11 @@ namespace ExtraplanetaryLaunchpads {
 		const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
 		static GameObject prefab;
 		static MethodInfo buildCraftList = typeof(CraftBrowserDialog).GetMethod ("BuildCraftList", bindingFlags);
+		static FieldInfo stoField;
+		static FieldInfo sltField;
+		static FieldInfo sfhField;
+		static FieldInfo svField;
+		static FieldInfo sdpField;
 
 		[SerializeField]
 		private Toggle tabSub;
@@ -59,13 +66,28 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		static FieldInfo FindField<T>(int num)
+		{
+			var fields = typeof (CraftBrowserDialog).GetFields (BindingFlags.NonPublic | BindingFlags.Instance);
+			int count = 0;
+			for (int i = 0, c = fields.Length; i < c; i++) {
+				if (fields[i].FieldType == typeof(T)) {
+					count++;
+					if (count == num) {
+						return fields[i];
+					}
+				}
+			}
+			return null;
+		}
+
 		// CraftBrowserDialog has a mask that hides anything outside the
 		// default buttons, both visually and for mouse clicks. Since the
 		// button count is going from 2 to 3, set the button widths to 80
 		// instead of the default 120, and adjust positions accordingly.
 		static void AdjustToggles(Transform parent)
 		{
-			Vector2 ap;
+			/*Vector2 ap;
 			Vector2 sd;
 			bool first = true;
 
@@ -83,7 +105,7 @@ namespace ExtraplanetaryLaunchpads {
 				rect.sizeDelta = sd;
 
 				ap.x += sd.x;
-			}
+			}*/
 		}
 
 		// Set the label text for both enabled and disabled versions of the
@@ -101,6 +123,13 @@ namespace ExtraplanetaryLaunchpads {
 
 		static void CreatePrefab ()
 		{
+			if (stoField == null) {
+				stoField = FindField<bool> (2);
+				sltField = FindField<TextMeshProUGUI> (3);
+				sfhField = FindField<GameObject> (2);
+				svField = FindField<RectTransform> (1);
+				sdpField = FindField<UIPanelTransition> (1);
+			}
 			var cbdType = typeof (CraftBrowserDialog);
 			var cbdFields = cbdType.GetFields (bindingFlags);
 
@@ -116,7 +145,8 @@ namespace ExtraplanetaryLaunchpads {
 				field.SetValue(ELcb, field.GetValue(cbd));
 			}
 
-			var toggleMask = prefab.transform.Find ("ToggleMask");
+			var toggles = prefab.transform.Find("Toggles");
+			var toggleMask = toggles.transform.Find ("ToggleMask");
 			var toggleSPH = toggleMask.Find ("ToggleSPH");
 			var tabSPH = toggleSPH.GetComponent<Toggle> ();
 
@@ -186,6 +216,16 @@ namespace ExtraplanetaryLaunchpads {
 		void onSubTabToggle (bool st)
 		{
 			if (st) {
+				stoField.SetValue (this, false);
+				(sltField.GetValue (this) as TextMeshProUGUI).gameObject.SetActive (false);
+				(sfhField.GetValue (this) as GameObject).SetActive (false);
+				var rXform = svField.GetValue (this) as RectTransform;
+				var offsetMax = rXform.offsetMax;
+				rXform.offsetMax = new Vector2 (offsetMax.x, -56f);
+				if (SteamManager.Initialized) {
+					(sdpField.GetValue (this) as UIPanelTransition).Transition (0);
+				}
+
 				facility = EditorFacility.None;
 				LoadSubassemblies ();
 			}

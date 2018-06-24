@@ -81,33 +81,6 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		// CraftBrowserDialog has a mask that hides anything outside the
-		// default buttons, both visually and for mouse clicks. Since the
-		// button count is going from 2 to 3, set the button widths to 80
-		// instead of the default 120, and adjust positions accordingly.
-		static void AdjustToggles(Transform parent)
-		{
-			/*Vector2 ap;
-			Vector2 sd;
-			bool first = true;
-
-			ap.x = 0; ap.y = 0;
-			sd.x = 0; sd.y = 0;
-			foreach (Transform child in parent) {
-				var rect = child.GetComponent<RectTransform> ();
-				if (first) {
-					first = false;
-					ap = rect.anchoredPosition;
-					sd = rect.sizeDelta;
-					sd.x = 80;
-				}
-				rect.anchoredPosition = ap;
-				rect.sizeDelta = sd;
-
-				ap.x += sd.x;
-			}*/
-		}
-
 		// Set the label text for both enabled and disabled versions of the
 		// subassembly toggle button.
 		static void SetSubLabels (Transform toggleSub)
@@ -157,8 +130,6 @@ namespace ExtraplanetaryLaunchpads {
 			SetSubLabels (toggleSub.transform);
 			ELcb.tabSub = toggleSub.GetComponent<Toggle> ();
 			ELcb.tabSub.group = tabSPH.group;
-
-			AdjustToggles (toggleMask);
 
 			Destroy (cbd);
 		}

@@ -30,7 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		static Texture texture;
 		static Icon icon;
-		static string[] elResources = {"MetalOre", "Metal", "RocketParts"};
+		static string[] elResources = {"MetalOre", "Metal", "ScrapMetal", "RocketParts"};
 		static HashSet<string> elItems;
 
 		bool elItemFilter (AvailablePart ap)

@@ -279,6 +279,9 @@ namespace ExtraplanetaryLaunchpads {
 			bool did_work;
 			int count;
 			do {
+				if (kerbalHours == 0) {
+					break;
+				}
 				count = required.Where (r => r.amount > 0).Count ();
 				if (count == 0)
 					break;
@@ -300,7 +303,11 @@ namespace ExtraplanetaryLaunchpads {
 					did_work = true;
 					// do only the work required to process the actual amount
 					// of consumed resource
-					kerbalHours -= work * amount / base_amount;
+					double dkH = work * amount / base_amount;
+					if (dkH > kerbalHours) {
+						dkH = kerbalHours;
+					}
+					kerbalHours -= dkH;
 					res.amount -= amount;
 					//Debug.Log("add delta: "+amount);
 					res.deltaAmount = amount;
@@ -326,6 +333,9 @@ namespace ExtraplanetaryLaunchpads {
 			bool did_work;
 			int count;
 			do {
+				if (kerbalHours == 0) {
+					break;
+				}
 				count = 0;
 				foreach (var bres in built) {
 					var cres = ELBuildWindow.FindResource (cost, bres.name);
@@ -356,7 +366,12 @@ namespace ExtraplanetaryLaunchpads {
 					did_work = true;
 					// do only the work required to process the actual amount
 					// of returned or disposed resource
-					kerbalHours -= work * amount / base_amount;
+					double dkH = work * amount / base_amount;
+					if (dkH > kerbalHours) {
+						dkH = kerbalHours;
+					}
+					kerbalHours -= dkH;
+
 					bres.amount += amount;
 					//Debug.Log("remove delta: "+amount);
 					bres.deltaAmount = amount;

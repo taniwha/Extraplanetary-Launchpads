@@ -14,8 +14,19 @@ GIT			:= git
 TAR			:= tar
 ZIP			:= zip
 
-all: kairyuu.png kairyuu_scaled.png icon_button.png icon_filter.png plaque.png
-#	${GUI_ICONS}
+ICONS := \
+	icon_button.png	\
+	icon_filter.png
+
+FLAGS := \
+	kairyuu.png	\
+	nightheron.png
+
+MISC := \
+	kairyuu_scaled.png	\
+	plaque.png
+
+all: ${ICONS} ${FLAGS} ${MISC}
 
 info:
 	@echo "Extraplanetary Launchpads Build Information"
@@ -43,6 +54,9 @@ plaque.png: plaque.svg
 kairyuu.png: kairyuu.svg
 	inkscape --export-width=256 --export-height=160 --export-png=$@ $^
 
+nightheron.png: nightheron.svg
+	inkscape --export-width=256 --export-height=160 --export-png=$@ $^
+
 kairyuu_scaled.png: kairyuu.svg
 	inkscape --export-width=64 --export-height=40 --export-background='#000000' --export-background-opacity=0 --export-png=$@ $^
 
@@ -56,8 +70,9 @@ clean:
 	rm -f kairyuu.png kairyuu_scaled.png icon_button.png icon_filter.png ${GUI_ICONS}
 
 install: all
-	mkdir -p ${ELGAMEDATA}/Agencies
+	mkdir -p ${ELGAMEDATA}/Agencies ${ELGAMEDATA}/Flags
 	cp kairyuu.png kairyuu_scaled.png ${ELGAMEDATA}/Agencies
+	cp nightheron.png ${ELGAMEDATA}/Flags
 	mkdir -p ${ELGAMEDATA}/Textures
 	cp icon_button.png icon_filter.png plaque.png ${ELGAMEDATA}/Textures
 	#cp ${GUI_ICONS} ${ELGAMEDATA}/Textures

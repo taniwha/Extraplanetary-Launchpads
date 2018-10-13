@@ -31,4 +31,4 @@ info:
 	@echo "    Plugin:   ${PLUGINDIR}"
 
 release:
-	tools/make-release
+	tools/make-release -u

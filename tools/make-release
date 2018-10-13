@@ -4,5 +4,14 @@ ver=`Source/tools/git-version-gen --prefix v .tarball-version`
 make GAMEDATA=`pwd`/tmp install
 cd tmp
 zip -r9 ../Extraplanetary_Launchpads_v${ver}.zip ExtraplanetaryLaunchpads
+cp ExtraplanetaryLaunchpads/Plugins/EL.version ..
 cd ..
 rm -rf tmp
+
+if test "$1" = "-u" -a -n "$UPLOAD_DIR" -a -n "$UPLOAD_URL"; then
+	uploads="Extraplanetary_Launchpads_v${ver}.zip EL.version"
+	scp ${uploads} ${UPLOAD_DIR}
+	for f in ${uploads}; do
+		echo ${UPLOAD_URL}/"$f" | sed -s 's/ /%20/g'
+	done
+fi

@@ -9,6 +9,7 @@
 *.swp
 *.blend?
 *.pyc
+*.version
 build
 obj
 bin

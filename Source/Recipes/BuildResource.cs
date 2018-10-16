@@ -48,17 +48,9 @@ namespace ExtraplanetaryLaunchpads {
 		private double KerbalHours ()
 		{
 			if (density > 0) {
-				// 5 Kerbal-hours/ton
-				//FIXME per resource
-				if (name == "RocketParts") {
-					return 5 * density;
-				} else {
-					return 0.5 * density;
-				}
+				return ELRecipeDatabase.ResourceRate (name) * density;
 			} else {
-				//FIXME per resource
-				// this is probably ElectricCharge
-				return 1.0 / 3600;	// 1Ks/u
+				return ELRecipeDatabase.ResourceRate (name) / 3600;
 			}
 		}
 

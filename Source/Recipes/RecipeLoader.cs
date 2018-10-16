@@ -65,6 +65,34 @@ namespace ExtraplanetaryLaunchpads {
 			return resources;
 		}
 
+		IEnumerator LoadResourceRates ()
+		{
+			var dbase = GameDatabase.Instance;
+			var node_list = dbase.GetConfigNodes ("EL_ResourceRates");
+			for (int i = 0; i < node_list.Length; i++) {
+				var node = node_list[i];
+				for (int j = 0; j < node.values.Count; j++) {
+					var val = node.values[j];
+					string name = val.name;
+					double rate;
+					if (name != "default"
+						&& PartResourceLibrary.Instance.GetDefinition (name) == null) {
+						print ("warning: unknown resource: " + name);
+					}
+					if (double.TryParse (val.value, out rate)
+						&& rate > 0) {
+						print("EL_ResourceRates: " + name + " " + rate);
+						if (name == "default") {
+							ELRecipeDatabase.default_resource_rate = rate;
+						} else {
+							ELRecipeDatabase.resource_rates[name] = rate;
+						}
+					}
+				}
+				yield return null;
+			}
+		}
+
 		IEnumerator LoadResourceRecipes ()
 		{
 			var dbase = GameDatabase.Instance;
@@ -225,6 +253,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			LoadDefautStructureRecipe ();
 			LoadKerbalRecipe ();
+			yield return StartCoroutine (LoadResourceRates ());
 			yield return StartCoroutine (LoadResourceRecipes ());
 			yield return StartCoroutine (LoadRecycleRecipes ());
 			yield return StartCoroutine (LoadTransferRecipes ());

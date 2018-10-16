@@ -10,6 +10,7 @@ EL_FILES := \
 	CommandSeat/ControlReference.cs		\
 	CommandSeat/NoControlSwitch.cs		\
 	Converter/Converter.cs				\
+	Converter/CoreHeat.cs				\
 	Converter/Extractor.cs				\
 	Converter/IResourceProvider.cs		\
 	Converter/KethaneResourceProvider.cs\

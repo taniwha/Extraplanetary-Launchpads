@@ -35,6 +35,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		ConversionRecipe ratio_recipe;
 
+		ModuleCoreHeat coreHeat;
+
 		[KSPField]
 		public float EVARange = 1.5f;
 
@@ -44,11 +46,20 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField]
 		public double Rate;
 
+		[KSPField (guiActive = true, guiName = "Furnace Temp")]
+		public string furnaceTemp;
+		BaseField furnaceTempField;
+
+		public double HeatFlux { get { return heatFlux; } }
+
 		public override void OnStart(PartModule.StartState state)
 		{
 			base.OnStart (state);
+			furnaceTempField = Fields["furnaceTemp"];
 			EL_Utils.SetupEVAEvent (Events["StartResourceConverter"], EVARange);
 			EL_Utils.SetupEVAEvent (Events["StopResourceConverter"], EVARange);
+
+			coreHeat = part.FindModuleImplementing<ModuleCoreHeat> ();
 		}
 
 		void RemoveConflictingNodes (ConfigNode node, string name)
@@ -228,7 +239,17 @@ namespace ExtraplanetaryLaunchpads {
 					status = "Operating";
 				}
 			}
-			part.thermalInternalFlux += heatFlux * result.TimeFactor;
+			//if (deltaTime < 1000) {
+			//	part.thermalInternalFlux += heatFlux * result.TimeFactor;
+			//}
+		}
+
+		double GetTemperature ()
+		{
+			if (coreHeat != null) {
+				return coreHeat.CoreTemperature;
+			}
+			return part.temperature;
 		}
 
 		double DetermineEfficiency (double temperature)
@@ -267,7 +288,7 @@ namespace ExtraplanetaryLaunchpads {
 				ratio_recipe.Inputs.AddRange (new ResourceRatio[real_inputs]);
 				ratio_recipe.Outputs.AddRange (new ResourceRatio[real_outputs]);
 			}
-			efficiency = DetermineEfficiency (part.temperature);
+			efficiency = DetermineEfficiency (GetTemperature ());
 			if (efficiency != prevEfficiency) {
 				prevEfficiency = efficiency;
 				prevDeltaTime = -1;		//force rebake
@@ -286,6 +307,14 @@ namespace ExtraplanetaryLaunchpads {
 				heatFlux *= 1e3;
 			}
 			return ratio_recipe;
+		}
+
+		void Update ()
+		{
+			if (furnaceTempField != null) {
+				furnaceTempField.guiActive = PhysicsGlobals.ThermalDataDisplay;
+			}
+			furnaceTemp = GetTemperature ().ToString("G4");
 		}
 	}
 }

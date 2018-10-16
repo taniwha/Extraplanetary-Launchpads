@@ -6224,26 +6224,32 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
+
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6342,30 +6348,37 @@ literal "true"
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6390,14 +6403,17 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6525,26 +6541,32 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6823,30 +6845,37 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6931,26 +6960,32 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -7035,34 +7070,42 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
+
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
+
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -7163,110 +7206,137 @@ efficiency
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = LFOFiredSmelter
 \end_layout
 
 \begin_layout Verbatim
+
     Input {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
+
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
+
         MetalOre = 1596.882
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
     Output {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
+
         CarbonDioxide = 1056.228
 \end_layout
 
 \begin_layout Verbatim
+
         Water = 288.24448
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 1116.9 -9627.678
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
     Input {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
+
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
     Output {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
+
         Carbon = 24.0214
 \end_layout
 
 \begin_layout Verbatim
+
         CarbonDioxide = 176.038
 \end_layout
 
 \begin_layout Verbatim
+
         CarbonMonoxide = 476.1717
 \end_layout
 
 \begin_layout Verbatim
+
         Formaldehyde = 30.02598
 \end_layout
 
 \begin_layout Verbatim
+
         Hydrogen = 14.11116
 \end_layout
 
 \begin_layout Verbatim
+
         Water = 144.12224
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -7275,34 +7345,163 @@ EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = LFOMix
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         LiquidFuel = 9
 \end_layout
 
 \begin_layout Verbatim
+
         Oxidizer = 11
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
 \end_deeper
+\begin_layout Subsection
+Resource Rates
+\end_layout
+
+\begin_layout Standard
+The amount of work required to prepare resources may be configured using
+ an 
+\noun on
+EL_ResourceRates
+\noun default
+ node.
+ This node is very simple in that it is just a list of 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+resourcename = rate
+\end_layout
+
+\end_inset
+
+ lines.
+ 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+resourcename
+\end_layout
+
+\end_inset
+
+ is the name of the resource (or 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+default
+\end_layout
+
+\end_inset
+
+ to specify the default rate), and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+rate
+\end_layout
+
+\end_inset
+
+ is the amount of kerbal-hours / ton (or kerbal-seconds / unit for massless
+ resources (such as 
+\noun on
+ElectricCharge
+\noun default
+)).
+ Note that this affects only those resources that are required to complete
+ the build, not optional resources that will be transferred afterwards.
+ If 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+default
+\end_layout
+
+\end_inset
+
+ is not specified, then it defaults to 
+\begin_inset Formula $5$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Verbatim
+
+EL_ResourceRates {
+\end_layout
+
+\begin_layout Verbatim
+
+    default = 5
+\end_layout
+
+\begin_layout Verbatim
+
+    ElectricCharge = 1
+\end_layout
+
+\begin_layout Verbatim
+
+    LiquidFuel = 0.36
+\end_layout
+
+\begin_layout Verbatim
+
+    Oxidizer = 0.44
+\end_layout
+
+\begin_layout Verbatim
+
+    MonoPropellant = 0.4
+\end_layout
+
+\begin_layout Verbatim
+
+    XenonGas = 2
+\end_layout
+
+\begin_layout Verbatim
+
+    Ore = 8
+\end_layout
+
+\begin_layout Verbatim
+
+} 
+\end_layout
+
 \begin_layout Section
 EL API
 \end_layout

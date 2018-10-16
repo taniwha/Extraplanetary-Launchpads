@@ -33,7 +33,8 @@ namespace ExtraplanetaryLaunchpads {
 		}
 		protected override void ResolveConverterEnergy (double deltaTime)
 		{
-			if (energyTemp > 0) {
+			double partEnergy = part.thermalMass * part.temperature;
+			if (CoreThermalEnergy > partEnergy && energyTemp > 0) {
 				energyTemp = 0;
 			}
 			for (int i = converterCache.Count; i-- > 0; ) {

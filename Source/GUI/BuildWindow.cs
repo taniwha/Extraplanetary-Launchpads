@@ -545,30 +545,6 @@ namespace ExtraplanetaryLaunchpads {
 			GUI.enabled = true;
 		}
 
-		void SpawnOffset ()
-		{
-			/*if (control.vessel.situation == Vessel.Situations.LANDED) {
-				GUILayout.BeginVertical();
-				GUILayout.Space(10.0f);
-				GUILayout.BeginHorizontal();
-				GUILayout.Box("Spawn Height Offset", ELStyles.white,
-							  GUILayout.Width(180), GUILayout.Height(40));
-				control.spawnOffset = GUILayout.HorizontalSlider(control.spawnOffset,
-					0.0F, 10.0F, ELStyles.slider, GUI.skin.horizontalSliderThumb,
-					GUILayout.Width(300), GUILayout.Height(40));
-				control.spawnOffset = (float)Math.Round(control.spawnOffset, 1);
-				GUILayout.Box(control.spawnOffset.ToString() + "m",
-							  ELStyles.white, GUILayout.Width(75),
-							  GUILayout.Height(40));
-				GUILayout.FlexibleSpace();
-
-				GUILayout.EndHorizontal();
-				GUILayout.EndVertical();
-			} else {
-				control.SpawnHeightOffset = 0.0f;
-			}*/
-		}
-
 		void FinalizeButton ()
 		{
 			GUILayout.BeginHorizontal ();
@@ -784,7 +760,6 @@ namespace ExtraplanetaryLaunchpads {
 				PauseButton ();
 				break;
 			case ELBuildControl.State.Complete:
-				SpawnOffset ();
 				FinalizeButton ();
 				break;
 			case ELBuildControl.State.Transfer:

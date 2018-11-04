@@ -65,8 +65,8 @@ namespace ExtraplanetaryLaunchpads
             // can expect a future update to be available.
             //
 			if (Versioning.version_major == 1
-				&& Versioning.version_minor == 4) {
-				return Versioning.Revision == 5;
+				&& Versioning.version_minor == 5) {
+				return Versioning.Revision == 1;
 			}
 			return false;
 

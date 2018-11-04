@@ -349,7 +349,6 @@ namespace ExtraplanetaryLaunchpads {
 
 				double work = kerbalHours / count;
 				did_work = false;
-				count = 0;
 				foreach (var bres in built) {
 					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
@@ -362,7 +361,6 @@ namespace ExtraplanetaryLaunchpads {
 					if (amount > remaining) {
 						amount = remaining;
 					}
-					count++;
 					did_work = true;
 					// do only the work required to process the actual amount
 					// of returned or disposed resource

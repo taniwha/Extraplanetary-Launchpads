@@ -1,6 +1,7 @@
+MODNAME		:= ExtraplanetaryLaunchpads
 KSPDIR		:= ${HOME}/ksp/KSP_linux
 GAMEDATA	:= ${KSPDIR}/GameData
-ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
+MODGAMEDATA  := ${GAMEDATA}/${MODNAME}
 
 DOC_FILES := \
 	FreeEVA.png \
@@ -70,11 +71,11 @@ clean:
 	rm -f kairyuu.png kairyuu_scaled.png icon_button.png icon_filter.png ${GUI_ICONS}
 
 install: all
-	mkdir -p ${ELGAMEDATA}/Agencies ${ELGAMEDATA}/Flags
-	cp kairyuu.png kairyuu_scaled.png ${ELGAMEDATA}/Agencies
-	cp nightheron.png ${ELGAMEDATA}/Flags
-	mkdir -p ${ELGAMEDATA}/Textures
-	cp icon_button.png icon_filter.png plaque.png ${ELGAMEDATA}/Textures
-	#cp ${GUI_ICONS} ${ELGAMEDATA}/Textures
+	mkdir -p ${MODGAMEDATA}/Agencies ${MODGAMEDATA}/Flags
+	cp kairyuu.png kairyuu_scaled.png ${MODGAMEDATA}/Agencies
+	cp nightheron.png ${MODGAMEDATA}/Flags
+	mkdir -p ${MODGAMEDATA}/Textures
+	cp icon_button.png icon_filter.png plaque.png ${MODGAMEDATA}/Textures
+	#cp ${GUI_ICONS} ${MODGAMEDATA}/Textures
 
 .PHONY: all clean install

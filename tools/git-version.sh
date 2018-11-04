@@ -1,7 +1,12 @@
 #! /bin/sh
 
-full_version=`./tools/git-version-gen --prefix v .tarball-version`
-version=`echo $full_version | cut -d '-' -f 1`
+set -e
+
+path=`dirname $0`
+
+full_version=`$path/git-version-gen --prefix v .tarball-version`
+version=`echo $full_version | cut -d '-' -f 1 | sed -e 's/UNKNOWN/0.0.0/'`
+
 
 sed -e "s/@FULL_VERSION@/$full_version/" -e "s/@VERSION@/$version/" assembly/AssemblyInfo.in > assembly/AssemblyInfo.cs-
 
@@ -23,11 +28,11 @@ KSPMINOR=$3
 KSPPATCH=$4
 
 mkdir -p bin
-cat > bin/EL.version <<EOF
+cat > bin/${MODNAME}.version <<EOF
 {
-	"NAME":"Extraplanetary Launchpads",
-	"URL":"http://taniwha.org/~bill/EL.version",
-	"DOWNLOAD":"http://taniwha.org/~bill/Extraplanetary_Launchpads_v$full_version.zip",
+	"NAME":"${MODNAME}",
+	"URL":"http://taniwha.org/~bill/${MODNAME}.version",
+	"DOWNLOAD":"http://taniwha.org/~bill/${MODNAME}_v$full_version.zip",
 	"VERSION":{"MAJOR":$MAJOR,"MINOR":$MINOR,"PATCH":$PATCH,"BUILD":$BUILD},
 	"KSP_VERSION":{"MAJOR":$KSPMAJOR,"MINOR":$KSPMINOR,"PATCH":$KSPPATCH}
 }

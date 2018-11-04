@@ -1,8 +1,9 @@
+export MODNAME		:= ExtraplanetaryLaunchpads
 export KSPDIR		:= ${HOME}/ksp/KSP_linux
 export MANAGED		:= ${KSPDIR}/KSP_Data/Managed
-export GAMEDATA	:= ${KSPDIR}/GameData
-export ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
-export PLUGINDIR	:= ${ELGAMEDATA}/Plugins
+export GAMEDATA		:= ${KSPDIR}/GameData
+export MODGAMEDATA	:= ${GAMEDATA}/${MODNAME}
+export PLUGINDIR	:= ${MODGAMEDATA}/Plugins
 
 TARGETS		:= bin/Launchpad.dll
 
@@ -89,10 +90,10 @@ all: version ${TARGETS}
 
 .PHONY: version
 version:
-	@./tools/git-version.sh
+	@../tools/git-version.sh
 
 info:
-	@echo "Extraplanetary Launchpads Build Information"
+	@echo "${MODNAME} Build Information"
 	@echo "    resgen2:    ${RESGEN2}"
 	@echo "    gmcs:       ${GMCS}"
 	@echo "    gmcs flags: ${GMCSFLAGS}"
@@ -109,11 +110,11 @@ bin/Launchpad.dll: ${EL_FILES}
 		-out:$@ $^
 
 clean:
-	rm -f ${TARGETS}* assembly/AssemblyInfo.cs bin/EL.version
+	rm -f ${TARGETS}* assembly/AssemblyInfo.cs bin/${MODNAME}.version
 	test -d bin && rmdir bin || true
 
 install: all
 	mkdir -p ${PLUGINDIR}
-	cp ${TARGETS} bin/EL.version ${PLUGINDIR}
+	cp ${TARGETS} bin/${MODNAME}.version ${PLUGINDIR}
 
 .PHONY: all clean install

@@ -1,9 +1,10 @@
-KSPDIR		:= ${HOME}/ksp/KSP_linux
-MANAGED		:= ${KSPDIR}/KSP_Data/Managed
-GAMEDATA	:= ${KSPDIR}/GameData
-ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
-PLUGINDIR	:= ${ELGAMEDATA}/Plugins
-APIEXTDATA	:= ${PLUGINDIR}
+export MODNAME		:= ExtraplanetaryLaunchpads
+export KSPDIR		:= ${HOME}/ksp/KSP_linux
+export MANAGED		:= ${KSPDIR}/KSP_Data/Managed
+export GAMEDATA		:= ${KSPDIR}/GameData
+export MODGAMEDATA  := ${GAMEDATA}/${MODNAME}
+export PLUGINDIR	:= ${MODGAMEDATA}/Plugins
+export APIEXTDATA	:= ${PLUGINDIR}
 
 RESGEN2	:= resgen2
 GMCS	:= gmcs
@@ -21,7 +22,7 @@ all clean install:
 	done
 
 info:
-	@echo "Extraplanetary Launchpads Build Information"
+	@echo "${MODNAME} Build Information"
 	@echo "    resgen2:  ${RESGEN2}"
 	@echo "    gmcs:     ${GMCS}"
 	@echo "    git:      ${GIT}"

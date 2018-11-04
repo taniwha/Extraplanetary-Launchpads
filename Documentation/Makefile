@@ -1,6 +1,7 @@
+MODNAME		:= ExtraplanetaryLaunchpads
 KSPDIR		:= ${HOME}/ksp/KSP_linux
 GAMEDATA	:= ${KSPDIR}/GameData
-ELGAMEDATA  := ${GAMEDATA}/ExtraplanetaryLaunchpads
+MODGAMEDATA	:= ${GAMEDATA}/${MODNAME}
 
 DOC_FILES := \
 	FreeEVA.png \
@@ -17,7 +18,7 @@ ZIP			:= zip
 all: EL_Manual.pdf
 
 info:
-	@echo "Extraplanetary Launchpads Build Information"
+	@echo "${MODNAME} Build Information"
 	@echo "    resgen2:    ${RESGEN2}"
 	@echo "    gmcs:       ${GMCS}"
 	@echo "    gmcs flags: ${GMCSFLAGS}"
@@ -36,7 +37,7 @@ veryclean: clean
 	rm -f *.bak *~
 
 install: all
-	mkdir -p ${ELGAMEDATA}
-	cp *.pdf ${ELGAMEDATA}
+	mkdir -p ${MODGAMEDATA}
+	cp *.pdf ${MODGAMEDATA}
 
 .PHONY: all clean install veryclean

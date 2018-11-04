@@ -51,8 +51,7 @@ PART
 		carriable = true
 		equipMode = part
 		equipSlot = jetpack
-		equipMeshName = jetpack_base01
-		equipBoneName = bn_jetpack01
+        equipBoneName = aliasJetpack
 		equipPos = (0,0.36,-0.05)
 		equipDir = (-80,0,0)
 		runSpeed = 0.8

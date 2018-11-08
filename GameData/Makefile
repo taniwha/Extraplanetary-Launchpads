@@ -15,6 +15,7 @@ ZIP		:= zip
 SUBDIRS=\
 	ExtraplanetaryLaunchpads/Parts/ControlReference	\
 	ExtraplanetaryLaunchpads/Parts/MicroPad	\
+	ExtraplanetaryLaunchpads/Parts/SurveyBuoy	\
 	ExtraplanetaryLaunchpads/Parts/smelter	\
 	$e
 

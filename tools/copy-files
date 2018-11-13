@@ -1,10 +1,16 @@
-#! /bin/sh
+#! /bin/sh -x
 
 list="$1"
 dst="$2"
 
 cat "$list" | while read file; do
-	dir=`dirname "$file"`
-	mkdir -p "$dst"/"$dir"
-	cp "$file" "$dst"/"$dir"
+	case $file in
+	'#'*)
+		;;
+	*)
+		dir=`dirname "$file"`
+		mkdir -p "$dst"/"$dir"
+		cp "$file" "$dst"/"$dir"
+		;;
+	esac
 done

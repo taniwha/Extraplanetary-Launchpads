@@ -279,10 +279,10 @@ namespace ExtraplanetaryLaunchpads {
 			bool did_work;
 			int count;
 			do {
+				count = required.Where (r => r.amount > 0).Count ();
 				if (kerbalHours == 0) {
 					break;
 				}
-				count = required.Where (r => r.amount > 0).Count ();
 				if (count == 0)
 					break;
 				double work = kerbalHours / count;
@@ -333,15 +333,15 @@ namespace ExtraplanetaryLaunchpads {
 			bool did_work;
 			int count;
 			do {
-				if (kerbalHours == 0) {
-					break;
-				}
 				count = 0;
 				foreach (var bres in built) {
 					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					if (cres.amount - bres.amount > 0) {
 						count++;
 					}
+				}
+				if (kerbalHours == 0) {
+					break;
 				}
 				if (count == 0) {
 					break;

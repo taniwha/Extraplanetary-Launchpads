@@ -248,7 +248,7 @@ public class ELVesselWorkNet : VesselModule
 		//Debug.LogFormat ("[ELVesselWorkNet] OnLoadVessel {0}", vessel.vesselName);
 		BuildNetwork ();
 		// part modules start after vessel modules, so make FixedUpdate wait
-		// a frame to give the works sinks a chance to initialize
+		// a frame to give the work sinks a chance to initialize
 		partModulesStarted = false;
 
 		if (protoSinks != null) {

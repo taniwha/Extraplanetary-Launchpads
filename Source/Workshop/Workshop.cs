@@ -33,6 +33,7 @@ public interface ELWorkSink
 	void DoWork (double kerbalHours);
 	bool isActive { get; }
 	double CalculateWork ();
+	ELVesselWorkNet workNet { set; }
 }
 
 public interface ELWorkSource
@@ -40,6 +41,7 @@ public interface ELWorkSource
 	void UpdateProductivity ();
 	double Productivity { get; }
 	bool isActive { get; }
+	ELVesselWorkNet workNet { set; }
 }
 
 public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
@@ -74,7 +76,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		}
 	}
 	public bool isActive { get; private set; }
-	private ELVesselWorkNet workNet;
+	public ELVesselWorkNet workNet { get; set; }
 	private bool enableSkilled;
 	private bool enableUnskilled;
 

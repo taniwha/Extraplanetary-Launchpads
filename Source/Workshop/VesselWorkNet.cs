@@ -55,6 +55,7 @@ public class ELProtoWorkSink : ELWorkSink
 	}
 
 	public bool isActive { get; private set; }
+	public ELVesselWorkNet workNet { get; set; }
 	public double CalculateWork ()
 	{
 		return maxHours;
@@ -141,6 +142,13 @@ public class ELVesselWorkNet : VesselModule
 		if (vessel.loaded) {
 			sources = vessel.FindPartModulesImplementing<ELWorkSource> ();
 			sinks = vessel.FindPartModulesImplementing<ELWorkSink> ();
+
+			foreach (var source in sources) {
+				source.workNet = this;
+			}
+			foreach (var sink in sinks) {
+				sink.workNet = this;
+			}
 
 			UpdateProductivity (true);
 		}

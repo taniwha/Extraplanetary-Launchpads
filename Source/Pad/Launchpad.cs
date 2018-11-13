@@ -262,6 +262,16 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public ELVesselWorkNet workNet
+		{
+			get {
+				return control.workNet;
+			}
+			set {
+				control.workNet = value;
+			}
+		}
+
 		public double CalculateWork ()
 		{
 			return control.CalculateWork();

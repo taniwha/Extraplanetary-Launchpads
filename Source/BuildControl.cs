@@ -156,7 +156,7 @@ namespace ExtraplanetaryLaunchpads {
 		public ELVesselWorkNet workNet
 		{
 			get;
-			private set;
+			set;
 		}
 
 		public double productivity

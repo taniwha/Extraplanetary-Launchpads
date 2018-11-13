@@ -60,7 +60,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			elItems.Clear ();
 			foreach (AvailablePart ap in PartLoader.LoadedPartsList) {
-				if (ap.name.StartsWith ("kerbalEVA") || !ap.partPrefab) {
+				if (ap.name.StartsWith ("kerbalEVA") || !ap.partPrefab
+					|| ap.category == PartCategories.none
+					|| ap.TechRequired == "Unresearchable") {
 					continue;
 				}
 				bool isELItem = false;

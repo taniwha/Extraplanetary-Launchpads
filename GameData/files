@@ -12,6 +12,8 @@ ExtraplanetaryLaunchpads/Parts/Auger/part.cfg
 ExtraplanetaryLaunchpads/Parts/ConstructionDrone/HullElectricalHazard.png
 ExtraplanetaryLaunchpads/Parts/ConstructionDrone/black.png
 ExtraplanetaryLaunchpads/Parts/ConstructionDrone/constructionDrone.mu
+ExtraplanetaryLaunchpads/Parts/ConstructionDrone/depr-constructionDrone.mu
+ExtraplanetaryLaunchpads/Parts/ConstructionDrone/depr-part.cfg
 ExtraplanetaryLaunchpads/Parts/ConstructionDrone/hullTex1.png
 ExtraplanetaryLaunchpads/Parts/ConstructionDrone/ksp3meterhullwhiteLaserWarning.png
 ExtraplanetaryLaunchpads/Parts/ConstructionDrone/ksp_darkgrey_panel.png

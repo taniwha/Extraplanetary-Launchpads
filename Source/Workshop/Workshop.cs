@@ -223,7 +223,9 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 
 	private IEnumerator WaitAndUpdateProductivity ()
 	{
-		yield return null;
+		for (int i = 0; i < 5; i++) {
+			yield return null;
+		}
 		UpdateProductivity ();
 	}
 
@@ -285,6 +287,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			return;
 		}
 		workNet = vessel.FindVesselModuleImplementing<ELVesselWorkNet> ();
+		StartCoroutine (WaitAndUpdateProductivity ());
 	}
 
 	private void Update ()

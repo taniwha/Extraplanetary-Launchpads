@@ -9,6 +9,7 @@ TARGETS		:= bin/Launchpad.dll
 
 EL_FILES := \
 	CommandSeat/ControlReference.cs		\
+	CommandSeat/FixSeatName.cs			\
 	CommandSeat/NoControlSwitch.cs		\
 	Converter/Converter.cs				\
 	Converter/CoreHeat.cs				\

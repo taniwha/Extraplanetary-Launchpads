@@ -73,18 +73,15 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static List<ProtoCrewMember> GetCrewList (Part part)
 		{
-			if (part.CrewCapacity > 0) {
-				return part.protoModuleCrew;
-			} else {
-				var crew = new List<ProtoCrewMember> ();
-				var seats = part.FindModulesImplementing<KerbalSeat> ();
-				foreach (var s in seats) {
-					if (s.Occupant != null) {
-						crew.Add (s.Occupant.protoModuleCrew[0]);
-					}
+			var crew = new List<ProtoCrewMember> ();
+			var seats = part.FindModulesImplementing<KerbalSeat> ();
+			foreach (var s in seats) {
+				if (s.Occupant != null) {
+					crew.Add (s.Occupant.protoModuleCrew[0]);
 				}
-				return crew;
 			}
+			crew.AddRange (part.protoModuleCrew);
+			return crew;
 		}
 
 		public static double[] TimeSpan (double seconds)

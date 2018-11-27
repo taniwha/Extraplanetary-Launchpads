@@ -564,10 +564,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			for (int i = 0; i < ship.parts.Count; i++) {
 				var p = ship.parts[i];
-				var lc = p.FindModulesImplementing<LaunchClamp> ();
-				for (int j = 0; j < lc.Count; j++) {
-					(lc[j] as LaunchClamp).EnableExtension ();
-				}
 				var elc = p.FindModulesImplementing<ELExtendingLaunchClamp> ();
 				for (int j = 0; j < elc.Count; j++) {
 					(elc[j] as ELExtendingLaunchClamp).EnableExtension ();
@@ -628,6 +624,15 @@ namespace ExtraplanetaryLaunchpads {
 			this.filename = filename;
 			this.flagname = flagname;
 			ConfigNode craft = ConfigNode.Load (filename);
+			foreach (ConfigNode node in craft.nodes) {
+				if (node.name == "PART") {
+					string name = ShipTemplate.GetPartName (node);
+					string id = ShipTemplate.GetPartId (node);
+					if (name == "launchClamp1") {
+						node.SetValue("part", "ELExtendingLaunchClamp_" + id);
+					}
+				}
+			}
 			if ((buildCost = getBuildCost (craft)) != null) {
 				craftConfig = craft;
 				state = State.Planning;

@@ -564,9 +564,13 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			for (int i = 0; i < ship.parts.Count; i++) {
 				var p = ship.parts[i];
-				var elc = p.FindModulesImplementing<LaunchClamp> ();
+				var lc = p.FindModulesImplementing<LaunchClamp> ();
+				for (int j = 0; j < lc.Count; j++) {
+					(lc[j] as LaunchClamp).EnableExtension ();
+				}
+				var elc = p.FindModulesImplementing<ELExtendingLaunchClamp> ();
 				for (int j = 0; j < elc.Count; j++) {
-					(elc[j] as LaunchClamp).EnableExtension ();
+					(elc[j] as ELExtendingLaunchClamp).EnableExtension ();
 				}
 			}
 		}

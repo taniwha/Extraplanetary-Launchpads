@@ -51,6 +51,9 @@ public class ELFixSeatName : PartModule
 
 	public override void OnStart (StartState state)
 	{
+		if (HighLogic.LoadedSceneIsEditor) {
+			OnLoad(null);
+		}
 		StartCoroutine (WaitAndFixSeatNames ());
 	}
 

@@ -134,7 +134,7 @@ public class ELVesselWorkNet : VesselModule
 	double updateTimer;
 	bool haveWork;
 	bool started;
-	bool partModulesStarted;
+	int waitForPartModules;
 
 	void BuildNetwork ()
 	{
@@ -256,8 +256,8 @@ public class ELVesselWorkNet : VesselModule
 		//Debug.LogFormat ("[ELVesselWorkNet] OnLoadVessel {0}", vessel.vesselName);
 		BuildNetwork ();
 		// part modules start after vessel modules, so make FixedUpdate wait
-		// a frame to give the work sinks a chance to initialize
-		partModulesStarted = false;
+		// a few frames to give the work sinks a chance to initialize
+		waitForPartModules = 3;
 
 		if (protoSinks != null) {
 			for (int i = 0; i < protoSinks.Count; i++) {
@@ -342,8 +342,8 @@ public class ELVesselWorkNet : VesselModule
 		double timeDelta = TimeWarp.fixedDeltaTime;
 
 		if (vessel.loaded) {
-			if (!partModulesStarted) {
-				partModulesStarted = true;
+			if (waitForPartModules > 0) {
+				--waitForPartModules;
 				return;
 			}
 			if (updateTimer > 0) {

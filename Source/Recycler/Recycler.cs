@@ -30,6 +30,7 @@ public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlI
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField] public string RecycleField_name = "RecycleField";
 	[KSPField (guiName = "State", guiActive = true)] public string status;
+	[KSPField] public float EVARange = 1.5f;
 
 	[KSPField (isPersistant = true)]
 	public bool Operational = true;
@@ -139,6 +140,10 @@ public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlI
 	{
 		RecycleField = part.FindModelComponent<Collider> (RecycleField_name);
 		Debug.Log (String.Format ("[EL Recycler] OnStart: {0}", RecycleField));
+		if (EVARange > 0) {
+			EL_Utils.SetupEVAEvent (Events["Activate"], EVARange);
+			EL_Utils.SetupEVAEvent (Events["Deactivate"], EVARange);
+		}
 		if (RecycleField != null) {
 			RecycleField.enabled = false;
 			RecycleField.isTrigger = true;	//FIXME workaround for KSP 1.1 bug

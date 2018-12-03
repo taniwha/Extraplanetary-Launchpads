@@ -274,8 +274,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var required = builtStuff.required;
 
-			//Debug.Log (String.Format ("[EL Launchpad] KerbalHours: {0}",
-			//						  kerbalHours));
+			//Debug.LogFormat ("[EL Launchpad] KerbalHours: {0}", kerbalHours);
 			bool did_work;
 			int count;
 			do {
@@ -285,9 +284,10 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				if (count == 0)
 					break;
-				double work = kerbalHours / count;
 				did_work = false;
 				foreach (var res in required.Where (r => r.amount > 0)) {
+					double work = kerbalHours / count--;
+					kerbalHours -= work;
 					double amount = work / res.kerbalHours;
 					double base_amount = Math.Abs (amount);
 
@@ -296,25 +296,26 @@ namespace ExtraplanetaryLaunchpads {
 					double avail = padResources.ResourceAmount (res.name);
 					if (amount > avail)
 						amount = avail;
-					//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}:{3}:{4}",
-					//						  res.name, res.kerbalHours, res.amount, avail, amount));
+					//Debug.LogFormat ("[EL Launchpad] work:{0}:{1}:{2}:{3}:{4}",
+					//				 res.name, res.kerbalHours, res.amount, avail, amount);
 					if (amount <= 0)
 						continue;
 					did_work = true;
 					// do only the work required to process the actual amount
 					// of consumed resource
 					double dkH = work * amount / base_amount;
-					if (dkH > kerbalHours) {
-						dkH = kerbalHours;
+					if (dkH > work) {
+						dkH = work;
 					}
-					kerbalHours -= dkH;
+					work -= dkH;
+					// return any unused kerbal-hours to the pool
+					kerbalHours += work;
 					res.amount -= amount;
 					//Debug.Log("add delta: "+amount);
 					res.deltaAmount = amount;
 					padResources.TransferResource (res.name, -amount);
 				}
-				//Debug.Log (String.Format ("[EL Launchpad] work:{0}:{1}:{2}",
-				//						  did_work, kerbalHours, kerbalHours/base_kerbalHours));
+				//Debug.LogFormat ("[EL Launchpad] work:{0}:{1}", did_work, kerbalHours);
 			} while (did_work);
 
 			SetPadMass ();
@@ -347,9 +348,10 @@ namespace ExtraplanetaryLaunchpads {
 					break;
 				}
 
-				double work = kerbalHours / count;
 				did_work = false;
 				foreach (var bres in built) {
+					double work = kerbalHours / count--;
+					kerbalHours -= work;
 					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
 					if (remaining <= 0) {
@@ -365,10 +367,12 @@ namespace ExtraplanetaryLaunchpads {
 					// do only the work required to process the actual amount
 					// of returned or disposed resource
 					double dkH = work * amount / base_amount;
-					if (dkH > kerbalHours) {
-						dkH = kerbalHours;
+					if (dkH > work) {
+						dkH = work;
 					}
-					kerbalHours -= dkH;
+					work -= dkH;
+					// return any unused kerbal-hours to the pool
+					kerbalHours += work;
 
 					bres.amount += amount;
 					//Debug.Log("remove delta: "+amount);

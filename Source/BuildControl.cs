@@ -287,7 +287,6 @@ namespace ExtraplanetaryLaunchpads {
 				did_work = false;
 				foreach (var res in required.Where (r => r.amount > 0)) {
 					double work = kerbalHours / count--;
-					kerbalHours -= work;
 					double amount = work / res.kerbalHours;
 					double base_amount = Math.Abs (amount);
 
@@ -300,6 +299,7 @@ namespace ExtraplanetaryLaunchpads {
 					//				 res.name, res.kerbalHours, res.amount, avail, amount);
 					if (amount <= 0)
 						continue;
+					kerbalHours -= work;
 					did_work = true;
 					// do only the work required to process the actual amount
 					// of consumed resource
@@ -320,10 +320,24 @@ namespace ExtraplanetaryLaunchpads {
 
 			SetPadMass ();
 
+			// recount resources that still need to be processed into the build
+			count = required.Where (r => r.amount > 0).Count ();
 			if (count == 0) {
 				(builder as PartModule).StartCoroutine (DewarpAndBuildCraft ());
 				KACalarmID = "";
 			}
+		}
+
+		int CountResources (List<BuildResource> built, List<BuildResource> cost)
+		{
+			int count = 0;
+			foreach (var bres in built) {
+				var cres = ELBuildWindow.FindResource (cost, bres.name);
+				if (cres.amount - bres.amount > 0) {
+					count++;
+				}
+			}
+			return count;
 		}
 
 		private void DoWork_Cancel (double kerbalHours)
@@ -334,13 +348,7 @@ namespace ExtraplanetaryLaunchpads {
 			bool did_work;
 			int count;
 			do {
-				count = 0;
-				foreach (var bres in built) {
-					var cres = ELBuildWindow.FindResource (cost, bres.name);
-					if (cres.amount - bres.amount > 0) {
-						count++;
-					}
-				}
+				count = CountResources (built, cost);
 				if (kerbalHours == 0) {
 					break;
 				}
@@ -351,7 +359,6 @@ namespace ExtraplanetaryLaunchpads {
 				did_work = false;
 				foreach (var bres in built) {
 					double work = kerbalHours / count--;
-					kerbalHours -= work;
 					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
 					if (remaining <= 0) {
@@ -363,6 +370,7 @@ namespace ExtraplanetaryLaunchpads {
 					if (amount > remaining) {
 						amount = remaining;
 					}
+					kerbalHours -= work;
 					did_work = true;
 					// do only the work required to process the actual amount
 					// of returned or disposed resource
@@ -391,6 +399,8 @@ namespace ExtraplanetaryLaunchpads {
 
 			SetPadMass ();
 
+			// recount resources that still need to be taken from the build
+			count = CountResources (built, cost);
 			if (count == 0) {
 				state = State.Planning;
 				KACalarmID = "";

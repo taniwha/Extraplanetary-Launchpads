@@ -1,0 +1,52 @@
+values {
+	mass = ${math.floor(7.8 * modelSkinVolume * 1000 + 0.5)/1000}
+}
+PART
+{
+	name = ELLandingPad
+	module = Part
+	author = Bill Currie
+
+	MODEL {
+		model = ExtraplanetaryLaunchpads/Parts/LandingPad/LandingPad
+		position = 0, 0, 0
+		rotation = 0, 0, 0
+		scale = 1, 1, 1
+	}
+	rescaleFactor = 1.0
+	scale = 1.0
+
+
+	TechRequired = advConstruction
+	entryCost = 400
+	cost = ${math.floor((mass * 600 * 2.5) * 100 + 0.5) / 100}
+	category = Utility
+	subcategory = 0
+	title = KS-LP Landing Pad
+	manufacturer = Kairyuu Shipping
+	description = Give your new ships somewhere to land. Can be used to build ships too.
+	tags = cck-el
+
+	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
+	attachRules = 1,0,1,1,0
+
+	mass = ${mass}
+	dragModelType = default
+	maximum_drag = 0.2
+	minimum_drag = 0.15
+	angularDrag = 2
+	crashTolerance = 8
+	breakingForce = 2000
+	breakingTorque = 2000
+	maxTemp = 1700
+
+	MODULE {
+		name = ELLaunchpad
+		SpawnTransform = ReferenceTransform
+	}
+	MODULE {
+		name = ELTarget
+		TargetName = Landing Pad
+		TargetTransform = ReferenceTransform
+	}
+}

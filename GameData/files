@@ -53,6 +53,9 @@ ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/hcrpnormal.cfg
 ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/hcrpsmall.cfg
 ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/model.mu
 ExtraplanetaryLaunchpads/Parts/HexCanRocketParts/model000.png
+ExtraplanetaryLaunchpads/Parts/LandingPad/LandingPad.cfg
+ExtraplanetaryLaunchpads/Parts/LandingPad/LandingPad.mu
+ExtraplanetaryLaunchpads/Parts/LandingPad/LandingPad.png
 ExtraplanetaryLaunchpads/Parts/Magnetometer/Magnetometer.png
 ExtraplanetaryLaunchpads/Parts/Magnetometer/model.mu
 ExtraplanetaryLaunchpads/Parts/Magnetometer/part.cfg

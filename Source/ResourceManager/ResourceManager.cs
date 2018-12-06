@@ -26,6 +26,8 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
+	using KAS;
+
 	public class RMResourceManager
 	{
 		class ConnectedPartSet {
@@ -159,6 +161,18 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void GetOtherPart (KASModuleStrut strut, ConnectedPartSet cp)
+		{
+			Part otherPart = null;
+			if (partMap.TryGetValue (strut.dockedPartID, out otherPart)) {
+				if (strut.vesselInfo != null) {
+					var vi = strut.vesselInfo;
+					cp.Add (otherPart, vi.name);
+					return;
+				}
+			}
+		}
+
 		//FIXME rework for multiple connections
 		ConnectedPartSet ConnectedParts (Part part)
 		{
@@ -192,6 +206,10 @@ namespace ExtraplanetaryLaunchpads {
 				}
 
 				//FIXME need to add KAS connectors
+				if (module.moduleName == "KASModuleStrut") {
+					var kasStrut = new KASModuleStrut (module);
+					GetOtherPart (kasStrut, connectedParts);
+				}
 			}
 			return connectedParts;
 		}

@@ -68,6 +68,7 @@ EL_FILES := \
 	Workshop/ConstructionSkill.cs		\
 	Workshop/VesselWorkNet.cs			\
 	Workshop/Workshop.cs				\
+	lib/KASWrapper.cs					\
 	lib/KISWrapper.cs					\
 	lib/KACWrapper.cs					\
 	lib/KerbalStatsWrapper.cs			\

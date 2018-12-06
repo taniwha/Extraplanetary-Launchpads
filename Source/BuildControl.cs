@@ -626,6 +626,7 @@ namespace ExtraplanetaryLaunchpads {
 			KSP.UI.Screens.StageManager.BeginFlight ();
 
 			builtStuff = null;	// ensure pad mass gets reset
+			SetPadMass ();
 			if (builder.capture) {
 				FlightGlobals.overrideOrbit = true;
 				(builder as PartModule).StartCoroutine (CaptureCraft ());

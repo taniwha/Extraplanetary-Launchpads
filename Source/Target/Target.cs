@@ -31,6 +31,9 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField]
 		public string TargetTransform;
 		public Transform targetTransform;
+		[KSPField]
+		public string VesselTargetMode = "DirectionVelocityAndOrientation";
+		public VesselTargetModes vesselTargetMode;
 
 		public override string GetInfo ()
 		{
@@ -87,7 +90,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 		public VesselTargetModes GetTargetingMode ()
 		{
-			return VesselTargetModes.DirectionVelocityAndOrientation;
+			return vesselTargetMode;
 		}
 		public bool GetActiveTargetable()
 		{
@@ -96,14 +99,6 @@ namespace ExtraplanetaryLaunchpads {
 		public string GetDisplayName()
 		{
 			return TargetName;
-		}
-
-		public override void OnLoad (ConfigNode node)
-		{
-			targetTransform = part.FindModelTransform (TargetTransform);
-			if (targetTransform == null) {
-				targetTransform = transform;
-			}
 		}
 
 		public void Update ()
@@ -135,8 +130,30 @@ namespace ExtraplanetaryLaunchpads {
 			FlightGlobals.fetch.SetVesselTarget (null);
 		}
 
-		public override void OnAwake ()
+		public override void OnStart (PartModule.StartState state)
 		{
+			targetTransform = part.FindModelTransform (TargetTransform);
+			if (targetTransform == null) {
+				targetTransform = transform;
+			}
+
+			switch (VesselTargetMode) {
+				case "Direction":
+					vesselTargetMode = VesselTargetModes.Direction;
+					break;
+				case "DirectionAndVelocity":
+					vesselTargetMode = VesselTargetModes.DirectionAndVelocity;
+					break;
+				case "DirectionVelocityAndOrientation":
+					vesselTargetMode = VesselTargetModes.DirectionVelocityAndOrientation;
+					break;
+				default:
+					Debug.LogWarning ($"[ELTarget] Invalid target mode {VesselTargetMode}");
+					Debug.LogWarning (" defaulting to DirectionVelocityAndOrientation");
+					VesselTargetMode = "DirectionVelocityAndOrientation";
+					vesselTargetMode = VesselTargetModes.DirectionVelocityAndOrientation;
+					break;
+			}
 		}
 	}
 }

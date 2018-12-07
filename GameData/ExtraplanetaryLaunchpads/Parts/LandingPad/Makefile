@@ -1,7 +1,7 @@
 LANDINGPAD = \
 	LandingPad.png	\
 	LandingPad.cfg	\
-	LandingPad.mu		\
+	LandingPad.mu	\
 	$e
 
 all: ${LANDINGPAD}

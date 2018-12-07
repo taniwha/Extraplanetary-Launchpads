@@ -48,5 +48,6 @@ PART
 		name = ELTarget
 		TargetName = Landing Pad
 		TargetTransform = ReferenceTransform
+		VesselTargetMode = DirectionAndVelocity
 	}
 }

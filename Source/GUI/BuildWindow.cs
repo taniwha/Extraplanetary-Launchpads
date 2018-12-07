@@ -61,9 +61,14 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		static bool KACinited = false;
+
 		internal void Start()
 		{
-			KACWrapper.InitKACWrapper();
+			if (!KACinited) {
+				KACinited = true;
+				KACWrapper.InitKACWrapper();
+			}
 			if (KACWrapper.APIReady)
 			{
 				//All good to go

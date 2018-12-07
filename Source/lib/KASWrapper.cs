@@ -365,39 +365,44 @@ namespace ExtraplanetaryLaunchpads.KAS {
 	public class KASWrapper {
 
 		internal const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
+		static bool haveKAS = false;
+		static bool inited = false;
 
 		public static bool Initialize ()
 		{
-			AssemblyLoader.LoadedAssembly KASAPIasm = null;
-			AssemblyLoader.LoadedAssembly KASasm = null;
-			AssemblyLoader.LoadedAssembly KASLegacyasm = null;
+			if (!inited) {
+				inited = true; // do this only once, assemblies won't change
+				AssemblyLoader.LoadedAssembly KASAPIasm = null;
+				AssemblyLoader.LoadedAssembly KASasm = null;
+				AssemblyLoader.LoadedAssembly KASLegacyasm = null;
 
-			foreach (var la in AssemblyLoader.loadedAssemblies) {
-				if (la.assembly.GetName ().Name.Equals ("KAS-API-v1", StringComparison.InvariantCultureIgnoreCase)) {
-					KASAPIasm = la;
-				} else if (la.assembly.GetName ().Name.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase)) {
-					if (KASLegacyasm == null) {
-						KASLegacyasm = la;
-					} else {
-						KASasm = la;
+				foreach (var la in AssemblyLoader.loadedAssemblies) {
+					if (la.assembly.GetName ().Name.Equals ("KAS-API-v1", StringComparison.InvariantCultureIgnoreCase)) {
+						KASAPIasm = la;
+					} else if (la.assembly.GetName ().Name.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase)) {
+						if (KASLegacyasm == null) {
+							KASLegacyasm = la;
+						} else {
+							KASasm = la;
+						}
 					}
 				}
-			}
-			bool haveKAS = false;
-			if (KASAPIasm != null && KASasm != null) {
-				haveKAS = true;
-				ILinkPeer.Initialize (KASAPIasm.assembly);
-				ILinkSource.Initialize (KASAPIasm.assembly);
-				ILinkTarget.Initialize (KASAPIasm.assembly);
-				ILinkJoint.Initialize (KASAPIasm.assembly);
-				IKasLinkEvent.Initialize (KASAPIasm.assembly);
-				IKasEvents.Initialize (KASAPIasm.assembly);
+				haveKAS = false;
+				if (KASAPIasm != null && KASasm != null) {
+					haveKAS = true;
+					ILinkPeer.Initialize (KASAPIasm.assembly);
+					ILinkSource.Initialize (KASAPIasm.assembly);
+					ILinkTarget.Initialize (KASAPIasm.assembly);
+					ILinkJoint.Initialize (KASAPIasm.assembly);
+					IKasLinkEvent.Initialize (KASAPIasm.assembly);
+					IKasEvents.Initialize (KASAPIasm.assembly);
 
-				KASJointCableBase.Initialize (KASasm.assembly);
-			}
-			if (KASLegacyasm != null) {
-				haveKAS = true;
-				KASModuleStrut.Initialize (KASLegacyasm.assembly);
+					KASJointCableBase.Initialize (KASasm.assembly);
+				}
+				if (KASLegacyasm != null) {
+					haveKAS = true;
+					KASModuleStrut.Initialize (KASLegacyasm.assembly);
+				}
 			}
 
 			return haveKAS;

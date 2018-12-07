@@ -153,18 +153,22 @@ namespace ExtraplanetaryLaunchpads.KIS {
 	}
 
 	public class KISWrapper {
+		static bool haveKIS = false;
+		static bool inited = false;
 
 		public static bool Initialize ()
 		{
-			var KISasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ();
-			if (KISasm == null) {
-				return false;
+			if (!inited) {
+				inited = true; // do this only once, assemblies won't change
+				var KISasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ();
+				if (KISasm != null) {
+					ModuleKISInventory.Initialize (KISasm.assembly);
+					KIS_Item.Initialize (KISasm.assembly);
+					KIS_Item.ResourceInfo.Initialize (KISasm.assembly);
+					haveKIS = true;
+				}
 			}
-
-			ModuleKISInventory.Initialize (KISasm.assembly);
-			KIS_Item.Initialize (KISasm.assembly);
-			KIS_Item.ResourceInfo.Initialize (KISasm.assembly);
-			return true;
+			return haveKIS;
 		}
 
 		static void GetResources (ModuleKISInventory inv, Dictionary<string, RMResourceInfo> resources)

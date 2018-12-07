@@ -169,12 +169,24 @@ namespace ExtraplanetaryLaunchpads {
 				if (strut.vesselInfo != null) {
 					var vi = strut.vesselInfo;
 					cp.Add (otherPart, vi.name);
-					return;
 				}
 			}
 		}
 
-		void CheckKASLink (ILinkPeer peer)
+		void GetOtherPart (KASJointCableBase joint, ConnectedPartSet cp)
+		{
+			if (joint.isLinked) {
+				var srcVessel = joint.linkSource.part.vessel;
+				var dstVessel = joint.linkTarget.part.vessel;
+				if (srcVessel == dstVessel
+					&& joint.persistedTgtVesselInfo != null) {
+					cp.Add (joint.linkTarget.part,
+							joint.persistedTgtVesselInfo.name);
+				}
+			}
+		}
+
+		bool CheckKASLink (ILinkPeer peer)
 		{
 			if (peer.isLinked && peer.otherPeer != null) {
 				var thisVessel = peer.part.vessel;
@@ -183,8 +195,10 @@ namespace ExtraplanetaryLaunchpads {
 					&& !visitedVessels.Contains (otherVessel.id)) {
 					visitedVessels.Add (otherVessel.id);
 					ProcessParts (otherVessel.parts[0].localRoot, AddModule(otherVessel.vesselName));
+					return true;
 				}
 			}
+			return false;
 		}
 
 		//FIXME rework for multiple connections
@@ -233,8 +247,9 @@ namespace ExtraplanetaryLaunchpads {
 					// case KASJointCableBase is to be checked, or even
 					// just connected on the same vessel (just ignore)
 					var peer = new ILinkPeer (module);
-					CheckKASLink (peer);
-					continue;
+					if (CheckKASLink (peer)) {
+						continue;
+					}
 				}
 
 				if (module.moduleName == "KASLinkTargetBase") {
@@ -243,9 +258,14 @@ namespace ExtraplanetaryLaunchpads {
 					// case KASJointCableBase is to be checked, or even
 					// just connected on the same vessel (just ignore)
 					var peer = new ILinkPeer (module);
-					if (peer.cfgLinkType == "MdHose") {
-						CheckKASLink (peer);
+					if (peer.cfgLinkType == "MdHose" && CheckKASLink (peer)) {
+						continue;
 					}
+				}
+
+				if (module.moduleName == "KASJointCableBase") {
+					var kasJoint = new KASJointCableBase (module);
+					GetOtherPart (kasJoint, connectedParts);
 				}
 			}
 			return connectedParts;

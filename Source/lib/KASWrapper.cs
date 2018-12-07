@@ -181,7 +181,7 @@ namespace ExtraplanetaryLaunchpads.KAS {
 			}
 		}
 
-		object obj;
+		protected object obj;
 
 		public ILinkJoint (object obj)
 		{
@@ -295,6 +295,38 @@ namespace ExtraplanetaryLaunchpads.KAS {
 		}
 	}
 
+	public class KASJointCableBase: ILinkJoint {
+		static Type AbstractJoint_class;
+
+		static FieldInfo persistedSrcVesselInfo_field;
+		static FieldInfo persistedTgtVesselInfo_field;
+
+		public DockedVesselInfo persistedSrcVesselInfo
+		{
+			get {
+				return (DockedVesselInfo) persistedSrcVesselInfo_field.GetValue (obj);
+			}
+		}
+
+		public DockedVesselInfo persistedTgtVesselInfo
+		{
+			get {
+				return (DockedVesselInfo) persistedTgtVesselInfo_field.GetValue (obj);
+			}
+		}
+
+		public KASJointCableBase (object obj) : base (obj)
+		{
+		}
+
+		internal static new void Initialize (Assembly KASasm)
+		{
+			AbstractJoint_class = KASasm.GetTypes().Where (t => t.Name.Equals ("AbstractJoint")).FirstOrDefault ();
+			persistedSrcVesselInfo_field = AbstractJoint_class.GetField ("persistedSrcVesselInfo", KASWrapper.bindingFlags);
+			persistedTgtVesselInfo_field = AbstractJoint_class.GetField ("persistedTgtVesselInfo", KASWrapper.bindingFlags);
+		}
+	}
+
 	public class KASModuleStrut {
 		static Type KASModuleAttachCore_class;
 
@@ -336,21 +368,39 @@ namespace ExtraplanetaryLaunchpads.KAS {
 
 		public static bool Initialize ()
 		{
-			var KASasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ();
-			if (KASasm == null) {
-				return false;
+			AssemblyLoader.LoadedAssembly KASAPIasm = null;
+			AssemblyLoader.LoadedAssembly KASasm = null;
+			AssemblyLoader.LoadedAssembly KASLegacyasm = null;
+
+			foreach (var la in AssemblyLoader.loadedAssemblies) {
+				if (la.assembly.GetName ().Name.Equals ("KAS-API-v1", StringComparison.InvariantCultureIgnoreCase)) {
+					KASAPIasm = la;
+				} else if (la.assembly.GetName ().Name.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase)) {
+					if (KASLegacyasm == null) {
+						KASLegacyasm = la;
+					} else {
+						KASasm = la;
+					}
+				}
+			}
+			bool haveKAS = false;
+			if (KASAPIasm != null && KASasm != null) {
+				haveKAS = true;
+				ILinkPeer.Initialize (KASAPIasm.assembly);
+				ILinkSource.Initialize (KASAPIasm.assembly);
+				ILinkTarget.Initialize (KASAPIasm.assembly);
+				ILinkJoint.Initialize (KASAPIasm.assembly);
+				IKasLinkEvent.Initialize (KASAPIasm.assembly);
+				IKasEvents.Initialize (KASAPIasm.assembly);
+
+				KASJointCableBase.Initialize (KASasm.assembly);
+			}
+			if (KASLegacyasm != null) {
+				haveKAS = true;
+				KASModuleStrut.Initialize (KASLegacyasm.assembly);
 			}
 
-			KASModuleStrut.Initialize (KASasm.assembly);
-
-			var KASAPIasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KAS-API-v1", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ();
-			ILinkPeer.Initialize (KASAPIasm.assembly);
-			ILinkSource.Initialize (KASAPIasm.assembly);
-			ILinkTarget.Initialize (KASAPIasm.assembly);
-			ILinkJoint.Initialize (KASAPIasm.assembly);
-			IKasLinkEvent.Initialize (KASAPIasm.assembly);
-			IKasEvents.Initialize (KASAPIasm.assembly);
-			return true;
+			return haveKAS;
 		}
 	}
 }

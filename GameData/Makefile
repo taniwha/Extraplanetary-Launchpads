@@ -14,6 +14,7 @@ ZIP		:= zip
 
 SUBDIRS=\
 	ExtraplanetaryLaunchpads/Parts/ControlReference	\
+	ExtraplanetaryLaunchpads/Parts/LandingPad	\
 	ExtraplanetaryLaunchpads/Parts/MicroPad	\
 	ExtraplanetaryLaunchpads/Parts/SurveyBuoy	\
 	ExtraplanetaryLaunchpads/Parts/smelter	\

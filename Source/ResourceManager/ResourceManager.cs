@@ -57,6 +57,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 		HashSet<uint> visitedParts;
+		HashSet<Guid> visitedVessels;
 		Dictionary<uint, Part> partMap;
 		Dictionary<uint, RMResourceSet> symmetryDict;
 		public List<RMResourceSet> symmetrySets;
@@ -173,6 +174,19 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void CheckKASLink (ILinkPeer peer)
+		{
+			if (peer.isLinked && peer.otherPeer != null) {
+				var thisVessel = peer.part.vessel;
+				var otherVessel = peer.otherPeer.part.vessel;
+				if (thisVessel != otherVessel
+					&& !visitedVessels.Contains (otherVessel.id)) {
+					visitedVessels.Add (otherVessel.id);
+					ProcessParts (otherVessel.parts[0].localRoot, AddModule(otherVessel.vesselName));
+				}
+			}
+		}
+
 		//FIXME rework for multiple connections
 		ConnectedPartSet ConnectedParts (Part part)
 		{
@@ -207,8 +221,31 @@ namespace ExtraplanetaryLaunchpads {
 
 				//FIXME need to add KAS connectors
 				if (module.moduleName == "KASModuleStrut") {
+					// legacy pipe connector
 					var kasStrut = new KASModuleStrut (module);
 					GetOtherPart (kasStrut, connectedParts);
+					continue;
+				}
+
+				if (module.moduleName == "KASLinkResourceConnector") {
+					// new resoruce connector. works when undocked!
+					// however, can be used to dock the vessel, in which
+					// case KASJointCableBase is to be checked, or even
+					// just connected on the same vessel (just ignore)
+					var peer = new ILinkPeer (module);
+					CheckKASLink (peer);
+					continue;
+				}
+
+				if (module.moduleName == "KASLinkTargetBase") {
+					// new resoruce connector. works when undocked!
+					// however, can be used to dock the vessel, in which
+					// case KASJointCableBase is to be checked, or even
+					// just connected on the same vessel (just ignore)
+					var peer = new ILinkPeer (module);
+					if (peer.cfgLinkType == "MdHose") {
+						CheckKASLink (peer);
+					}
 				}
 			}
 			return connectedParts;
@@ -328,8 +365,10 @@ namespace ExtraplanetaryLaunchpads {
 
 		public RMResourceManager (List<Part> parts, bool useFlightID)
 		{
+			visitedVessels = new HashSet<Guid> ();
 			string vesselName = "root";
 			if (parts[0].vessel != null) {
+				visitedVessels.Add (parts[0].vessel.id);
 				vesselName = parts[0].vessel.vesselName;
 			}
 			this.useFlightID = useFlightID;

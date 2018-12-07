@@ -118,7 +118,7 @@ namespace ExtraplanetaryLaunchpads {
 			node.AddValue ("link_lfo_sliders", link_lfo_sliders);
 		}
 
-		void onVesselChange (Vessel v)
+		void RebuildSets (Vessel v)
 		{
 			resourceManager = new RMResourceManager (v.parts, true);
 			resscroll.Reset ();
@@ -138,10 +138,39 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateGUIState ();
 		}
 
+		IEnumerator WaitAndRebuildSets (Vessel v)
+		{
+			for (int i = 5; i-- > 0; ) {
+				yield return null;
+			}
+			RebuildSets (v);
+		}
+
+		void onVesselChange (Vessel v)
+		{
+			StartCoroutine (WaitAndRebuildSets (v));
+		}
+
 		void onVesselWasModified (Vessel v)
 		{
 			if (FlightGlobals.ActiveVessel == v) {
+				StartCoroutine (WaitAndRebuildSets (v));
+			}
+		}
 
+		void OnLinkCreated (KAS.IKasLinkEvent evt)
+		{
+			if (evt.source.part.vessel == FlightGlobals.ActiveVessel
+				|| evt.target.part.vessel == FlightGlobals.ActiveVessel) {
+				StartCoroutine (WaitAndRebuildSets (FlightGlobals.ActiveVessel));
+			}
+		}
+
+		void OnLinkBroken (KAS.IKasLinkEvent evt)
+		{
+			if (evt.source.part.vessel == FlightGlobals.ActiveVessel
+				|| evt.target.part.vessel == FlightGlobals.ActiveVessel) {
+				StartCoroutine (WaitAndRebuildSets (FlightGlobals.ActiveVessel));
 			}
 		}
 
@@ -167,6 +196,8 @@ namespace ExtraplanetaryLaunchpads {
 			instance = this;
 			GameEvents.onVesselChange.Add (onVesselChange);
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			KAS.IKasEvents.OnLinkCreated.Add (OnLinkCreated);
+			KAS.IKasEvents.OnLinkBroken.Add (OnLinkBroken);
 			GameEvents.onHideUI.Add (onHideUI);
 			GameEvents.onShowUI.Add (onShowUI);
 			enabled = false;
@@ -180,6 +211,8 @@ namespace ExtraplanetaryLaunchpads {
 			instance = null;
 			GameEvents.onVesselChange.Remove (onVesselChange);
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
+			KAS.IKasEvents.OnLinkCreated.Remove (OnLinkCreated);
+			KAS.IKasEvents.OnLinkBroken.Remove (OnLinkBroken);
 			GameEvents.onHideUI.Remove (onHideUI);
 			GameEvents.onShowUI.Remove (onShowUI);
 		}

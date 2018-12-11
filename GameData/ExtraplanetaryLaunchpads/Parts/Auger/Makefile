@@ -11,6 +11,6 @@ ${AUGER} : Auger.blend
 	blender -noaudio --background Auger.blend -P ../../../../tools/mass-export.py
 
 clean:
-	rm -f ${AUGER}
+	rm -f ${AUGER} model000.mbm.png
 
 .PHONY: all clean install

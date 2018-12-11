@@ -13,10 +13,12 @@ TAR		:= tar
 ZIP		:= zip
 
 SUBDIRS=\
+	ExtraplanetaryLaunchpads/Parts/Auger	\
 	ExtraplanetaryLaunchpads/Parts/ControlReference	\
 	ExtraplanetaryLaunchpads/Parts/LandingPad	\
 	ExtraplanetaryLaunchpads/Parts/MicroPad	\
 	ExtraplanetaryLaunchpads/Parts/SurveyBuoy	\
+	ExtraplanetaryLaunchpads/Parts/Workshop	\
 	ExtraplanetaryLaunchpads/Parts/smelter	\
 	$e
 

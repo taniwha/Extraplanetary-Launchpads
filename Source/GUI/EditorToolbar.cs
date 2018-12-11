@@ -32,6 +32,7 @@ namespace ExtraplanetaryLaunchpads {
 		static Icon icon;
 		static string[] elResources = {"MetalOre", "Metal", "ScrapMetal", "RocketParts"};
 		static HashSet<string> elItems;
+		static bool haveCCK;
 
 		bool elItemFilter (AvailablePart ap)
 		{
@@ -46,8 +47,10 @@ namespace ExtraplanetaryLaunchpads {
 					subcat.button.SetIcon (icon);
 				}
 			}
-			cat = PartCategorizer.Instance.filters.Find (c => c.button.categoryName == "Filter by Function");
-			PartCategorizer.AddCustomSubcategoryFilter (cat, "EL Items", "EL Items", icon, elItemFilter);
+			if (!haveCCK) {
+				cat = PartCategorizer.Instance.filters.Find (c => c.button.categoryName == "Filter by Function");
+				PartCategorizer.AddCustomSubcategoryFilter (cat, "EL Items", "EL Items", icon, elItemFilter);
+			}
 		}
 
 		void Awake ()
@@ -57,6 +60,13 @@ namespace ExtraplanetaryLaunchpads {
 				texture = GameDatabase.Instance.GetTexture ("ExtraplanetaryLaunchpads/Textures/icon_filter", false);
 				icon = new Icon ("EL icon", texture, texture, true);
 				elItems = new HashSet<string> ();
+				haveCCK = false;
+				foreach (var asm in AssemblyLoader.loadedAssemblies) {
+					if (asm.assembly.GetName ().Name.Equals ("CCK", StringComparison.InvariantCultureIgnoreCase)) {
+						haveCCK = true;
+						break;
+					}
+				}
 			}
 			elItems.Clear ();
 			foreach (AvailablePart ap in PartLoader.LoadedPartsList) {

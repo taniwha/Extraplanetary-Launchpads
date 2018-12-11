@@ -93,7 +93,7 @@ namespace ExtraplanetaryLaunchpads {
 						}
 					}
 				}
-				Debug.Log (String.Format ("[EL PF] checking: {0} {1}", ap.name, isELItem));
+				//Debug.Log ($"[EL PF] checking: {ap.name} {isELItem}");
 				if (isELItem) {
 					elItems.Add (ap.name);
 				}

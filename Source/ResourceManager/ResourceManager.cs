@@ -364,7 +364,8 @@ namespace ExtraplanetaryLaunchpads {
 					if (visitedParts.Contains (id)) {
 						continue;
 					}
-					if (p.symmetryCounterparts.Count > 0) {
+					if (p.symmetryCounterparts.Count > 0
+						&& symmetryDict.ContainsKey (id)) {
 						RMResourceSet sym = symmetryDict[id];
 						foreach (var s in sym.parts) {
 							uint sid = GetID (s);

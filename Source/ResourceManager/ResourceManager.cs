@@ -84,8 +84,14 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			AttachNode node = null;
 			if (separator is ModuleAnchoredDecoupler) {
+				if (!(separator as ModuleAnchoredDecoupler).stagingEnabled) {
+					return;
+				}
 				node = (separator as ModuleAnchoredDecoupler).ExplosiveNode;
 			} else if (separator is ModuleDecouple) {
+				if (!(separator as ModuleDecouple).stagingEnabled) {
+					return;
+				}
 				node = (separator as ModuleDecouple).ExplosiveNode;
 			} else if (separator is ModuleDockingNode) {
 				// if referenceNode.attachedPart is not null, then the port

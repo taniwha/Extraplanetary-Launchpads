@@ -13,14 +13,15 @@ TAR		:= tar
 ZIP		:= zip
 
 SUBDIRS=\
-	ExtraplanetaryLaunchpads/Parts/Auger	\
+	ExtraplanetaryLaunchpads/Parts/Auger			\
 	ExtraplanetaryLaunchpads/Parts/ControlReference	\
-	ExtraplanetaryLaunchpads/Parts/LandingPad	\
-	ExtraplanetaryLaunchpads/Parts/MicroPad	\
-	ExtraplanetaryLaunchpads/Parts/SurveyBuoy	\
-	ExtraplanetaryLaunchpads/Parts/Workshop	\
-	ExtraplanetaryLaunchpads/Parts/smelter	\
-	$e
+	ExtraplanetaryLaunchpads/Parts/LandingPad		\
+	ExtraplanetaryLaunchpads/Parts/MicroPad			\
+	ExtraplanetaryLaunchpads/Parts/RecycleBin		\
+	ExtraplanetaryLaunchpads/Parts/SurveyBuoy		\
+	ExtraplanetaryLaunchpads/Parts/Workshop			\
+	ExtraplanetaryLaunchpads/Parts/rocket_builder	\
+	ExtraplanetaryLaunchpads/Parts/smelter
 
 all clean:
 	@for dir in ${SUBDIRS}; do \

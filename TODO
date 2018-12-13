@@ -32,3 +32,5 @@ electronics
 Angel-125 - Today at 2:40 AM
 I once said that if @taniwha decided that Ore -> RubberChickens ->RocketParts was the resource chain, I'd adopt it
 ￼2
+
+12:45Electrocutor: You would place a surveyor tripod on the ground, then use it to bring up an interface where you select the vessel and get the displacement and rotation controls you get like when in the VAB. Once it's where you want, you finish and it auto-places stakes at the bounding box points. This way it removes the manual x,z stuff needed for the current stakes and you know which way and where your thing will be built.

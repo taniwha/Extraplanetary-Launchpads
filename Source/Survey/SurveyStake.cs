@@ -127,19 +127,15 @@ namespace ExtraplanetaryLaunchpads {
 				CreatePlaque ();
 				UpdatePlaque ();
 			}
-			GameEvents.onPartDie.Add(OnPartDie);
 		}
 
 		void OnDestroy ()
 		{
-			GameEvents.onPartDie.Remove(OnPartDie);
 		}
 
-		public void OnPartDie (Part p)
+		public void OnPartDie ()
 		{
-			if (p == part) {
-				ELSurveyTracker.instance.RemoveStake (vessel);
-			}
+			ELSurveyTracker.instance.RemoveStake (vessel);
 		}
 
 		[KSPEvent(active = true, guiActiveUnfocused = true,

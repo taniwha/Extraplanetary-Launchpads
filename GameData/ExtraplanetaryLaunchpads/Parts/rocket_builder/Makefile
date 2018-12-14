@@ -1,16 +1,16 @@
-AUGER = \
+ROCKETBUILDER = \
 	rocket_builder.mu		\
 	$e
 
-all: ${AUGER}
+all: ${ROCKETBUILDER}
 
 install: all
 	#nothing to do as GameData makefile will take care of installation
 
-${AUGER} : rocket_builder.blend
+${ROCKETBUILDER} : rocket_builder.blend
 	blender -noaudio --background rocket_builder.blend -P ../../../../tools/mass-export.py
 
 clean:
-	rm -f ${AUGER} model000.mbm.png
+	rm -f ${ROCKETBUILDER} model000.mbm.png
 
 .PHONY: all clean install

@@ -14,12 +14,16 @@ ZIP		:= zip
 
 SUBDIRS=\
 	ExtraplanetaryLaunchpads/Parts/Auger			\
+	ExtraplanetaryLaunchpads/Parts/ConstructionDrone\
 	ExtraplanetaryLaunchpads/Parts/ControlReference	\
 	ExtraplanetaryLaunchpads/Parts/LandingPad		\
+	ExtraplanetaryLaunchpads/Parts/Mallet			\
 	ExtraplanetaryLaunchpads/Parts/MicroPad			\
 	ExtraplanetaryLaunchpads/Parts/RecycleBin		\
 	ExtraplanetaryLaunchpads/Parts/SurveyBuoy		\
+	ExtraplanetaryLaunchpads/Parts/SurveyStake		\
 	ExtraplanetaryLaunchpads/Parts/Workshop			\
+	ExtraplanetaryLaunchpads/Parts/launchpad2		\
 	ExtraplanetaryLaunchpads/Parts/rocket_builder	\
 	ExtraplanetaryLaunchpads/Parts/smelter
 

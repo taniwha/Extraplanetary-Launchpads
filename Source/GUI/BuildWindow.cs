@@ -37,6 +37,7 @@ namespace ExtraplanetaryLaunchpads {
 		static Rect windowpos;
 		static bool highlight_pad = true;
 		static bool link_lfo_sliders = true;
+		static double minimum_alarm_time = 60;
 
 		static ELCraftBrowser craftlist = null;
 		static ScrollView resScroll = new ScrollView (680,300);
@@ -123,6 +124,10 @@ namespace ExtraplanetaryLaunchpads {
 			val = node.GetValue ("link_lfo_sliders");
 			if (val != null) {
 				bool.TryParse (val, out link_lfo_sliders);
+			}
+			val = node.GetValue ("minimum_alarm_time");
+			if (val != null) {
+				double.TryParse (val, out minimum_alarm_time);
 			}
 		}
 
@@ -361,14 +366,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			double required = br.amount;
 			double available = control.padResources.ResourceAmount (br.name);
-			double alarmTime;
+			double eta = 0;
 			string percent = (fraction * 100).ToString ("G4") + "%";
 			if (control.paused) {
 				percent = percent + "[paused]";
-				alarmTime = 0; // need assignment or compiler complains about use of unassigned variable
 			} else {
-				double eta = BuildETA (br, req, forward);
-				alarmTime = Planetarium.GetUniversalTime () + eta;
+				eta = BuildETA (br, req, forward);
 				percent = percent + " " + EL_Utils.TimeSpanString (eta);
 
 			}
@@ -399,7 +402,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.FlexibleSpace ();
 
 			GUILayout.EndHorizontal ();
-			return alarmTime;
+			return eta;
 		}
 
 		void SelectPad_start ()
@@ -632,15 +635,18 @@ namespace ExtraplanetaryLaunchpads {
 
 		void BuildProgress (bool forward)
 		{
-			double mostFutureAlarmTime = 0;
+			double longestETA = 0;
 			foreach (var br in control.builtStuff.required) {
 				var req = FindResource (control.buildCost.required, br.name);
-				double alarmTime = ResourceProgress (br.name, br, req, forward);
-				if (alarmTime > mostFutureAlarmTime) {
-					mostFutureAlarmTime = alarmTime;
+				double eta = ResourceProgress (br.name, br, req, forward);
+				if (eta > longestETA) {
+					longestETA = eta;
 				}
 			}
-			UpdateAlarm (mostFutureAlarmTime, forward);
+			if (longestETA > 0 && longestETA > minimum_alarm_time) {
+				double alarmTime = Planetarium.GetUniversalTime () + longestETA;
+				UpdateAlarm (alarmTime, forward);
+			}
 		}
 
 		void OptionalResources ()

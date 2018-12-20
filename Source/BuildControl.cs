@@ -277,6 +277,11 @@ namespace ExtraplanetaryLaunchpads {
 			//Debug.LogFormat ("[EL Launchpad] KerbalHours: {0}", kerbalHours);
 			bool did_work;
 			int count;
+
+			for (int i = required.Count; i-- > 0; ) {
+				required[i].deltaAmount = 0;
+			}
+
 			do {
 				count = required.Where (r => r.amount > 0).Count ();
 				if (kerbalHours == 0) {
@@ -312,7 +317,7 @@ namespace ExtraplanetaryLaunchpads {
 					kerbalHours += work;
 					res.amount -= amount;
 					//Debug.Log("add delta: "+amount);
-					res.deltaAmount = amount;
+					res.deltaAmount += amount;
 					padResources.TransferResource (res.name, -amount);
 				}
 				//Debug.LogFormat ("[EL Launchpad] work:{0}:{1}", did_work, kerbalHours);
@@ -344,6 +349,10 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var built = builtStuff.required;
 			var cost = buildCost.required;
+
+			for (int i = built.Count; i-- > 0; ) {
+				built[i].deltaAmount = 0;
+			}
 
 			bool did_work;
 			int count;
@@ -384,7 +393,7 @@ namespace ExtraplanetaryLaunchpads {
 
 					bres.amount += amount;
 					//Debug.Log("remove delta: "+amount);
-					bres.deltaAmount = amount;
+					bres.deltaAmount += amount;
 
 					double capacity = padResources.ResourceCapacity (bres.name)
 									- padResources.ResourceAmount (bres.name);
@@ -815,7 +824,7 @@ namespace ExtraplanetaryLaunchpads {
 			var vesselCount = FlightGlobals.Vessels.Count;
 			Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
 			FlightGlobals.ForceSetActiveVessel (vsl);
-			builder.part.StartCoroutine (FixAirstreamShielding (vsl));
+			//builder.part.StartCoroutine (FixAirstreamShielding (vsl));
 
 			CleaupAfterRelease ();
 		}

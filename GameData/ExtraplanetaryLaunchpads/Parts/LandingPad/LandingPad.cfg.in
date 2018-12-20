@@ -42,12 +42,11 @@ PART
 
 	MODULE {
 		name = ELLaunchpad
-		SpawnTransform = ReferenceTransform
+		SpawnTransform = LaunchReference
 	}
 	MODULE {
 		name = ELTarget
 		TargetName = Landing Pad
-		TargetTransform = ReferenceTransform
-		VesselTargetMode = DirectionAndVelocity
+		TargetTransform = TargetReference
 	}
 }

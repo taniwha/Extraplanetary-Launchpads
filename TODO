@@ -4,6 +4,9 @@ refurbish
 	Parachutes
 	... (resources with resource recipes)
 
+somehow mark parts as not being buildable
+	requested by lgg
+
 rebalance converters DONE
 	use LFO (+EC?) to power smelter
 		assuming LF is RP-1, the mix seems to be pretty good for supplying

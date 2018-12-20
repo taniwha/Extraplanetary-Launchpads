@@ -208,6 +208,7 @@ namespace ExtraplanetaryLaunchpads {
 				//print("[EL Recipes] " + name);
 				if (node.HasNode ("EL_Recipe")) {
 					var recipe_node = node.GetNode ("EL_Recipe");
+					//print($"[EL Recipes] {name} {recipe_node}");
 					var recipe = new PartRecipe (recipe_node);
 					ELRecipeDatabase.part_recipes[name] = recipe;
 				} else {

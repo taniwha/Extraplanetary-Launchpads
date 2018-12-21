@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELDisposablePad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink
+	public class ELDisposablePad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
 	{
 		[KSPField (isPersistant = false)]
 		public string SpawnTransform;
@@ -338,6 +338,11 @@ namespace ExtraplanetaryLaunchpads {
 		public double CalculateWork ()
 		{
 			return control.CalculateWork();
+		}
+
+		public void OnRename ()
+		{
+			ELBuildWindow.updateCurrentPads ();
 		}
 	}
 }

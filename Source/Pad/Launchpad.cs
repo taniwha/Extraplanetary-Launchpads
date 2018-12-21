@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELLaunchpad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink
+	public class ELLaunchpad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -275,6 +275,11 @@ namespace ExtraplanetaryLaunchpads {
 		public double CalculateWork ()
 		{
 			return control.CalculateWork();
+		}
+
+		public void OnRename ()
+		{
+			ELBuildWindow.updateCurrentPads ();
 		}
 	}
 }

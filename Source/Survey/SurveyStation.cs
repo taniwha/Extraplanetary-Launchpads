@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink
+	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
 	{
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string StationName = "";
@@ -460,6 +460,11 @@ namespace ExtraplanetaryLaunchpads {
 		public double CalculateWork ()
 		{
 			return control.CalculateWork();
+		}
+
+		public void OnRename ()
+		{
+			ELBuildWindow.updateCurrentPads ();
 		}
 	}
 }

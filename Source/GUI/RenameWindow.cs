@@ -27,7 +27,12 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.FlightAndEditor, false)]
 	public class ELRenameWindow: MonoBehaviour
 	{
-		private static ELBuildControl.IBuilder padInstance = null;
+		public interface IRenamable {
+			string Name { get; set; }
+			void OnRename ();
+		}
+
+		private static IRenamable target = null;
 		private static ELRenameWindow windowInstance = null;
 		private static Rect windowpos = new Rect(Screen.width * 0.35f,Screen.height * 0.1f,1,1);
 		const string fieldName = "RenameWindow.ExtraplanetaryLaunchpads";
@@ -43,7 +48,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			Debug.Log("[ELRenameWindow] OnDestroy");
 			windowInstance = null;
-			padInstance = null;
+			target = null;
 		}
 
 		public static void HideGUI ()
@@ -54,10 +59,10 @@ namespace ExtraplanetaryLaunchpads {
 			ClearControlLock ();
 		}
 
-		public static void ShowGUI (ELBuildControl.IBuilder pad)
+		public static void ShowGUI (IRenamable renamable)
 		{
-			padInstance = pad;
-			nameField.text = pad.Name;
+			target = renamable;
+			nameField.text = renamable.Name;
 			if (windowInstance != null) {
 				windowInstance.enabled = true;
 			}
@@ -65,9 +70,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void RenamePad ()
 		{
-			if (padInstance.Name != nameField.text) {
-				padInstance.Name = nameField.text;
-				ELBuildWindow.updateCurrentPads ();
+			if (target.Name != nameField.text) {
+				target.Name = nameField.text;
+				target.OnRename ();
 			}
 		}
 

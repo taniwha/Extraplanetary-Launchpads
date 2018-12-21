@@ -23,22 +23,32 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
-	internal class SurveySite
+	internal class SurveySite: ELRenameWindow.IRenamable
 	{
 		List<Vessel> stakes;
+
+		string cached_name;
+		public string Name //FIXME not a good name?
+		{
+			get { cached_name = SiteName; return cached_name; }
+			set { cached_name = value; }
+		}
+
+		public void OnRename ()
+		{
+			if (Vessel.IsValidVesselName(cached_name) && cached_name != SiteName) {
+				// as stakes get renamed, they will be pulled out of this site and into
+				// the site with the new name
+				while (stakes.Count > 0) {
+					ELSurveyStake.RenameStake (stakes[0], cached_name);
+				}
+			}
+		}
 
 		internal ELSurveyStake.Data this[int index]
 		{
 			get {
-				Vessel v = stakes[index];
-				if (v.loaded) {
-					var stake = v[0].FindModuleImplementing<ELSurveyStake> ();
-					return stake.GetData ();
-				} else {
-					var ppart = v.protoVessel.protoPartSnapshots[0];
-					var stake = ppart.FindModule ("ELSurveyStake");
-					return ELSurveyStake.GetData (stake, v);
-				}
+				return ELSurveyStake.GetData (stakes[index]);
 			}
 		}
 

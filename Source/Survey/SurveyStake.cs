@@ -37,15 +37,32 @@ namespace ExtraplanetaryLaunchpads {
 			public ELSurveyStake stake;
 		}
 
-		public static Data GetData (ProtoPartModuleSnapshot stake, Vessel vessel)
+		public static void RenameStake (Vessel v, string name)
 		{
-			Data data = new Data ();
-			ConfigNode node = stake.moduleValues;
-			bool.TryParse (node.GetValue ("bound"), out data.bound);
-			int.TryParse (node.GetValue ("use"), out data.use);
-			data.vessel = vessel;
-			data.stake = null;	// part not loaded
-			return data;
+			if (Vessel.IsValidVesselName (name)) {
+				string oldname = v.vesselName;
+				v.vesselName = name;
+				GameEvents.onVesselRename.Fire (new GameEvents.HostedFromToAction<Vessel, string> (v, oldname, v.vesselName));
+			}
+		}
+
+		public static Data GetData (Vessel v)
+		{
+			if (v.loaded) {
+				var stake = v[0].FindModuleImplementing<ELSurveyStake> ();
+				return stake.GetData ();
+			} else {
+				var ppart = v.protoVessel.protoPartSnapshots[0];
+				var stake = ppart.FindModule ("ELSurveyStake");
+
+				Data data = new Data ();
+				ConfigNode node = stake.moduleValues;
+				bool.TryParse (node.GetValue ("bound"), out data.bound);
+				int.TryParse (node.GetValue ("use"), out data.use);
+				data.vessel = v;
+				data.stake = null;	// part not loaded
+				return data;
+			}
 		}
 
 		public Data GetData ()

@@ -168,6 +168,19 @@ namespace ExtraplanetaryLaunchpads {
 			// The build window will take care of turning on highlighting
 		}
 
+		void RenameSite ()
+		{
+			bool en = GUI.enabled;
+			GUI.enabled = en && (site != null);
+			if (GUILayout.Button ("Rename Site", ELStyles.normal,
+								  GUILayout.ExpandWidth (false))) {
+				if (site != null) {
+					ELRenameWindow.ShowGUI (site);
+				}
+			}
+			GUI.enabled = en;
+		}
+
 		public void PadSelection ()
 		{
 			if (site_list == null) {
@@ -183,6 +196,7 @@ namespace ExtraplanetaryLaunchpads {
 				GUILayout.BeginHorizontal ();
 				site_list.DrawButton ();
 				SetSite (available_sites[site_list.SelectedIndex]);
+				RenameSite ();
 				GUILayout.EndHorizontal ();
 			}
 		}

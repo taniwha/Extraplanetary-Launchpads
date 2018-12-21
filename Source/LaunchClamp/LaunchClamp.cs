@@ -197,6 +197,14 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public void RotateTower ()
+		{
+			FindTransforms ();
+			towerPivot.localRotation = towerRot;
+			anchor.localRotation = towerRot;
+			anchor.position = towerStretch.position - towerStretch.up * height;
+		}
+
 		void SetHeight ()
 		{
 			if (can_stretch) {
@@ -252,12 +260,8 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselGoOffRails.Remove (SetClampJoint);
 		}
 
-		public override void OnStart (PartModule.StartState state)
+		void FindTransforms ()
 		{
-			if (part.stagingIcon == string.Empty
-				&& overrideStagingIconIfBlank) {
-				part.stagingIcon = "STRUT";
-			}
 			towerPivot = part.FindModelTransform (trf_towerPivot_name);
 			towerStretch = part.FindModelTransform (trf_towerStretch_name);
 			anchor = part.FindModelTransform (trf_anchor_name);
@@ -265,6 +269,15 @@ namespace ExtraplanetaryLaunchpads {
 			cloneSource = part.FindModelTransform (trf_cloneSource_name);
 
 			can_stretch = towerPivot && towerStretch && anchor;
+		}
+
+		public override void OnStart (PartModule.StartState state)
+		{
+			if (part.stagingIcon == string.Empty
+				&& overrideStagingIconIfBlank) {
+				part.stagingIcon = "STRUT";
+			}
+			FindTransforms ();
 
 			if (animationRoot) {
 				anim = animationRoot.GetComponent<Animation> ();

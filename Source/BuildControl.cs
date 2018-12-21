@@ -516,6 +516,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		Box GetVesselBox (ShipConstruct ship)
 		{
+			RotateLaunchClamps (ship);
+
 			PartHeightQuery phq = null;
 			Box box = null;
 			for (int i = 0; i < ship.parts.Count; i++) {
@@ -566,13 +568,24 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void RotateLaunchClamps (ShipConstruct ship)
+		{
+			for (int i = 0; i < ship.parts.Count; i++) {
+				var p = ship.parts[i];
+				var elc = p.FindModulesImplementing<ELExtendingLaunchClamp> ();
+				for (int j = 0; j < elc.Count; j++) {
+					elc[j].RotateTower ();
+				}
+			}
+		}
+
 		void EnableExtendingLaunchClamps (ShipConstruct ship)
 		{
 			for (int i = 0; i < ship.parts.Count; i++) {
 				var p = ship.parts[i];
 				var elc = p.FindModulesImplementing<ELExtendingLaunchClamp> ();
 				for (int j = 0; j < elc.Count; j++) {
-					(elc[j] as ELExtendingLaunchClamp).EnableExtension ();
+					elc[j].EnableExtension ();
 				}
 			}
 		}

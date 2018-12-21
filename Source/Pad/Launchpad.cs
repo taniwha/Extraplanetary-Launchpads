@@ -104,6 +104,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public string LandedAt { get { return ""; } }
+		public string LaunchedFrom { get { return ""; } }
+
 		public void PadSelection_start ()
 		{
 		}

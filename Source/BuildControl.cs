@@ -64,31 +64,14 @@ namespace ExtraplanetaryLaunchpads {
 			void PadSelection ();
 			void PadSelection_end ();
 
-			bool canBuild
-			{
-				get;
-			}
-			bool capture
-			{
-				get;
-			}
-			Vessel vessel
-			{
-				get;
-			}
-			Part part
-			{
-				get;
-			}
-			ELBuildControl control
-			{
-				get;
-			}
-			string Name
-			{
-				get;
-				set;
-			}
+			bool canBuild { get; }
+			bool capture { get; }
+			Vessel vessel { get; }
+			Part part { get; }
+			ELBuildControl control { get; }
+			string Name { get; set; }
+			string LandedAt { get; }
+			string LaunchedFrom { get; }
 		}
 
 		public IBuilder builder
@@ -600,7 +583,7 @@ namespace ExtraplanetaryLaunchpads {
 			ShipConstruct nship = new ShipConstruct ();
 			nship.LoadShip (craftConfig);
 
-			string landedAt = "External Launchpad";
+			string landedAt = builder.LandedAt;
 			string flag = flagname;
 			Game game = FlightDriver.FlightStateCache;
 			VesselCrewManifest crew = new VesselCrewManifest ();
@@ -613,6 +596,7 @@ namespace ExtraplanetaryLaunchpads {
 												flag, game, crew);
 			var FlightVessels = FlightGlobals.Vessels;
 			craftVessel = FlightVessels[FlightVessels.Count - 1];
+			craftVessel.launchedFrom = builder.LaunchedFrom;
 
 			FlightGlobals.ForceSetActiveVessel (craftVessel);
 			if (builder.capture) {

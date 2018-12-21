@@ -113,6 +113,25 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public string LandedAt
+		{
+			get {
+				if (site != null) {
+					return site.SiteName;
+				}
+				return "";
+			}
+		}
+		public string LaunchedFrom
+		{
+			get {
+				if (site != null) {
+					return site.SiteName;
+				}
+				return "";
+			}
+		}
+
 		public bool isBusy
 		{
 			get {

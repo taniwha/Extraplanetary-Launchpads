@@ -606,6 +606,10 @@ namespace ExtraplanetaryLaunchpads {
 				bool packed = craftVessel.packed;
 				craftVessel.loaded = true;
 				craftVessel.packed = false;
+				// The default situation for new vessels is PRELAUNCH, but
+				// that is not so good for bases because contracts check for
+				// LANDED. XXX should this be selectable?
+				craftVessel.situation = Vessel.Situations.LANDED;
 				craftVessel.GetHeightFromTerrain ();
 				Debug.LogFormat ("[EL] hft {0}", craftVessel.heightFromTerrain);
 				craftVessel.loaded = loaded;

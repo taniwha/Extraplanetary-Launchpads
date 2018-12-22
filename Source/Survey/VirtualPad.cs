@@ -83,8 +83,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			GameObject go = new GameObject ("EL Virtual Pad bounds",
 											typeof (Canvas),
-											typeof (CanvasScaler),
-											typeof (RectTransform));
+											typeof (CanvasScaler));
 			bounds[ind] = go.AddComponent<CanvasRenderer> ();
 
 			RectTransform rxform = go.transform as RectTransform;

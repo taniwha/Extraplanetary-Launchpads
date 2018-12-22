@@ -596,7 +596,7 @@ namespace ExtraplanetaryLaunchpads {
 			ShipConstruct nship = new ShipConstruct ();
 			nship.LoadShip (craftConfig);
 
-			string landedAt = builder.LandedAt;
+			string landedAt = "";
 			string flag = flagname;
 			Game game = FlightDriver.FlightStateCache;
 			VesselCrewManifest crew = new VesselCrewManifest ();

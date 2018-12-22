@@ -51,6 +51,18 @@ namespace ExtraplanetaryLaunchpads {
 		DropDownList pad_list;
 		ELBuildControl control;
 
+		static GUILayoutOption width48 = GUILayout.Width (48);
+		static GUILayoutOption width100 = GUILayout.Width (100);
+		static GUILayoutOption width120 = GUILayout.Width (120);
+		static GUILayoutOption width125 = GUILayout.Width (125);
+		static GUILayoutOption width300 = GUILayout.Width (300);
+		static GUILayoutOption width695 = GUILayout.Width (695);
+		static GUILayoutOption height20 = GUILayout.Height (20);
+		static GUILayoutOption height32 = GUILayout.Height (32);
+		static GUILayoutOption height40 = GUILayout.Height (40);
+		static GUILayoutOption expandWidth = GUILayout.ExpandWidth (true);
+		static GUILayoutOption noExpandWidth = GUILayout.ExpandWidth (false);
+
 		//FIXME this is a workaround for a bug in KSP 1.3.1 and earlier
 		void VMSaveHack (Vessel o, Vessel n)
 		{
@@ -283,27 +295,23 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 
 			// Resource name
-			GUILayout.Box (label, ELStyles.white, GUILayout.Width (125),
-						   GUILayout.Height (40));
+			GUILayout.Box (label, ELStyles.white, width125, height40);
 
 			// Fill amount
 			// limit slider to 0.5% increments
 			GUILayout.BeginVertical ();
 			if (minAmount == maxAmount) {
-				GUILayout.Box ("Must be 100%", GUILayout.Width (300),
-							   GUILayout.Height (20));
+				GUILayout.Box ("Must be 100%", width300, height20);
 				fraction = 1.0F;
 			} else {
 				fraction = GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F,
 													   ELStyles.slider,
 													   GUI.skin.horizontalSliderThumb,
-													   GUILayout.Width (300),
-													   GUILayout.Height (20));
+													   width300, height20);
 				fraction = (float)Math.Round (fraction, 3);
 				fraction = (Mathf.Floor (fraction * 200)) / 200;
 				GUILayout.Box ((fraction * 100).ToString () + "%",
-							   ELStyles.sliderText, GUILayout.Width (300),
-							   GUILayout.Height (20));
+							   ELStyles.sliderText, width300, height20);
 			}
 			GUILayout.EndVertical ();
 
@@ -316,15 +324,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			// Required and Available
 			GUILayout.Box (displayAmount(required),
-						   requiredStyle, GUILayout.Width (100),
-						   GUILayout.Height (40));
+						   requiredStyle, width100, height40);
 			if (available >= 0) {
 				GUILayout.Box (displayAmount(available),
-							   ELStyles.white, GUILayout.Width (100),
-							   GUILayout.Height (40));
+							   ELStyles.white, width100, height40);
 			} else {
-				GUILayout.Box ("N/A", ELStyles.white, GUILayout.Width (100),
-							   GUILayout.Height (40));
+				GUILayout.Box ("N/A", ELStyles.white, width100, height40);
 			}
 
 			GUILayout.FlexibleSpace ();
@@ -379,8 +384,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 
 			// Resource name
-			GUILayout.Box (label, ELStyles.white, GUILayout.Width (125),
-						   GUILayout.Height (40));
+			GUILayout.Box (label, ELStyles.white, width125, height40);
 
 			GUILayout.BeginVertical ();
 
@@ -394,11 +398,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			// Required and Available
 			GUILayout.Box (displayAmount(required),
-						   requiredStyle, GUILayout.Width (100),
-						   GUILayout.Height (40));
+						   requiredStyle, width100, height40);
 			GUILayout.Box (displayAmount(available),
-						   ELStyles.white, GUILayout.Width (100),
-						   GUILayout.Height (40));
+						   ELStyles.white, width100, height40);
 			GUILayout.FlexibleSpace ();
 
 			GUILayout.EndHorizontal ();
@@ -476,7 +478,7 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 			GUI.enabled = craftlist == null;
 			if (GUILayout.Button ("Select Craft", ELStyles.normal,
-								  GUILayout.ExpandWidth (true))) {
+								  expandWidth)) {
 
 				//GUILayout.Button is "true" when clicked
 				craftlist = ELCraftBrowser.Spawn (control.craftType,
@@ -487,17 +489,14 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			GUI.enabled = flagBrowser == null;
 			if (GUILayout.Button (flagTexture, ELStyles.normal,
-								  GUILayout.Width (48), GUILayout.Height (32),
-								  GUILayout.ExpandWidth (false))) {
+								  width48, height32, noExpandWidth)) {
 				CreateFlagBrowser ();
 			}
 			GUI.enabled = control.craftConfig != null;
-			if (GUILayout.Button ("Reload", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
+			if (GUILayout.Button ("Reload", ELStyles.normal, noExpandWidth)) {
 				control.LoadCraft (control.filename, control.flagname);
 			}
-			if (GUILayout.Button ("Clear", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
+			if (GUILayout.Button ("Clear", ELStyles.normal, noExpandWidth)) {
 				control.UnloadCraft ();
 			}
 			GUI.enabled = true;
@@ -519,9 +518,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		void ResourceHeader ()
 		{
-			var width120 = GUILayout.Width (120);
-			var width300 = GUILayout.Width (300);
-			var width100 = GUILayout.Width (100);
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Resource", ELStyles.label, width120);
 			GUILayout.Label ("Fill Percentage", ELStyles.label, width300);
@@ -533,7 +529,7 @@ namespace ExtraplanetaryLaunchpads {
 		void RequiredResources ()
 		{
 			GUILayout.Label ("Resources required to build:", ELStyles.label,
-							 GUILayout.ExpandWidth (true));
+							 expandWidth);
 			foreach (var br in control.buildCost.required) {
 				double a = br.amount;
 				double available = -1;
@@ -546,8 +542,7 @@ namespace ExtraplanetaryLaunchpads {
 		void BuildButton ()
 		{
 			GUI.enabled = control.builder.canBuild;
-			if (GUILayout.Button ("Build", ELStyles.normal,
-								  GUILayout.ExpandWidth (true))) {
+			if (GUILayout.Button ("Build", ELStyles.normal, expandWidth)) {
 				control.BuildCraft ();
 			}
 			GUI.enabled = true;
@@ -558,12 +553,12 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginHorizontal ();
 			GUI.enabled = control.builder.canBuild;
 			if (GUILayout.Button ("Finalize Build", ELStyles.normal,
-								  GUILayout.ExpandWidth (true))) {
+								  expandWidth)) {
 				control.BuildAndLaunchCraft ();
 			}
 			GUI.enabled = true;
 			if (GUILayout.Button ("Teardown Build", ELStyles.normal,
-								  GUILayout.ExpandWidth (true))) {
+								  expandWidth)) {
 				control.CancelBuild ();
 			}
 			GUILayout.EndHorizontal ();
@@ -684,26 +679,27 @@ namespace ExtraplanetaryLaunchpads {
 		void PauseButton ()
 		{
 			int ind = control.state == ELBuildControl.State.Building ? 0 : 1;
+			string statestr = state_str[ind];
 			GUILayout.BeginHorizontal ();
 			if (control.paused) {
-				if (GUILayout.Button ("Resume " + state_str[ind], ELStyles.normal,
-									  GUILayout.ExpandWidth (true))) {
+				if (GUILayout.Button ($"Resume {statestr}", ELStyles.normal,
+									  expandWidth)) {
 					control.ResumeBuild ();
 				}
 			} else {
-				if (GUILayout.Button ("Pause " + state_str[ind], ELStyles.normal,
-									  GUILayout.ExpandWidth (true))) {
+				if (GUILayout.Button ($"Pause {statestr}", ELStyles.normal,
+									  expandWidth)) {
 					control.PauseBuild ();
 				}
 			}
 			if (control.state == ELBuildControl.State.Building) {
 				if (GUILayout.Button ("Cancel Build", ELStyles.normal,
-									  GUILayout.ExpandWidth (true))) {
+									  expandWidth)) {
 					control.CancelBuild ();
 				}
 			} else {
 				if (GUILayout.Button ("Restart Build", ELStyles.normal,
-									  GUILayout.ExpandWidth (true))) {
+									  expandWidth)) {
 					control.UnCancelBuild ();
 				}
 			}
@@ -712,8 +708,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void ReleaseButton ()
 		{
-			if (GUILayout.Button ("Release", ELStyles.normal,
-								  GUILayout.ExpandWidth (true))) {
+			if (GUILayout.Button ("Release", ELStyles.normal, expandWidth)) {
 				control.ReleaseVessel ();
 			}
 		}
@@ -824,7 +819,7 @@ namespace ExtraplanetaryLaunchpads {
 			windowpos = GUILayout.Window (GetInstanceID (),
 										  windowpos, WindowGUI,
 										  ELVersionReport.GetVersion (),
-										  GUILayout.Width (695));
+										  width695);
 		}
 	}
 }

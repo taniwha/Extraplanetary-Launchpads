@@ -53,7 +53,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		static GUILayoutOption width48 = GUILayout.Width (48);
 		static GUILayoutOption width100 = GUILayout.Width (100);
-		static GUILayoutOption width120 = GUILayout.Width (120);
 		static GUILayoutOption width125 = GUILayout.Width (125);
 		static GUILayoutOption width300 = GUILayout.Width (300);
 		static GUILayoutOption width695 = GUILayout.Width (695);
@@ -302,7 +301,10 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.BeginVertical ();
 			if (minAmount == maxAmount) {
 				GUILayout.Box ("Must be 100%", width300, height20);
-				fraction = 1.0F;
+				fraction = 1;
+			} else if (fraction < 0) {
+				GUILayout.Box ($"Capacity: {maxAmount}", width300, height20);
+				fraction += 2;
 			} else {
 				fraction = GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F,
 													   ELStyles.slider,
@@ -516,20 +518,17 @@ namespace ExtraplanetaryLaunchpads {
 			GUILayout.Label ("Not all of the blueprints for this vessel can be found.");
 		}
 
-		void ResourceHeader ()
+		void ResourceHeader (string header)
 		{
 			GUILayout.BeginHorizontal ();
-			GUILayout.Label ("Resource", ELStyles.label, width120);
-			GUILayout.Label ("Fill Percentage", ELStyles.label, width300);
-			GUILayout.Label ("Required", ELStyles.label, width100);
-			GUILayout.Label ("Available", ELStyles.label, width100);
+			GUILayout.Label (header, ELStyles.label, noExpandWidth);
+			GUILayout.FlexibleSpace ();
 			GUILayout.EndHorizontal ();
 		}
 
 		void RequiredResources ()
 		{
-			GUILayout.Label ("Resources required to build:", ELStyles.label,
-							 expandWidth);
+			ResourceHeader ("Resources required to build:");
 			foreach (var br in control.buildCost.required) {
 				double a = br.amount;
 				double available = -1;
@@ -644,15 +643,23 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void OptionalResources ()
+		void OptionalResources (bool prebuild)
 		{
-			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
-												 "Link LiquidFuel and "
-												 + "Oxidizer sliders");
+			if (prebuild) {
+				ResourceHeader ("Optional resources:");
+			} else {
+				link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
+													 "Link LiquidFuel and "
+													 + "Oxidizer sliders");
+			}
 			foreach (var br in control.buildCost.optional) {
 				double available = control.padResources.ResourceAmount (br.name);
 				double maximum = control.craftResources.ResourceCapacity(br.name);
 				float frac = (float) (br.amount / maximum);
+				if (prebuild) {
+					// tell resource line to show capacity rather than a slider
+					frac -= 2;
+				}
 				frac = ResourceLine (br.name, br.name, frac, 0,
 									 maximum, available);
 				if (link_lfo_sliders
@@ -746,7 +753,7 @@ namespace ExtraplanetaryLaunchpads {
 				} else {
 					resScroll.Begin ();
 					RequiredResources ();
-					OptionalResources ();
+					OptionalResources (true);
 					resScroll.End ();
 					BuildButton ();
 				}
@@ -771,7 +778,7 @@ namespace ExtraplanetaryLaunchpads {
 			case ELBuildControl.State.Transfer:
 				SelectedCraft ();
 				resScroll.Begin ();
-				OptionalResources ();
+				OptionalResources (false);
 				resScroll.End ();
 				ReleaseButton ();
 				break;

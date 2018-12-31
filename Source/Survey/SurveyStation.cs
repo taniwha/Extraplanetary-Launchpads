@@ -33,6 +33,8 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
 
+		[KSPField] public float EVARange = 0;
+
 		EL_VirtualPad virtualPad;
 		DropDownList site_list;
 		List<SurveySite> available_sites;
@@ -316,6 +318,9 @@ namespace ExtraplanetaryLaunchpads {
 				return;
 			}
 			control.OnStart ();
+			if (EVARange > 0) {
+				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);
+			}
 			GameEvents.onVesselSituationChange.Add (onVesselSituationChange);
 			GameEvents.onCrewTransferred.Add (onCrewTransferred);
 			StartCoroutine (WaitAndDetermineRange ());

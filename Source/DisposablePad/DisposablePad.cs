@@ -34,6 +34,8 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
 
+		[KSPField] public float EVARange = 0;
+
 		Transform launchTransform;
 		double craft_mass;
 
@@ -279,6 +281,9 @@ namespace ExtraplanetaryLaunchpads {
 			if (state == PartModule.StartState.None
 				|| state == PartModule.StartState.Editor) {
 				return;
+			}
+			if (EVARange > 0) {
+				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);
 			}
 			control.OnStart ();
 		}

@@ -45,6 +45,7 @@ PART
 	MODULE {
 		name = ELDisposablePad
 		SpawnTransform = SpawnTransform
+		EVARange = 1.5
 	}
 	MODULE {
 		name = ModuleKISItemEvaTweaker

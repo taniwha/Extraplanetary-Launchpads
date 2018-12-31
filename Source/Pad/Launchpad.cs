@@ -33,6 +33,8 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string PadName = "";
 
+		[KSPField] public float EVARange = 0;
+
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
 
@@ -216,6 +218,9 @@ namespace ExtraplanetaryLaunchpads {
 			if (state == PartModule.StartState.None
 				|| state == PartModule.StartState.Editor) {
 				return;
+			}
+			if (EVARange > 0) {
+				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);
 			}
 			control.OnStart ();
 		}

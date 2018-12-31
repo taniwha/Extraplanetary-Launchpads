@@ -131,6 +131,7 @@ namespace ExtraplanetaryLaunchpads {
 				var meshC = collider as MeshCollider;
 				var mesh = meshC.sharedMesh;
 				var verts = mesh.vertices;
+				//Part root = part.localRoot;
 				RaycastHit bestHit = hitInfo;
 				float bestDist = float.PositiveInfinity;
 				// Not the most efficient, and it will miss peaks hitting faces, but it will do for most cases
@@ -143,6 +144,7 @@ namespace ExtraplanetaryLaunchpads {
 							bestDist = hitInfo.distance;
 						}
 					}
+					//Debug.Log ($"[ELExtendingLaunchClamp] mesh {start} {root.transform.InverseTransformPoint (start)} {hitInfo.distance} {hitInfo.distance + baseHeight}");
 				}
 				if (hit) {
 					hitInfo = bestHit;
@@ -152,7 +154,7 @@ namespace ExtraplanetaryLaunchpads {
 				return -1;
 			}
 			if (hit) {
-				return hitInfo.distance + baseHeight;
+				return hitInfo.distance;
 			}
 			return -1;
 		}
@@ -200,9 +202,10 @@ namespace ExtraplanetaryLaunchpads {
 		public void RotateTower ()
 		{
 			FindTransforms ();
+			baseHeight = Vector3.Distance (anchor.position, towerStretch.position);
 			towerPivot.localRotation = towerRot;
 			anchor.localRotation = towerRot;
-			anchor.position = towerStretch.position - towerStretch.up * height;
+			anchor.position = towerStretch.position - towerStretch.up * baseHeight;
 		}
 
 		void SetHeight ()
@@ -225,10 +228,11 @@ namespace ExtraplanetaryLaunchpads {
 						// orientation before checking for distance to the
 						// ground
 						anchor.localRotation = towerRot;
-						anchor.position = towerStretch.position - towerStretch.up * baseHeight;
+						anchor.position = towerStretch.position;
 						float dist = DistanceFromTerrain ();
 						// set height only if the casts actually found
 						// something, otherwise keep the VAB/SPH height
+						//Debug.Log ($"[ELExtendingLaunchClamp] dist {dist}");
 						if (dist > 0) {
 							height = dist;
 						}
@@ -337,7 +341,7 @@ namespace ExtraplanetaryLaunchpads {
 		void SetClampJoint (Vessel v)
 		{
 			if (v == vessel && !clampJoint) {
-				Debug.LogFormat ("[ELExtendingLaunchClamp] SetClampJoint");
+				//Debug.Log ("[ELExtendingLaunchClamp] SetClampJoint");
 				clampJoint = gameObject.AddComponent<ConfigurableJoint> ();
 				clampJoint.angularXMotion = ConfigurableJointMotion.Locked;
 				clampJoint.angularYMotion = ConfigurableJointMotion.Locked;

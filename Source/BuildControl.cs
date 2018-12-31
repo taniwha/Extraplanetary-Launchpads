@@ -545,7 +545,9 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
-			Debug.Log (String.Format ("[EL] GetVesselBox {0} {1}", ship.parts[0].localRoot.transform.position, box));
+			Part root = ship.parts[0].localRoot;
+			Debug.Log ($"[EL] GetVesselBox {root.transform.position} {box}");
+			Debug.Log ($"[EL]   {root.transform.InverseTransformPoint(box.min)} {root.transform.InverseTransformPoint(box.max)}");
 			for (int i = 0; i < ship.parts.Count; i++) {
 				Part p = ship[i];
 				p.SendMessage ("OnPutToGround", phq,
@@ -624,7 +626,7 @@ namespace ExtraplanetaryLaunchpads {
 				// LANDED. XXX should this be selectable?
 				craftVessel.situation = Vessel.Situations.LANDED;
 				craftVessel.GetHeightFromTerrain ();
-				Debug.LogFormat ("[EL] hft {0}", craftVessel.heightFromTerrain);
+				Debug.Log ($"[ELBuildControl] height from terrain {craftVessel.heightFromTerrain}");
 				craftVessel.loaded = loaded;
 				craftVessel.packed = packed;
 			}

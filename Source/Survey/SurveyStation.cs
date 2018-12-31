@@ -273,7 +273,7 @@ namespace ExtraplanetaryLaunchpads {
 			launchPos.transform.position = points.center;
 			launchPos.transform.rotation = points.GetOrientation ();
 			xform = launchPos.transform;
-			Debug.LogFormat ("[EL SurveyStation] launchPos {0} {1}", xform.position, xform.rotation);
+			Debug.Log ($"[EL SurveyStation] launchPos {xform.position} {xform.rotation}");
 
 			float angle;
 			Vector3 axis;

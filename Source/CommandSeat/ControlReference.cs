@@ -29,7 +29,7 @@ namespace ExtraplanetaryLaunchpads {
 public class ELControlReference : PartModule
 {
 	Material material;
-	[KSPField(isPersistant = false)]
+	[KSPField(isPersistant = true)]
 	public uint pushedRefId;
 
 	public void SetIndicators (bool bright)

@@ -305,6 +305,12 @@ namespace ExtraplanetaryLaunchpads {
 				string rot = node.GetValue ("towerRot");
 				towerRot = KSPUtil.ParseQuaternion (rot);
 			}
+			if (node.HasValue ("ForceHeightCheck")) {
+				bool fhc;
+				if (bool.TryParse (node.GetValue ("ForceHeightCheck"), out fhc)) {
+					enableExtension |= fhc;
+				}
+			}
 		}
 
 		public override void OnSave (ConfigNode node)

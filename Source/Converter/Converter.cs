@@ -155,7 +155,9 @@ namespace ExtraplanetaryLaunchpads {
 					heat += outputs.ingredients[i].heat;
 				}
 				sb.Append (ConverterName);
-				sb.Append (" at 50% efficiency");
+				if (efficiencyCurve.Length > 1) {
+					sb.Append (" at 50% efficiency");
+				}
 
 				sb.AppendFormat ("\n\n<color=#bada55>Mass flow: {0:0.00} {1}/{2}</color>", mass, "kg", "s");
 				sb.AppendFormat ("\n\n<color=#bada55>Heat flow: {0:0.00} {1}/{2}</color>", heat, "MJ", "s");

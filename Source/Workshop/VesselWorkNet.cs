@@ -35,10 +35,16 @@ public class ELVesselWorkNet : VesselModule
 	public double lastUpdate;
 	public double Productivity { get; private set; }
 
+	public void ForceProductivityUpdate()
+	{
+		forceProductivityUpdate = true;
+	}
+
 	int updateIndex;
 	double updateTimer;
 	bool haveWork;
 	bool started;
+	bool forceProductivityUpdate;
 	int waitForPartModules;
 
 	void BuildNetwork ()
@@ -249,11 +255,11 @@ public class ELVesselWorkNet : VesselModule
 				--waitForPartModules;
 				return;
 			}
-			if (updateTimer > 0) {
+			if (!forceProductivityUpdate && updateTimer > 0) {
 				updateTimer -= timeDelta;
 			} else {
 				updateTimer = 10;
-				UpdateProductivity (false);
+				UpdateProductivity (forceProductivityUpdate);
 			}
 			if (protoSinks != null) {
 				if (CatchUpBacklog ()) {

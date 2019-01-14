@@ -202,7 +202,9 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 			return;
 		//Debug.LogFormat ("[EL Workshop] transfer: {0} {1} {2}",
 		//				  hft.host, hft.from, hft.to);
-		UpdateProductivity ();
+		if (workNet != null) {
+			workNet.ForceProductivityUpdate ();
+		}
 	}
 
 	private IEnumerator WaitAndUpdateProductivity ()
@@ -210,7 +212,9 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 		for (int i = 0; i < 5; i++) {
 			yield return null;
 		}
-		UpdateProductivity ();
+		if (workNet != null) {
+			workNet.ForceProductivityUpdate ();
+		}
 	}
 
 	void onPartCouple (GameEvents.FromToAction<Part,Part> hft)

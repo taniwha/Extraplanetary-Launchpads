@@ -28,22 +28,6 @@ namespace ExtraplanetaryLaunchpads {
 
 using KerbalStats;
 
-public interface ELWorkSink
-{
-	void DoWork (double kerbalHours);
-	bool isActive { get; }
-	double CalculateWork ();
-	ELVesselWorkNet workNet { set; }
-}
-
-public interface ELWorkSource
-{
-	void UpdateProductivity ();
-	double Productivity { get; }
-	bool isActive { get; }
-	ELVesselWorkNet workNet { set; }
-}
-
 public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 {
 	[KSPField]

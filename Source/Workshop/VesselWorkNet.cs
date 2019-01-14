@@ -25,101 +25,6 @@ using Experience;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class ELProtoWorkSink : ELWorkSink
-{
-	double workedHours;
-	double maxHours;
-
-	public void DoWork (double kerbalHours)
-	{
-		if (kerbalHours > 0) {
-			if (kerbalHours > maxHours - workedHours) {
-				kerbalHours = maxHours - workedHours;
-				isActive = false;
-			}
-		} else {
-			if (kerbalHours < -maxHours - workedHours) {
-				kerbalHours = -maxHours - workedHours;
-				isActive = false;
-			}
-		}
-		//Debug.LogFormat ("[ELProtoWorkSink] DoWork: {0} {1} {2}", kerbalHours, maxHours, workedHours);
-		workedHours += kerbalHours;
-	}
-
-	public void OnLoadVessel ()
-	{
-		if (workedHours != 0) {
-			isActive = true;
-		}
-	}
-
-	public bool isActive { get; private set; }
-	public ELVesselWorkNet workNet { get; set; }
-	public double CalculateWork ()
-	{
-		return maxHours;
-	}
-
-	public ELProtoWorkSink (ConfigNode node)
-	{
-		workedHours = 0;
-		maxHours = 0;
-		isActive = false;
-
-		string s;
-		if (node.HasValue ("workedHours")) {
-			s = node.GetValue ("workedHours");
-			double.TryParse (s, out workedHours);
-		}
-		if (node.HasValue ("maxHours")) {
-			s = node.GetValue ("maxHours");
-			double.TryParse (s, out maxHours);
-		}
-		if (node.HasValue ("isActive")) {
-			s = node.GetValue ("isActive");
-			bool active;
-			bool.TryParse (s, out active);
-			isActive = active;
-		}
-	}
-
-	public void Save (ConfigNode node)
-	{
-		ConfigNode n = node.AddNode ("WorkSink");
-		n.AddValue ("workedHours", workedHours);
-		n.AddValue ("maxHours", maxHours);
-		n.AddValue ("isActive", isActive);
-	}
-
-	public ELProtoWorkSink (ELWorkSink sink)
-	{
-		workedHours = 0;
-		maxHours = 0;
-		if (isActive = sink.isActive) {
-			maxHours = sink.CalculateWork ();
-		}
-	}
-
-	public void CatchUpBacklog (ELWorkSink sink, double hours)
-	{
-		if (hours > 0) {
-			if (hours > workedHours) {
-				hours = workedHours;
-				isActive = false;
-			}
-		} else {
-			// vessel productivity is negative
-			if (hours < workedHours) {
-				hours = workedHours;
-				isActive = false;
-			}
-		}
-		workedHours -= hours;
-		sink.DoWork (hours);
-	}
-}
-
 public class ELVesselWorkNet : VesselModule
 {
 	List<ELWorkSource> sources;
@@ -299,8 +204,6 @@ public class ELVesselWorkNet : VesselModule
 
 	bool CatchUpBacklog ()
 	{
-		//if (Time.timeSinceLevelLoad < 1
-		//	|| ResourceScenario.Instance == null) {
 		if (ResourceScenario.Instance == null) {
 			return true;
 		}

@@ -178,7 +178,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			} else {
 				if (virtualPad == null) {
-					virtualPad = EL_VirtualPad.Create (site);
+					//virtualPad = EL_VirtualPad.Create (site);
 				} else {
 					virtualPad.SetSite (site);
 				}

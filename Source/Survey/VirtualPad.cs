@@ -29,7 +29,8 @@ namespace ExtraplanetaryLaunchpads {
 	public class EL_VirtualPad : MonoBehaviour
 	{
 		Points points;
-		CanvasRenderer[] bounds = new CanvasRenderer[6];
+		Renderer[] bounds = new Renderer[6];
+		Mesh[] boundMeshes = new Mesh[6];
 
 		internal static Color[] AxisColors = {
 			XKCDColors.CherryRed,			// +X
@@ -45,8 +46,23 @@ namespace ExtraplanetaryLaunchpads {
 			Vector3.left, Vector3.down, Vector3.back,
 		};
 
+		internal static Vector3[] BoundVertices = {
+			new Vector3 (-1, -1, 0),
+			new Vector3 (-1,  1, 0),
+			new Vector3 ( 1,  1, 0),
+			new Vector3 ( 1, -1, 0),
+		};
+		// working set of vertices to avoid generating garbage
+		static Vector3[] boundVertices = new Vector3[4];
+
+		internal static int[] BoundTriangles = {
+			0, 1, 2,	// front face
+			0, 2, 3,	// front face
+			0, 3, 2,	// back face
+			0, 2, 1,	// back face
+		};
 		internal static Quaternion[] BoundRotations = {
-			new Quaternion (0, 0.7f, 0, 0.7f),
+			new Quaternion (0, -0.7f, 0, 0.7f),
 			new Quaternion (0.7f, 0, 0, 0.7f),
 			new Quaternion (0, 0, 0, 1),
 		};
@@ -82,23 +98,24 @@ namespace ExtraplanetaryLaunchpads {
 		void CreateBounds (int ind)
 		{
 			GameObject go = new GameObject ("EL Virtual Pad bounds",
-											typeof (Canvas),
-											typeof (CanvasScaler));
-			bounds[ind] = go.AddComponent<CanvasRenderer> ();
+											typeof (MeshRenderer),
+											typeof (MeshFilter));
+			bounds[ind] = go.GetComponent<Renderer> ();
+			bounds[ind].material = new Material (Shader.Find("Transparent/Diffuse"));
 
-			RectTransform rxform = go.transform as RectTransform;
-			rxform.SetParent (gameObject.transform, false);
-			rxform.localPosition = new Vector3 (0, 0, 0);
-			rxform.localScale = new Vector3 (0.25f, 0.25f, 0.25f);
-			rxform.SetSizeWithCurrentAnchors (RectTransform.Axis.Horizontal, 128);
-			rxform.SetSizeWithCurrentAnchors (RectTransform.Axis.Vertical, 128);
+			var meshFilter = go.GetComponent<MeshFilter> ();
+			var mesh = new Mesh();
+			mesh.vertices = BoundVertices;
+			mesh.triangles = BoundTriangles;
+			meshFilter.mesh = mesh;
+			boundMeshes[ind] = mesh;
 
-			rxform.localRotation = BoundRotations[ind % 3];
+			var xform = go.transform as Transform;
+			xform.SetParent (gameObject.transform, false);
+			xform.localPosition = new Vector3 (0, 0, 0);
+			xform.localScale = new Vector3 (1, 1, 1);
 
-			Image bg = go.AddComponent<Image> ();
-			Texture2D tex = GameDatabase.Instance.GetTexture("ExtraplanetaryLaunchpads/Textures/plaque", false);
-			bg.sprite = Sprite.Create (tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect, new Vector4 (17, 17, 17, 17));
-			bg.type = Image.Type.Sliced;
+			xform.localRotation = BoundRotations[ind % 3];
 
 			go.SetActive(false);
 		}
@@ -109,20 +126,84 @@ namespace ExtraplanetaryLaunchpads {
 				CreateAxis (i);
 				CreateBounds (i);
 			}
-			gameObject.SetActive (false);	// currently for debug
+			gameObject.SetActive (true);	// currently for debug
+		}
+
+		static int[] TopMap = { 1, 2, 1 };
+		static int[] BotMap = { 4, 5, 4 };
+		static int[] LeftMap = { 5, 3, 3 };
+		static int[] RightMap = { 2, 0, 0 };
+
+		void ShapeBounds (int ind, Vector3 center, Quaternion orientation)
+		{
+			int ti = TopMap[ind % 3];
+			int bi = BotMap[ind % 3];
+			int li = LeftMap[ind % 3];
+			int ri = RightMap[ind % 3];
+			string tn = ELSurveyStake.StakeUses[ti + 1];
+			string bn = ELSurveyStake.StakeUses[bi + 1];
+			string ln = ELSurveyStake.StakeUses[li + 1];
+			string rn = ELSurveyStake.StakeUses[ri + 1];
+			Debug.Log ($"[EL_VirtualPad] ShapeBounds {ind} {ti}:{tn} {bi}:{bn} {li}:{ln} {ri}:{rn}");
+			Vector2 min, max;
+			Vector3d pos, dir;
+			if (points.bounds.TryGetValue (tn, out pos)) {
+				dir = orientation * (pos - center);
+				Debug.Log ($"    {tn} {pos} {dir}");
+				max.y = (float) (dir)[ti % 3];
+			} else {
+				max.y = 5;
+			}
+			if (points.bounds.TryGetValue (bn, out pos)) {
+				dir = orientation * (pos - center);
+				Debug.Log ($"    {bn} {pos} {dir}");
+				min.y = (float) (dir)[bi % 3];
+			} else {
+				min.y = -5;
+			}
+			if (points.bounds.TryGetValue (ln, out pos)) {
+				dir = orientation * (pos - center);
+				Debug.Log ($"    {ln} {pos} {dir}");
+				min.x = (float) (dir)[li % 3];
+			} else {
+				min.x = -5;
+			}
+			if (points.bounds.TryGetValue (rn, out pos)) {
+				dir = orientation * (pos - center);
+				Debug.Log ($"    {rn} {pos} {dir}");
+				max.x = (float) (dir)[ri % 3];
+			} else {
+				max.x = 5;
+			}
+			Debug.Log ($"    {min} {max}");
+			boundVertices[0].x = min.x;
+			boundVertices[0].y = min.y;
+			boundVertices[1].x = min.x;
+			boundVertices[1].y = max.y;
+			boundVertices[2].x = max.x;
+			boundVertices[2].y = max.y;
+			boundVertices[3].x = max.x;
+			boundVertices[3].y = min.y;
+			boundMeshes[ind].vertices = boundVertices;
+			boundMeshes[ind].triangles = BoundTriangles;
 		}
 
 		IEnumerator WaitAndSetBounds ()
 		{
 			yield return null;
 
+			var orientation = Quaternion.Inverse (points.GetOrientation ());
 			for (int i = 0; i < 6; i++) {
 				string use = ELSurveyStake.StakeUses[i + 1];
 				Vector3d pos;
+				Debug.Log ($"[EL_VirtualPad] WaitAndSetBounds {i} {use}");
 				if (points.bounds.TryGetValue (use, out pos)) {
+					ShapeBounds(i, pos, orientation);
 					bounds[i].transform.position = points.center + pos;
 					bounds[i].gameObject.SetActive (true);
-					bounds[i].SetColor (AxisColors[i]);
+					var color = AxisColors[i];
+					color.a = 0.5f;
+					bounds[i].material.color = color;
 				} else {
 					bounds[i].gameObject.SetActive (false);
 				}
@@ -141,7 +222,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal static EL_VirtualPad Create (SurveySite site)
 		{
-			GameObject go = new GameObject ("EL Virtual Pad");
+			GameObject go = GameObject.Find ("EL Virtual Pad");
+			if (go == null) {
+				go = new GameObject ("EL Virtual Pad");
+			} else {
+				Debug.Log ("[EL_VirtualPad] oi, clean up!");
+			}
 			var pad = go.AddComponent<EL_VirtualPad> ();
 			pad.SetSite (site);
 			return pad;

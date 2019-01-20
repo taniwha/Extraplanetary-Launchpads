@@ -282,6 +282,9 @@ namespace ExtraplanetaryLaunchpads {
 				did_work = false;
 				for (int i = required.Count; i-- > 0; ) {
 					var res = required[i];
+					if (res.amount == 0) {
+						continue;
+					}
 					double avail = padResources.ResourceAmount (res.name);
 					if (avail == 0) {
 						continue;

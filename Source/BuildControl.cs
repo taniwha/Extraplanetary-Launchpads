@@ -257,7 +257,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			var required = builtStuff.required;
 
-			//Debug.LogFormat ("[EL Launchpad] KerbalHours: {0}", kerbalHours);
 			bool did_work;
 			int count;
 
@@ -266,21 +265,33 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			do {
-				count = required.Where (r => r.amount > 0).Count ();
+				//Debug.LogFormat ("[EL Launchpad] KerbalHours: {0}", kerbalHours);
+				count = 0;
+				for (int i = required.Count; i-- > 0; ) {
+					var res = required[i];
+					if (res.amount > 0
+						&& padResources.ResourceAmount (res.name) > 0) {
+						count++;
+					}
+				}
 				if (kerbalHours == 0) {
 					break;
 				}
 				if (count == 0)
 					break;
 				did_work = false;
-				foreach (var res in required.Where (r => r.amount > 0)) {
+				for (int i = required.Count; i-- > 0; ) {
+					var res = required[i];
+					double avail = padResources.ResourceAmount (res.name);
+					if (avail == 0) {
+						continue;
+					}
 					double work = kerbalHours / count--;
 					double amount = work / res.kerbalHours;
 					double base_amount = Math.Abs (amount);
 
 					if (amount > res.amount)
 						amount = res.amount;
-					double avail = padResources.ResourceAmount (res.name);
 					if (amount > avail)
 						amount = avail;
 					//Debug.LogFormat ("[EL Launchpad] work:{0}:{1}:{2}:{3}:{4}",
@@ -299,7 +310,7 @@ namespace ExtraplanetaryLaunchpads {
 					// return any unused kerbal-hours to the pool
 					kerbalHours += work;
 					res.amount -= amount;
-					//Debug.Log("add delta: "+amount);
+					//Debug.Log($"add delta: {amount}");
 					res.deltaAmount += amount;
 					padResources.TransferResource (res.name, -amount);
 				}

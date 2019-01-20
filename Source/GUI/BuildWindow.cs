@@ -768,6 +768,7 @@ namespace ExtraplanetaryLaunchpads {
 				PauseButton ();
 				break;
 			case ELBuildControl.State.Complete:
+				SelectedCraft ();
 				FinalizeButton ();
 				break;
 			case ELBuildControl.State.Transfer:

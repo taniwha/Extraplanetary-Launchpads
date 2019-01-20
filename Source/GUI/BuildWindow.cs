@@ -158,17 +158,12 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			launchpads = null;
 			pad_list = null;
-			var pads = new List<ELBuildControl.IBuilder> ();
 
 			if (v.isEVA) {
 				control = null;
 				return;
 			}
-
-			for (int i = 0; i < v.Parts.Count; i++) {
-				var p = v.Parts[i];
-				pads.AddRange (p.Modules.OfType<ELBuildControl.IBuilder> ());
-			}
+			var pads = v.FindPartModulesImplementing<ELBuildControl.IBuilder> ();
 			if (pads.Count < 1) {
 				control = null;
 			} else {

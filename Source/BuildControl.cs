@@ -584,6 +584,31 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void UpdateAttachNode (Part p, AttachNode vnode)
+		{
+			var pnode = p.FindAttachNode (vnode.id);
+			if (pnode != null) {
+				pnode.originalPosition = vnode.originalPosition;
+				pnode.position = vnode.position;
+				pnode.size = vnode.size;
+			}
+		}
+
+		void ApplyNodeVariants (ShipConstruct ship)
+		{
+			for (int i = 0; i < ship.parts.Count; i++) {
+				var p = ship.parts[i];
+				var pv = p.FindModulesImplementing<ModulePartVariants> ();
+				for (int j = 0; j < pv.Count; j++) {
+					var variant = pv[j].SelectedVariant;
+					for (int k = 0; k < variant.AttachNodes.Count; k++) {
+						var vnode = variant.AttachNodes[k];
+						UpdateAttachNode (p, vnode);
+					}
+				}
+			}
+		}
+
 		void RotateLaunchClamps (ShipConstruct ship)
 		{
 			for (int i = 0; i < ship.parts.Count; i++) {
@@ -611,6 +636,8 @@ namespace ExtraplanetaryLaunchpads {
 			// build craft
 			ShipConstruct nship = new ShipConstruct ();
 			nship.LoadShip (craftConfig);
+
+			ApplyNodeVariants (nship);
 
 			string landedAt = "";
 			string flag = flagname;

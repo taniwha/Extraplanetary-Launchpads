@@ -16,6 +16,8 @@ PART
 	rescaleFactor = 1.0
 	scale = 1.0
 
+	bulkheadProfiles = size1
+
 
 	TechRequired = advConstruction
 	entryCost = 400

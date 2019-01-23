@@ -47,6 +47,8 @@ PART {
 	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
 	attachRules = 1,1,1,1,0
 
+	bulkheadProfiles = size2, srf
+
 	// --- standard part parameters ---
 	mass = ${mass * scale1}
 	dragModelType = override
@@ -131,6 +133,8 @@ PART {
 	manufacturer = Kairyuu Shipping
 	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
 	attachRules = 1,1,1,1,0
+
+	bulkheadProfiles = size1, srf
 
 	// --- standard part parameters ---
 	mass = ${mass * scale2}
@@ -221,6 +225,8 @@ PART {
 	manufacturer = Kairyuu Shipping
 	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
 	attachRules = 1,1,1,1,0
+
+	bulkheadProfiles = size1, srf
 
 	// --- standard part parameters ---
 	mass = ${mass * scale3}

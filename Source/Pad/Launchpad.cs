@@ -198,6 +198,10 @@ namespace ExtraplanetaryLaunchpads {
 			return launchTransform;
 		}
 
+		public void PostBuild (Vessel craftVessel)
+		{
+		}
+
 		public override void OnSave (ConfigNode node)
 		{
 			control.Save (node);

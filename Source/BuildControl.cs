@@ -60,6 +60,7 @@ namespace ExtraplanetaryLaunchpads {
 			void UpdateMenus (bool visible);
 			void SetCraftMass (double craft_mass);
 			Transform PlaceShip (ShipConstruct ship, Box vessel_bounds);
+			void PostBuild (Vessel craftVessel);
 			void PadSelection_start ();
 			void PadSelection ();
 			void PadSelection_end ();
@@ -655,6 +656,7 @@ namespace ExtraplanetaryLaunchpads {
 			craftVessel.launchedFrom = builder.LaunchedFrom;
 
 			FlightGlobals.ForceSetActiveVessel (craftVessel);
+			builder.PostBuild (craftVessel);
 			if (builder.capture) {
 				craftVessel.Splashed = craftVessel.Landed = false;
 			} else {

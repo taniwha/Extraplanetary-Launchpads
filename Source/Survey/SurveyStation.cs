@@ -22,6 +22,7 @@ using System.Linq;
 using UnityEngine;
 
 using KSP.IO;
+using ModuleWheels;
 
 namespace ExtraplanetaryLaunchpads {
 
@@ -289,6 +290,19 @@ namespace ExtraplanetaryLaunchpads {
 			rootPart.transform.RotateAround (xform.position,
 												  axis, angle);
 			return xform;
+		}
+
+		public void PostBuild (Vessel craftVessel)
+		{
+			var brakes = craftVessel.FindPartModulesImplementing<ModuleWheelBrakes> ();
+			for (int i = brakes.Count; i-- > 0; ) {
+				brakes[i].brakeInput = 1;
+			}
+			if (brakes.Count > 0) {
+				var group = KSPActionGroup.Brakes;
+				var actionGroups = craftVessel.ActionGroups;
+				actionGroups.SetGroup (group, true);
+			}
 		}
 
 		public override void OnSave (ConfigNode node)

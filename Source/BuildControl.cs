@@ -785,9 +785,6 @@ namespace ExtraplanetaryLaunchpads {
 				padResources.RemovePart (part);
 				craftResources.AddPart (part);
 			}
-			if (craftResources == null && craftConfig != null) {
-				getBuildCost (craftConfig);
-			}
 		}
 
 		public void Load (ConfigNode node)

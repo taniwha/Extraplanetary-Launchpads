@@ -94,6 +94,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+
+		static void fallback ()
+		{
+			Debug.Log ($"[CraftBrowserDialog] how did we get here?");
+		}
+
 		static void CreatePrefab ()
 		{
 			if (stoField == null) {
@@ -108,6 +114,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			var cbdPrefab = AssetBase.GetPrefab ("CraftBrowser");
 			prefab = Instantiate (cbdPrefab);
+			prefab.transform.SetParent (cbdPrefab.transform.parent, false);
 			prefab.transform.name = "ELCraftBrowser";
 			prefab.name = "ELCraftBrowser";
 
@@ -131,6 +138,9 @@ namespace ExtraplanetaryLaunchpads {
 			ELcb.tabSub = toggleSub.GetComponent<Toggle> ();
 			ELcb.tabSub.group = tabSPH.group;
 
+			ELcb.OnBrowseCancelled = fallback;
+			ELcb.enabled = false;
+
 			Destroy (cbd);
 		}
 
@@ -141,7 +151,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			var cb = Instantiate (prefab).GetComponent<ELCraftBrowser> ();
-
+			cb.enabled = true;
 			cb.transform.SetParent (DialogCanvasUtil.DialogCanvasRect, false);
 
 			cb.facility = craftFacility[(int) type];

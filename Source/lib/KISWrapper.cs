@@ -30,60 +30,27 @@ namespace ExtraplanetaryLaunchpads.KIS {
 
 	public class KIS_Item {
 		static Type KIS_Item_class;
-		static MethodInfo kis_GetResources;
-		static MethodInfo kis_SetResource;
+		static FieldInfo kis_partNode;
+		static PropertyInfo kis_itemResourceMass;
 
 		object obj;
 
+		public ConfigNode partNode { get { return (ConfigNode)kis_partNode.GetValue (obj); } }
+		public float itemResourceMass { get { return (float)kis_itemResourceMass.GetValue (obj, null); } }
+
 		public struct ResourceInfo {
-			static Type ResourceInfo_class;
-			static FieldInfo kis_resourceName;
-			static FieldInfo kis_amount;
-			static FieldInfo kis_maxAmount;
+			public string resourceName { get; private set; }
+			public double maxAmount { get; private set; }
+			public double amount { get; private set; }
 
-			object obj;
-
-			public string resourceName
+			public ResourceInfo (ConfigNode node)
 			{
-				get {
-					return (string) kis_resourceName.GetValue (obj);
-				}
-				set {
-					kis_resourceName.SetValue (obj, value);
-				}
-			}
-
-			public double maxAmount
-			{
-				get {
-					return (double) kis_maxAmount.GetValue (obj);
-				}
-				set {
-					kis_maxAmount.SetValue (obj, value);
-				}
-			}
-
-			public double amount
-			{
-				get {
-					return (double) kis_amount.GetValue (obj);
-				}
-				set {
-					kis_amount.SetValue (obj, value);
-				}
-			}
-
-			internal static void Initialize (Assembly KISasm)
-			{
-				ResourceInfo_class = KISasm.GetTypes().Where (t => t.Name.Equals ("ResourceInfo")).FirstOrDefault ();
-				kis_resourceName = ResourceInfo_class.GetField ("resourceName");
-				kis_maxAmount = ResourceInfo_class.GetField ("maxAmount");
-				kis_amount = ResourceInfo_class.GetField ("amount");
-			}
-
-			public ResourceInfo (object obj)
-			{
-				this.obj = obj;
+				double val;
+				resourceName = node.GetValue ("name");
+				double.TryParse (node.GetValue ("maxAmount"), out val);
+				maxAmount = val;
+				double.TryParse (node.GetValue ("amount"), out val);
+				amount = val;
 			}
 		}
 
@@ -95,23 +62,18 @@ namespace ExtraplanetaryLaunchpads.KIS {
 		public List<ResourceInfo> GetResources ()
 		{
 			var resources = new List<ResourceInfo> ();
-			var kis_resources = (IList) kis_GetResources.Invoke (obj, null);
-			foreach (var item in kis_resources) {
-				resources.Add (new ResourceInfo (item));
+			var kis_resources = partNode.GetNodes ("RESOURCE");
+			foreach (var res in kis_resources) {
+				resources.Add (new ResourceInfo (res));
 			}
 			return resources;
-		}
-
-		public void SetResource(string name, double amount)
-		{
-			kis_SetResource.Invoke (obj, new object[]{name, amount});
 		}
 
 		internal static void Initialize (Assembly KISasm)
 		{
 			KIS_Item_class = KISasm.GetTypes().Where (t => t.Name.Equals ("KIS_Item")).FirstOrDefault ();
-			kis_GetResources = KIS_Item_class.GetMethod ("GetResources");
-			kis_SetResource = KIS_Item_class.GetMethod ("SetResource");
+			kis_partNode = KIS_Item_class.GetField ("partNode");
+			kis_itemResourceMass = KIS_Item_class.GetProperty ("itemResourceMass");
 		}
 	}
 
@@ -145,10 +107,19 @@ namespace ExtraplanetaryLaunchpads.KIS {
 			this.obj = obj;
 		}
 
-		internal static void Initialize (Assembly KISasm)
+		internal static bool Initialize (Assembly KISasm)
 		{
-			ModuleKISInventory_class = KISasm.GetTypes().Where (t => t.Name.Equals ("ModuleKISInventory")).FirstOrDefault ();
-			kis_items = ModuleKISInventory_class.GetField ("items");
+			var types = KISasm.GetTypes ();
+
+			foreach (var t in types) {
+				if (t.Name == "ModuleKISInventory") {
+					ModuleKISInventory_class = t;
+					kis_items = ModuleKISInventory_class.GetField ("items");
+					Debug.Log ($"[KISWrapper] ModuleKISInventory {kis_items}");
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 
@@ -160,21 +131,29 @@ namespace ExtraplanetaryLaunchpads.KIS {
 		{
 			if (!inited) {
 				inited = true; // do this only once, assemblies won't change
-				var KISasm = AssemblyLoader.loadedAssemblies.Where (a => a.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault ();
+				AssemblyLoader.LoadedAssembly KISasm = null;
+
+				foreach (var la in AssemblyLoader.loadedAssemblies) {
+					if (la.assembly.GetName ().Name.Equals ("KIS", StringComparison.InvariantCultureIgnoreCase)) {
+						KISasm = la;
+					}
+				}
 				if (KISasm != null) {
+					Debug.Log ($"[KISWrapper] found KIS {KISasm}");
 					ModuleKISInventory.Initialize (KISasm.assembly);
 					KIS_Item.Initialize (KISasm.assembly);
-					KIS_Item.ResourceInfo.Initialize (KISasm.assembly);
 					haveKIS = true;
 				}
 			}
 			return haveKIS;
 		}
 
-		static void GetResources (ModuleKISInventory inv, Dictionary<string, RMResourceInfo> resources)
+		static double GetResources (ModuleKISInventory inv, Dictionary<string, RMResourceInfo> resources)
 		{
+			double resMass = 0;
 			var items = inv.items;
 			foreach (var item in items.Values) {
+				resMass += item.itemResourceMass;
 				var kis_resources = item.GetResources ();
 				foreach (var res in kis_resources) {
 					RMResourceInfo resourceInfo;
@@ -187,16 +166,19 @@ namespace ExtraplanetaryLaunchpads.KIS {
 					resourceInfo.containers.Add (new KISResourceContainer (inv.part, res));
 				}
 			}
+			return resMass;
 		}
 
-		public static void GetResources (Part part, Dictionary<string, RMResourceInfo> resources)
+		public static double GetResources (Part part, Dictionary<string, RMResourceInfo> resources)
 		{
+			double resMass = 0;
 			foreach (PartModule mod in part.Modules) {
 				if (mod.moduleName == "ModuleKISInventory") {
 					var inv = new ModuleKISInventory (mod);
-					GetResources (inv, resources);
+					resMass += GetResources (inv, resources);
 				}
 			}
+			return resMass;
 		}
 	}
 }

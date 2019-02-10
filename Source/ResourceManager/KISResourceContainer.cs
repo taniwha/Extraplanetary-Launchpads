@@ -33,9 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 			get {
 				return resource.amount;
 			}
-			set {
-				resource.amount = value;
-			}
+			set { }
 		}
 
 		public bool flowState

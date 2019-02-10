@@ -37,12 +37,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void addPart (Part part)
 		{
+			double resMass = 0;
 			if (ELSettings.KIS_Present) {
-				KIS.KISWrapper.GetResources (part, container.resources);
+				// KIS container mass includes resources in contained parts
+				resMass = KIS.KISWrapper.GetResources (part, container.resources);
 			}
-			ELRecipeDatabase.ProcessPart (part, hullResoures.resources);
+			ELRecipeDatabase.ProcessPart (part, hullResoures.resources, resMass);
 			resources.AddPart (part);
-			mass += part.mass;
+			mass += part.mass - resMass;
 		}
 
 		public void removePart (Part part)

@@ -104,7 +104,7 @@ namespace ExtraplanetaryLaunchpads {
 			return pname;
 		}
 
-		public static void ProcessPart (Part part, Dictionary<string, RMResourceInfo> resources)
+		public static void ProcessPart (Part part, Dictionary<string, RMResourceInfo> resources, double massOffset)
 		{
 			string name = GetPartName (part);
 			if (name.Contains ("kerbalEVA")) {
@@ -116,7 +116,7 @@ namespace ExtraplanetaryLaunchpads {
 				print ("ELRecipeDatabase.ProcessPart: no part recipe for " + name);
 				return;
 			}
-			var recipe = part_recipes[name].Bake (part.mass);
+			var recipe = part_recipes[name].Bake (part.mass - massOffset);
 			for (int i = 0; i < recipe.ingredients.Count; i++) {
 				var ingredient = recipe.ingredients[i];
 				if (!ingredient.isReal) {

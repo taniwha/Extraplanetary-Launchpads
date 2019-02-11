@@ -23,6 +23,7 @@ using System.Reflection;
 using UnityEngine;
 
 using KSP.IO;
+using KSP.Localization;
 
 namespace ExtraplanetaryLaunchpads {
 
@@ -105,6 +106,7 @@ namespace ExtraplanetaryLaunchpads {
 				return null;
 			}
 		}
+		public List<string> craftBoM { get; private set; }
 		public CostReport buildCost { get; private set; }
 		public CostReport builtStuff { get; private set; }
 		public State state { get; private set; }
@@ -706,13 +708,42 @@ namespace ExtraplanetaryLaunchpads {
 			if ((buildCost = getBuildCost (craft)) != null) {
 				craftConfig = craft;
 				state = State.Planning;
+				craftName = Localizer.Format (craft.GetValue ("ship"));
 			}
 		}
 
 		public void UnloadCraft ()
 		{
 			craftConfig = null;
+			craftBoM = null;
 			state = State.Idle;
+		}
+
+		public void CreateBoM ()
+		{
+			string str;
+
+			if (craftConfig != null) {
+				craftBoM = new List<string> ();
+				var partCounts = new Dictionary<string, int> ();
+
+				str = craftConfig.GetValue ("description");
+				if (!string.IsNullOrEmpty (str)) {
+					craftBoM.Add (Localizer.Format(str));
+					craftBoM.Add ("");	// blank line
+				}
+				foreach (var part in craftConfig.GetNodes ("PART")) {
+					string name = part.GetValue ("part").Split ('_')[0];
+					if (!partCounts.ContainsKey (name)) {
+						partCounts[name] = 0;
+					}
+					partCounts[name]++;
+				}
+				foreach (var key in partCounts.Keys) {
+					var ap = PartLoader.getPartInfoByName (key);
+					craftBoM.Add($"{partCounts[key]}x  {ap.title}");
+				}
+			}
 		}
 
 		public void BuildCraft ()

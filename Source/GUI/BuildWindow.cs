@@ -500,7 +500,7 @@ namespace ExtraplanetaryLaunchpads {
 		void SelectedCraft ()
 		{
 			if (control.craftConfig != null) {
-				var ship_name = control.craftConfig.GetValue ("ship");
+				var ship_name = control.craftName;
 				GUILayout.Box ("Selected Craft:	" + ship_name, ELStyles.white);
 			}
 		}
@@ -635,6 +635,16 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void CraftBoM ()
+		{
+			if (control.craftBoM == null) {
+				control.CreateBoM ();
+			}
+			for (int i = 0, count = control.craftBoM.Count; i < count; i++) {
+				GUILayout.Label (control.craftBoM[i]);
+			}
+		}
+
 		void OptionalResources ()
 		{
 			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
@@ -737,7 +747,7 @@ namespace ExtraplanetaryLaunchpads {
 				} else {
 					resScroll.Begin ();
 					RequiredResources ();
-					//FIXME add BOM display
+					CraftBoM ();
 					resScroll.End ();
 					BuildButton ();
 				}

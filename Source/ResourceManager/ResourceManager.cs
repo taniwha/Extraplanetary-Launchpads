@@ -79,16 +79,6 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void CreatePartMap (List<Part> parts)
-		{
-			if (partMap == null) {
-				partMap = new Dictionary<uint, Part>();
-			} else {
-				partMap.Clear ();
-			}
-			ExpandPartMap (parts);
-		}
-
 		void GetOtherPart (IStageSeparator separator, ConnectedPartSet cp)
 		{
 			AttachNode node = null;
@@ -209,8 +199,8 @@ namespace ExtraplanetaryLaunchpads {
 				if (thisVessel != otherVessel
 					&& !visitedVessels.Contains (otherVessel.id)) {
 					visitedVessels.Add (otherVessel.id);
-					ExpandPartMap (otherVessel.parts);
-					ProcessParts (otherVessel.parts[0].localRoot, AddModule(otherVessel.vesselName));
+					BuildResourceSets (otherVessel.parts,
+									   otherVessel.vesselName);
 					return true;
 				}
 			}
@@ -364,7 +354,7 @@ namespace ExtraplanetaryLaunchpads {
 			symmetrySets = sets;
 		}
 
-		void BuildResourceSets ()
+		void FinalizeResourceSets ()
 		{
 			visitedParts.Clear ();
 			resourceSets = new List<RMResourceSet> ();
@@ -399,6 +389,20 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void BuildResourceSets (List<Part> parts, string vesselName)
+		{
+			ExpandPartMap (parts);
+			FindSymmetrySets (parts);
+			ProcessParts (parts[0].localRoot, AddModule (vesselName));
+			for (int i = 0; i < moduleSets.Count; ) {
+				if (moduleSets[i].parts.Count > 0) {
+					i++;
+				} else {
+					moduleSets.RemoveAt (i);
+				}
+			}
+		}
+
 		public RMResourceManager (List<Part> parts, bool useFlightID)
 		{
 			visitedVessels = new HashSet<Guid> ();
@@ -408,19 +412,12 @@ namespace ExtraplanetaryLaunchpads {
 				vesselName = parts[0].vessel.vesselName;
 			}
 			this.useFlightID = useFlightID;
-			CreatePartMap (parts);
+			partMap = new Dictionary<uint, Part>();
 			visitedParts = new HashSet<uint> ();
-			FindSymmetrySets (parts);
 			moduleSets = new List<RMResourceSet> ();
-			ProcessParts (parts[0].localRoot, AddModule (vesselName));
-			for (int i = 0; i < moduleSets.Count; ) {
-				if (moduleSets[i].parts.Count > 0) {
-					i++;
-				} else {
-					moduleSets.RemoveAt (i);
-				}
-			}
-			BuildResourceSets ();
+
+			BuildResourceSets (parts, vesselName);
+			FinalizeResourceSets ();
 #if false
 			foreach (var s in symmetrySets) {
 				Debug.LogFormat ("[RMResourceManager]  s {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);

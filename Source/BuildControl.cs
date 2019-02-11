@@ -949,10 +949,6 @@ namespace ExtraplanetaryLaunchpads {
 				InitializeFARSurfaces (craftVessel);
 			}
 
-			// needed for displaying optional resources during the planning
-			// stage.
-			craftResources = new RMResourceSet (craftVessel);
-
 			BuildCost resources = new BuildCost ();
 
 			foreach (Part p in craftVessel.parts) {

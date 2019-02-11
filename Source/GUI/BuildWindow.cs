@@ -297,9 +297,6 @@ namespace ExtraplanetaryLaunchpads {
 			if (minAmount == maxAmount) {
 				GUILayout.Box ("Must be 100%", width300, height20);
 				fraction = 1;
-			} else if (fraction < 0) {
-				GUILayout.Box ($"Capacity: {maxAmount}", width300, height20);
-				fraction += 2;
 			} else {
 				fraction = GUILayout.HorizontalSlider (fraction, 0.0F, 1.0F,
 													   ELStyles.slider,
@@ -638,23 +635,15 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void OptionalResources (bool prebuild)
+		void OptionalResources ()
 		{
-			if (prebuild) {
-				ResourceHeader ("Optional resources:");
-			} else {
-				link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
-													 "Link LiquidFuel and "
-													 + "Oxidizer sliders");
-			}
+			link_lfo_sliders = GUILayout.Toggle (link_lfo_sliders,
+												 "Link LiquidFuel and "
+												 + "Oxidizer sliders");
 			foreach (var br in control.buildCost.optional) {
 				double available = control.padResources.ResourceAmount (br.name);
 				double maximum = control.craftResources.ResourceCapacity(br.name);
 				float frac = (float) (br.amount / maximum);
-				if (prebuild) {
-					// tell resource line to show capacity rather than a slider
-					frac -= 2;
-				}
 				frac = ResourceLine (br.name, br.name, frac, 0,
 									 maximum, available);
 				if (link_lfo_sliders
@@ -748,7 +737,7 @@ namespace ExtraplanetaryLaunchpads {
 				} else {
 					resScroll.Begin ();
 					RequiredResources ();
-					OptionalResources (true);
+					//FIXME add BOM display
 					resScroll.End ();
 					BuildButton ();
 				}
@@ -774,7 +763,7 @@ namespace ExtraplanetaryLaunchpads {
 			case ELBuildControl.State.Transfer:
 				SelectedCraft ();
 				resScroll.Begin ();
-				OptionalResources (false);
+				OptionalResources ();
 				resScroll.End ();
 				ReleaseButton ();
 				break;

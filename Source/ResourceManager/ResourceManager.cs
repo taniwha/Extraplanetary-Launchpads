@@ -239,7 +239,6 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 
-				//FIXME need to add KAS connectors
 				if (module.moduleName == "KASModuleStrut") {
 					// legacy pipe connector
 					var kasStrut = new KASModuleStrut (module);
@@ -248,7 +247,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 
 				if (module.moduleName == "KASLinkResourceConnector") {
-					// new resoruce connector. works when undocked!
+					// new resource connector. works when undocked!
 					// however, can be used to dock the vessel, in which
 					// case KASJointCableBase is to be checked, or even
 					// just connected on the same vessel (just ignore)
@@ -259,7 +258,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 
 				if (module.moduleName == "KASLinkTargetBase") {
-					// new resoruce connector. works when undocked!
+					// new resource connector. works when undocked!
 					// however, can be used to dock the vessel, in which
 					// case KASJointCableBase is to be checked, or even
 					// just connected on the same vessel (just ignore)

@@ -65,9 +65,8 @@ namespace ExtraplanetaryLaunchpads {
 		public List<RMResourceSet> resourceSets;
 		bool useFlightID;
 
-		void CreatePartMap (List<Part> parts)
+		void ExpandPartMap (List<Part> parts)
 		{
-			partMap = new Dictionary<uint, Part>();
 			for (int i = parts.Count; i-- > 0; ) {
 				Part p = parts[i];
 				// flightID is usable when the parts are from an existing
@@ -78,6 +77,16 @@ namespace ExtraplanetaryLaunchpads {
 				uint id = useFlightID ? p.flightID : p.craftID;
 				partMap[id] = p;
 			}
+		}
+
+		void CreatePartMap (List<Part> parts)
+		{
+			if (partMap == null) {
+				partMap = new Dictionary<uint, Part>();
+			} else {
+				partMap.Clear ();
+			}
+			ExpandPartMap (parts);
 		}
 
 		void GetOtherPart (IStageSeparator separator, ConnectedPartSet cp)
@@ -200,6 +209,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (thisVessel != otherVessel
 					&& !visitedVessels.Contains (otherVessel.id)) {
 					visitedVessels.Add (otherVessel.id);
+					ExpandPartMap (otherVessel.parts);
 					ProcessParts (otherVessel.parts[0].localRoot, AddModule(otherVessel.vesselName));
 					return true;
 				}

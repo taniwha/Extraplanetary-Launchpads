@@ -105,15 +105,25 @@ namespace ExtraplanetaryLaunchpads {
 			get;
 			private set;
 		}
+		RMResourceManager padResourceManager;
 		public RMResourceSet padResources
 		{
-			get;
-			private set;
+			get {
+				if (padResourceManager != null) {
+					return padResourceManager.masterSet;
+				}
+				return null;
+			}
 		}
+		RMResourceManager craftResourceManager;
 		public RMResourceSet craftResources
 		{
-			get;
-			private set;
+			get {
+				if (craftResourceManager != null) {
+					return craftResourceManager.masterSet;
+				}
+				return null;
+			}
 		}
 		public CostReport buildCost
 		{
@@ -156,6 +166,25 @@ namespace ExtraplanetaryLaunchpads {
 		public DockedVesselInfo vesselInfo { get; private set; }
 		Transform launchTransform;
 		public Part craftRoot { get; private set; }
+		public string craftName
+		{
+			get {
+				if (vesselInfo != null) {
+					return vesselInfo.name;
+				} else if (craftConfig != null) {
+					return craftConfig.GetValue ("ship");
+				} else {
+					return "";
+				}
+			}
+			set {
+				if (vesselInfo != null) {
+					vesselInfo.name = value;
+				} else if (craftConfig != null) {
+					craftConfig.SetValue ("ship", value);
+				}
+			}
+		}
 		Vessel craftVessel;
 		Vector3 craftOffset;
 
@@ -425,7 +454,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void SetupCraftResources (Vessel vsl)
 		{
-			craftResources = new RMResourceSet (vsl);
+			Part rootPart = vsl.parts[0].localRoot;
+			craftResourceManager = new RMResourceManager (vsl.parts, rootPart,
+														  false, true);
 			foreach (var br in buildCost.optional) {
 				var amount = craftResources.ResourceAmount (br.name);
 				craftResources.TransferResource (br.name, -amount);
@@ -762,31 +793,40 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		internal List<Part> CraftParts ()
+		internal HashSet<Part> CraftParts ()
 		{
-			var part_list = new List<Part> ();
+			var part_set = new HashSet<Part> ();
 			if (craftRoot != null) {
 				var root = craftRoot;
 				Debug.Log (String.Format ("[EL] CraftParts root {0}", root));
-				part_list.Add (root);
-				part_list.AddRange (root.FindChildParts<Part> (true));
+				part_set.Add (root);
+				part_set.UnionWith (root.FindChildParts<Part> (true));
 			}
-			return part_list;
+			return part_set;
 		}
 
 		internal void FindVesselResources ()
 		{
-			padResources = new RMResourceSet (builder.vessel);
 			var craft_parts = CraftParts ();
+			var pad_parts = new HashSet<Part> (builder.vessel.parts);
+			pad_parts.ExceptWith (craft_parts);
+			//Debug.Log ($"[ELBuildControl] FindVesselResources pad {pad_parts.Count} craft {craft_parts.Count}");
+
+			string vesselName = builder.vessel.vesselName;
+			Part root = builder.part.localRoot;
+			//Debug.Log ($"[ELBuildControl] FindVesselResources pad");
+			padResourceManager = new RMResourceManager (vesselName,
+														pad_parts, root,
+														craft_parts,
+														false, true);
+
 			if (craft_parts.Count > 0) {
-				craftResources = new RMResourceSet ();
-			}
-			foreach (var part in craft_parts) {
-				padResources.RemovePart (part);
-				craftResources.AddPart (part);
-			}
-			if (craftResources == null && craftConfig != null) {
-				getBuildCost (craftConfig);
+				//Debug.Log ($"[ELBuildControl] FindVesselResources craft");
+				craftResourceManager = new RMResourceManager (craftName,
+															  craft_parts,
+															  craftRoot,
+															  null,
+															  false, true);
 			}
 		}
 
@@ -969,10 +1009,7 @@ namespace ExtraplanetaryLaunchpads {
 		void onVesselWasModified (Vessel v)
 		{
 			if (v == builder.vessel) {
-				padResources = new RMResourceSet (builder.vessel);
-				if (craftRoot != null && craftRoot.vessel != builder.vessel) {
-					CleaupAfterRelease ();
-				}
+				FindVesselResources ();
 			}
 		}
 	}

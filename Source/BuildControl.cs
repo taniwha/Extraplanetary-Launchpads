@@ -75,36 +75,16 @@ namespace ExtraplanetaryLaunchpads {
 			string LaunchedFrom { get; }
 		}
 
-		public IBuilder builder
-		{
-			get;
-			private set;
-		}
+		public IBuilder builder { get; private set; }
 
 		public enum State { Idle, Planning, Building, Canceling, Dewarping, Complete, Transfer };
 
 		public ELCraftType craftType = ELCraftType.VAB;
 
-		public string filename
-		{
-			get;
-			private set;
-		}
-		public string flagname
-		{
-			get;
-			set;
-		}
-		public bool lockedParts
-		{
-			get;
-			private set;
-		}
-		public ConfigNode craftConfig
-		{
-			get;
-			private set;
-		}
+		public string filename { get; private set; }
+		public string flagname { get; set; }
+		public bool lockedParts { get; private set; }
+		public ConfigNode craftConfig { get; private set; }
 		RMResourceManager padResourceManager;
 		public RMResourceSet padResources
 		{
@@ -125,33 +105,13 @@ namespace ExtraplanetaryLaunchpads {
 				return null;
 			}
 		}
-		public CostReport buildCost
-		{
-			get;
-			private set;
-		}
-		public CostReport builtStuff
-		{
-			get;
-			private set;
-		}
-		public State state
-		{
-			get;
-			private set;
-		}
-		public bool paused
-		{
-			get;
-			private set;
-		}
+		public CostReport buildCost { get; private set; }
+		public CostReport builtStuff { get; private set; }
+		public State state { get; private set; }
+		public bool paused { get; private set; }
 		public string KACalarmID = "";
 
-		public ELVesselWorkNet workNet
-		{
-			get;
-			set;
-		}
+		public ELVesselWorkNet workNet { get; set; }
 
 		public double productivity
 		{

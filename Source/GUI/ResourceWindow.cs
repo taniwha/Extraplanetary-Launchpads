@@ -120,7 +120,10 @@ namespace ExtraplanetaryLaunchpads {
 
 		void RebuildSets (Vessel v)
 		{
-			resourceManager = new RMResourceManager (v.parts, true);
+			Part rootPart = v.parts[0].localRoot;
+			//Debug.Log ($"[ELResourceWindow] RebuildSets");
+			resourceManager = new RMResourceManager (v.parts, rootPart,
+													 true, true);
 			resscroll.Reset ();
 			var set = new HashSet<string> ();
 			setSelected = null;

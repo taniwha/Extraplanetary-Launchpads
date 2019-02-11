@@ -56,19 +56,26 @@ namespace ExtraplanetaryLaunchpads {
 				parts.Clear ();
 			}
 		}
-		HashSet<uint> visitedParts;
-		HashSet<Guid> visitedVessels;
-		Dictionary<uint, Part> partMap;
-		Dictionary<uint, RMResourceSet> symmetryDict;
-		public List<RMResourceSet> symmetrySets;
-		public List<RMResourceSet> moduleSets;
-		public List<RMResourceSet> resourceSets;
-		bool useFlightID;
 
-		void ExpandPartMap (List<Part> parts)
+		HashSet<uint> visitedParts = new HashSet<uint> ();
+		HashSet<Guid> visitedVessels = new HashSet<Guid> ();
+		HashSet<Part> excludeParts;
+		Dictionary<uint, Part> partMap = new Dictionary<uint, Part>();
+		Dictionary<uint, RMResourceSet> symmetryDict;
+
+		public List<RMResourceSet> symmetrySets;
+		public List<RMResourceSet> moduleSets = new List<RMResourceSet> ();
+		public List<RMResourceSet> resourceSets;
+		public RMResourceSet masterSet;
+		bool useFlightID;
+		bool addVessels;
+
+		void ExpandPartMap (IEnumerable<Part> parts)
 		{
-			for (int i = parts.Count; i-- > 0; ) {
-				Part p = parts[i];
+			foreach (Part p in parts) {
+				if (excludeParts.Contains (p)) {
+					continue;
+				}
 				// flightID is usable when the parts are from an existing
 				// vessel, and craftID is usable when the parts are from
 				// a craft file (ie, the vessel does not yet exist)
@@ -193,14 +200,15 @@ namespace ExtraplanetaryLaunchpads {
 
 		bool CheckKASLink (ILinkPeer peer)
 		{
-			if (peer.isLinked && peer.otherPeer != null) {
+			if (addVessels && peer.isLinked && peer.otherPeer != null) {
 				var thisVessel = peer.part.vessel;
 				var otherVessel = peer.otherPeer.part.vessel;
-				if (thisVessel != otherVessel
+				if (!excludeParts.Contains(peer.otherPeer.part)
+					&& thisVessel != otherVessel
 					&& !visitedVessels.Contains (otherVessel.id)) {
 					visitedVessels.Add (otherVessel.id);
-					BuildResourceSets (otherVessel.parts,
-									   otherVessel.vesselName);
+					AddVessel (otherVessel.vesselName, otherVessel.parts,
+							   otherVessel.parts[0].localRoot);
 					return true;
 				}
 			}
@@ -297,6 +305,9 @@ namespace ExtraplanetaryLaunchpads {
 
 			for (int i = part.children.Count; i-- > 0; ) {
 				var child = part.children[i];
+				if (excludeParts.Contains (child)) {
+					continue;
+				}
 				if (cp.Has (child)) {
 					//Debug.LogFormat("[RMResourceSet] ProcessParts: child {0}", child);
 					ProcessParts (child, AddModule (cp.Name (child)));
@@ -314,13 +325,15 @@ namespace ExtraplanetaryLaunchpads {
 		// The dictionary is indexed by part id (flight or craft) such that
 		// the symmetry set can be found by the id of any part within the set.
 		// However, the sets consist of only those parts that hold resources.
-		void FindSymmetrySets (List<Part> parts)
+		void FindSymmetrySets (IEnumerable<Part> parts)
 		{
 			visitedParts.Clear ();
 			var dict = new Dictionary<uint, RMResourceSet> ();
 			var sets = new List<RMResourceSet> ();
-			for (int i = 0; i < parts.Count; i++) {
-				Part p = parts[i];
+			foreach (Part p in parts) {
+				if (excludeParts.Contains (p)) {
+					continue;
+				}
 				uint id = GetID (p);
 				//Debug.LogFormat ("{0} {1} {2}", i, p.name, p.symmetryCounterparts.Count);
 				if (p.Resources.Count < 1) {
@@ -358,6 +371,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			visitedParts.Clear ();
 			resourceSets = new List<RMResourceSet> ();
+			masterSet = new RMResourceSet ();
 			RMResourceSet set = null;
 			foreach (var m in moduleSets) {
 				if (set == null) {
@@ -377,9 +391,11 @@ namespace ExtraplanetaryLaunchpads {
 							visitedParts.Add (sid);
 						}
 						set.AddSet (sym);
+						masterSet.AddSet (sym);
 					} else {
 						visitedParts.Contains (id);
 						set.AddPart (p);
+						masterSet.AddPart (p);
 					}
 				}
 				if (set.parts.Count > 0 || set.sets.Count > 0) {
@@ -389,11 +405,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void BuildResourceSets (List<Part> parts, string vesselName)
+		void AddVessel (string vesselName, IEnumerable<Part> parts,
+						Part rootPart)
 		{
 			ExpandPartMap (parts);
 			FindSymmetrySets (parts);
-			ProcessParts (parts[0].localRoot, AddModule (vesselName));
+			ProcessParts (rootPart, AddModule (vesselName));
 			for (int i = 0; i < moduleSets.Count; ) {
 				if (moduleSets[i].parts.Count > 0) {
 					i++;
@@ -403,22 +420,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public RMResourceManager (List<Part> parts, bool useFlightID)
+		void DumpResourceSets ()
 		{
-			visitedVessels = new HashSet<Guid> ();
-			string vesselName = "root";
-			if (parts[0].vessel != null) {
-				visitedVessels.Add (parts[0].vessel.id);
-				vesselName = parts[0].vessel.vesselName;
-			}
-			this.useFlightID = useFlightID;
-			partMap = new Dictionary<uint, Part>();
-			visitedParts = new HashSet<uint> ();
-			moduleSets = new List<RMResourceSet> ();
-
-			BuildResourceSets (parts, vesselName);
-			FinalizeResourceSets ();
-#if false
 			foreach (var s in symmetrySets) {
 				Debug.LogFormat ("[RMResourceManager]  s {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
 			}
@@ -434,7 +437,43 @@ namespace ExtraplanetaryLaunchpads {
 					Debug.LogFormat ("[RMResourceManager] rr {0} {1} {2}", res, r.ResourceAmount (res), r.ResourceCapacity (res));
 				}
 			}
-#endif
+		}
+
+		public RMResourceManager (string vesselName,
+								  IEnumerable<Part> parts, Part rootPart,
+								  HashSet<Part> excludeParts,
+								  bool addVessels, bool useFlightID)
+		{
+			this.useFlightID = useFlightID;
+			this.addVessels = addVessels;
+			if (excludeParts == null) {
+				excludeParts = new HashSet<Part> ();
+			}
+			this.excludeParts = excludeParts;
+
+			AddVessel (vesselName, parts, rootPart);
+			FinalizeResourceSets ();
+
+			//DumpResourceSets ();
+		}
+
+		public RMResourceManager (IEnumerable<Part> parts, Part rootPart,
+								  bool addVessels, bool useFlightID)
+		{
+			this.useFlightID = useFlightID;
+			this.addVessels = addVessels;
+			this.excludeParts = new HashSet<Part> ();
+
+			string vesselName = "root";
+			if (rootPart.vessel != null) {
+				visitedVessels.Add (rootPart.vessel.id);
+				vesselName = rootPart.vessel.vesselName;
+			}
+
+			AddVessel (vesselName, parts, rootPart);
+			FinalizeResourceSets ();
+
+			//DumpResourceSets ();
 		}
 	}
 }

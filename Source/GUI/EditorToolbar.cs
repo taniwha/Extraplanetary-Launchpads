@@ -28,7 +28,8 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false) ]
 	public class ELEditorToolbar : MonoBehaviour
 	{
-		static Texture texture;
+		static string nTexName = "ExtraplanetaryLaunchpads/Textures/icon_filter_n";
+		static string sTexName = "ExtraplanetaryLaunchpads/Textures/icon_filter_s";
 		static Icon icon;
 		static string[] elResources = {"MetalOre", "Metal", "ScrapMetal", "RocketParts"};
 		static HashSet<string> elItems;
@@ -56,9 +57,10 @@ namespace ExtraplanetaryLaunchpads {
 		void Awake ()
 		{
 			GameEvents.onGUIEditorToolbarReady.Add (onGUIEditorToolbarReady);
-			if (texture == null) {
-				texture = GameDatabase.Instance.GetTexture ("ExtraplanetaryLaunchpads/Textures/icon_filter", false);
-				icon = new Icon ("EL icon", texture, texture, true);
+			if (icon == null) {
+				var nTex = GameDatabase.Instance.GetTexture (nTexName, false);
+				var sTex = GameDatabase.Instance.GetTexture (sTexName, false);
+				icon = new Icon ("EL icon", nTex, sTex, true);
 				elItems = new HashSet<string> ();
 				haveCCK = false;
 				foreach (var asm in AssemblyLoader.loadedAssemblies) {

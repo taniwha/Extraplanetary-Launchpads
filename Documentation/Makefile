@@ -31,7 +31,7 @@ info:
 	lyx -E pdf4 $@ $^
 
 clean:
-	rm -f *.pdf
+	rm -f *.pdf *.tex
 
 veryclean: clean
 	rm -f *.bak *~

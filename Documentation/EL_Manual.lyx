@@ -3448,11 +3448,6 @@ Technically, there is no difference between a launchpad and an orbital dock:
  orbital operation.
 \end_layout
 
-\begin_layout Standard
-Adjusting the optional resources in the preview will set the defaults for
- the amounts to be transferred upon release.
-\end_layout
-
 \begin_layout Subsubsection
 Survey Stations and Survey Stakes
 \end_layout
@@ -3494,11 +3489,6 @@ Valentina Kerman Base
  and within range (200m) of each other.
 \end_layout
 
-\begin_layout Standard
-Adjusting the optional resources in the preview will have no effect as no
- resources will be transferred.
-\end_layout
-
 \begin_layout Subsubsection
 Micro-Pad
 \end_layout
@@ -3524,8 +3514,8 @@ The orientation and position of the build is controlled by the combination
  of the orientation and position of the micro-pad, and the automatically
  selected attach node of the root part.
  The colored diamonds on the micro-pad indicate the orientation of the root
- part when its top node is selected (red = +X, blue = +Z, cyan = -X, yellow
- = -Z
+ part when its bottom node is selected (red = +X, blue = +Z, cyan = -X,
+ yellow = -Z
 \begin_inset Foot
 status collapsed
 
@@ -3548,16 +3538,10 @@ Hopefully the colors are distinct enough that any suffering from colorblindness
 \begin_layout Standard
 The micro-pad automatically selects the attach node of the root part by
  searching for the first available (unattached) node.
- First the top node is checked, then the bottom node, then any remaining
+ First the bottom node is checked, then the top node, then any remaining
  nodes in the order they are found.
  Thus a small amount of control over which node is selected can be obtained
  simply by attaching parts to the undesired nodes.
-\end_layout
-
-\begin_layout Standard
-Adjusting the optional resources in the preview will have no effect as no
- resources will be transferred.
- Nor is there any need for them to be automatically transferred.
 \end_layout
 
 \begin_layout Section
@@ -4482,6 +4466,45 @@ Workbench
 Once the required modules have been built, base production can go into full
  swing, even the construction of larger resource production chain, including
  recycling and the full-sized workshop.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways true
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename gilly_base.svg
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Gilly Base
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+The base started with just a tiny seed lander, but eventually flourished
+ into a productive base...
+ until the kethane supply ran out :/
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part
@@ -6224,32 +6247,26 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
-
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6348,37 +6365,30 @@ literal "true"
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6403,17 +6413,14 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6541,32 +6548,26 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6845,37 +6846,30 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6960,32 +6954,26 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7070,42 +7058,34 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
-
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
-
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7206,137 +7186,110 @@ efficiency
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = LFOFiredSmelter
 \end_layout
 
 \begin_layout Verbatim
-
     Input {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
-
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
-
         MetalOre = 1596.882
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
     Output {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
-
         CarbonDioxide = 1056.228
 \end_layout
 
 \begin_layout Verbatim
-
         Water = 288.24448
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 1116.9 -9627.678
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
     Input {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
-
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
     Output {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
-
         Carbon = 24.0214
 \end_layout
 
 \begin_layout Verbatim
-
         CarbonDioxide = 176.038
 \end_layout
 
 \begin_layout Verbatim
-
         CarbonMonoxide = 476.1717
 \end_layout
 
 \begin_layout Verbatim
-
         Formaldehyde = 30.02598
 \end_layout
 
 \begin_layout Verbatim
-
         Hydrogen = 14.11116
 \end_layout
 
 \begin_layout Verbatim
-
         Water = 144.12224
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7345,37 +7298,30 @@ EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = LFOMix
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         LiquidFuel = 9
 \end_layout
 
 \begin_layout Verbatim
-
         Oxidizer = 11
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7458,47 +7404,38 @@ default
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ResourceRates {
 \end_layout
 
 \begin_layout Verbatim
-
     default = 5
 \end_layout
 
 \begin_layout Verbatim
-
     ElectricCharge = 1
 \end_layout
 
 \begin_layout Verbatim
-
     LiquidFuel = 0.36
 \end_layout
 
 \begin_layout Verbatim
-
     Oxidizer = 0.44
 \end_layout
 
 \begin_layout Verbatim
-
     MonoPropellant = 0.4
 \end_layout
 
 \begin_layout Verbatim
-
     XenonGas = 2
 \end_layout
 
 \begin_layout Verbatim
-
     Ore = 8
 \end_layout
 
 \begin_layout Verbatim
-
 } 
 \end_layout
 

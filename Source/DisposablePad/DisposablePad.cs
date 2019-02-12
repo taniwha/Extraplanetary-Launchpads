@@ -217,12 +217,12 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			AttachNode node;
 
-			if ((node = p.FindAttachNode ("top")) != null) {
+			if ((node = p.FindAttachNode ("bottom")) != null) {
 				if (node.attachedPart == null) {
 					return node;
 				}
 			}
-			if ((node = p.FindAttachNode ("bottom")) != null) {
+			if ((node = p.FindAttachNode ("top")) != null) {
 				if (node.attachedPart == null) {
 					return node;
 				}

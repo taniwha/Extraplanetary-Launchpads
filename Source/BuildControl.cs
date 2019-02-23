@@ -356,12 +356,12 @@ namespace ExtraplanetaryLaunchpads {
 
 				did_work = false;
 				foreach (var bres in built) {
-					double work = kerbalHours / count--;
 					var cres = ELBuildWindow.FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
 					if (remaining <= 0) {
 						continue;
 					}
+					double work = kerbalHours / count--;
 					double amount = work / bres.kerbalHours;
 					double base_amount = Math.Abs (amount);
 

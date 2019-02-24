@@ -87,7 +87,7 @@ namespace ExtraplanetaryLaunchpads {
 				yield return null;
 			}
 			ShipConstruct ship = EditorLogic.fetch.ship;
-			Debug.LogFormat ("ELShipInfo.WaitAndRebuildList: {0}", ship);
+			//Debug.LogFormat ("ELShipInfo.WaitAndRebuildList: {0}", ship);
 
 			buildCost = null;
 			cashed_cost = null;

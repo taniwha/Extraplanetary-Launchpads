@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Triangle
 {
-	public const float epsilon = 1e-5f;
+	public const float epsilon = 1e-3f;
 
 	public RawMesh mesh;
 	public Vector3 a, b, c, n;

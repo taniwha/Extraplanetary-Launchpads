@@ -75,23 +75,45 @@ public class FaceSet
 		return edges;
 	}
 
-	public Mesh CreateMesh ()
+	Mesh MakeSubMesh (int start, int count)
 	{
-		var verts = new Vector3[faces.Count * 3];
-		var tris = new int[faces.Count * 3];
+		var verts = new Vector3[count * 3];
+		var tris = new int[count * 3];
 
-		for (int i = 0; i < faces.Count; i++) {
-			var f = faces[i];
+		for (int i = 0; i < count; i++) {
+			var f = faces[start + i];
 			verts[i*3 + 0] = f.a;
 			verts[i*3 + 1] = f.c;
 			verts[i*3 + 2] = f.b;
 		}
-		for (int i = 0; i < 3*faces.Count; i++) {
+		for (int i = 0; i < 3*count; i++) {
 			tris[i] = i;
 		}
 		var m = new Mesh ();
 		m.vertices = verts;
 		m.triangles = tris;
 		return m;
+	}
+
+	// While Unity 2017.3 introduces 32-bit vertex indices, KSP is still on
+	// 2017.1, so they're not yet available. The maximum vertex count seems to
+	// be 65000, but the generated mesh is simplistic in that vertices are not
+	// shared between triangles thus the max faces is 65000/3
+	const int maxFaces = 21666;
+
+	public Mesh[] CreateMesh ()
+	{
+		int numMeshes = (faces.Count + maxFaces - 1) / maxFaces;
+		Debug.Log ($"[FaceSet] faces: {faces.Count} meshes: {numMeshes}");
+		var meshes = new Mesh[numMeshes];
+		for (int i = 0; i < numMeshes; i++) {
+			int start = i * maxFaces;
+			int count = faces.Count - start;
+			if (count > maxFaces) {
+				count = maxFaces;
+			}
+			meshes[i] = MakeSubMesh (start, count);
+		}
+		return meshes;
 	}
 }

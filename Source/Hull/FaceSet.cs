@@ -83,8 +83,8 @@ public class FaceSet
 		for (int i = 0; i < faces.Count; i++) {
 			var f = faces[i];
 			verts[i*3 + 0] = f.a;
-			verts[i*3 + 1] = f.b;
-			verts[i*3 + 2] = f.c;
+			verts[i*3 + 1] = f.c;
+			verts[i*3 + 2] = f.b;
 		}
 		for (int i = 0; i < 3*faces.Count; i++) {
 			tris[i] = i;

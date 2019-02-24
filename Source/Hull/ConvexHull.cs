@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class ConvexHull
 {
 	public RawMesh mesh;
@@ -83,8 +85,8 @@ public class ConvexHull
 		var tri = new Triangle(mesh, a, b, c);
 		d = 0;
 		bestd = 0;
-		for (int i = 0; i < 6; i++) {
-			int p = points[i];
+		for (int i = 0; i < mesh.verts.Length; i++) {
+			int p = i;
 			if (a == p || b == p || c == p) {
 				continue;
 			}
@@ -116,15 +118,24 @@ public class ConvexHull
 			for (int j = 0; j < faces.Count; j++) {
 				var f = faces[j];
 				if (f.AddPoint (i)) {
-					break;	// proces the next point
+					break;	// process the next point
 				}
 			}
 		}
+		//for (int i = 0; i < faces.Count; i++) {
+		//	var f = faces[i];
+		//	Debug.Log($"[ConvexHull] GetHull {i} {f.vispoints.Count} {f.highest} {f.height}");
+		//}
 
 		FaceSet finalFaces = new FaceSet (mesh);
 
 		while (faces.Count > 0) {
+			int nvis = 0;
+			for (int i = 0; i < faces.Count; i++) {
+				nvis += faces[i].vispoints.Count;
+			}
 			var f = faces.Pop ();
+			//Debug.Log($"[ConvexHull] total vis {nvis} f.vis {f.vispoints.Count} faces {faces.Count}");
 			if (f.vispoints.Count < 1) {
 				finalFaces.Add (f);
 				continue;
@@ -133,6 +144,7 @@ public class ConvexHull
 			var litFaces = faces.LightFaces (f, point);
 			// light final faces as well so that face merging can be done
 			litFaces.Extend (finalFaces.LightFaces (null, point));
+			//Debug.Log($"[ConvexHull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
 			var horizonEdges = litFaces.FindOuterEdges ();
 			var newFaces = new FaceSet (mesh);
 			foreach (Edge e in horizonEdges) {
@@ -147,6 +159,14 @@ public class ConvexHull
 							break;
 						}
 					}
+				}
+			}
+			for (int i = 0; i < newFaces.Count; i++) {
+				var nf = newFaces[i];
+				if (nf.vispoints.Count > 0) {
+					faces.Add (nf);
+				} else {
+					finalFaces.Add (nf);
 				}
 			}
 		}

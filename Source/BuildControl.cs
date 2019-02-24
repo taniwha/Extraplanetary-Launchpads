@@ -86,6 +86,8 @@ namespace ExtraplanetaryLaunchpads {
 		public string flagname { get; set; }
 		public bool lockedParts { get; private set; }
 		public ConfigNode craftConfig { get; private set; }
+		public Mesh craftHullMesh { get; private set; }
+		public GameObject craftHullObject { get; private set; }
 		RMResourceManager padResourceManager;
 		public RMResourceSet padResources
 		{
@@ -892,6 +894,12 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
+			if (craftHullMesh != null) {
+				UnityEngine.Object.Destroy (craftHullMesh);
+				craftHullMesh = null;
+				UnityEngine.Object.Destroy (craftHullObject);
+				craftHullObject = null;
+			}
 		}
 
 		void CleaupAfterRelease ()
@@ -954,6 +962,45 @@ namespace ExtraplanetaryLaunchpads {
 			return called;
 		}
 
+		Mesh BuildConvexHull (Vessel craftVessel)
+		{
+			var meshFilters = craftVessel.GetComponentsInChildren<MeshFilter> (false);
+			var skinnedMeshRenderers = craftVessel.GetComponentsInChildren<SkinnedMeshRenderer> (false);
+
+			int numVerts = 0;
+
+			for (int i = 0; i < meshFilters.Length; i++) {
+				numVerts += meshFilters[i].sharedMesh.vertices.Length;
+			}
+			for (int i = 0; i < skinnedMeshRenderers.Length; i++) {
+				numVerts += skinnedMeshRenderers[i].sharedMesh.vertices.Length;
+			}
+
+			Debug.Log($"[ELBuildControl] BuildConvexHull {numVerts} verts to process");
+			var rawMesh = new RawMesh (numVerts);
+			var rootXform = craftVessel.parts[0].localRoot.transform.worldToLocalMatrix;
+
+			for (int i = 0; i < meshFilters.Length; i++) {
+				var mf = meshFilters[i];
+				var xform = rootXform * mf.transform.localToWorldMatrix;
+				rawMesh.AppendMesh (mf.sharedMesh, xform);
+			}
+
+			var m = new Mesh ();
+			for (int i = 0; i < skinnedMeshRenderers.Length; i++) {
+				var smr = skinnedMeshRenderers[i];
+				var xform = rootXform * smr.transform.localToWorldMatrix;
+				smr.BakeMesh (m);
+				rawMesh.AppendMesh (m, xform);
+			}
+			UnityEngine.Object.Destroy (m);
+
+			var hull = new ConvexHull (rawMesh);
+			var hullFaces = hull.GetHull ();
+			Debug.Log($"[ELBuildControl] BuildConvexHull {hullFaces.faces.Count} hull faces");
+			return hullFaces.CreateMesh ();
+		}
+
 		public CostReport getBuildCost (ConfigNode craft)
 		{
 			lockedParts = false;
@@ -985,6 +1032,32 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (Part p in craftVessel.parts) {
 				resources.addPart (p);
 			}
+
+			if (craftHullMesh != null) {
+				UnityEngine.Object.Destroy (craftHullMesh);
+			}
+			var timer = System.Diagnostics.Stopwatch.StartNew();
+			craftHullMesh = BuildConvexHull (craftVessel);
+			timer.Stop();
+			var verts = craftHullMesh.vertices;
+			var tris = craftHullMesh.triangles;
+			//for (int i = 0; i < verts.Length; i++) {
+			//	Debug.Log($"    {i} {verts[i].x} {verts[i].y} {verts[i].z}");
+			//}
+			//for (int i = 0; i < tris.Length / 3; i++) {
+			//	Debug.Log($"    {i} {tris[i*3+0]} {tris[i*3+1]} {tris[i*3+2]}");
+			//}
+			Debug.Log($"[ELBuildControl] BuildConvexHull {timer.ElapsedMilliseconds}ms {verts.Length} {tris.Length/3}");
+			craftHullObject = new GameObject ("EL convex hull",
+											  typeof (MeshRenderer),
+											  typeof (MeshFilter));
+			var meshFilter = craftHullObject.GetComponent<MeshFilter> ();
+			meshFilter.mesh = craftHullMesh;
+			var renderer = craftHullObject.GetComponent<Renderer> ();
+			renderer.material = new Material (Shader.Find("Diffuse"));
+			renderer.material.color = XKCDColors.MossGreen;
+			craftHullObject.transform.SetParent (builder.part.transform, false);
+
 			craftVessel.Die ();
 
 			return resources.cost;

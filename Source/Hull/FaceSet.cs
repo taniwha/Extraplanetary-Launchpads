@@ -36,10 +36,9 @@ public class FaceSet
 	public Triangle Pop ()
 	{
 		Triangle face = null;
-		int ind = faces.Count - 1;
-		if (ind >= 0) {
-			face = faces[ind];
-			faces.RemoveAt (ind);
+		if (faces.Count > 0) {
+			face = faces[0];
+			faces.RemoveAt (0);
 		}
 		return face;
 	}

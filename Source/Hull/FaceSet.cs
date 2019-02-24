@@ -66,10 +66,10 @@ public class FaceSet
 		for (int i = 0; i < faces.Count; i++) {
 			var f = faces[i];
 			for (int j = 0; j < 3; j++) {
-				if (edges.Contains (f.redges[i])) {
-					edges.Remove (f.redges[i]);
+				if (edges.Contains (f.redges[j])) {
+					edges.Remove (f.redges[j]);
 				} else {
-					edges.Add (f.edges[i]);
+					edges.Add (f.edges[j]);
 				}
 			}
 		}

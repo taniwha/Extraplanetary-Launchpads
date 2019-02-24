@@ -5,14 +5,13 @@ make GAMEDATA=`pwd`/tmp install
 cd tmp
 zip -r9 ../${MODNAME}_v${ver}.zip ${MODNAME}
 cp ${MODNAME}/Plugins/${MODNAME}.version ..
-cp ${MODNAME}/EL_Manual.pdf ..
 cd ..
 rm -rf tmp
 
 if test "$1" = "-u" -a -n "$UPLOAD_DIR" -a -n "$UPLOAD_URL"; then
-	uploads="${MODNAME}_v${ver}.zip ${MODNAME}.version EL_Manual.pdf"
+	uploads="${MODNAME}_v${ver}.zip ${MODNAME}.version Documentation/EL_Manual.pdf"
 	scp ${uploads} ${UPLOAD_DIR}
 	for f in ${uploads}; do
-		echo ${UPLOAD_URL}/"$f" | sed -s 's/ /%20/g'
+		echo ${UPLOAD_URL}/`basename "$f"` | sed -s 's/ /%20/g'
 	done
 fi

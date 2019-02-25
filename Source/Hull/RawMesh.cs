@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 
 public class RawMesh
@@ -32,6 +33,16 @@ public class RawMesh
 		}
 		for (int i = 0; i < v.Length; i++) {
 			verts[addindex++] = xform.MultiplyPoint3x4 (v[i]);
+		}
+	}
+
+	public void Write (BinaryWriter bw)
+	{
+		bw.Write(addindex);
+		for (int i = 0; i < addindex; i++) {
+			bw.Write(verts[i].x);
+			bw.Write(verts[i].y);
+			bw.Write(verts[i].z);
 		}
 	}
 }

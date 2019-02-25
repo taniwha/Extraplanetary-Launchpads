@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,5 +55,17 @@ public class Triangle
 			return true;
 		}
 		return false;
+	}
+
+	public void Write (BinaryWriter bw)
+	{
+		bw.Write (edges[0].a);
+		bw.Write (edges[1].a);
+		bw.Write (edges[2].a);
+		bw.Write (highest);
+		bw.Write (vispoints.Count);
+		for (int i = 0; i < vispoints.Count; i++) {
+			bw.Write (vispoints[i]);
+		}
 	}
 }

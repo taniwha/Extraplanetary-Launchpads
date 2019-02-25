@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -115,5 +116,13 @@ public class FaceSet
 			meshes[i] = MakeSubMesh (start, count);
 		}
 		return meshes;
+	}
+
+	public void Write(BinaryWriter bw)
+	{
+		bw.Write(faces.Count);
+		for (int i = 0; i < faces.Count; i++) {
+			faces[i].Write (bw);
+		}
 	}
 }

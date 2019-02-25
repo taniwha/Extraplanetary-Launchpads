@@ -37,7 +37,7 @@ public class Triangle
 
 	public bool CanSee (int point)
 	{
-		return Dist (point) > -epsilon;
+		return Dist (point) >= 0;
 	}
 
 	public bool AddPoint (int point)

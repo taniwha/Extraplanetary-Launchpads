@@ -26,7 +26,7 @@ public class Triangle
 		this.a = mesh.verts[a];
 		this.b = mesh.verts[b];
 		this.c = mesh.verts[c];
-		n = Vector3.Cross (edges[2].vect, edges[0].vect);
+		n = Vector3.Cross (edges[2].vect, edges[0].vect).normalized;
 	}
 
 	public float Dist (int point)

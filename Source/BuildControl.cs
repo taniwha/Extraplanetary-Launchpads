@@ -1002,7 +1002,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			UnityEngine.Object.Destroy (m);
 
-			var hull = new ConvexHull (rawMesh);
+			var hull = new Quickhull (rawMesh);
 			var hullFaces = hull.GetHull ();
 			Debug.Log($"[ELBuildControl] BuildConvexHull {hullFaces.faces.Count} hull faces");
 			return hullFaces.CreateMesh ();

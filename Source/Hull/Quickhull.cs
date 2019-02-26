@@ -1,11 +1,11 @@
 using System.IO;
 using UnityEngine;
 
-public class ConvexHull
+public class Quickhull
 {
 	public RawMesh mesh;
 
-	public ConvexHull (RawMesh mesh)
+	public Quickhull (RawMesh mesh)
 	{
 		this.mesh = mesh;
 	}
@@ -125,7 +125,7 @@ public class ConvexHull
 		}
 		//for (int i = 0; i < faces.Count; i++) {
 		//	var f = faces[i];
-		//	Debug.Log($"[ConvexHull] GetHull {i} {f.vispoints.Count} {f.highest} {f.height}");
+		//	Debug.Log($"[Quickhull] GetHull {i} {f.vispoints.Count} {f.highest} {f.height}");
 		//}
 
 		FaceSet finalFaces = new FaceSet (mesh);
@@ -142,7 +142,7 @@ public class ConvexHull
 				nvis += faces[i].vispoints.Count;
 			}
 			var f = faces.Pop ();
-			//Debug.Log($"[ConvexHull] total vis {nvis} f.vis {f.vispoints.Count} faces {faces.Count}");
+			//Debug.Log($"[Quickhull] total vis {nvis} f.vis {f.vispoints.Count} faces {faces.Count}");
 			if (f.vispoints.Count < 1) {
 				finalFaces.Add (f);
 				continue;
@@ -152,7 +152,7 @@ public class ConvexHull
 			// light final faces as well so that face merging can be done
 			litFaces.Extend (finalFaces.LightFaces (null, point));
 			litFaces.Write (bw);
-			//Debug.Log($"[ConvexHull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
+			//Debug.Log($"[Quickhull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
 			var horizonEdges = litFaces.FindOuterEdges ();
 			var newFaces = new FaceSet (mesh);
 			foreach (Edge e in horizonEdges) {

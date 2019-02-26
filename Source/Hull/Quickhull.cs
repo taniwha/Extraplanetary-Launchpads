@@ -156,17 +156,17 @@ public class Quickhull
 
 		FaceSet finalFaces = new FaceSet (mesh);
 
-		int iter = 0;
+		//int iter = 0;
 
 		while (faces.Count > 0) {
-			var bw = new BinaryWriter(File.Open($"/tmp/quickhull-{iter++:D5}.bin", FileMode.Create));
-			mesh.Write (bw);
-			faces.Write (bw);
-			finalFaces.Write (bw);
-			int nvis = 0;
-			for (int i = 0; i < faces.Count; i++) {
-				nvis += faces[i].vispoints.Count;
-			}
+			//var bw = new BinaryWriter(File.Open($"/tmp/quickhull-{iter++:D5}.bin", FileMode.Create));
+			//mesh.Write (bw);
+			//faces.Write (bw);
+			//finalFaces.Write (bw);
+			//int nvis = 0;
+			//for (int i = 0; i < faces.Count; i++) {
+			//	nvis += faces[i].vispoints.Count;
+			//}
 			var f = faces.Pop ();
 			//Debug.Log($"[Quickhull] total vis {nvis} f.vis {f.vispoints.Count} faces {faces.Count}");
 			if (f.vispoints.Count < 1) {
@@ -177,7 +177,7 @@ public class Quickhull
 			var litFaces = faces.LightFaces (f, point);
 			// light final faces as well so that face merging can be done
 			litFaces.Extend (finalFaces.LightFaces (null, point));
-			litFaces.Write (bw);
+			//litFaces.Write (bw);
 			//Debug.Log($"[Quickhull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
 			var horizonEdges = litFaces.FindOuterEdges ();
 			var newFaces = new FaceSet (mesh);
@@ -195,7 +195,7 @@ public class Quickhull
 					}
 				}
 			}
-			newFaces.Write (bw);
+			//newFaces.Write (bw);
 			for (int i = 0; i < newFaces.Count; i++) {
 				var nf = newFaces[i];
 				if (nf.vispoints.Count > 0) {
@@ -204,7 +204,7 @@ public class Quickhull
 					finalFaces.Add (nf);
 				}
 			}
-			bw.Close ();
+			//bw.Close ();
 		}
 		return finalFaces;
 	}

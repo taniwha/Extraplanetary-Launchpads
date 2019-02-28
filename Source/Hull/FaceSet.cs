@@ -93,20 +93,34 @@ public class FaceSet
 		return edges;
 	}
 
+	Dictionary<int, int> vertexMap;
+
 	Mesh MakeSubMesh (int start, int count)
 	{
-		var verts = new Vector3[count * 3];
+		vertexMap.Clear ();
+
+		var vertInds = new int[count * 3];
 		var tris = new int[count * 3];
+		int numVerts = 0;
 
 		for (int i = 0; i < count; i++) {
 			var f = faces[start + i];
-			verts[i*3 + 0] = f.a;
-			verts[i*3 + 1] = f.b;
-			verts[i*3 + 2] = f.c;
+			for (int j = 0; j < 3; j++) {
+				int vi = f.edges[j].a;
+				int vo;
+				if (!vertexMap.TryGetValue (vi, out vo)) {
+					vo = numVerts++;
+					vertexMap[vi] = vo;
+					vertInds[vo] = vi;
+				}
+				tris[i*3 + j] = vo;
+			}
 		}
-		for (int i = 0; i < 3*count; i++) {
-			tris[i] = i;
+		var verts = new Vector3[numVerts];
+		for (int i = 0; i < numVerts; i++) {
+			verts[i] = mesh.verts[vertInds[i]];
 		}
+		Debug.Log($"[FaceSet] MakeSubMesh v:{numVerts} t:{count}");
 		var m = new Mesh ();
 		m.vertices = verts;
 		m.triangles = tris;
@@ -121,6 +135,8 @@ public class FaceSet
 
 	public Mesh[] CreateMesh ()
 	{
+		vertexMap = new Dictionary<int, int> ();
+
 		int numMeshes = (faces.Count + maxFaces - 1) / maxFaces;
 		Debug.Log ($"[FaceSet] faces: {faces.Count} meshes: {numMeshes}");
 		var meshes = new Mesh[numMeshes];
@@ -132,6 +148,7 @@ public class FaceSet
 			}
 			meshes[i] = MakeSubMesh (start, count);
 		}
+		vertexMap = null;
 		return meshes;
 	}
 

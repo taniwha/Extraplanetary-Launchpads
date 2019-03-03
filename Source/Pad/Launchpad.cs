@@ -171,12 +171,10 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (launchTransform == null) {
 				Vector3 offset = Vector3.up * (SpawnHeightOffset + spawnOffset);
-				Transform t = part.transform;
+				Transform t = part.partTransform.Find("model");
 				GameObject launchPos = new GameObject ("EL launch pos");
-				launchPos.transform.parent = t;
-				launchPos.transform.position = t.position;
-				launchPos.transform.rotation = t.rotation;
-				launchPos.transform.position += t.TransformDirection (offset);
+				launchPos.transform.SetParent (t, false);;
+				launchPos.transform.localPosition = offset;
 				launchTransform = launchPos.transform;
 				//Debug.Log (String.Format ("[EL] launchPos {0}",
 				//						  launchTransform));

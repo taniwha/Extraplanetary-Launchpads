@@ -19,6 +19,8 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace ExtraplanetaryLaunchpads {
+
 public class FaceSet
 {
 	public RawMesh mesh;
@@ -159,4 +161,6 @@ public class FaceSet
 			faces[i].Write (bw);
 		}
 	}
+}
+
 }

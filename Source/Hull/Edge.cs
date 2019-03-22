@@ -17,6 +17,8 @@ along with Extraplanetary Launchpads.  If not, see
 */
 using UnityEngine;
 
+namespace ExtraplanetaryLaunchpads {
+
 public struct Edge
 {
 	public int a, b;
@@ -54,4 +56,6 @@ public struct Edge
 		var xv = Vector3.Dot (x, v);
 		return (vv * Vector3.Dot (x, x) - xv * xv) / vv;
 	}
+}
+
 }

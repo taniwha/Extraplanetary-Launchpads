@@ -19,6 +19,8 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace ExtraplanetaryLaunchpads {
+
 public class Triangle
 {
 	public const float epsilon = 1e-3f;
@@ -85,4 +87,6 @@ public class Triangle
 			bw.Write (vispoints[i]);
 		}
 	}
+}
+
 }

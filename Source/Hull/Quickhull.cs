@@ -18,6 +18,8 @@ along with Extraplanetary Launchpads.  If not, see
 using System.IO;
 using UnityEngine;
 
+namespace ExtraplanetaryLaunchpads {
+
 /*
 This is an implementation of the quickhull algorithm based on
 
@@ -208,4 +210,6 @@ public class Quickhull
 		}
 		return finalFaces;
 	}
+}
+
 }

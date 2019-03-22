@@ -18,6 +18,8 @@ along with Extraplanetary Launchpads.  If not, see
 using System.IO;
 using UnityEngine;
 
+namespace ExtraplanetaryLaunchpads {
+
 public class RawMesh
 {
 	int addindex;
@@ -62,4 +64,6 @@ public class RawMesh
 			bw.Write(verts[i].z);
 		}
 	}
+}
+
 }

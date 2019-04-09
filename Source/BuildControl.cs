@@ -20,9 +20,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.IO;
 using UnityEngine;
 
-using KSP.IO;
 using KSP.Localization;
 
 namespace ExtraplanetaryLaunchpads {
@@ -86,7 +86,7 @@ namespace ExtraplanetaryLaunchpads {
 		public string flagname { get; set; }
 		public bool lockedParts { get; private set; }
 		public ConfigNode craftConfig { get; private set; }
-		public Mesh[] craftHullMeshes { get; private set; }
+		public CraftHull craftHull { get; private set; }
 		public GameObject craftHullObject { get; private set; }
 		RMResourceManager padResourceManager;
 		public RMResourceSet padResources
@@ -685,11 +685,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void LoadCraft (string filename, string flagname)
+		void ReplaceLaunchClamps (ConfigNode craft)
 		{
-			this.filename = filename;
-			this.flagname = flagname;
-			ConfigNode craft = ConfigNode.Load (filename);
 			foreach (ConfigNode node in craft.nodes) {
 				if (node.name == "PART") {
 					string name = ShipTemplate.GetPartName (node);
@@ -707,7 +704,22 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
-			if ((buildCost = getBuildCost (craft)) != null) {
+		}
+
+		public void LoadCraft (string filename, string flagname)
+		{
+			this.filename = filename;
+			this.flagname = flagname;
+
+			if (!File.Exists (filename)) {
+				Debug.LogWarning ($"File '{filename}' does not exist");
+				return;
+			}
+			string craftText = File.ReadAllText (filename);
+			ConfigNode craft = ConfigNode.Parse (craftText);
+			ReplaceLaunchClamps (craft);
+
+			if ((buildCost = getBuildCost (craft, craftText)) != null) {
 				craftConfig = craft;
 				state = State.Planning;
 				craftName = Localizer.Format (craft.GetValue ("ship"));
@@ -892,21 +904,21 @@ namespace ExtraplanetaryLaunchpads {
 
 		void DestroyCraftHull ()
 		{
-			for (int i = 0; i < craftHullMeshes.Length; i++) {
-				UnityEngine.Object.Destroy (craftHullMeshes[i]);
+			if (craftHull != null) {
+				craftHull.Destroy();
+				craftHull = null;
 			}
-			craftHullMeshes = null;
-			UnityEngine.Object.Destroy (craftHullObject);
-			craftHullObject = null;
+			if (craftHullObject != null) {
+				UnityEngine.Object.Destroy (craftHullObject);
+				craftHullObject = null;
+			}
 		}
 
 		internal void OnDestroy ()
 		{
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
-			if (craftHullMeshes != null) {
-				DestroyCraftHull ();
-			}
+			DestroyCraftHull ();
 		}
 
 		void CleaupAfterRelease ()
@@ -969,46 +981,7 @@ namespace ExtraplanetaryLaunchpads {
 			return called;
 		}
 
-		Mesh[] BuildConvexHull (Vessel craftVessel)
-		{
-			var meshFilters = craftVessel.GetComponentsInChildren<MeshFilter> (false);
-			var skinnedMeshRenderers = craftVessel.GetComponentsInChildren<SkinnedMeshRenderer> (false);
-
-			int numVerts = 0;
-
-			for (int i = 0; i < meshFilters.Length; i++) {
-				numVerts += meshFilters[i].sharedMesh.vertices.Length;
-			}
-			for (int i = 0; i < skinnedMeshRenderers.Length; i++) {
-				numVerts += skinnedMeshRenderers[i].sharedMesh.vertices.Length;
-			}
-
-			Debug.Log($"[ELBuildControl] BuildConvexHull {numVerts} verts to process");
-			var rawMesh = new RawMesh (numVerts);
-			var rootXform = craftVessel.parts[0].localRoot.transform.worldToLocalMatrix;
-
-			for (int i = 0; i < meshFilters.Length; i++) {
-				var mf = meshFilters[i];
-				var xform = rootXform * mf.transform.localToWorldMatrix;
-				rawMesh.AppendMesh (mf.sharedMesh, xform);
-			}
-
-			var m = new Mesh ();
-			for (int i = 0; i < skinnedMeshRenderers.Length; i++) {
-				var smr = skinnedMeshRenderers[i];
-				var xform = rootXform * smr.transform.localToWorldMatrix;
-				smr.BakeMesh (m);
-				rawMesh.AppendMesh (m, xform);
-			}
-			UnityEngine.Object.Destroy (m);
-
-			var hull = new Quickhull (rawMesh);
-			var hullFaces = hull.GetHull ();
-			Debug.Log($"[ELBuildControl] BuildConvexHull {hullFaces.faces.Count} hull faces");
-			return hullFaces.CreateMesh ();
-		}
-
-		public CostReport getBuildCost (ConfigNode craft)
+		public CostReport getBuildCost (ConfigNode craft, string craftText = null)
 		{
 			lockedParts = false;
 			ShipConstruct ship = new ShipConstruct ();
@@ -1040,37 +1013,18 @@ namespace ExtraplanetaryLaunchpads {
 				resources.addPart (p);
 			}
 
-			if (craftHullMeshes != null) {
+			if (craftText != null) {
 				DestroyCraftHull ();
+				craftHull = new CraftHull (craftText);
+				if (!craftHull.LoadHull (HighLogic.SaveFolder)) {
+					craftHull.BuildConvexHull (craftVessel);
+					craftHull.SaveHull (HighLogic.SaveFolder);
+				}
 			}
-			var timer = System.Diagnostics.Stopwatch.StartNew();
-			craftHullMeshes = BuildConvexHull (craftVessel);
-			timer.Stop();
-			Debug.Log($"[ELBuildControl] BuildConvexHull {timer.ElapsedMilliseconds}ms");
-			CreateCraftHull ();
 
 			craftVessel.Die ();
 
 			return resources.cost;
-		}
-
-		void CreateCraftHull ()
-		{
-			craftHullObject = new GameObject ("EL Craft Hull");
-			craftHullObject.transform.SetParent (builder.part.transform, false);
-			for (int i = 0; i < craftHullMeshes.Length; i++) {
-				var go = new GameObject ("EL convex hull",
-										 typeof (MeshRenderer),
-										 typeof (MeshFilter));
-				go.transform.SetParent (craftHullObject.transform, false);
-
-				var meshFilter = go.GetComponent<MeshFilter> ();
-				meshFilter.mesh = craftHullMeshes[i];
-
-				var renderer = go.GetComponent<Renderer> ();
-				renderer.material = new Material (Shader.Find("Diffuse"));
-				renderer.material.color = XKCDColors.MossGreen;
-			}
 		}
 
 		void onPartDie (Part p)

@@ -1016,9 +1016,11 @@ namespace ExtraplanetaryLaunchpads {
 			if (craftText != null) {
 				DestroyCraftHull ();
 				craftHull = new CraftHull (craftText);
-				if (!craftHull.LoadHull (HighLogic.SaveFolder)) {
+				string path = KSPUtil.ApplicationRootPath + "saves/";
+				path += HighLogic.SaveFolder;
+				if (!craftHull.LoadHull (path)) {
 					craftHull.BuildConvexHull (craftVessel);
-					craftHull.SaveHull (HighLogic.SaveFolder);
+					craftHull.SaveHull (path);
 				}
 			}
 

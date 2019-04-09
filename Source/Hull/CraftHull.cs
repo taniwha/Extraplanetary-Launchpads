@@ -92,6 +92,7 @@ namespace ExtraplanetaryLaunchpads {
 		public bool LoadHull (string path)
 		{
 			path = $"{path}/CraftHull-{md5sum}.dat";
+
 			if (!File.Exists (path)) {
 				Debug.LogError ($"[CraftHull] {path} does not exist");
 				return false;

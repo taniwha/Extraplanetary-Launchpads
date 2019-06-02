@@ -29,32 +29,6 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELBuildControl : ELWorkSink
 	{
-		public class Box
-		{
-			public Vector3 min;
-			public Vector3 max;
-
-			public Box (Bounds b)
-			{
-				min = new Vector3 (b.min.x, b.min.y, b.min.z);
-				max = new Vector3 (b.max.x, b.max.y, b.max.z);
-			}
-
-			public void Add (Bounds b)
-			{
-				min.x = Mathf.Min (min.x, b.min.x);
-				min.y = Mathf.Min (min.y, b.min.y);
-				min.z = Mathf.Min (min.z, b.min.z);
-				max.x = Mathf.Max (max.x, b.max.x);
-				max.y = Mathf.Max (max.y, b.max.y);
-				max.z = Mathf.Max (max.z, b.max.z);
-			}
-
-			public override string ToString ()
-			{
-				return "[" + min + "," + max + "]";
-			}
-		}
 		public interface IBuilder
 		{
 			void Highlight (bool on);

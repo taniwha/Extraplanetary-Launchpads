@@ -235,7 +235,7 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		public Transform PlaceShip (ShipConstruct ship, ELBuildControl.Box vessel_bounds)
+		public Transform PlaceShip (ShipConstruct ship, Box vessel_bounds)
 		{
 			SetLaunchTransform ();
 

@@ -41,6 +41,10 @@ namespace ExtraplanetaryLaunchpads {
 			HashCraft (craftFile);
 		}
 
+		public void SetBox (Box b)
+		{
+		}
+
 		public void HashCraft (string craftFile)
 		{
 			var md5Hash = MD5.Create ();

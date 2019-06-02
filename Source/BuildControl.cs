@@ -993,6 +993,9 @@ namespace ExtraplanetaryLaunchpads {
 				string path = KSPUtil.ApplicationRootPath + "saves/";
 				path += HighLogic.SaveFolder;
 				if (!craftHull.LoadHull (path)) {
+					// GetVesselBox will rotate and minimize any launchclamps,
+					// which is probably a good thing.
+					craftHull.SetBox (GetVesselBox (ship));
 					craftHull.BuildConvexHull (craftVessel);
 					craftHull.SaveHull (path);
 				}

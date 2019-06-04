@@ -154,6 +154,35 @@ public class FaceSet
 		return meshes;
 	}
 
+	public Box GetBounds ()
+	{
+		Vector3 min = mesh.verts[faces[0].edges[0].a];
+		Vector3 max = mesh.verts[faces[0].edges[0].a];
+
+		for (int i = 0; i < faces.Count; i++) {
+			for (int j = 0; j < 3; j++) {
+				Vector3 v = mesh.verts[faces[i].edges[j].a];
+				if (v.x < min.x) {
+					min.x = v.x;
+				} else if (v.x > max.x) {
+					max.x = v.x;
+				}
+				if (v.y < min.y) {
+					min.y = v.y;
+				} else if (v.y > max.y) {
+					max.y = v.y;
+				}
+				if (v.z < min.z) {
+					min.z = v.z;
+				} else if (v.z > max.z) {
+					max.z = v.z;
+				}
+			}
+		}
+		return new Box (min, max);
+	}
+
+
 	public void Write(BinaryWriter bw)
 	{
 		bw.Write(faces.Count);

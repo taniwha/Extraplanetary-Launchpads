@@ -25,6 +25,7 @@ namespace ExtraplanetaryLaunchpads {
 	public class CraftHull
 	{
 		string md5sum;
+		Box bounds;
 		// It's not actually expected that there will be more than one mesh,
 		// but if the quickhull algorithm breaks down, it can produce a nasty
 		// hedgehog with more vertices than can fit in a single mesh.
@@ -43,6 +44,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetBox (Box b)
 		{
+			bounds = new Box(b);
 		}
 
 		public void HashCraft (string craftFile)
@@ -60,11 +62,17 @@ namespace ExtraplanetaryLaunchpads {
 		public void Load (ConfigNode node)
 		{
 			md5sum = node.GetValue ("CraftHullSum");
+			if (node.HasNode ("bounds")) {
+				bounds = new Box (node.GetNode ("bounds"));
+			}
 		}
 
 		public void Save (ConfigNode node)
 		{
 			node.AddValue ("CraftHullSum", md5sum);
+			if (bounds != null) {
+				bounds.Save (node.AddNode ("bounds"));
+			}
 		}
 
 		Mesh ReadMesh (BinaryReader br)

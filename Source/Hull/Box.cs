@@ -50,6 +50,16 @@ namespace ExtraplanetaryLaunchpads {
 			max = b.max;
 		}
 
+		public Box (ConfigNode node)
+		{
+			if (node.HasValue ("min")) {
+				min = ConfigNode.ParseVector3 (node.GetValue ("min"));
+			}
+			if (node.HasValue ("min")) {
+				max = ConfigNode.ParseVector3 (node.GetValue ("max"));
+			}
+		}
+
 		public void Add (Bounds b)
 		{
 			min.x = Mathf.Min (min.x, b.min.x);
@@ -58,6 +68,12 @@ namespace ExtraplanetaryLaunchpads {
 			max.x = Mathf.Max (max.x, b.max.x);
 			max.y = Mathf.Max (max.y, b.max.y);
 			max.z = Mathf.Max (max.z, b.max.z);
+		}
+
+		public void Save (ConfigNode node)
+		{
+			node.AddValue("min", min);
+			node.AddValue("max", max);
 		}
 
 		public override string ToString ()

@@ -225,8 +225,10 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Destroy ()
 		{
-			for (int i = 0; i < hullMeshes.Length; i++) {
-				UnityEngine.Object.Destroy (hullMeshes[i]);
+			if (hullMeshes != null) {
+				for (int i = 0; i < hullMeshes.Length; i++) {
+					UnityEngine.Object.Destroy (hullMeshes[i]);
+				}
 			}
 		}
 	}

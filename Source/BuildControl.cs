@@ -755,6 +755,10 @@ namespace ExtraplanetaryLaunchpads {
 				craftConfig.name = "CraftConfig";
 				node.AddNode (craftConfig);
 			}
+			if (craftHull != null) {
+				var ch = node.AddNode ("CraftHull");
+				craftHull.Save (ch);
+			}
 			if (buildCost != null) {
 				var bc = node.AddNode ("BuildCost");
 				buildCost.Save (bc);
@@ -819,6 +823,10 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (node.HasNode ("CraftConfig")) {
 				craftConfig = node.GetNode ("CraftConfig");
+			}
+			if (node.HasNode ("CraftHull")) {
+				craftHull = new CraftHull ();
+				craftHull.Load (node.GetNode ("CraftHull"));
 			}
 			if (node.HasNode ("BuildCost")) {
 				var bc = node.GetNode ("BuildCost");

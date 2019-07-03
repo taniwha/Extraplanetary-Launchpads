@@ -375,11 +375,17 @@ namespace ExtraplanetaryLaunchpads.KAS {
 				AssemblyLoader.LoadedAssembly KASAPIasm = null;
 				AssemblyLoader.LoadedAssembly KASasm = null;
 				AssemblyLoader.LoadedAssembly KASLegacyasm = null;
+				int apiVersion = 0;
 
 				foreach (var la in AssemblyLoader.loadedAssemblies) {
-					if (la.assembly.GetName ().Name.Equals ("KAS-API-v1", StringComparison.InvariantCultureIgnoreCase)) {
+					string asmName = la.assembly.GetName ().Name;
+					if (asmName.Equals ("KAS-API-v2", StringComparison.InvariantCultureIgnoreCase)) {
 						KASAPIasm = la;
-					} else if (la.assembly.GetName ().Name.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase)) {
+						apiVersion = 2;
+					} else if (asmName.Equals ("KAS-API-v1", StringComparison.InvariantCultureIgnoreCase)) {
+						KASAPIasm = la;
+						apiVersion = 1;
+					} else if (asmName.Equals ("KAS", StringComparison.InvariantCultureIgnoreCase)) {
 						if (KASLegacyasm == null) {
 							KASLegacyasm = la;
 						} else {
@@ -388,6 +394,13 @@ namespace ExtraplanetaryLaunchpads.KAS {
 					}
 				}
 				haveKAS = false;
+				if (apiVersion == 2) {
+					// With API version 2, legacy has gone away and now there's
+					// just the API dll and the main dll
+					// however, the main dll gets picked up as legacy
+					KASasm = KASLegacyasm;
+					KASLegacyasm = null;
+				}
 				if (KASAPIasm != null && KASasm != null) {
 					haveKAS = true;
 					ILinkPeer.Initialize (KASAPIasm.assembly);

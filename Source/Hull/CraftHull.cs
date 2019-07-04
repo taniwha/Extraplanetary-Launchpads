@@ -26,6 +26,8 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		string md5sum;
 		Box bounds;
+		Vector3 position;
+		Quaternion rotation = Quaternion.identity;
 		// It's not actually expected that there will be more than one mesh,
 		// but if the quickhull algorithm breaks down, it can produce a nasty
 		// hedgehog with more vertices than can fit in a single mesh.
@@ -47,6 +49,12 @@ namespace ExtraplanetaryLaunchpads {
 			bounds = new Box(b);
 		}
 
+		public void SetTransform (Transform transform)
+		{
+			position = transform.position;
+			rotation = transform.rotation;
+		}
+
 		public void HashCraft (string craftFile)
 		{
 			var md5Hash = MD5.Create ();
@@ -62,6 +70,8 @@ namespace ExtraplanetaryLaunchpads {
 		public void Load (ConfigNode node)
 		{
 			md5sum = node.GetValue ("CraftHullSum");
+			position = KSPUtil.ParseVector3 (node.GetValue ("position"));
+			rotation = KSPUtil.ParseQuaternion (node.GetValue ("rotation"));
 			if (node.HasNode ("bounds")) {
 				bounds = new Box (node.GetNode ("bounds"));
 			}
@@ -70,6 +80,8 @@ namespace ExtraplanetaryLaunchpads {
 		public void Save (ConfigNode node)
 		{
 			node.AddValue ("CraftHullSum", md5sum);
+			node.AddValue ("position", KSPUtil.WriteVector (position));
+			node.AddValue ("rotation", KSPUtil.WriteQuaternion (rotation));
 			if (bounds != null) {
 				bounds.Save (node.AddNode ("bounds"));
 			}
@@ -228,7 +240,15 @@ namespace ExtraplanetaryLaunchpads {
 				renderer.material = new Material (Shader.Find("Diffuse"));
 				renderer.material.color = XKCDColors.MossGreen;
 			}
+			hullObject.transform.position = position;
+			hullObject.transform.rotation = rotation;
 			return hullObject;
+		}
+
+		public void PlaceHull (ELBuildControl.IBuilder builder, GameObject hullObject)
+		{
+			builder.PlaceShip (hullObject.transform, bounds);
+			hullObject.transform.SetParent (builder.part.transform, true);
 		}
 
 		public void Destroy ()

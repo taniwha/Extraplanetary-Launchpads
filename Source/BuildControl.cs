@@ -700,6 +700,10 @@ namespace ExtraplanetaryLaunchpads {
 				state = State.Planning;
 				craftName = Localizer.Format (craft.GetValue ("ship"));
 			}
+			if (craftHull != null) {
+				craftHullObject = craftHull.CreateHull (craftName + ":hull");
+				craftHull.PlaceHull (builder, craftHullObject);
+			}
 		}
 
 		public void UnloadCraft ()
@@ -1002,10 +1006,11 @@ namespace ExtraplanetaryLaunchpads {
 				craftHull = new CraftHull (craftText);
 				string path = KSPUtil.ApplicationRootPath + "saves/";
 				path += HighLogic.SaveFolder;
+				// GetVesselBox will rotate and minimize any launchclamps,
+				// which is probably a good thing.
+				craftHull.SetBox (GetVesselBox (ship));
+				craftHull.SetTransform (ship.parts[0].localRoot.transform);
 				if (!craftHull.LoadHull (path)) {
-					// GetVesselBox will rotate and minimize any launchclamps,
-					// which is probably a good thing.
-					craftHull.SetBox (GetVesselBox (ship));
 					craftHull.BuildConvexHull (craftVessel);
 					craftHull.SaveHull (path);
 				}

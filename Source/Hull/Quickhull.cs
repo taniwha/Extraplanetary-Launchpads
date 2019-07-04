@@ -139,7 +139,7 @@ public class Quickhull
 			c = t;
 		}
 		return new FaceSet(mesh,
-						   new Triangle (mesh, a, b, c),
+						   tri,
 						   new Triangle (mesh, a, d, b),
 						   new Triangle (mesh, a, c, d),
 						   new Triangle (mesh, c, b, d));

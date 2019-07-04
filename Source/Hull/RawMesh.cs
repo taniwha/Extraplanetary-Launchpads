@@ -57,11 +57,22 @@ public class RawMesh
 
 	public void Write (BinaryWriter bw)
 	{
-		bw.Write(addindex);
+		bw.Write (addindex);
 		for (int i = 0; i < addindex; i++) {
-			bw.Write(verts[i].x);
-			bw.Write(verts[i].y);
-			bw.Write(verts[i].z);
+			bw.Write (verts[i].x);
+			bw.Write (verts[i].y);
+			bw.Write (verts[i].z);
+		}
+	}
+
+	public void Read (BinaryReader br)
+	{
+		addindex = br.ReadInt32 ();
+		verts = new Vector3[addindex];
+		for (int i = 0; i < addindex; i++) {
+			verts[i].x = br.ReadSingle ();
+			verts[i].y = br.ReadSingle ();
+			verts[i].z = br.ReadSingle ();
 		}
 	}
 }

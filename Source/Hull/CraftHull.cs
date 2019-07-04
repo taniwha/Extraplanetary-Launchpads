@@ -110,6 +110,9 @@ namespace ExtraplanetaryLaunchpads {
 			var mesh = new Mesh ();
 			mesh.vertices = verts;
 			mesh.triangles = tris;
+			mesh.RecalculateBounds();
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
 			return mesh;
 		}
 

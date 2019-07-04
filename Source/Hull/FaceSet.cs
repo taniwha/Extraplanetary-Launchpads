@@ -126,6 +126,9 @@ public class FaceSet
 		var m = new Mesh ();
 		m.vertices = verts;
 		m.triangles = tris;
+		m.RecalculateBounds();
+		m.RecalculateNormals();
+		m.RecalculateTangents();
 		return m;
 	}
 

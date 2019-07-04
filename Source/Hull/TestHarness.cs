@@ -130,7 +130,7 @@ public class TestHarness
 					bw.Close ();
 					var qh = new Quickhull (mesh);
 					var hull = qh.GetHull ();
-					Debug.Log ($"    - {hull.Count} points");
+					Debug.Log ($"    - {hull.Count} faces");
 					break;
 			}
 		}

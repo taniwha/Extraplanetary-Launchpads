@@ -23,8 +23,6 @@ using System.Reflection;
 using System.IO;
 using UnityEngine;
 
-using KSP.Localization;
-
 namespace ExtraplanetaryLaunchpads {
 
 	public class Box

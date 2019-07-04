@@ -235,10 +235,10 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		public Transform PlaceShip (ShipConstruct ship, Box vessel_bounds)
+		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
 		{
 			SetLaunchTransform ();
-
+/*
 			float angle;
 			Vector3 axis;
 
@@ -256,7 +256,7 @@ namespace ExtraplanetaryLaunchpads {
 			shift += launchTransform.position;
 			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
 			rootXform.Translate (shift, Space.World);
-			rootXform.RotateAround (launchTransform.position, axis, angle);
+			rootXform.RotateAround (launchTransform.position, axis, angle);*/
 			return launchTransform;
 		}
 

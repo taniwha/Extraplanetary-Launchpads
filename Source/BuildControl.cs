@@ -34,7 +34,7 @@ namespace ExtraplanetaryLaunchpads {
 			void Highlight (bool on);
 			void UpdateMenus (bool visible);
 			void SetCraftMass (double craft_mass);
-			Transform PlaceShip (ShipConstruct ship, Box vessel_bounds);
+			Transform PlaceShip (Transform shipTransform, Box vessel_bounds);
 			void PostBuild (Vessel craftVessel);
 			void PadSelection_start ();
 			void PadSelection ();
@@ -615,7 +615,9 @@ namespace ExtraplanetaryLaunchpads {
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
 			Box vessel_bounds = GetVesselBox (nship);
-			launchTransform = builder.PlaceShip (nship, vessel_bounds);
+			//FIXME this is wrong for disposable pads
+			var shipTransform = nship.parts[0].localRoot.transform;
+			launchTransform = builder.PlaceShip (shipTransform, vessel_bounds);
 
 			EnableExtendingLaunchClamps (nship);
 			ShipConstruction.AssembleForLaunch (nship, landedAt, landedAt,

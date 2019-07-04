@@ -159,7 +159,7 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
-		public Transform PlaceShip (ShipConstruct ship, Box vessel_bounds)
+		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
 		{
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
@@ -184,15 +184,13 @@ namespace ExtraplanetaryLaunchpads {
 			Vector3 axis;
 			launchTransform.rotation.ToAngleAxis (out angle, out axis);
 
-			Part rootPart = ship.parts[0].localRoot;
-			Vector3 pos = rootPart.transform.position;
+			Vector3 pos = shipTransform.position;
 			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
 			//Debug.Log (String.Format ("[EL] pos: {0} shift: {1}", pos, shift));
 			shift += launchTransform.position;
 			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
-			rootPart.transform.Translate (shift, Space.World);
-			rootPart.transform.RotateAround (launchTransform.position, axis,
-											 angle);
+			shipTransform.Translate (shift, Space.World);
+			shipTransform.RotateAround (launchTransform.position, axis, angle);
 			return launchTransform;
 		}
 

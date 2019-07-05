@@ -155,7 +155,7 @@ public class Quickhull
 			for (int j = 0; j < faces.Count; j++) {
 				var f = faces[j];
 				if (f.AddPoint (i)) {
-					break;	// process the next point
+					//break;	// process the next point
 				}
 			}
 		}
@@ -205,7 +205,7 @@ public class Quickhull
 					int p = lf.vispoints[j];
 					for (int k = 0; k < newFaces.Count; k++) {
 						if (newFaces[k].AddPoint (p)) {
-							break;
+							//break;
 						}
 					}
 				}

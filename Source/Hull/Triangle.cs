@@ -56,11 +56,17 @@ public class Triangle
 
 	public bool CanSee (int point)
 	{
-		return Dist (point) >= 0;
+		if (point == edges[0].a || point == edges[1].a || point == edges[2].a) {
+			return true;
+		}
+		return Dist (point) >= -epsilon;
 	}
 
 	public bool AddPoint (int point)
 	{
+		if (point == edges[0].a || point == edges[1].a || point == edges[2].a) {
+			return false;
+		}
 		// CanSee is not used here because CanSee includes points on the
 		// triangle's plane (not a problem, but suboptimal) and the height
 		// is needed anyway as in the end, the highest point is desirned.

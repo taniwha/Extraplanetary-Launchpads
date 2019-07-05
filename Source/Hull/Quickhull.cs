@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
@@ -154,9 +155,7 @@ public class Quickhull
 		for (int i = 0; i < mesh.verts.Length; i++) {
 			for (int j = 0; j < faces.Count; j++) {
 				var f = faces[j];
-				if (f.AddPoint (i)) {
-					//break;	// process the next point
-				}
+				f.AddPoint (i);
 			}
 		}
 		//for (int i = 0; i < faces.Count; i++) {
@@ -168,6 +167,8 @@ public class Quickhull
 
 		int iter = 0;
 		BinaryWriter bw = null;
+
+		HashSet<int> donePoints = new HashSet<int> ();
 
 		while (faces.Count > 0) {
 			if (dump_faces) {
@@ -199,14 +200,17 @@ public class Quickhull
 			foreach (Edge e in horizonEdges) {
 				newFaces.Add (new Triangle (mesh, e.a, e.b, point));
 			}
+			donePoints.Clear ();
 			for (int i = 0; i < litFaces.Count; i++) {
 				var lf = litFaces[i];
 				for (int j = 0; j < lf.vispoints.Count; j++) {
 					int p = lf.vispoints[j];
+					if (donePoints.Contains(p)) {
+						continue;
+					}
+					donePoints.Add(p);
 					for (int k = 0; k < newFaces.Count; k++) {
-						if (newFaces[k].AddPoint (p)) {
-							//break;
-						}
+						newFaces[k].AddPoint (p);
 					}
 				}
 			}

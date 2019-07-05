@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using ExtraplanetaryLaunchpads;
 
 using UnityEngine;
@@ -123,7 +124,12 @@ public class TestHarness
 					Quickhull.dump_faces = true;
 					break;
 				default:
-					var bw = new BinaryReader (File.Open (s, FileMode.Open, FileAccess.Read));
+					BinaryReader bw;
+					if (s.Substring(s.Length - 3) == ".gz") {
+						bw = new BinaryReader (new GZipStream (File.Open (s, FileMode.Open, FileAccess.Read), CompressionMode.Decompress));
+					} else {
+						bw = new BinaryReader (File.Open (s, FileMode.Open, FileAccess.Read));
+					}
 					var mesh = new RawMesh (0);
 					mesh.Read (bw);
 					Debug.Log ($"{s} - {mesh.verts.Length} points");

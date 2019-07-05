@@ -225,6 +225,15 @@ public class Quickhull
 				bw.Close ();
 			}
 		}
+		if (dump_faces) {
+			bw = new BinaryWriter(File.Open($"/tmp/quickhull-{iter++:D5}.bin", FileMode.Create));
+			mesh.Write (bw);
+			faces.Write (bw);
+			finalFaces.Write (bw);
+			bw.Write((int)0);
+			bw.Write((int)0);
+			bw.Close ();
+		}
 		return finalFaces;
 	}
 }

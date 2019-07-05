@@ -135,8 +135,10 @@ public class TestHarness
 					Debug.Log ($"{s} - {mesh.verts.Length} points");
 					bw.Close ();
 					var qh = new Quickhull (mesh);
+					var timer = System.Diagnostics.Stopwatch.StartNew ();
 					var hull = qh.GetHull ();
-					Debug.Log ($"    - {hull.Count} faces");
+					timer.Stop();
+					Debug.Log ($"    - {hull.Count} faces {timer.ElapsedMilliseconds}ms");
 					break;
 			}
 		}

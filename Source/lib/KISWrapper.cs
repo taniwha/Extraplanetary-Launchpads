@@ -36,7 +36,7 @@ namespace ExtraplanetaryLaunchpads.KIS {
 		object obj;
 
 		public ConfigNode partNode { get { return (ConfigNode)kis_partNode.GetValue (obj); } }
-		public float itemResourceMass { get { return (float)kis_itemResourceMass.GetValue (obj, null); } }
+		public double itemResourceMass { get { return (double)kis_itemResourceMass.GetValue (obj, null); } }
 
 		public struct ResourceInfo {
 			public string resourceName { get; private set; }

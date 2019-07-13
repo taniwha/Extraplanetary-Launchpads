@@ -152,6 +152,8 @@ public class Quickhull
 
 		FaceSet faces = FindSimplex ();
 
+		var connectivity = new Connectivity (faces);
+
 		for (int i = 0; i < mesh.verts.Length; i++) {
 			for (int j = 0; j < faces.Count; j++) {
 				var f = faces[j];
@@ -199,10 +201,13 @@ public class Quickhull
 				litFaces.Write (bw);
 			}
 			//Debug.Log($"[Quickhull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
+			connectivity.Remove (litFaces);
 			var horizonEdges = litFaces.FindOuterEdges ();
 			var newFaces = new FaceSet (mesh);
 			foreach (Edge e in horizonEdges) {
-				newFaces.Add (new Triangle (mesh, e.a, e.b, point));
+				var tri = new Triangle (mesh, e.a, e.b, point);
+				newFaces.Add (tri);
+				connectivity.Add (tri);
 			}
 			donePoints.Clear ();
 			for (int i = 0; i < litFaces.Count; i++) {

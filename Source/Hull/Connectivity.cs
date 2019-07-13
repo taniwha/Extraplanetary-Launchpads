@@ -34,6 +34,11 @@ public class Connectivity
 		}
 	}
 
+	public Connectivity (FaceSet faceset)
+	{
+		Add (faceset);
+	}
+
 	public int Count => edgeFaces.Count;
 
 	public void Add (Triangle face)
@@ -47,7 +52,7 @@ public class Connectivity
 		}
 	}
 
-	public void Extend (FaceSet faceset)
+	public void Add (FaceSet faceset)
 	{
 		var faces = faceset.faces;
 		for (int i = 0; i < faces.Count; i++) {
@@ -59,6 +64,14 @@ public class Connectivity
 	{
 		for (int i = 0; i < 3; i++) {
 			edgeFaces.Remove (face.edges[i]);
+		}
+	}
+
+	public void Remove (FaceSet faceset)
+	{
+		var faces = faceset.faces;
+		for (int i = 0; i < faces.Count; i++) {
+			Remove (faces[i]);
 		}
 	}
 }

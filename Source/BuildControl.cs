@@ -713,7 +713,7 @@ namespace ExtraplanetaryLaunchpads {
 			state = State.Idle;
 		}
 
-		public void CreateBoM ()
+		public bool CreateBoM ()
 		{
 			string str;
 
@@ -737,7 +737,9 @@ namespace ExtraplanetaryLaunchpads {
 					var ap = PartLoader.getPartInfoByName (key);
 					craftBoM.Add($"{partCounts[key]}x  {ap.title}");
 				}
+				return true;
 			}
+			return false;
 		}
 
 		public void BuildCraft ()

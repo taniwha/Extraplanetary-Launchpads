@@ -180,17 +180,11 @@ namespace ExtraplanetaryLaunchpads {
 				//						  launchTransform));
 			}
 
-			float angle;
-			Vector3 axis;
-			launchTransform.rotation.ToAngleAxis (out angle, out axis);
-
-			Vector3 pos = shipTransform.position;
-			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
-			//Debug.Log (String.Format ("[EL] pos: {0} shift: {1}", pos, shift));
-			shift += launchTransform.position;
-			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
-			shipTransform.Translate (shift, Space.World);
-			shipTransform.RotateAround (launchTransform.position, axis, angle);
+			float height = shipTransform.position.y - vessel_bounds.min.y;
+			Vector3 pos = new Vector3 (0, height, 0);
+			Quaternion rot = shipTransform.rotation;
+			shipTransform.rotation = launchTransform.rotation * rot;
+			shipTransform.position = launchTransform.TransformPoint (pos);
 			return launchTransform;
 		}
 

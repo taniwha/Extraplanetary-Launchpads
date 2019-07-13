@@ -1,6 +1,6 @@
 MCSFLAGS = -optimize -warnaserror -unsafe
 
-cstest_sources = TestHarness.cs Box.cs Edge.cs FaceSet.cs Quickhull.cs RawMesh.cs Triangle.cs
+cstest_sources = TestHarness.cs Box.cs Connectivity.cs Edge.cs FaceSet.cs Quickhull.cs RawMesh.cs Triangle.cs
 
 cstest = test
 

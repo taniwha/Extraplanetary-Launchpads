@@ -27,20 +27,12 @@ public class FaceSet
 	public class FaceDict : Dictionary<Edge,Triangle> { }
 	public RawMesh mesh;
 	public FaceList faces = new FaceList ();
-	public FaceDict edgeFaces = new FaceDict ();
 
 	public FaceSet (RawMesh mesh, params Triangle []faces)
 	{
 		this.mesh = mesh;
 		for (int i = 0; i < faces.Length; i++) {
 			this.faces.Add (faces[i]);
-			for (int j = 0; j < 3; j++) {
-				if (edgeFaces.ContainsKey (faces[i].edges[j])) {
-					//Debug.Log ("duplicate edge");
-				} else {
-					edgeFaces[faces[i].edges[j]] = faces[i];
-				}
-			}
 		}
 	}
 
@@ -56,27 +48,11 @@ public class FaceSet
 	public void Add (Triangle face)
 	{
 		faces.Add (face);
-		for (int j = 0; j < 3; j++) {
-			if (edgeFaces.ContainsKey (face.edges[j])) {
-				//Debug.Log ("duplicate edge");
-			} else {
-				edgeFaces[face.edges[j]] = face;
-			}
-		}
 	}
 
 	public void Extend (FaceSet newFaces)
 	{
 		faces.AddRange (newFaces.faces);
-		for (int i = newFaces.Count; i-- > 0; ) {
-			for (int j = 0; j < 3; j++) {
-				if (edgeFaces.ContainsKey (newFaces[i].edges[j])) {
-					//Debug.Log ("duplicate edge");
-				} else {
-					edgeFaces[newFaces[i].edges[j]] = newFaces[i];
-				}
-			}
-		}
 	}
 
 	public Triangle Pop ()
@@ -85,9 +61,6 @@ public class FaceSet
 		if (faces.Count > 0) {
 			face = faces[0];
 			faces.RemoveAt (0);
-			for (int j = 0; j < 3; j++) {
-				edgeFaces.Remove(face.edges[j]);
-			}
 		}
 		return face;
 	}
@@ -103,9 +76,6 @@ public class FaceSet
 			if (lf.CanSee (point)) {
 				lit_faces.Add (lf);
 				faces.RemoveAt (i);
-				for (int j = 0; j < 3; j++) {
-					edgeFaces.Remove (lf.edges[j]);
-				}
 			}
 		}
 		return lit_faces;

@@ -638,7 +638,9 @@ namespace ExtraplanetaryLaunchpads {
 		void CraftBoM ()
 		{
 			if (control.craftBoM == null) {
-				control.CreateBoM ();
+				if (!control.CreateBoM ()) {
+					return;
+				}
 			}
 			for (int i = 0, count = control.craftBoM.Count; i < count; i++) {
 				GUILayout.Label (control.craftBoM[i]);

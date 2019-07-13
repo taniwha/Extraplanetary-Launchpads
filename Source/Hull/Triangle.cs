@@ -23,7 +23,7 @@ namespace ExtraplanetaryLaunchpads {
 
 public class Triangle
 {
-	public const float epsilon = 1e-3f;
+	public const float epsilon = 0e-3f;
 
 	public RawMesh mesh;
 	public Vector3 a, b, c, n;
@@ -79,7 +79,7 @@ public class Triangle
 		if (point == edges[0].a || point == edges[1].a || point == edges[2].a) {
 			return true;
 		}
-		return Dist (point) >= -epsilon;
+		return Dist (point) >= epsilon;
 	}
 
 	public bool AddPoint (int point)

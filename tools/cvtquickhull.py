@@ -1,4 +1,5 @@
 from mu import Mu, MuObject, MuTransform, MuMesh, MuTagLayer
+from multiprocessing import Pool
 
 def read_vertices(input):
     count = input.read_int()
@@ -59,11 +60,9 @@ def make_mesh(name, verts, faces):
     obj.shared_mesh = mesh
     return obj
 
-i = 0
-input = Mu()
-while True:
-    name = f"quickhull-{i:#05d}"
-    print(name)
+def thread_func(parms):
+    name = parms
+    input = Mu()
     input.file = open(name + ".bin", "rb");
     verts = read_vertices(input)
     faces = read_facelist(input)
@@ -84,4 +83,20 @@ while True:
         p.transform.localPosition = verts[point]
         output.obj.children.append(p)
     output.write(name+".mu")
+    print(name)
+
+i = 0
+work_queue = []
+while True:
+    name = f"quickhull-{i:#05d}"
+    try:
+        file = open(name + ".bin", "rb");
+    except:
+        break
+    else:
+        file.close()
+        work_queue.append(name)
     i+=1
+print(len(work_queue))
+with Pool(12) as p:
+    p.map(thread_func, work_queue)

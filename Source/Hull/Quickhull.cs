@@ -155,6 +155,9 @@ public class Quickhull
 		for (int i = 0; i < mesh.verts.Length; i++) {
 			for (int j = 0; j < faces.Count; j++) {
 				var f = faces[j];
+				if (f.IsDup (i)) {
+					continue;
+				}
 				f.AddPoint (i);
 			}
 		}
@@ -211,6 +214,9 @@ public class Quickhull
 					}
 					donePoints.Add(p);
 					for (int k = 0; k < newFaces.Count; k++) {
+						if (newFaces[k].IsDup (p)) {
+							continue;
+						}
 						newFaces[k].AddPoint (p);
 					}
 				}

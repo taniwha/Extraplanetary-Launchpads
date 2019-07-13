@@ -54,6 +54,26 @@ public class Triangle
 		return Vector3.Dot (p - a, n);
 	}
 
+	public bool IsDup (int point)
+	{
+		Vector3 p = mesh.verts[point];
+		Vector3 d;
+		float e = 1e-5f;
+		d = p - a;
+		if (Vector3.Dot (d, d) < e) {
+			return true;
+		}
+		d = p - b;
+		if (Vector3.Dot (d, d) < e) {
+			return true;
+		}
+		d = p - c;
+		if (Vector3.Dot (d, d) < e) {
+			return true;
+		}
+		return false;
+	}
+
 	public bool CanSee (int point)
 	{
 		if (point == edges[0].a || point == edges[1].a || point == edges[2].a) {

@@ -192,6 +192,7 @@ public class Quickhull
 			// light final faces as well so that face merging can be done
 			litFaces.Extend (finalFaces.LightFaces (null, point));
 			if (dump_faces) {
+				bw.Write (point);
 				litFaces.Write (bw);
 			}
 			//Debug.Log($"[Quickhull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
@@ -234,6 +235,7 @@ public class Quickhull
 			mesh.Write (bw);
 			faces.Write (bw);
 			finalFaces.Write (bw);
+			bw.Write((int)-1);
 			bw.Write((int)0);
 			bw.Write((int)0);
 			bw.Close ();

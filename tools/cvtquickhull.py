@@ -68,6 +68,7 @@ while True:
     verts = read_vertices(input)
     faces = read_facelist(input)
     final_faces = read_facelist(input)
+    point = input.read_int()
     lit_faces = read_facelist(input)
     new_faces = read_facelist(input)
     output = Mu()
@@ -78,5 +79,9 @@ while True:
     output.obj.children.append(make_mesh("final_faces", verts, final_faces))
     output.obj.children.append(make_mesh("lit_faces", verts, lit_faces))
     output.obj.children.append(make_mesh("new_faces", verts, new_faces))
+    if (point >= 0):
+        p = make_empty("point")
+        p.transform.localPosition = verts[point]
+        output.obj.children.append(p)
     output.write(name+".mu")
     i+=1

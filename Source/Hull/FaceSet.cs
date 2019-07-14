@@ -46,6 +46,11 @@ public class FaceSet
 		}
 	}
 
+	public bool Contains (Triangle face)
+	{
+		return face.Node.List == faces;
+	}
+
 	public void Add (Triangle face)
 	{
 		face.Pull ();

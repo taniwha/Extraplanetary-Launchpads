@@ -61,6 +61,17 @@ public class Triangle
 		n = Vector3.Cross (edges[0].vect, edges[1].vect).normalized;
 	}
 
+	public int TouchedEdge (int point)
+	{
+		int i;
+		for (i = 3; i-- > 0; ) {
+			if (edges[i].TouchesPoint (point)) {
+				break;
+			}
+		}
+		return i;
+	}
+
 	public float Dist (int point)
 	{
 		Vector3 p = mesh.verts[point];

@@ -146,6 +146,29 @@ public class Quickhull
 						   new Triangle (mesh, c, b, d));
 	}
 
+	void SplitTriangle (Triangle t, int splitEdge, int point, Connectivity connectivity)
+	{
+		int a = t.edges[splitEdge].a;
+		int b = t.edges[splitEdge].b;
+		int c = t.edges[(splitEdge + 1) % 3].b;
+		var list = t.Node.List;
+		t.Pull ();
+		connectivity.Remove (t);
+		Triangle nt1 = new Triangle (mesh, a, point, c);
+		Triangle nt2 = new Triangle (mesh, point, b, c);
+		nt1.vispoints = t.vispoints;
+		nt1.height = t.height;
+		nt1.highest = t.highest;
+		nt2.vispoints = new List<int> (t.vispoints);
+		nt2.height = t.height;
+		nt2.highest = t.highest;
+
+		list.AddFirst (nt1.Node);
+		list.AddFirst (nt2.Node);
+		connectivity.Add (nt1);
+		connectivity.Add (nt2);
+	}
+
 	public FaceSet GetHull ()
 	{
 		FindExtremePoints ();
@@ -177,13 +200,12 @@ public class Quickhull
 		while (faces.Count > 0) {
 			//Debug.Log($"[Quickhull] iteration {iter}");
 			if (dump_faces) {
-				bw = new BinaryWriter(File.Open($"/tmp/quickhull-{iter++:D5}.bin", FileMode.Create));
+				bw = new BinaryWriter (File.Open ($"/tmp/quickhull-{iter:D5}.bin", FileMode.Create));
 				mesh.Write (bw);
 				faces.Write (bw);
 				finalFaces.Write (bw);
-			} else {
-				iter++;
 			}
+			iter++;
 			//int nvis = 0;
 			//for (var nf = faces.First; nf != null; nf = nf.Next) {
 			//	nvis += nf.vispoints.Count;
@@ -207,9 +229,18 @@ public class Quickhull
 			var horizonEdges = litFaces.FindOuterEdges ();
 			var newFaces = new FaceSet (mesh);
 			foreach (Edge e in horizonEdges) {
-				var tri = new Triangle (mesh, e.a, e.b, point);
-				newFaces.Add (tri);
-				connectivity.Add (tri);
+				if (e.TouchesPoint (point)) {
+					var t = connectivity[e.reverse];
+					int splitEdge = t.TouchedEdge (point);
+					Debug.Log ($"[Quickhull] point on edge {splitEdge} {faces.Contains (t)} {finalFaces.Contains (t)} {litFaces.Contains (t)}");
+					if (splitEdge >= 0) {
+						SplitTriangle (t, splitEdge, point, connectivity);
+					}
+				} else {
+					var tri = new Triangle (mesh, e.a, e.b, point);
+					newFaces.Add (tri);
+					connectivity.Add (tri);
+				}
 			}
 			donePoints.Clear ();
 			for (var lf = litFaces.First; lf != null; lf = lf.Next) {

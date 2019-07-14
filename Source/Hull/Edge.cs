@@ -45,6 +45,8 @@ public struct Edge
 		this.b = b;
 	}
 
+	public Edge reverse { get { return new Edge (mesh, b, a); } }
+
 	public Vector3 vect { get { return mesh.verts[b] - mesh.verts[a]; } }
 	public Vector3 rvect { get { return mesh.verts[a] - mesh.verts[b]; } }
 	public float Distance (int point)
@@ -55,6 +57,23 @@ public struct Edge
 		var vv = Vector3.Dot (v, v);
 		var xv = Vector3.Dot (x, v);
 		return (vv * Vector3.Dot (x, x) - xv * xv) / vv;
+	}
+
+	public bool TouchesPoint (int point)
+	{
+		if (point == a || point == b) {
+			return true;
+		}
+		Vector3 x = mesh.verts[point] - mesh.verts[a];
+		Vector3 v = mesh.verts[b] - mesh.verts[a];
+		float vx = Vector3.Dot (v, x);
+		float vv = Vector3.Dot (v, v);
+		float xx = Vector3.Dot (x, x);
+		if (vx > vv || vx < 0) {
+			return false;
+		}
+		float d = (vv * xx - vx * vx) / vv;
+		return d < 1e-5f;
 	}
 }
 

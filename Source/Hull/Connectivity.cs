@@ -41,6 +41,17 @@ public class Connectivity
 
 	public int Count => edgeFaces.Count;
 
+	public Triangle this[Edge e]
+	{
+		get {
+			Triangle t;
+			if (edgeFaces.TryGetValue (e, out t)) {
+				return t;
+			}
+			return null;
+		}
+	}
+
 	public bool error = false;
 
 	public void Add (Triangle face)

@@ -40,7 +40,7 @@ public class Quickhull
 	public Quickhull (RawMesh mesh)
 	{
 		if (dump_points) {
-			var bw = new BinaryWriter(File.Open("/tmp/quickhull-points.bin", FileMode.Create));
+			var bw = new BinaryWriter (File.Open ("/tmp/quickhull-points.bin", FileMode.Create));
 			mesh.Write (bw);
 			bw.Close ();
 		}
@@ -120,7 +120,7 @@ public class Quickhull
 			}
 		}
 
-		var tri = new Triangle(mesh, a, b, c);
+		var tri = new Triangle (mesh, a, b, c);
 		d = 0;
 		bestd = 0;
 		for (int i = 0; i < mesh.verts.Length; i++) {
@@ -128,7 +128,7 @@ public class Quickhull
 			if (a == p || b == p || c == p) {
 				continue;
 			}
-			float r = tri.Dist(p);
+			float r = tri.Dist (p);
 			if (r*r > bestd*bestd) {
 				d = p;
 				bestd = r;
@@ -139,11 +139,11 @@ public class Quickhull
 			b = c;
 			c = t;
 		}
-		return new FaceSet(mesh,
-						   new Triangle (mesh, a, b, c),
-						   new Triangle (mesh, a, d, b),
-						   new Triangle (mesh, a, c, d),
-						   new Triangle (mesh, c, b, d));
+		return new FaceSet (mesh,
+							new Triangle (mesh, a, b, c),
+							new Triangle (mesh, a, d, b),
+							new Triangle (mesh, a, c, d),
+							new Triangle (mesh, c, b, d));
 	}
 
 	void SplitTriangle (Triangle t, int splitEdge, int point, Connectivity connectivity)
@@ -187,7 +187,7 @@ public class Quickhull
 			}
 		}
 		//for (var f = faces.First; f != null; f = f.Next) {
-		//	Debug.Log($"[Quickhull] GetHull {f.vispoints.Count} {f.highest} {f.height}");
+		//	Debug.Log ($"[Quickhull] GetHull {f.vispoints.Count} {f.highest} {f.height}");
 		//}
 
 		FaceSet finalFaces = new FaceSet (mesh);
@@ -198,7 +198,7 @@ public class Quickhull
 		HashSet<int> donePoints = new HashSet<int> ();
 
 		while (faces.Count > 0) {
-			//Debug.Log($"[Quickhull] iteration {iter}");
+			//Debug.Log ($"[Quickhull] iteration {iter}");
 			if (dump_faces) {
 				bw = new BinaryWriter (File.Open ($"/tmp/quickhull-{iter:D5}.bin", FileMode.Create));
 				mesh.Write (bw);
@@ -211,7 +211,7 @@ public class Quickhull
 			//	nvis += nf.vispoints.Count;
 			//}
 			var f = faces.Pop ();
-			//Debug.Log($"[Quickhull] total vis {nvis} f.vis {f.vispoints.Count} faces {faces.Count}");
+			//Debug.Log ($"[Quickhull] total vis {nvis} f.vis {f.vispoints.Count} faces {faces.Count}");
 			if (f.vispoints.Count < 1) {
 				finalFaces.Add (f);
 				continue;
@@ -224,7 +224,7 @@ public class Quickhull
 				bw.Write (point);
 				litFaces.Write (bw);
 			}
-			//Debug.Log($"[Quickhull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
+			//Debug.Log ($"[Quickhull] final:{finalFaces.Count} faces:{faces.Count} lit:{litFaces.Count}");
 			connectivity.Remove (litFaces);
 			var horizonEdges = litFaces.FindOuterEdges ();
 			var newFaces = new FaceSet (mesh);
@@ -246,10 +246,10 @@ public class Quickhull
 			for (var lf = litFaces.First; lf != null; lf = lf.Next) {
 				for (int j = 0; j < lf.vispoints.Count; j++) {
 					int p = lf.vispoints[j];
-					if (donePoints.Contains(p)) {
+					if (donePoints.Contains (p)) {
 						continue;
 					}
-					donePoints.Add(p);
+					donePoints.Add (p);
 					for (var nf = newFaces.First; nf != null; nf = nf.Next) {
 						if (nf.IsDup (p)) {
 							continue;
@@ -278,13 +278,13 @@ public class Quickhull
 			}
 		}
 		if (dump_faces && !connectivity.error) {
-			bw = new BinaryWriter(File.Open($"/tmp/quickhull-{iter++:D5}.bin", FileMode.Create));
+			bw = new BinaryWriter (File.Open ($"/tmp/quickhull-{iter++:D5}.bin", FileMode.Create));
 			mesh.Write (bw);
 			faces.Write (bw);
 			finalFaces.Write (bw);
-			bw.Write((int)-1);
-			bw.Write((int)0);
-			bw.Write((int)0);
+			bw.Write ((int)-1);
+			bw.Write ((int)0);
+			bw.Write ((int)0);
 			bw.Close ();
 		}
 		return finalFaces;

@@ -19,6 +19,7 @@ EL_FILES := \
 	Converter/StockResourceProvider.cs	\
 	DisposablePad/DisposablePad.cs		\
 	Hull/Box.cs							\
+	Hull/Connectivity.cs				\
 	Hull/CraftHull.cs					\
 	Hull/Quickhull.cs					\
 	Hull/Edge.cs						\

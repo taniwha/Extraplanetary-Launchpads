@@ -220,7 +220,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			var hull = new Quickhull (rawMesh);
 			var hullFaces = hull.GetHull ();
-			Debug.Log($"[CraftHull] BuildConvexHull {hullFaces.faces.Count} hull faces");
+			Debug.Log($"[CraftHull] BuildConvexHull {hullFaces.Count} hull faces");
 			hullMeshes = hullFaces.CreateMesh ();
 
 			timer.Stop();

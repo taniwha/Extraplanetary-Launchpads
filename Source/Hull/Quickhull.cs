@@ -230,7 +230,7 @@ public class Quickhull
 				if (e.TouchesPoint (point)) {
 					var t = connectivity[e.reverse];
 					int splitEdge = t.TouchedEdge (point);
-					Debug.Log ($"[Quickhull] point on edge {splitEdge} {faces.Contains (t)} {finalFaces.Contains (t)} {litFaces.Contains (t)}");
+					//Debug.Log ($"[Quickhull] point on edge {splitEdge} {faces.Contains (t)} {finalFaces.Contains (t)} {litFaces.Contains (t)}");
 					if (splitEdge >= 0) {
 						SplitTriangle (t, splitEdge, point, connectivity);
 					}

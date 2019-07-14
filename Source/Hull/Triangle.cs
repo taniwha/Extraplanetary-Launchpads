@@ -33,6 +33,8 @@ public class Triangle
 	public float height;
 	public int highest;
 
+	public int light_run;
+
 	LinkedListNode<Triangle> node = new LinkedListNode<Triangle> (null);
 
 	public LinkedListNode<Triangle> Node { get { return node; } }

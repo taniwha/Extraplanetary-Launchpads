@@ -75,22 +75,6 @@ public class FaceSet
 		return face;
 	}
 
-	public FaceSet LightFaces (Triangle first_face, int point)
-	{
-		var lit_faces = new FaceSet (mesh);
-		if (first_face != null) {
-			lit_faces.Add (first_face);
-		}
-		Triangle face, next;
-		for (face = First; face != null; face = next) {
-			next = face.Next;
-			if (face.CanSee (point)) {
-				lit_faces.Add (face);
-			}
-		}
-		return lit_faces;
-	}
-
 	public HashSet<Edge> FindOuterEdges ()
 	{
 		var edges = new HashSet<Edge> ();

@@ -86,6 +86,36 @@ public class Connectivity
 			Remove (face);
 		}
 	}
+
+	int light_run;
+
+	void LightFaces (Triangle face, int point, FaceSet lit_faces)
+	{
+		if (face.light_run == light_run) {
+			return;
+		}
+		face.light_run = light_run;
+		if (face.CanSee (point)) {
+			lit_faces.Add (face);
+			for (int i = 0; i < 3; i++) {
+				var conface = this[face.redges[i]];
+				if (conface == null) {
+					Debug.Log ($"[Connectivity] incompletely connected face");
+					continue;
+				}
+				LightFaces (conface, point, lit_faces);
+			}
+		}
+	}
+
+	public FaceSet LightFaces (Triangle first_face, int point)
+	{
+		var lit_faces = new FaceSet (first_face.mesh, first_face);
+
+		light_run++;
+		LightFaces (first_face, point, lit_faces);
+		return lit_faces;
+	}
 }
 
 }

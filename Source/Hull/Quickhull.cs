@@ -217,9 +217,7 @@ public class Quickhull
 				continue;
 			}
 			int point = f.vispoints[f.highest];
-			var litFaces = faces.LightFaces (f, point);
-			// light final faces as well so that face merging can be done
-			litFaces.Extend (finalFaces.LightFaces (null, point));
+			var litFaces = connectivity.LightFaces (f, point);
 			if (dump_faces) {
 				bw.Write (point);
 				litFaces.Write (bw);

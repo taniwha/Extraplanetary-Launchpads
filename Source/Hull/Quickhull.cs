@@ -178,14 +178,23 @@ public class Quickhull
 
 		var connectivity = new Connectivity (faces);
 
+		var dupPoints = new HashSet<int> ();
+
 		for (int i = 0; i < mesh.verts.Length; i++) {
 			for (var f = faces.First; f != null; f = f.Next) {
 				if (f.IsDup (i)) {
-					continue;
+					dupPoints.Add (i);
+					break;
 				}
+			}
+			if (dupPoints.Contains (i)) {
+				continue;
+			}
+			for (var f = faces.First; f != null; f = f.Next) {
 				f.AddPoint (i);
 			}
 		}
+		//Debug.Log($"[Quickhull] dupPoints: {dupPoints.Count}");
 		//for (var f = faces.First; f != null; f = f.Next) {
 		//	Debug.Log ($"[Quickhull] GetHull {f.vispoints.Count} {f.highest} {f.height}");
 		//}
@@ -195,7 +204,7 @@ public class Quickhull
 		int iter = 0;
 		BinaryWriter bw = null;
 
-		HashSet<int> donePoints = new HashSet<int> ();
+		var donePoints = new HashSet<int> ();
 
 		while (faces.Count > 0) {
 			//Debug.Log ($"[Quickhull] iteration {iter}");
@@ -250,12 +259,20 @@ public class Quickhull
 					donePoints.Add (p);
 					for (var nf = newFaces.First; nf != null; nf = nf.Next) {
 						if (nf.IsDup (p)) {
-							continue;
+							dupPoints.Add (p);
+							p = -1;
+							break;
 						}
+					}
+					if (p < 0) {
+						continue;
+					}
+					for (var nf = newFaces.First; nf != null; nf = nf.Next) {
 						nf.AddPoint (p);
 					}
 				}
 			}
+			//Debug.Log($"[Quickhull] dupPoints: {dupPoints.Count}");
 			if (dump_faces) {
 				newFaces.Write (bw);
 			}

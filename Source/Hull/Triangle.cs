@@ -84,7 +84,7 @@ public class Triangle
 	{
 		Vector3 p = mesh.verts[point];
 		Vector3 d;
-		float e = 1e-5f;
+		float e = 1e-6f;
 		d = p - a;
 		if (Vector3.Dot (d, d) < e) {
 			return true;

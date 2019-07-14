@@ -64,6 +64,13 @@ namespace UnityEngine {
 			}
 		}
 
+		public float magnitude
+		{
+			get {
+				return (float) Math.Sqrt (x * x + y * y + z * z);
+			}
+		}
+
 		public Vector3 normalized
 		{
 			get {

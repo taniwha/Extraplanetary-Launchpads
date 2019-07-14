@@ -226,6 +226,7 @@ public class Quickhull
 				continue;
 			}
 			int point = f.vispoints[f.highest];
+			//Debug.Log ($"[Quickhull] height {f.height}");
 			var litFaces = connectivity.LightFaces (f, point);
 			if (dump_faces) {
 				bw.Write (point);
@@ -289,6 +290,28 @@ public class Quickhull
 				bw.Close ();
 			}
 			if (connectivity.error) {
+				var vis = new HashSet<int> ();
+				for (var lf = litFaces.First; lf != null; lf = lf.Next) {
+					for (int i = 0; i < lf.vispoints.Count; i++) {
+						vis.Add (lf.vispoints[i]);
+					}
+				}
+				Debug.Log($"[Quickhull] {litFaces.Count} {vis.Count}");
+				for (var lf = litFaces.First; lf != null; lf = lf.Next) {
+					float dist1 = float.PositiveInfinity;
+					float dist2 = float.PositiveInfinity;
+					for (int i = 0; i < 3; i++) {
+						float d = lf.edges[i].Distance (point);
+						if (d < dist1) {
+							dist1 = d;
+						}
+						d = (mesh.verts[point] - mesh.verts[lf.edges[i].a]).magnitude;
+						if (d < dist2) {
+							dist2 = d;
+						}
+					}
+					Debug.Log($"    h:{lf.Dist(point)} d1:{dist1} d2:{dist2} {lf.edges[0].TouchesPoint(point)} {lf.edges[1].TouchesPoint(point)} {lf.edges[2].TouchesPoint(point)}");
+				}
 				break;
 			}
 		}

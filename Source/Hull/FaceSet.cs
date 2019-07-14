@@ -23,44 +23,49 @@ namespace ExtraplanetaryLaunchpads {
 
 public class FaceSet
 {
-	public class FaceList : List<Triangle> { }
-	public class FaceDict : Dictionary<Edge,Triangle> { }
+	class FaceList : LinkedList<Triangle> { }
+	FaceList faces = new FaceList ();
 	public RawMesh mesh;
-	public FaceList faces = new FaceList ();
 
 	public FaceSet (RawMesh mesh, params Triangle []faces)
 	{
 		this.mesh = mesh;
 		for (int i = 0; i < faces.Length; i++) {
-			this.faces.Add (faces[i]);
-		}
-	}
-
-	public Triangle this[int index]
-	{
-		get {
-			return faces[index];
+			faces[i].Pull ();
+			this.faces.AddFirst (faces[i].Node);
 		}
 	}
 
 	public int Count => faces.Count;
 
+	public Triangle First
+	{
+		get {
+			var first = faces.First;
+			return first != null ? first.Value : null;
+		}
+	}
+
 	public void Add (Triangle face)
 	{
-		faces.Add (face);
+		face.Pull ();
+		faces.AddFirst (face.Node);
 	}
 
 	public void Extend (FaceSet newFaces)
 	{
-		faces.AddRange (newFaces.faces);
+		Triangle face, next;
+		for (face = newFaces.First; face != null; face = next) {
+			next = face.Next;
+			Add (face);
+		}
 	}
 
 	public Triangle Pop ()
 	{
-		Triangle face = null;
-		if (faces.Count > 0) {
-			face = faces[0];
-			faces.RemoveAt (0);
+		Triangle face = First;
+		if (face != null) {
+			faces.Remove (face.Node);
 		}
 		return face;
 	}
@@ -71,11 +76,11 @@ public class FaceSet
 		if (first_face != null) {
 			lit_faces.Add (first_face);
 		}
-		for (int i = faces.Count; i-- > 0; ) {
-			var lf = faces[i];
-			if (lf.CanSee (point)) {
-				lit_faces.Add (lf);
-				faces.RemoveAt (i);
+		Triangle face, next;
+		for (face = First; face != null; face = next) {
+			next = face.Next;
+			if (face.CanSee (point)) {
+				lit_faces.Add (face);
 			}
 		}
 		return lit_faces;
@@ -84,8 +89,7 @@ public class FaceSet
 	public HashSet<Edge> FindOuterEdges ()
 	{
 		var edges = new HashSet<Edge> ();
-		for (int i = 0; i < faces.Count; i++) {
-			var f = faces[i];
+		for (var f = First; f != null; f = f.Next) {
 			for (int j = 0; j < 3; j++) {
 				if (edges.Contains (f.redges[j])) {
 					edges.Remove (f.redges[j]);
@@ -99,7 +103,7 @@ public class FaceSet
 
 	Dictionary<int, int> vertexMap;
 
-	Mesh MakeSubMesh (int start, int count)
+	Mesh MakeSubMesh (ref Triangle face, int count)
 	{
 		vertexMap.Clear ();
 
@@ -108,9 +112,8 @@ public class FaceSet
 		int numVerts = 0;
 
 		for (int i = 0; i < count; i++) {
-			var f = faces[start + i];
 			for (int j = 0; j < 3; j++) {
-				int vi = f.edges[j].a;
+				int vi = face.edges[j].a;
 				int vo;
 				if (!vertexMap.TryGetValue (vi, out vo)) {
 					vo = numVerts++;
@@ -119,6 +122,7 @@ public class FaceSet
 				}
 				tris[i*3 + j] = vo;
 			}
+			face = face.Next;
 		}
 		var verts = new Vector3[numVerts];
 		for (int i = 0; i < numVerts; i++) {
@@ -147,13 +151,15 @@ public class FaceSet
 		int numMeshes = (faces.Count + maxFaces - 1) / maxFaces;
 		Debug.Log ($"[FaceSet] faces: {faces.Count} meshes: {numMeshes}");
 		var meshes = new Mesh[numMeshes];
+		Triangle face = First;
+		int count = faces.Count;
 		for (int i = 0; i < numMeshes; i++) {
-			int start = i * maxFaces;
-			int count = faces.Count - start;
-			if (count > maxFaces) {
-				count = maxFaces;
+			int c = count;
+			if (c > maxFaces) {
+				c = maxFaces;
 			}
-			meshes[i] = MakeSubMesh (start, count);
+			count -= c;
+			meshes[i] = MakeSubMesh (ref face, c);
 		}
 		vertexMap = null;
 		return meshes;
@@ -161,12 +167,17 @@ public class FaceSet
 
 	public Box GetBounds ()
 	{
-		Vector3 min = mesh.verts[faces[0].edges[0].a];
-		Vector3 max = mesh.verts[faces[0].edges[0].a];
+		Triangle face = First;
+		if (face == null) {
+			return new Box (Vector3.zero, Vector3.zero);
+		}
 
-		for (int i = 0; i < faces.Count; i++) {
+		Vector3 min = mesh.verts[face.edges[0].a];
+		Vector3 max = mesh.verts[face.edges[0].a];
+
+		while (face != null) {
 			for (int j = 0; j < 3; j++) {
-				Vector3 v = mesh.verts[faces[i].edges[j].a];
+				Vector3 v = mesh.verts[face.edges[j].a];
 				if (v.x < min.x) {
 					min.x = v.x;
 				} else if (v.x > max.x) {
@@ -191,8 +202,8 @@ public class FaceSet
 	public void Write(BinaryWriter bw)
 	{
 		bw.Write(faces.Count);
-		for (int i = 0; i < faces.Count; i++) {
-			faces[i].Write (bw);
+		for (var face = First; face != null; face = face.Next) {
+			face.Write (bw);
 		}
 	}
 }

@@ -33,8 +33,21 @@ public class Triangle
 	public float height;
 	public int highest;
 
+	LinkedListNode<Triangle> node = new LinkedListNode<Triangle> (null);
+
+	public LinkedListNode<Triangle> Node { get { return node; } }
+	public Triangle Next { get { return node.Next != null ? node.Next.Value : null; } }
+	public Triangle Previous { get { return  node.Previous != null ? node.Previous.Value : null; } }
+	public void Pull ()
+	{
+		if (node.List != null) {
+			node.List.Remove (node);
+		}
+	}
+
 	public Triangle (RawMesh mesh, int a, int b, int c)
 	{
+		node.Value = this;
 		this.mesh = mesh;
 		edges[0] = new Edge (mesh, a, b);
 		edges[1] = new Edge (mesh, b, c);

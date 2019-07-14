@@ -41,11 +41,14 @@ public class Connectivity
 
 	public int Count => edgeFaces.Count;
 
+	public bool error = false;
+
 	public void Add (Triangle face)
 	{
 		for (int i = 0; i < 3; i++) {
 			if (edgeFaces.ContainsKey (face.edges[i])) {
 				Debug.Log ($"[Connectivity] duplicate edge");
+				error = true;
 			} else {
 				edgeFaces.Add (face.edges[i], face);
 			}
@@ -54,9 +57,8 @@ public class Connectivity
 
 	public void Add (FaceSet faceset)
 	{
-		var faces = faceset.faces;
-		for (int i = 0; i < faces.Count; i++) {
-			Add (faces[i]);
+		for (var face = faceset.First; face != null; face = face.Next) {
+			Add (face);
 		}
 	}
 
@@ -69,9 +71,8 @@ public class Connectivity
 
 	public void Remove (FaceSet faceset)
 	{
-		var faces = faceset.faces;
-		for (int i = 0; i < faces.Count; i++) {
-			Remove (faces[i]);
+		for (var face = faceset.First; face != null; face = face.Next) {
+			Remove (face);
 		}
 	}
 }

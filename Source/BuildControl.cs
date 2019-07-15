@@ -1012,7 +1012,9 @@ namespace ExtraplanetaryLaunchpads {
 				// GetVesselBox will rotate and minimize any launchclamps,
 				// which is probably a good thing.
 				craftHull.SetBox (GetVesselBox (ship));
-				craftHull.SetTransform (ship.parts[0].localRoot.transform);
+				Part rootPart = ship.parts[0].localRoot;
+				builder.SetShipTransform (rootPart.transform, rootPart);
+				craftHull.SetTransform (rootPart.transform);
 				if (!craftHull.LoadHull (path)) {
 					craftHull.BuildConvexHull (craftVessel);
 					craftHull.SaveHull (path);

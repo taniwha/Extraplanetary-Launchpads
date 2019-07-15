@@ -34,6 +34,7 @@ namespace ExtraplanetaryLaunchpads {
 			void Highlight (bool on);
 			void UpdateMenus (bool visible);
 			void SetCraftMass (double craft_mass);
+			void SetShipTransform (Transform shipTransform, Part rootPart);
 			Transform PlaceShip (Transform shipTransform, Box vessel_bounds);
 			void PostBuild (Vessel craftVessel);
 			void PadSelection_start ();

@@ -235,28 +235,27 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
-		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
+		public void SetShipTransform (Transform shipTransform, Part rootPart)
 		{
-			SetLaunchTransform ();
-/*
-			float angle;
-			Vector3 axis;
-
-			Part rootPart = ship.parts[0].localRoot;
+			// Don't assume shipTransform == rootPart.transform
 			Transform rootXform = rootPart.transform;
 			AttachNode n = FindNode (rootPart);
 
 			Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
-			Quaternion launchRot = launchTransform.rotation;
-			launchRot *= Quaternion.FromToRotation (nodeAxis, Vector3.up);
-			launchRot.ToAngleAxis (out angle, out axis);
-			Vector3 pos = rootXform.TransformPoint (n.position);
-			Vector3 shift = -pos;
-			//Debug.Log (String.Format ("[EL] pos: {0} shift: {1}", pos, shift));
-			shift += launchTransform.position;
-			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
-			rootXform.Translate (shift, Space.World);
-			rootXform.RotateAround (launchTransform.position, axis, angle);*/
+			Quaternion rot = Quaternion.FromToRotation (nodeAxis, Vector3.up);
+			Vector3 pos = rootXform.TransformVector (n.position);
+			Debug.Log ($"[EL] pos: {pos} rot: {rot}");
+			shipTransform.position = pos;
+			shipTransform.rotation = rot;
+		}
+
+		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
+		{
+			SetLaunchTransform ();
+			Vector3 pos = shipTransform.position;
+			Quaternion rot = shipTransform.rotation;
+			shipTransform.rotation = launchTransform.rotation * rot;
+			shipTransform.position = launchTransform.TransformPoint (pos);
 			return launchTransform;
 		}
 

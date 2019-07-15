@@ -159,6 +159,10 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
+		public void SetShipTransform (Transform shipTransform, Part rootPart)
+		{
+		}
+
 		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
 		{
 			if (SpawnTransform != "") {

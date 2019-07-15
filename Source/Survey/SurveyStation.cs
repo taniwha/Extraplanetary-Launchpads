@@ -263,7 +263,11 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
-		public Transform PlaceShip (ShipConstruct ship, ELBuildControl.Box vessel_bounds)
+		public void SetShipTransform (Transform shipTransform, Part rootPart)
+		{
+		}
+
+		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
 		{
 			if (site == null) {
 				return part.transform;
@@ -271,24 +275,22 @@ namespace ExtraplanetaryLaunchpads {
 			Transform xform;
 			xform = part.FindModelTransform ("EL launch pos");
 
+			if (xform == null) {
+				GameObject launchPos = new GameObject ("EL launch pos");
+				xform = launchPos.transform;
+				Transform t = part.partTransform.Find("model");
+				xform.SetParent (t, false);
+			}
 			var points = new Points (site);
-			GameObject launchPos = new GameObject ("EL launch pos");
-			launchPos.transform.position = points.center;
-			launchPos.transform.rotation = points.GetOrientation ();
-			xform = launchPos.transform;
+			xform.transform.position = points.center;
+			xform.transform.rotation = points.GetOrientation ();
 			Debug.Log ($"[EL SurveyStation] launchPos {xform.position} {xform.rotation}");
 
-			float angle;
-			Vector3 axis;
-			xform.rotation.ToAngleAxis (out angle, out axis);
-
-			Part rootPart = ship.parts[0].localRoot;
-			Vector3 pos = rootPart.transform.position;
-			Vector3 shift = points.ShiftBounds (xform, pos, vessel_bounds);
-			shift += xform.position;
-			rootPart.transform.Translate (shift, Space.World);
-			rootPart.transform.RotateAround (xform.position,
-												  axis, angle);
+			Vector3 pos = shipTransform.position;
+			pos += points.ShiftBounds (xform, pos, vessel_bounds);
+			Quaternion rot = shipTransform.rotation;
+			shipTransform.rotation = xform.rotation * rot;
+			shipTransform.position = xform.TransformPoint (pos);
 			return xform;
 		}
 

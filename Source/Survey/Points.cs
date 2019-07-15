@@ -175,8 +175,7 @@ namespace ExtraplanetaryLaunchpads {
 			return rot;
 		}
 
-		public Vector3 ShiftBounds (Transform frame, Vector3 pos,
-									ELBuildControl.Box box)
+		public Vector3 ShiftBounds (Transform frame, Vector3 pos, Box box)
 		{
 			Vector3 shift = new Vector3 (-pos.x, -box.min.y, -pos.z);
 			Vector3 mins = box.min - pos;

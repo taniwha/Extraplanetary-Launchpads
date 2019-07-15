@@ -20,47 +20,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.IO;
 using UnityEngine;
 
-using KSP.IO;
 using KSP.Localization;
 
 namespace ExtraplanetaryLaunchpads {
 
 	public class ELBuildControl : ELWorkSink
 	{
-		public class Box
-		{
-			public Vector3 min;
-			public Vector3 max;
-
-			public Box (Bounds b)
-			{
-				min = new Vector3 (b.min.x, b.min.y, b.min.z);
-				max = new Vector3 (b.max.x, b.max.y, b.max.z);
-			}
-
-			public void Add (Bounds b)
-			{
-				min.x = Mathf.Min (min.x, b.min.x);
-				min.y = Mathf.Min (min.y, b.min.y);
-				min.z = Mathf.Min (min.z, b.min.z);
-				max.x = Mathf.Max (max.x, b.max.x);
-				max.y = Mathf.Max (max.y, b.max.y);
-				max.z = Mathf.Max (max.z, b.max.z);
-			}
-
-			public override string ToString ()
-			{
-				return "[" + min + "," + max + "]";
-			}
-		}
 		public interface IBuilder
 		{
 			void Highlight (bool on);
 			void UpdateMenus (bool visible);
 			void SetCraftMass (double craft_mass);
-			Transform PlaceShip (ShipConstruct ship, Box vessel_bounds);
+			void SetShipTransform (Transform shipTransform, Part rootPart);
+			Transform PlaceShip (Transform shipTransform, Box vessel_bounds);
 			void PostBuild (Vessel craftVessel);
 			void PadSelection_start ();
 			void PadSelection ();
@@ -86,6 +61,8 @@ namespace ExtraplanetaryLaunchpads {
 		public string flagname { get; set; }
 		public bool lockedParts { get; private set; }
 		public ConfigNode craftConfig { get; private set; }
+		public CraftHull craftHull { get; private set; }
+		public GameObject craftHullObject { get; private set; }
 		RMResourceManager padResourceManager;
 		public RMResourceSet padResources
 		{
@@ -149,6 +126,18 @@ namespace ExtraplanetaryLaunchpads {
 		}
 		Vessel craftVessel;
 		Vector3 craftOffset;
+
+		string _savesPath;
+		string savesPath
+		{
+			get {
+				if (_savesPath == null) {
+					_savesPath = KSPUtil.ApplicationRootPath + "saves/";
+					_savesPath += HighLogic.SaveFolder;
+				}
+				return _savesPath;
+			}
+		}
 
 		public void CancelBuild ()
 		{
@@ -639,7 +628,11 @@ namespace ExtraplanetaryLaunchpads {
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
 			Box vessel_bounds = GetVesselBox (nship);
-			launchTransform = builder.PlaceShip (nship, vessel_bounds);
+			//FIXME this is wrong for disposable pads
+			var rootPart = nship.parts[0].localRoot;
+			var shipTransform = rootPart.transform;
+			builder.SetShipTransform (shipTransform, rootPart);
+			launchTransform = builder.PlaceShip (shipTransform, vessel_bounds);
 
 			EnableExtendingLaunchClamps (nship);
 			ShipConstruction.AssembleForLaunch (nship, landedAt, landedAt,
@@ -683,11 +676,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void LoadCraft (string filename, string flagname)
+		void ReplaceLaunchClamps (ConfigNode craft)
 		{
-			this.filename = filename;
-			this.flagname = flagname;
-			ConfigNode craft = ConfigNode.Load (filename);
 			foreach (ConfigNode node in craft.nodes) {
 				if (node.name == "PART") {
 					string name = ShipTemplate.GetPartName (node);
@@ -705,10 +695,29 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
-			if ((buildCost = getBuildCost (craft)) != null) {
+		}
+
+		public void LoadCraft (string filename, string flagname)
+		{
+			this.filename = filename;
+			this.flagname = flagname;
+
+			if (!File.Exists (filename)) {
+				Debug.LogWarning ($"File '{filename}' does not exist");
+				return;
+			}
+			string craftText = File.ReadAllText (filename);
+			ConfigNode craft = ConfigNode.Parse (craftText);
+			ReplaceLaunchClamps (craft);
+
+			if ((buildCost = getBuildCost (craft, craftText)) != null) {
 				craftConfig = craft;
 				state = State.Planning;
 				craftName = Localizer.Format (craft.GetValue ("ship"));
+			}
+			if (craftHull != null) {
+				craftHullObject = craftHull.CreateHull (craftName + ":hull");
+				craftHull.PlaceHull (builder, craftHullObject);
 			}
 		}
 
@@ -768,6 +777,10 @@ namespace ExtraplanetaryLaunchpads {
 			if (craftConfig != null) {
 				craftConfig.name = "CraftConfig";
 				node.AddNode (craftConfig);
+			}
+			if (craftHull != null) {
+				var ch = node.AddNode ("CraftHull");
+				craftHull.Save (ch);
 			}
 			if (buildCost != null) {
 				var bc = node.AddNode ("BuildCost");
@@ -834,6 +847,10 @@ namespace ExtraplanetaryLaunchpads {
 			if (node.HasNode ("CraftConfig")) {
 				craftConfig = node.GetNode ("CraftConfig");
 			}
+			if (node.HasNode ("CraftHull")) {
+				craftHull = new CraftHull ();
+				craftHull.Load (node.GetNode ("CraftHull"));
+			}
 			if (node.HasNode ("BuildCost")) {
 				var bc = node.GetNode ("BuildCost");
 				buildCost = new CostReport ();
@@ -886,14 +903,34 @@ namespace ExtraplanetaryLaunchpads {
 					CleaupAfterRelease ();
 				}
 			}
+			if (craftHull != null) {
+				if (!craftHull.LoadHull (savesPath)) {
+					craftHull.MakeBoxHull ();
+				}
+				craftHullObject = craftHull.CreateHull (craftName + ":hull");
+				craftHull.PlaceHull (builder, craftHullObject);
+			}
 			FindVesselResources ();
 			SetPadMass ();
+		}
+
+		void DestroyCraftHull ()
+		{
+			if (craftHull != null) {
+				craftHull.Destroy();
+				craftHull = null;
+			}
+			if (craftHullObject != null) {
+				UnityEngine.Object.Destroy (craftHullObject);
+				craftHullObject = null;
+			}
 		}
 
 		internal void OnDestroy ()
 		{
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
+			DestroyCraftHull ();
 		}
 
 		void CleaupAfterRelease ()
@@ -956,7 +993,7 @@ namespace ExtraplanetaryLaunchpads {
 			return called;
 		}
 
-		public CostReport getBuildCost (ConfigNode craft)
+		public CostReport getBuildCost (ConfigNode craft, string craftText = null)
 		{
 			lockedParts = false;
 			ShipConstruct ship = new ShipConstruct ();
@@ -987,6 +1024,23 @@ namespace ExtraplanetaryLaunchpads {
 			foreach (Part p in craftVessel.parts) {
 				resources.addPart (p);
 			}
+
+			if (craftText != null) {
+				DestroyCraftHull ();
+				craftHull = new CraftHull (craftText);
+				// GetVesselBox will rotate and minimize any launchclamps,
+				// which is probably a good thing.
+				var rootPart = ship.parts[0].localRoot;
+				var rootPos = rootPart.transform.position;
+				craftHull.SetBox (GetVesselBox (ship), rootPos);
+				builder.SetShipTransform (rootPart.transform, rootPart);
+				craftHull.SetTransform (rootPart.transform);
+				if (!craftHull.LoadHull (savesPath)) {
+					craftHull.BuildConvexHull (craftVessel);
+					craftHull.SaveHull (savesPath);
+				}
+			}
+
 			craftVessel.Die ();
 
 			return resources.cost;

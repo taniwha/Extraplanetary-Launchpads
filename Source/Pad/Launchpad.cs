@@ -159,7 +159,11 @@ namespace ExtraplanetaryLaunchpads {
 			return ModifierChangeWhen.CONSTANTLY;
 		}
 
-		public Transform PlaceShip (ShipConstruct ship, ELBuildControl.Box vessel_bounds)
+		public void SetShipTransform (Transform shipTransform, Part rootPart)
+		{
+		}
+
+		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
 		{
 			if (SpawnTransform != "") {
 				launchTransform = part.FindModelTransform (SpawnTransform);
@@ -171,30 +175,20 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (launchTransform == null) {
 				Vector3 offset = Vector3.up * (SpawnHeightOffset + spawnOffset);
-				Transform t = part.transform;
+				Transform t = part.partTransform.Find("model");
 				GameObject launchPos = new GameObject ("EL launch pos");
-				launchPos.transform.parent = t;
-				launchPos.transform.position = t.position;
-				launchPos.transform.rotation = t.rotation;
-				launchPos.transform.position += t.TransformDirection (offset);
+				launchPos.transform.SetParent (t, false);;
+				launchPos.transform.localPosition = offset;
 				launchTransform = launchPos.transform;
 				//Debug.Log (String.Format ("[EL] launchPos {0}",
 				//						  launchTransform));
 			}
 
-			float angle;
-			Vector3 axis;
-			launchTransform.rotation.ToAngleAxis (out angle, out axis);
-
-			Part rootPart = ship.parts[0].localRoot;
-			Vector3 pos = rootPart.transform.position;
-			Vector3 shift = new Vector3 (-pos.x, -vessel_bounds.min.y, -pos.z);
-			//Debug.Log (String.Format ("[EL] pos: {0} shift: {1}", pos, shift));
-			shift += launchTransform.position;
-			//Debug.Log (String.Format ("[EL] shift: {0}", shift));
-			rootPart.transform.Translate (shift, Space.World);
-			rootPart.transform.RotateAround (launchTransform.position, axis,
-											 angle);
+			float height = shipTransform.position.y - vessel_bounds.min.y;
+			Vector3 pos = new Vector3 (0, height, 0);
+			Quaternion rot = shipTransform.rotation;
+			shipTransform.rotation = launchTransform.rotation * rot;
+			shipTransform.position = launchTransform.TransformPoint (pos);
 			return launchTransform;
 		}
 

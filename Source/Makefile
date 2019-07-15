@@ -18,6 +18,14 @@ EL_FILES := \
 	Converter/KethaneResourceProvider.cs\
 	Converter/StockResourceProvider.cs	\
 	DisposablePad/DisposablePad.cs		\
+	Hull/Box.cs							\
+	Hull/Connectivity.cs				\
+	Hull/CraftHull.cs					\
+	Hull/Quickhull.cs					\
+	Hull/Edge.cs						\
+	Hull/FaceSet.cs						\
+	Hull/RawMesh.cs						\
+	Hull/Triangle.cs					\
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/BuildResourceSet.cs			\

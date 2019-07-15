@@ -55,6 +55,15 @@ public class RawMesh
 		}
 	}
 
+	public bool AddVertex (Vector3 vert)
+	{
+		if (addindex >= verts.Length) {
+			return false;
+		}
+		verts[addindex++] = vert;
+		return true;
+	}
+
 	public void Write (BinaryWriter bw)
 	{
 		bw.Write (addindex);

@@ -1011,8 +1011,9 @@ namespace ExtraplanetaryLaunchpads {
 				path += HighLogic.SaveFolder;
 				// GetVesselBox will rotate and minimize any launchclamps,
 				// which is probably a good thing.
-				craftHull.SetBox (GetVesselBox (ship));
-				Part rootPart = ship.parts[0].localRoot;
+				var rootPart = ship.parts[0].localRoot;
+				var rootPos = rootPart.transform.position;
+				craftHull.SetBox (GetVesselBox (ship), rootPos);
 				builder.SetShipTransform (rootPart.transform, rootPart);
 				craftHull.SetTransform (rootPart.transform);
 				if (!craftHull.LoadHull (path)) {

@@ -26,6 +26,7 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		string md5sum;
 		Box bounds;
+		Vector3 boundsOrigin;
 		Vector3 position;
 		Quaternion rotation = Quaternion.identity;
 		// It's not actually expected that there will be more than one mesh,
@@ -44,9 +45,10 @@ namespace ExtraplanetaryLaunchpads {
 			HashCraft (craftFile);
 		}
 
-		public void SetBox (Box b)
+		public void SetBox (Box b, Vector3 o)
 		{
 			bounds = new Box(b);
+			boundsOrigin = o;
 		}
 
 		public void SetTransform (Transform transform)
@@ -74,6 +76,7 @@ namespace ExtraplanetaryLaunchpads {
 			node.TryGetValue ("rotation", ref rotation);
 			if (node.HasNode ("bounds")) {
 				bounds = new Box (node.GetNode ("bounds"));
+				node.TryGetValue ("boundsOrigin", ref boundsOrigin);
 			}
 		}
 
@@ -86,6 +89,7 @@ namespace ExtraplanetaryLaunchpads {
 			node.AddValue ("rotation", KSPUtil.WriteQuaternion (rotation));
 			if (bounds != null) {
 				bounds.Save (node.AddNode ("bounds"));
+				node.AddValue ("boundsOrigin", boundsOrigin);
 			}
 		}
 
@@ -148,6 +152,32 @@ namespace ExtraplanetaryLaunchpads {
 
 			br.Close ();
 			return true;
+		}
+
+		public void MakeBoxHull ()
+		{
+			var timer = System.Diagnostics.Stopwatch.StartNew ();
+			Debug.Log($"[CraftHull] MakeBoxHull 8 verts to process");
+			var min = bounds.min - boundsOrigin;
+			var max = bounds.max - boundsOrigin;
+			var rawMesh = new RawMesh (8);
+			rawMesh.AddVertex (min);
+			rawMesh.AddVertex (new Vector3(min.x, min.y, max.z));
+			rawMesh.AddVertex (new Vector3(min.x, max.y, min.z));
+			rawMesh.AddVertex (new Vector3(min.x, max.y, max.z));
+			rawMesh.AddVertex (new Vector3(max.x, min.y, min.z));
+			rawMesh.AddVertex (new Vector3(max.x, min.y, max.z));
+			rawMesh.AddVertex (new Vector3(max.x, max.y, min.z));
+			rawMesh.AddVertex (max);
+
+			var hull = new Quickhull (rawMesh);
+			var hullFaces = hull.GetHull ();
+			hullError = hull.error;
+			Debug.Log($"[CraftHull] MakeBoxHull {hullFaces.Count} hull faces");
+			hullMeshes = hullFaces.CreateMesh ();
+
+			timer.Stop();
+			Debug.Log($"[CraftHull] MakeBoxHull {timer.ElapsedMilliseconds}ms");
 		}
 
 		void WriteMesh (BinaryWriter bw, Mesh mesh)

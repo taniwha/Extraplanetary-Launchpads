@@ -70,8 +70,8 @@ namespace ExtraplanetaryLaunchpads {
 		public void Load (ConfigNode node)
 		{
 			md5sum = node.GetValue ("CraftHullSum");
-			position = KSPUtil.ParseVector3 (node.GetValue ("position"));
-			rotation = KSPUtil.ParseQuaternion (node.GetValue ("rotation"));
+			node.TryGetValue ("position", ref position);
+			node.TryGetValue ("rotation", ref rotation);
 			if (node.HasNode ("bounds")) {
 				bounds = new Box (node.GetNode ("bounds"));
 			}
@@ -79,7 +79,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Save (ConfigNode node)
 		{
-			node.AddValue ("CraftHullSum", md5sum);
+			if (!string.IsNullOrEmpty(md5sum)) {
+				node.AddValue ("CraftHullSum", md5sum);
+			}
 			node.AddValue ("position", KSPUtil.WriteVector (position));
 			node.AddValue ("rotation", KSPUtil.WriteQuaternion (rotation));
 			if (bounds != null) {

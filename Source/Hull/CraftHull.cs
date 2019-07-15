@@ -178,7 +178,6 @@ namespace ExtraplanetaryLaunchpads {
 
 			var hull = new Quickhull (rawMesh);
 			var hullFaces = hull.GetHull ();
-			hullError = hull.error;
 			Debug.Log($"[CraftHull] MakeBoxHull {hullFaces.Count} hull faces");
 			hullMeshes = hullFaces.CreateMesh ();
 

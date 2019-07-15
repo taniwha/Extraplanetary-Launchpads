@@ -33,6 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 		// but if the quickhull algorithm breaks down, it can produce a nasty
 		// hedgehog with more vertices than can fit in a single mesh.
 		Mesh []hullMeshes;
+		bool hullError;
 
 		const int magic = 0x31337001;
 
@@ -74,6 +75,7 @@ namespace ExtraplanetaryLaunchpads {
 			md5sum = node.GetValue ("CraftHullSum");
 			node.TryGetValue ("position", ref position);
 			node.TryGetValue ("rotation", ref rotation);
+			node.TryGetValue ("hullError", ref hullError);
 			if (node.HasNode ("bounds")) {
 				bounds = new Box (node.GetNode ("bounds"));
 				node.TryGetValue ("boundsOrigin", ref boundsOrigin);
@@ -87,6 +89,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			node.AddValue ("position", KSPUtil.WriteVector (position));
 			node.AddValue ("rotation", KSPUtil.WriteQuaternion (rotation));
+			node.AddValue ("hullError", hullError);
 			if (bounds != null) {
 				bounds.Save (node.AddNode ("bounds"));
 				node.AddValue ("boundsOrigin", boundsOrigin);
@@ -128,12 +131,14 @@ namespace ExtraplanetaryLaunchpads {
 
 			if (!File.Exists (path)) {
 				Debug.LogError ($"[CraftHull] {path} does not exist");
+				hullError = true;
 				return false;
 			}
 
 			var br = new BinaryReader (File.Open(path, FileMode.Open));
 			if (br == null) {
 				Debug.LogError ($"[CraftHull] could not open {path}");
+				hullError = true;
 				return false;
 			}
 
@@ -141,6 +146,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (m != magic) {
 				Debug.LogError ($"[CraftHull] {path} incorrect magic number");
 				br.Close ();
+				hullError = true;
 				return false;
 			}
 
@@ -273,7 +279,11 @@ namespace ExtraplanetaryLaunchpads {
 
 				var renderer = go.GetComponent<Renderer> ();
 				renderer.material = new Material (Shader.Find("Diffuse"));
-				renderer.material.color = XKCDColors.MossGreen;
+				var color = XKCDColors.MossGreen;
+				if (hullError) {
+					color = XKCDColors.DustyRed;
+				}
+				renderer.material.color = color;
 			}
 			hullObject.transform.position = position;
 			hullObject.transform.rotation = rotation;

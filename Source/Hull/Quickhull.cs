@@ -36,6 +36,7 @@ public class Quickhull
 	public static bool dump_points;
 
 	public RawMesh mesh;
+	public bool error;
 
 	public Quickhull (RawMesh mesh)
 	{
@@ -325,6 +326,7 @@ public class Quickhull
 			bw.Write ((int)0);
 			bw.Close ();
 		}
+		error = connectivity.error;
 		return finalFaces;
 	}
 }

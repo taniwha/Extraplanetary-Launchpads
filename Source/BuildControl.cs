@@ -127,6 +127,18 @@ namespace ExtraplanetaryLaunchpads {
 		Vessel craftVessel;
 		Vector3 craftOffset;
 
+		string _savesPath;
+		string savesPath
+		{
+			get {
+				if (_savesPath == null) {
+					_savesPath = KSPUtil.ApplicationRootPath + "saves/";
+					_savesPath += HighLogic.SaveFolder;
+				}
+				return _savesPath;
+			}
+		}
+
 		public void CancelBuild ()
 		{
 			if (state == State.Building || state == State.Complete) {
@@ -617,7 +629,9 @@ namespace ExtraplanetaryLaunchpads {
 
 			Box vessel_bounds = GetVesselBox (nship);
 			//FIXME this is wrong for disposable pads
-			var shipTransform = nship.parts[0].localRoot.transform;
+			var rootPart = nship.parts[0].localRoot;
+			var shipTransform = rootPart.transform;
+			builder.SetShipTransform (shipTransform, rootPart);
 			launchTransform = builder.PlaceShip (shipTransform, vessel_bounds);
 
 			EnableExtendingLaunchClamps (nship);
@@ -889,6 +903,13 @@ namespace ExtraplanetaryLaunchpads {
 					CleaupAfterRelease ();
 				}
 			}
+			if (craftHull != null) {
+				if (!craftHull.LoadHull (savesPath)) {
+					craftHull.MakeBoxHull ();
+				}
+				craftHullObject = craftHull.CreateHull (craftName + ":hull");
+				craftHull.PlaceHull (builder, craftHullObject);
+			}
 			FindVesselResources ();
 			SetPadMass ();
 		}
@@ -1007,8 +1028,6 @@ namespace ExtraplanetaryLaunchpads {
 			if (craftText != null) {
 				DestroyCraftHull ();
 				craftHull = new CraftHull (craftText);
-				string path = KSPUtil.ApplicationRootPath + "saves/";
-				path += HighLogic.SaveFolder;
 				// GetVesselBox will rotate and minimize any launchclamps,
 				// which is probably a good thing.
 				var rootPart = ship.parts[0].localRoot;
@@ -1016,9 +1035,9 @@ namespace ExtraplanetaryLaunchpads {
 				craftHull.SetBox (GetVesselBox (ship), rootPos);
 				builder.SetShipTransform (rootPart.transform, rootPart);
 				craftHull.SetTransform (rootPart.transform);
-				if (!craftHull.LoadHull (path)) {
+				if (!craftHull.LoadHull (savesPath)) {
 					craftHull.BuildConvexHull (craftVessel);
-					craftHull.SaveHull (path);
+					craftHull.SaveHull (savesPath);
 				}
 			}
 

@@ -1037,7 +1037,8 @@ namespace ExtraplanetaryLaunchpads {
 				craftHull.SetBox (GetVesselBox (ship), rootPos);
 				builder.SetShipTransform (rootPart.transform, rootPart);
 				craftHull.SetTransform (rootPart.transform);
-				if (!craftHull.LoadHull (savesPath)) {
+				if (ELSettings.DebugCraftHull
+					|| !craftHull.LoadHull (savesPath)) {
 					craftHull.BuildConvexHull (craftVessel);
 					craftHull.SaveHull (savesPath);
 				}

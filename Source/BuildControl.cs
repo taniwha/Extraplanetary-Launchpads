@@ -903,7 +903,7 @@ namespace ExtraplanetaryLaunchpads {
 					CleaupAfterRelease ();
 				}
 			}
-			if (craftHull != null) {
+			if (craftHull != null && ELSettings.ShowCraftHull) {
 				if (!craftHull.LoadHull (savesPath)) {
 					craftHull.MakeBoxHull ();
 				}
@@ -1025,7 +1025,9 @@ namespace ExtraplanetaryLaunchpads {
 				resources.addPart (p);
 			}
 
-			if (craftText != null) {
+			if (craftText != null && ELSettings.ShowCraftHull) {
+				Quickhull.dump_points = ELSettings.DebugCraftHull;
+				Quickhull.points_path = savesPath;
 				DestroyCraftHull ();
 				craftHull = new CraftHull (craftText);
 				// GetVesselBox will rotate and minimize any launchclamps,

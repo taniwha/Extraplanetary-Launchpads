@@ -71,6 +71,16 @@ namespace ExtraplanetaryLaunchpads {
 			get;
 			private set;
 		}
+		public static bool ShowCraftHull
+		{
+			get;
+			private set;
+		}
+		public static bool DebugCraftHull
+		{
+			get;
+			private set;
+		}
 
 		static Rect windowpos;
 		private static bool gui_enabled;
@@ -152,6 +162,36 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateToolbarButton ();
 		}
 
+		void ParseShowCraftHull (ConfigNode settings)
+		{
+			if (!settings.HasValue ("ShowCraftHull")) {
+				var val = ShowCraftHull.ToString();
+				settings.AddValue ("ShowCraftHull", val);
+			}
+
+			string str = settings.GetValue ("ShowCraftHull");
+			bool bval;
+			if (bool.TryParse (str, out bval)) {
+				ShowCraftHull = bval;
+			}
+			UpdateToolbarButton ();
+		}
+
+		void ParseDebugCraftHull (ConfigNode settings)
+		{
+			if (!settings.HasValue ("DebugCraftHull")) {
+				var val = DebugCraftHull.ToString();
+				settings.AddValue ("DebugCraftHull", val);
+			}
+
+			string str = settings.GetValue ("DebugCraftHull");
+			bool bval;
+			if (bool.TryParse (str, out bval)) {
+				DebugCraftHull = bval;
+			}
+			UpdateToolbarButton ();
+		}
+
 		void ParseShipInfo (ConfigNode settings)
 		{
 			if (settings.HasNode ("ShipInfo")) {
@@ -188,6 +228,8 @@ namespace ExtraplanetaryLaunchpads {
 			ParseUseKAC (settings);
 			ParseKACAction (settings);
 			ParsePreferBlizzy (settings);
+			ParseShowCraftHull (settings);
+			ParseDebugCraftHull (settings);
 			ParseShipInfo (settings);
 			ParseBuildWindow (settings);
 			ParseResourceWindow (settings);
@@ -206,6 +248,8 @@ namespace ExtraplanetaryLaunchpads {
 			settings.AddValue ("UseKAC", use_KAC);
 			settings.AddValue ("KACAction", KACAction.ToString ());
 			settings.AddValue ("PreferBlizzy", PreferBlizzy);
+			settings.AddValue ("ShowCraftHull", ShowCraftHull);
+			settings.AddValue ("DebugCraftHull", DebugCraftHull);
 
 			ELShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
 			ELBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
@@ -229,6 +273,8 @@ namespace ExtraplanetaryLaunchpads {
 			ParseUseKAC (settings);
 			ParseKACAction (settings);
 			ParsePreferBlizzy (settings);
+			ParseShowCraftHull (settings);
+			ParseDebugCraftHull (settings);
 		}
 		
 		public override void OnAwake ()
@@ -265,6 +311,14 @@ namespace ExtraplanetaryLaunchpads {
 			bool si = ELShipInfo.showGUI;
 			si = GUILayout.Toggle (si, "Build Resources window currently visible in editor");
 			ELShipInfo.showGUI = si;
+
+			bool sch = ShowCraftHull;
+			sch = GUILayout.Toggle (sch, "Show craft hull during construction");
+			ShowCraftHull = sch;
+
+			bool dch = DebugCraftHull;
+			dch = GUILayout.Toggle (dch, "Write craft hull points file");
+			DebugCraftHull = dch;
 
 			if (uk) {
 				int actionint;

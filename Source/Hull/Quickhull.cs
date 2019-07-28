@@ -34,6 +34,7 @@ public class Quickhull
 {
 	public static bool dump_faces;
 	public static bool dump_points;
+	public static string points_path = "/tmp";
 
 	public RawMesh mesh;
 	public bool error;
@@ -41,7 +42,10 @@ public class Quickhull
 	public Quickhull (RawMesh mesh)
 	{
 		if (dump_points) {
-			var bw = new BinaryWriter (File.Open ("/tmp/quickhull-points.bin", FileMode.Create));
+			Debug.Log($"[Quickhull] points_path: {points_path}");
+			var file = File.Open ($"{points_path}/quickhull-points.bin",
+								  FileMode.Create);
+			var bw = new BinaryWriter (file);
 			mesh.Write (bw);
 			bw.Close ();
 		}

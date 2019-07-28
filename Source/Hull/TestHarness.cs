@@ -125,6 +125,7 @@ public class TestHarness
 {
 	static int Main (string []args)
 	{
+		bool error = false;
 		foreach (var s in args) {
 			switch (s) {
 				case "--dump":
@@ -144,11 +145,12 @@ public class TestHarness
 					var qh = new Quickhull (mesh);
 					var timer = System.Diagnostics.Stopwatch.StartNew ();
 					var hull = qh.GetHull ();
+					error |= qh.error;
 					timer.Stop();
 					Debug.Log ($"    - {hull.Count} faces {timer.ElapsedMilliseconds}ms");
 					break;
 			}
 		}
-		return 0;
+		return error ? 1 : 0;
 	}
 }

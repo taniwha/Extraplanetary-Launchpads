@@ -616,6 +616,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void BuildAndLaunchCraft ()
 		{
+			DestroyCraftHull ();
 			// build craft
 			ShipConstruct nship = new ShipConstruct ();
 			nship.LoadShip (craftConfig);
@@ -628,7 +629,6 @@ namespace ExtraplanetaryLaunchpads {
 			VesselCrewManifest crew = new VesselCrewManifest ();
 
 			Box vessel_bounds = GetVesselBox (nship);
-			//FIXME this is wrong for disposable pads
 			var rootPart = nship.parts[0].localRoot;
 			var shipTransform = rootPart.transform;
 			builder.SetShipTransform (shipTransform, rootPart);

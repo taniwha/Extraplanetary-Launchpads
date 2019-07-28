@@ -317,7 +317,7 @@ namespace ExtraplanetaryLaunchpads {
 			ShowCraftHull = sch;
 
 			bool dch = DebugCraftHull;
-			dch = GUILayout.Toggle (dch, "Write craft hull points file");
+			dch = GUILayout.Toggle (dch, "[Debug] Write craft hull points file");
 			DebugCraftHull = dch;
 
 			if (uk) {

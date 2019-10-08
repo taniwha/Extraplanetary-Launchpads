@@ -672,7 +672,7 @@ namespace ExtraplanetaryLaunchpads {
 				FlightGlobals.overrideOrbit = true;
 				(builder as PartModule).StartCoroutine (CaptureCraft ());
 			} else {
-				CleaupAfterRelease ();
+				CleanupAfterRelease ();
 			}
 		}
 
@@ -900,7 +900,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (vesselInfo != null) {
 				craftRoot = builder.vessel[vesselInfo.rootPartUId];
 				if (craftRoot == null) {
-					CleaupAfterRelease ();
+					CleanupAfterRelease ();
 				}
 			}
 			if (craftHull != null && ELSettings.ShowCraftHull) {
@@ -933,7 +933,7 @@ namespace ExtraplanetaryLaunchpads {
 			DestroyCraftHull ();
 		}
 
-		void CleaupAfterRelease ()
+		void CleanupAfterRelease ()
 		{
 			craftRoot = null;
 			vesselInfo = null;
@@ -950,7 +950,7 @@ namespace ExtraplanetaryLaunchpads {
 			FlightGlobals.ForceSetActiveVessel (vsl);
 			//builder.part.StartCoroutine (FixAirstreamShielding (vsl));
 
-			CleaupAfterRelease ();
+			CleanupAfterRelease ();
 		}
 
 		bool InitializeB9Wings (Vessel v)
@@ -1052,7 +1052,7 @@ namespace ExtraplanetaryLaunchpads {
 		void onPartDie (Part p)
 		{
 			if (p == craftRoot) {
-				CleaupAfterRelease ();
+				CleanupAfterRelease ();
 			}
 		}
 

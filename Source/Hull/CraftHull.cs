@@ -249,6 +249,16 @@ namespace ExtraplanetaryLaunchpads {
 			mesh.vertices = verts;
 		}
 
+		bool IsActive(MeshFilter mf)
+		{
+			var go = mf.gameObject;
+			var renderer = go.GetComponent<Renderer>();
+			if (renderer != null) {
+				return renderer.enabled;
+			}
+			return false;
+		}
+
 		public void BuildConvexHull (Vessel craftVessel)
 		{
 			var timer = System.Diagnostics.Stopwatch.StartNew ();
@@ -259,9 +269,15 @@ namespace ExtraplanetaryLaunchpads {
 			int numVerts = 0;
 
 			for (int i = 0; i < meshFilters.Length; i++) {
+				if (!IsActive(meshFilters[i])) {
+					continue;
+				}
 				numVerts += meshFilters[i].sharedMesh.vertices.Length;
 			}
 			for (int i = 0; i < skinnedMeshRenderers.Length; i++) {
+				if (!skinnedMeshRenderers[i].enabled) {
+					continue;
+				}
 				numVerts += skinnedMeshRenderers[i].sharedMesh.vertices.Length;
 			}
 
@@ -271,6 +287,9 @@ namespace ExtraplanetaryLaunchpads {
 
 			for (int i = 0; i < meshFilters.Length; i++) {
 				var mf = meshFilters[i];
+				if (!IsActive(mf)) {
+					continue;
+				}
 				var xform = rootXform * mf.transform.localToWorldMatrix;
 				rawMesh.AppendMesh (mf.sharedMesh, xform);
 			}
@@ -278,6 +297,9 @@ namespace ExtraplanetaryLaunchpads {
 			var m = new Mesh ();
 			for (int i = 0; i < skinnedMeshRenderers.Length; i++) {
 				var smr = skinnedMeshRenderers[i];
+				if (!smr.enabled) {
+					continue;
+				}
 				var xform = rootXform * smr.transform.localToWorldMatrix;
 				BakeMesh (smr, m);
 				rawMesh.AppendMesh (m, xform);

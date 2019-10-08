@@ -220,6 +220,35 @@ namespace ExtraplanetaryLaunchpads {
 			return true;
 		}
 
+		Vector3 BakeVert (Vector3 vert, Matrix4x4 []xforms, int bone, float weight)
+		{
+			return xforms[bone].MultiplyPoint3x4 (vert) * weight;
+		}
+
+		void BakeMesh (SkinnedMeshRenderer smr, Mesh mesh)
+		{
+			var xforms = new Matrix4x4[smr.bones.Length];
+			var root = smr.transform.worldToLocalMatrix;
+
+			for (int i = 0; i < smr.bones.Length; i++) {
+				var bone = smr.bones[i].localToWorldMatrix;
+				var bp = smr.sharedMesh.bindposes[i];
+				xforms[i] = root * bone * bp;
+			}
+
+			var mv = smr.sharedMesh.vertices;
+			var verts = new Vector3[mv.Length];
+			for (int i = 0; i < mv.Length; i++) {
+				var bw = smr.sharedMesh.boneWeights[i];
+				int bone = bw.boneIndex0;
+				verts[i] += BakeVert(mv[i], xforms, bw.boneIndex0, bw.weight0);
+				verts[i] += BakeVert(mv[i], xforms, bw.boneIndex1, bw.weight1);
+				verts[i] += BakeVert(mv[i], xforms, bw.boneIndex2, bw.weight2);
+				verts[i] += BakeVert(mv[i], xforms, bw.boneIndex3, bw.weight3);
+			}
+			mesh.vertices = verts;
+		}
+
 		public void BuildConvexHull (Vessel craftVessel)
 		{
 			var timer = System.Diagnostics.Stopwatch.StartNew ();
@@ -250,7 +279,7 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < skinnedMeshRenderers.Length; i++) {
 				var smr = skinnedMeshRenderers[i];
 				var xform = rootXform * smr.transform.localToWorldMatrix;
-				smr.BakeMesh (m);
+				BakeMesh (smr, m);
 				rawMesh.AppendMesh (m, xform);
 			}
 			UnityEngine.Object.Destroy (m);

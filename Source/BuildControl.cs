@@ -384,14 +384,15 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			} while (did_work);
 
-			SetPadMass ();
-
 			// recount resources that still need to be taken from the build
 			count = CountResources (built, cost);
 			if (count == 0) {
 				state = State.Planning;
 				KACalarmID = "";
+				builtStuff = null;	// ensure pad mass gets reset
 			}
+
+			SetPadMass ();
 		}
 
 		public void DoWork (double kerbalHours)
@@ -725,7 +726,8 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			craftConfig = null;
 			craftBoM = null;
-			state = State.Idle;
+			buildCost = null;
+			CleanupAfterRelease ();
 		}
 
 		public bool CreateBoM ()
@@ -937,8 +939,10 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			craftRoot = null;
 			vesselInfo = null;
-			builtStuff = null;
+			builtStuff = null;	// ensure pad mass gets reset
+			SetPadMass ();
 			state = State.Idle;
+			DestroyCraftHull ();
 		}
 
 		public void ReleaseVessel ()

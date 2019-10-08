@@ -240,7 +240,6 @@ namespace ExtraplanetaryLaunchpads {
 			var verts = new Vector3[mv.Length];
 			for (int i = 0; i < mv.Length; i++) {
 				var bw = smr.sharedMesh.boneWeights[i];
-				int bone = bw.boneIndex0;
 				verts[i] += BakeVert(mv[i], xforms, bw.boneIndex0, bw.weight0);
 				verts[i] += BakeVert(mv[i], xforms, bw.boneIndex1, bw.weight1);
 				verts[i] += BakeVert(mv[i], xforms, bw.boneIndex2, bw.weight2);

@@ -203,11 +203,9 @@ namespace ExtraplanetaryLaunchpads {
 				launchTransform = part.FindModelTransform ("EL launch pos");
 			}
 			if (launchTransform == null) {
-				Transform t = part.transform;
+				Transform t = part.partTransform.Find("model");
 				GameObject launchPos = new GameObject ("EL launch pos");
-				launchPos.transform.parent = t;
-				launchPos.transform.position = t.position;
-				launchPos.transform.rotation = t.rotation;
+				launchPos.transform.SetParent (t, false);
 				launchTransform = launchPos.transform;
 				//Debug.LogFormat ("[EL] launchPos {0}", launchTransform);
 			}

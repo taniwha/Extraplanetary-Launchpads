@@ -716,10 +716,7 @@ namespace ExtraplanetaryLaunchpads {
 				state = State.Planning;
 				craftName = Localizer.Format (craft.GetValue ("ship"));
 			}
-			if (craftHull != null) {
-				craftHullObject = craftHull.CreateHull (craftName + ":hull");
-				craftHull.PlaceHull (builder, craftHullObject);
-			}
+			PlaceCraftHull ();
 		}
 
 		public void UnloadCraft ()
@@ -905,15 +902,24 @@ namespace ExtraplanetaryLaunchpads {
 					CleanupAfterRelease ();
 				}
 			}
-			if (craftHull != null && ELSettings.ShowCraftHull) {
-				if (!craftHull.LoadHull (savesPath)) {
-					craftHull.MakeBoxHull ();
-				}
-				craftHullObject = craftHull.CreateHull (craftName + ":hull");
-				craftHull.PlaceHull (builder, craftHullObject);
-			}
+			PlaceCraftHull ();
 			FindVesselResources ();
 			SetPadMass ();
+		}
+
+		public void PlaceCraftHull ()
+		{
+			if (craftHull != null && ELSettings.ShowCraftHull) {
+				if (craftHullObject == null) {
+					if (!craftHull.LoadHull (savesPath)) {
+						craftHull.MakeBoxHull ();
+					}
+					craftHullObject = craftHull.CreateHull (craftName+":hull");
+				}
+				craftHullObject.transform.SetParent (null);
+				craftHull.RestoreTransform (craftHullObject.transform);
+				craftHull.PlaceHull (builder, craftHullObject);
+			}
 		}
 
 		void DestroyCraftHull ()

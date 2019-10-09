@@ -42,6 +42,17 @@ namespace ExtraplanetaryLaunchpads {
 		Transform launchTransform;
 		double craft_mass;
 
+		int rotationIndex;
+
+		static Quaternion []rotations = {
+			new Quaternion(0, 0, 0, 1),
+			new Quaternion(0, -0.707106781f, 0, 0.707106781f),
+			new Quaternion(0, 1, 0, 0),
+			new Quaternion(0, 0.707106781f, 0, 0.707106781f),
+		};
+
+		static string []rotationLabels = {"12:00", "09:00", "06:00", "03:00"};
+
 		public override string GetInfo ()
 		{
 			return "Launchpad";
@@ -115,6 +126,29 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void PadSelection ()
 		{
+			bool rotated = false;
+
+			GUILayout.BeginHorizontal ();
+			if (GUILayout.Button ("->", ELStyles.normal,
+								  GUILayout.ExpandWidth (false))) {
+				if (--rotationIndex < 0) {
+					rotationIndex = 3;
+				}
+				rotated = true;
+			}
+			if (GUILayout.Button ("<-", ELStyles.normal,
+								  GUILayout.ExpandWidth (false))) {
+				if (++rotationIndex > 3) {
+					rotationIndex = 0;
+				}
+				rotated = true;
+			}
+			GUILayout.Label (rotationLabels[rotationIndex], ELStyles.normal);
+			GUILayout.EndHorizontal ();
+
+			if (rotated) {
+				control.PlaceCraftHull ();
+			}
 		}
 
 		public void PadSelection_end ()
@@ -186,7 +220,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			float height = shipTransform.position.y - vessel_bounds.min.y;
 			Vector3 pos = new Vector3 (0, height, 0);
-			Quaternion rot = shipTransform.rotation;
+			Quaternion rot = rotations[rotationIndex] * shipTransform.rotation;
 			shipTransform.rotation = launchTransform.rotation * rot;
 			shipTransform.position = launchTransform.TransformPoint (pos);
 			return launchTransform;

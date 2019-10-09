@@ -58,6 +58,12 @@ namespace ExtraplanetaryLaunchpads {
 			rotation = transform.rotation;
 		}
 
+		public void RestoreTransform (Transform transform)
+		{
+			transform.position = position;
+			transform.rotation = rotation;
+		}
+
 		public void HashCraft (string craftFile)
 		{
 			var md5Hash = MD5.Create ();

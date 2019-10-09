@@ -167,6 +167,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (site != null && virtualPad != null) {
 					// update display
 					virtualPad.SetSite (site);
+					control.PlaceCraftHull ();
 				}
 				return;
 			}
@@ -187,6 +188,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (site_list != null) {
 				site_list.SelectItem (available_sites.IndexOf (site));
 			}
+			control.PlaceCraftHull ();
 			// The build window will take care of turning on highlighting
 		}
 
@@ -343,6 +345,7 @@ namespace ExtraplanetaryLaunchpads {
 			ELSurveyTracker.onSiteAdded.Add (onSiteAdded);
 			ELSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
 			ELSurveyTracker.onSiteModified.Add (onSiteModified);
+			ELSurveyTracker.onStakeModified.Add (onStakeModified);
 		}
 
 		void OnDestroy ()
@@ -354,6 +357,7 @@ namespace ExtraplanetaryLaunchpads {
 				ELSurveyTracker.onSiteAdded.Remove (onSiteAdded);
 				ELSurveyTracker.onSiteRemoved.Remove (onSiteRemoved);
 				ELSurveyTracker.onSiteModified.Remove (onSiteModified);
+				ELSurveyTracker.onStakeModified.Remove (onStakeModified);
 			}
 		}
 
@@ -487,6 +491,15 @@ namespace ExtraplanetaryLaunchpads {
 			Debug.LogFormat ("[ELSurveyStation] onSiteModified");
 			FindSites ();
 			SetSite (site);
+			control.PlaceCraftHull ();
+		}
+
+		void onStakeModified (ELSurveyStake s)
+		{
+			Debug.LogFormat ("[ELSurveyStation] onStakeModified");
+			if (site != null && site.Contains (s.vessel)) {
+				control.PlaceCraftHull ();
+			}
 		}
 
 		public void DoWork (double kerbalHours)

@@ -163,6 +163,7 @@ namespace ExtraplanetaryLaunchpads {
 			use = (use + 1) % StakeUses.Count();
 			Events["NextUse"].guiName = StakeUses[use];
 			UpdatePlaque ();
+			ELSurveyTracker.onStakeModified.Fire (this);
 		}
 
 		[KSPEvent(active = true, guiActiveUnfocused = true,
@@ -173,6 +174,7 @@ namespace ExtraplanetaryLaunchpads {
 			bound = !bound;
 			Events["ToggleBound"].guiName = bound ? "Bound" : "Direction";
 			UpdatePlaque ();
+			ELSurveyTracker.onStakeModified.Fire (this);
 		}
 
 		[KSPEvent (active = true, guiActiveUnfocused = true,

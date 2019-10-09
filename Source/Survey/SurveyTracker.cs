@@ -31,6 +31,7 @@ namespace ExtraplanetaryLaunchpads {
 		internal static EventData<SurveySite> onSiteRemoved = new EventData<SurveySite> ("onSiteRemoved");
 		internal static EventData<SurveySite> onSiteAdded = new EventData<SurveySite> ("onSiteAdded");
 		internal static EventData<SurveySite> onSiteModified = new EventData<SurveySite> ("onSiteModified");
+		internal static EventData<ELSurveyStake> onStakeModified = new EventData<ELSurveyStake> ("onStakeModified");
 		internal static ELSurveyTracker instance;
 
 		Dictionary<string, SiteBody> sites;

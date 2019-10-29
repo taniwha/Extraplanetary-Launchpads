@@ -238,10 +238,13 @@ namespace ExtraplanetaryLaunchpads {
 			// Don't assume shipTransform == rootPart.transform
 			Transform rootXform = rootPart.transform;
 			AttachNode n = FindNode (rootPart);
-
-			Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
-			Quaternion rot = Quaternion.FromToRotation (nodeAxis, Vector3.up);
-			Vector3 pos = rootXform.TransformVector (n.position);
+			var rot = Quaternion.identity;
+			var pos = Vector3.zero;
+			if (n != null) {
+				Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
+				rot = Quaternion.FromToRotation (nodeAxis, Vector3.up);
+				pos = rootXform.TransformVector (n.position);
+			}
 			Debug.Log ($"[EL] pos: {pos} rot: {rot}");
 			shipTransform.position = pos;
 			shipTransform.rotation = rot;

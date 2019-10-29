@@ -119,7 +119,15 @@ bin/Launchpad.dll: ${EL_FILES}
 	@mkdir -p bin
 	${GMCS} ${GMCSFLAGS} -t:library -lib:${MANAGED} \
 		-r:Assembly-CSharp,Assembly-CSharp-firstpass \
-		-r:UnityEngine,UnityEngine.UI \
+		-r:UnityEngine \
+		-r:UnityEngine.UI \
+		-r:UnityEngine.UIModule \
+		-r:UnityEngine.IMGUIModule \
+		-r:UnityEngine.TextRenderingModule \
+		-r:UnityEngine.AnimationModule \
+		-r:UnityEngine.CoreModule \
+		-r:UnityEngine.PhysicsModule \
+		-r:UnityEngine.InputLegacyModule \
 		-out:$@ $^
 
 clean:

@@ -24,9 +24,9 @@ PART
 	cost = ${math.floor((mass * 600 * 2.5) * 100 + 0.5) / 100}
 	category = Utility
 	subcategory = 0
-	title = KS-LP Landing Pad
+	title = #EL_ELLandingPad_title//KS-LP Landing Pad
 	manufacturer = Kairyuu Shipping
-	description = Give your new ships somewhere to land. Can be used to build ships too.
+	description = #EL_ELLandingPad_desc//Give your new ships somewhere to land. Can be used to build ships too.
 	tags = cck-el
 
 	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
@@ -48,7 +48,7 @@ PART
 	}
 	MODULE {
 		name = ELTarget
-		TargetName = Landing Pad
+		TargetName = #EL_TargetName_LandingPad//Landing Pad
 		TargetTransform = TargetReference
 	}
 }

@@ -22,6 +22,7 @@ using System.Linq;
 using UnityEngine;
 
 using KSP.UI.Screens;
+using KSP.Localization;
 
 namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
@@ -168,7 +169,7 @@ namespace ExtraplanetaryLaunchpads {
 				winpos.height = 100;
 			}
 			winpos = GUILayout.Window (GetInstanceID (), winpos, InfoWindow,
-									  "Build Resources",
+									  Localizer.Format("#EL_Editor_Wintitle"),//"Build Resources"
 									  GUILayout.MinWidth (200));
 			if (enabled && winpos.Contains (new Vector2 (Input.mousePosition.x, Screen.height - Input.mousePosition.y))) {
 				InputLockManager.SetControlLock ("EL_ShipInfo_window_lock");

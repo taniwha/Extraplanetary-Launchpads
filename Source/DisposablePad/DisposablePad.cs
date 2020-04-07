@@ -226,6 +226,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			for (int i = 0; i < p.attachNodes.Count; i++) {
+				node = p.attachNodes[i];
 				if (node.attachedPart == null) {
 					return node;
 				}

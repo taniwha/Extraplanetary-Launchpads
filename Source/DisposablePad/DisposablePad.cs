@@ -242,12 +242,25 @@ namespace ExtraplanetaryLaunchpads {
 			var pos = Vector3.zero;
 			if (n != null) {
 				Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
-				rot = Quaternion.FromToRotation (nodeAxis, Vector3.up);
+				Vector3 forward = rootXform.forward;
+				float fwdDot = Vector3.Dot (forward, nodeAxis);
+				if (Mathf.Abs (fwdDot) < 0.866f) {
+					Debug.Log ($"[EL] nodeAxis: {nodeAxis}");
+					Debug.Log ($"[EL] rotation: {rootXform.rotation} right:{rootXform.right} forward:{rootXform.forward} up:{rootXform.up}");
+					rot = Quaternion.LookRotation (nodeAxis, forward);
+					rot = Quaternion.Inverse (rot);
+					Debug.Log ($"[EL] {rot}");
+					rot = Quaternion.LookRotation (Vector3.up, -Vector3.forward) * rot;
+					Debug.Log ($"[EL] {Quaternion.LookRotation (Vector3.up, -Vector3.forward)}");
+				} else {
+					rot = Quaternion.FromToRotation (nodeAxis, Vector3.up);
+				}
 				pos = rootXform.TransformVector (n.position);
 			}
 			Debug.Log ($"[EL] pos: {pos} rot: {rot}");
 			shipTransform.position = rot * -pos;
 			shipTransform.rotation = rot * shipTransform.rotation;
+			Debug.Log ($"[EL] position: {shipTransform.position} rotation: {shipTransform.rotation} right:{shipTransform.right} forward:{shipTransform.forward} up:{shipTransform.up}");
 		}
 
 		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)

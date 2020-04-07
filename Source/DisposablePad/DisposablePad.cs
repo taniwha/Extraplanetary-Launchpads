@@ -244,16 +244,19 @@ namespace ExtraplanetaryLaunchpads {
 				Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
 				Vector3 forward = rootXform.forward;
 				float fwdDot = Vector3.Dot (forward, nodeAxis);
+				Debug.Log ($"[EL] nodeAxis: {nodeAxis}");
+				Debug.Log ($"[EL] rotation: {rootXform.rotation} right:{rootXform.right} forward:{rootXform.forward} up:{rootXform.up}");
 				if (Mathf.Abs (fwdDot) < 0.866f) {
-					Debug.Log ($"[EL] nodeAxis: {nodeAxis}");
-					Debug.Log ($"[EL] rotation: {rootXform.rotation} right:{rootXform.right} forward:{rootXform.forward} up:{rootXform.up}");
 					rot = Quaternion.LookRotation (nodeAxis, forward);
 					rot = Quaternion.Inverse (rot);
 					Debug.Log ($"[EL] {rot}");
 					rot = Quaternion.LookRotation (Vector3.up, -Vector3.forward) * rot;
 					Debug.Log ($"[EL] {Quaternion.LookRotation (Vector3.up, -Vector3.forward)}");
 				} else {
-					rot = Quaternion.FromToRotation (nodeAxis, Vector3.up);
+					rot = Quaternion.LookRotation (nodeAxis, rootXform.right);
+					rot = Quaternion.Inverse (rot);
+					Debug.Log ($"[EL] {rot}");
+					rot = new Quaternion (-0.5f, -0.5f, -0.5f, 0.5f) * rot;
 				}
 				pos = rootXform.TransformVector (n.position);
 			}

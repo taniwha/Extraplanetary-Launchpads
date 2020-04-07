@@ -246,8 +246,8 @@ namespace ExtraplanetaryLaunchpads {
 				pos = rootXform.TransformVector (n.position);
 			}
 			Debug.Log ($"[EL] pos: {pos} rot: {rot}");
-			shipTransform.position = pos;
-			shipTransform.rotation = rot;
+			shipTransform.position = rot * -pos;
+			shipTransform.rotation = rot * shipTransform.rotation;
 		}
 
 		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)

@@ -28,7 +28,7 @@ PART
 	subcategory = 0
 	title = KS-CR Control Reference
 	manufacturer = Kairyuu Shipping
-	description = Mark where built modules will be permanently attached to the construting vessel. The build replaces the pad. The built module must have a free stack node on its root part (top or bottom, top takes priority if both are available).
+	description = For those times where you need to switch control references quickly, such as doing a ventral landing. At the flick of an action button, this device will override your avionics and become your new fore and aft, with suitable indicators highlighting when active. At a second flick of the action buttion, the device will remove the override and the previous control reference will be active once again.
 	tags = cck-el
 
 	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision

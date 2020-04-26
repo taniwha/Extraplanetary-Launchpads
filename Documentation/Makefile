@@ -3,11 +3,6 @@ KSPDIR		:= ${HOME}/ksp/KSP_linux
 GAMEDATA	:= ${KSPDIR}/GameData
 MODGAMEDATA	:= ${GAMEDATA}/${MODNAME}
 
-DOC_FILES := \
-	FreeEVA.png \
-	License.txt \
-	README.md
-
 RESGEN2		:= resgen2
 GMCS		:= gmcs
 GMCSFLAGS	:= -optimize -warnaserror

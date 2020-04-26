@@ -3523,7 +3523,7 @@ status collapsed
 Hopefully the colors are distinct enough that any suffering from colorblindness
  can distinguish at least one diamond.
  The pad's default orientation in the VAB is such that red (+X) points to
- the VAB door, blue (+Z) points to the north wall, magenta (-X) to the west
+ the VAB door, blue (+Z) points to the north wall, cyan (-X) to the west
  and yellow (-Z) to the south.
 \end_layout
 

@@ -146,6 +146,9 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 5; i-- > 0; ) {
 				yield return null;
 			}
+			if (!v) {
+				yield break;
+			}
 			RebuildSets (v);
 		}
 

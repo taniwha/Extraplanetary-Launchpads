@@ -25,7 +25,6 @@ PART
 	entryCost = 400
 	cost = ${mass * 600 * 2.5}
 	category = Utility
-	subcategory = 0
 	title = KS-CR Control Reference
 	manufacturer = Kairyuu Shipping
 	description = For those times where you need to switch control references quickly, such as doing a ventral landing. At the flick of an action button, this device will override your avionics and become your new fore and aft, with suitable indicators highlighting when active. At a second flick of the action buttion, the device will remove the override and the previous control reference will be active once again.
@@ -45,6 +44,9 @@ PART
 	breakingForce = 200
 	breakingTorque = 200
 	maxTemp = 1700
+	heatConductivity = 0.12
+	skinInternalConductionMult = 1
+	emissiveConstant = 0.4
 
 	MODULE {
 		name = ELControlReference

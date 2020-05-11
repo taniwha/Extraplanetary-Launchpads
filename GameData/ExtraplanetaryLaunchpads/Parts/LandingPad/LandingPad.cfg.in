@@ -23,7 +23,6 @@ PART
 	entryCost = 400
 	cost = ${math.floor((mass * 600 * 2.5) * 100 + 0.5) / 100}
 	category = Utility
-	subcategory = 0
 	title = KS-LP Landing Pad
 	manufacturer = Kairyuu Shipping
 	description = Give your new ships somewhere to land. Can be used to build ships too.
@@ -41,6 +40,9 @@ PART
 	breakingForce = 2000
 	breakingTorque = 2000
 	maxTemp = 1700
+	heatConductivity = 0.12
+	skinInternalConductionMult = 1
+	emissiveConstant = 0.4
 
 	MODULE {
 		name = ELLaunchpad

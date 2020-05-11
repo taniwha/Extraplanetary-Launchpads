@@ -25,7 +25,6 @@ PART
 	entryCost = 400
 	cost = ${mass * 600 * 2.5}
 	category = Utility
-	subcategory = 0
 	title = KS-MP Disposable Pad
 	manufacturer = Kairyuu Shipping
 	description = Mark where built modules will be permanently attached to the construting vessel. The build replaces the pad. The built module must have a free stack node on its root part (top or bottom, top takes priority if both are available).
@@ -43,6 +42,9 @@ PART
 	breakingForce = 200
 	breakingTorque = 200
 	maxTemp = 1700
+	heatConductivity = 0.12
+	skinInternalConductionMult = 1
+	emissiveConstant = 0.4
 
 	MODULE {
 		name = ELDisposablePad

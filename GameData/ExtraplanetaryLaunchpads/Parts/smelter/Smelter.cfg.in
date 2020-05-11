@@ -41,10 +41,10 @@ PART {
 	entryCost = 0
 	cost = ${cost * scale1}
 	category = Utility
-	subcategory = 0
 	title = KS-S-10 Smelter
 	manufacturer = Kairyuu Shipping
 	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	tags = cck-el
 	attachRules = 1,1,1,1,0
 
 	bulkheadProfiles = size2, srf
@@ -52,13 +52,15 @@ PART {
 	// --- standard part parameters ---
 	mass = ${mass * scale1}
 	dragModelType = override
-	maximum_drag = 0
-	minimum_drag = 0
-	angularDrag = 0
+	maximum_drag = 0.1
+	minimum_drag = 0.1
+
+	angularDrag = 2
 	crashTolerance = 7
 	breakingForce = 200
 	breakingTorque = 200
 	maxTemp = 5000
+	emissiveConstant = 0.4
 
 	//FIXME make this a part upgrade?
 	skinInternalConductionMult = 0.002
@@ -128,10 +130,10 @@ PART {
 	entryCost = 0
 	cost = ${cost * scale2}
 	category = Utility
-	subcategory = 0
 	title = KS-S-05 Smelter
 	manufacturer = Kairyuu Shipping
 	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	tags = cck-el
 	attachRules = 1,1,1,1,0
 
 	bulkheadProfiles = size1, srf
@@ -139,13 +141,16 @@ PART {
 	// --- standard part parameters ---
 	mass = ${mass * scale2}
 	dragModelType = override
-	maximum_drag = 0
-	minimum_drag = 0
-	angularDrag = 0
+	maximum_drag = 0.1
+	minimum_drag = 0.1
+	angularDrag = 2
 	crashTolerance = 7
 	breakingForce = 200
 	breakingTorque = 200
 	maxTemp = 5000
+	heatConductivity = 0.12
+	skinInternalConductionMult = 1
+	emissiveConstant = 0.4
 
 	MODULE {
 		name = ELConverter
@@ -220,10 +225,10 @@ PART {
 	entryCost = 0
 	cost = ${cost * scale3}
 	category = Utility
-	subcategory = 0
 	title = KS-S-01 Smelter
 	manufacturer = Kairyuu Shipping
 	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	tags = cck-el
 	attachRules = 1,1,1,1,0
 
 	bulkheadProfiles = size1, srf
@@ -231,13 +236,16 @@ PART {
 	// --- standard part parameters ---
 	mass = ${mass * scale3}
 	dragModelType = override
-	maximum_drag = 0
-	minimum_drag = 0
-	angularDrag = 0
+	maximum_drag = 0.1
+	minimum_drag = 0.1
+	angularDrag = 2
 	crashTolerance = 7
 	breakingForce = 200
 	breakingTorque = 200
 	maxTemp = 5000
+	heatConductivity = 0.12
+	skinInternalConductionMult = 1
+	emissiveConstant = 0.4
 
 	MODULE {
 		name = ELConverter

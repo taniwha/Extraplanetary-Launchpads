@@ -684,12 +684,12 @@ namespace ExtraplanetaryLaunchpads {
 					string name = ShipTemplate.GetPartName (node);
 					string id = ShipTemplate.GetPartId (node);
 					if (name == "launchClamp1") {
-						node.SetValue ("part", "ELExtendingLaunchClamp_" + id);
 						foreach (ConfigNode subnode in node.nodes) {
 							if (subnode.name == "MODULE") {
 								string modname = subnode.GetValue ("name");
 								if (modname == "LaunchClamp") {
 									subnode.SetValue ("name", "ELExtendingLaunchClamp");
+									node.SetValue ("part", "ELExtendingLaunchClamp_" + id);
 								}
 							}
 						}

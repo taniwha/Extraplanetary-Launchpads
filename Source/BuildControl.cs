@@ -612,6 +612,17 @@ namespace ExtraplanetaryLaunchpads {
 				for (int j = 0; j < elc.Count; j++) {
 					elc[j].EnableExtension ();
 				}
+				if (p.name == "launchClamp1") {
+					// ReStock replaces the stock module with its own, which is
+					// derived from the stock module. However,
+					// ReplaceLaunchClamps will not do any replacement because
+					// the module uses a different name. Thus this will pick up
+					// the ReStock module.
+					var lc = p.FindModulesImplementing<LaunchClamp> ();
+					for (int j = 0; j < elc.Count; j++) {
+						lc[j].EnableExtension ();
+					}
+				}
 			}
 		}
 

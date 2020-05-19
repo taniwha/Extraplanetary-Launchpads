@@ -1019,6 +1019,7 @@ namespace ExtraplanetaryLaunchpads {
 			lockedParts = false;
 			ShipConstruct ship = new ShipConstruct ();
 			if (!ship.LoadShip (craft)) {
+				lockedParts = true;
 				return null;
 			}
 			if (!ship.shipPartsUnlocked) {

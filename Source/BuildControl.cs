@@ -722,10 +722,10 @@ namespace ExtraplanetaryLaunchpads {
 			ConfigNode craft = ConfigNode.Parse (craftText);
 			ReplaceLaunchClamps (craft);
 
+			state = State.Planning;
+			craftName = Localizer.Format (craft.GetValue ("ship"));
 			if ((buildCost = getBuildCost (craft, craftText)) != null) {
 				craftConfig = craft;
-				state = State.Planning;
-				craftName = Localizer.Format (craft.GetValue ("ship"));
 			}
 			PlaceCraftHull ();
 		}

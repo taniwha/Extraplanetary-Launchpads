@@ -745,7 +745,9 @@ namespace ExtraplanetaryLaunchpads {
 				SelectCraft ();
 				SelectedCraft ();
 				if (control.lockedParts) {
+					resScroll.Begin ();
 					LockedParts ();
+					resScroll.End ();
 				} else {
 					resScroll.Begin ();
 					RequiredResources ();

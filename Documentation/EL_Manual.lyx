@@ -558,6 +558,24 @@ Creation of KAC alarms and the default action for those alarms.
 Visibility of the build resources window in the editors.
 \end_layout
 
+\begin_layout Itemize
+Whether 
+\begin_inset Quotes eld
+\end_inset
+
+craft hulls
+\begin_inset Quotes erd
+\end_inset
+
+ are presented during build.
+\end_layout
+
+\begin_layout Itemize
+Debug output for craft hulls.
+ Generally not needed unless things go wrong in generating a hull, then
+ the data will be requested.
+\end_layout
+
 \begin_layout Section
 Construction Basics
 \end_layout
@@ -3565,7 +3583,7 @@ EL's survey system greatly eases the seeding (or even complete build-out)
 \emph on
 not
 \emph default
- be transfered: the build will be empty of such resources (freedom is not
+ be transferred: the build will be empty of such resources (freedom is not
  free), but as KIS
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -4297,6 +4315,297 @@ stakes
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsubsection
+The Base Kraken
+\end_layout
+
+\begin_layout Standard
+One thing that makes base building particularly difficult is bases have
+ a tendency to slide around on the ground, and even jumping into the air
+ and possibly self destructing.
+ None of this is helped by the difficulty of finding level ground anywhere
+ but the flats of Minmus, and Minmus is so small that despite the flats
+ being perfectly 
+\begin_inset Quotes eld
+\end_inset
+
+flat
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Flat Minmus Society, anyone?
+\end_layout
+
+\end_inset
+
+, the curvature is such that large sprawling bases have to bend to maintain
+ contact with the ground, but generally will not due to Minmus' low gravity.
+ Instead, they often tip slightly.
+\end_layout
+
+\begin_layout Standard
+To solve the problem of bases sliding around, and in attempt to prevent
+ them leaping into the air, various mods have implemented solutions involving
+ attaching the base parts to the ground
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Really, just to local space, but that's a minor technical PhysX detail.
+\end_layout
+
+\end_inset
+
+.
+ However, stock KSP provides its own solution that EL's survey system enables:
+ launch clamps.
+ While launch clamps do have their disadvantages
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The base can wind up quite high up from the ground.
+\end_layout
+
+\end_inset
+
+, they can turn a site that is untenable due to steep terrain into a stable
+ and highly productive base: the root part is always level
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Unless a Y direction stake is used.
+\end_layout
+
+\end_inset
+
+ with respect to the survey site's origin.
+\end_layout
+
+\begin_layout Standard
+The above, both the ground anchoring done by other mods and the use of launch
+ clamps, helps a lot in preventing bases from sliding around.
+ Unfortunately, not so much when it comes to actually preventing a kraken
+ attack on scene load.
+ In fact, they can make things worse, for a rather counter-intuitive reason:
+ the way KSP handles vessels going 
+\emph on
+on
+\emph default
+ rails (yes, on, not off).
+ The reason these attempts to solve the base kraken can make things worse
+ is that instead of the base being thrown away from the ground, it can be
+ torn apart by the sometimes very violent forces that are attempting to
+ throw the base.
+\end_layout
+
+\begin_layout Standard
+As for KSP's handling of vessels going on rails...
+\end_layout
+
+\begin_layout Standard
+KSP records the root-part relative positions and orientations of each part
+ of the vessel.
+ Normally, these never change
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Robotics parts do change them, and the vessel suffers for it over several
+ save-load cycles.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+When a vessel goes on rails, KSP snaps all parts back to their recorded
+ positions and orientations.
+ This is readily seen when a wobbly wet-noodle rocket goes on rails
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+ie, entering time-warp, assuming time-warp can be entered and is not blocked
+ by 
+\begin_inset Quotes eld
+\end_inset
+
+vessel is under acceleration
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+: the rocket snaps straight.
+\end_layout
+
+\begin_layout Standard
+For a grounded vessel, there are always sagging parts (some more, some less:
+ depends on local gravity, part mass, joint spring strength
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Not breaking strength.
+\end_layout
+
+\end_inset
+
+, how far the part is from a more securely supported part, etc etc).
+ Obviously, the sagging causes flexing.
+ Thus when going on rails, the parts are snapped back to their recorded
+ root-relative positions and orientations.
+\end_layout
+
+\begin_layout Standard
+It is the position (and orientation) of the root part that determines the
+ vessel's position etc when going on rails, and the vessel's position and
+ orientation dictates the root part's position and orientation when going
+ off rails.
+\end_layout
+
+\begin_layout Standard
+Thus, when a ground base's root part sags, even though it may not look it,
+ the whole base sags: when the base goes on rails, the base's location is
+ determined by the root part, and all the supporting structure is snapped
+ into position relative to that, resulting in the supporting parts being
+ forced into the ground.
+ Then, when the base goes off rails, the colliders of the support parts
+ are in the ground and PhysX
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This is not a bug in KSP, Unity, or PhysX: no physics engine likes interpenetrat
+ing colliders, and most produce very non-physical forces in order to separate
+ the colliders.
+\end_layout
+
+\end_inset
+
+ forces them out resulting in possibly extremely violent forces acting on
+ the base, possibly throwing it away from the ground or even tearing the
+ base apart.
+\end_layout
+
+\begin_layout Standard
+Fortunately, the solution lies in the very cause of the problem, and is
+ quite simple to implement.
+\end_layout
+
+\begin_layout Itemize
+Keep the base segment containing the root part very light.
+ This means no storage containers for anything massive.
+\end_layout
+
+\begin_layout Itemize
+Give the root segment solid support such that it will not sag or even tilt.
+ This is where the use of launch clamps really helps: they provide the needed
+ support before physics is applied to the base.
+\end_layout
+
+\begin_layout Itemize
+Keep massive storage in adequately supported separate base segments, connected
+ to the root segment via relatively flexible lightweight connectors.
+ The light weight prevents the connectors weighing excessively on the root
+ segment, and the flexibility allows the massive segments to sag without
+ dragging the root segment down with them.
+ 
+\emph on
+This is not a problem, and is even desirable
+\emph default
+: when the base goes on rails and KSP snaps the parts into position, the
+ base segments will be snapped 
+\emph on
+away
+\emph default
+ from the ground instead of into it.
+\end_layout
+
+\begin_layout Itemize
+Ensure that the root part of the base does not change.
+\end_layout
+
+\begin_layout Standard
+The last is actually easier than it may sound: KSP has a priority system
+ for determining which vessel is the 
+\begin_inset Quotes eld
+\end_inset
+
+mother ship
+\begin_inset Quotes erd
+\end_inset
+
+ (thus which root part remains root after coupling) when two vessels dock.
+\end_layout
+
+\begin_layout Description
+vessel
+\begin_inset space ~
+\end_inset
+
+type Base > Station > Plane > Ship > Lander > Rover > Relay > Probe > Space
+ Object (asteroid) > Debris.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Docking a station to a base...
+ neat trick.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+relative
+\begin_inset space ~
+\end_inset
+
+mass The vessel with the greater mass becomes the 
+\begin_inset Quotes eld
+\end_inset
+
+mother ship
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For otherwise identical ships, resource loads will make a difference.
+\end_layout
+
+\begin_layout Description
+vessel
+\begin_inset space ~
+\end_inset
+
+id While the order may appear random, it will be consistent, but the mass
+ tolerance is pretty tight, so this is pretty rare.
+\end_layout
+
+\begin_layout Standard
+Thus, if the root segment is made a base early on, it 
+\emph on
+should
+\emph default
+ remain the root throughout the life of the base unless the base is connected
+ to a more massive base (at the time of connection).
 \end_layout
 
 \begin_layout Subsection
@@ -6247,26 +6556,32 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
+
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6365,30 +6680,37 @@ literal "true"
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6413,14 +6735,17 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6548,26 +6873,32 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6846,30 +7177,37 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
+
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -6954,26 +7292,32 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -7058,34 +7402,42 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
+
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
+
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
+
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -7186,110 +7538,137 @@ efficiency
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = LFOFiredSmelter
 \end_layout
 
 \begin_layout Verbatim
+
     Input {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
+
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
+
         MetalOre = 1596.882
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
     Output {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
+
         CarbonDioxide = 1056.228
 \end_layout
 
 \begin_layout Verbatim
+
         Water = 288.24448
 \end_layout
 
 \begin_layout Verbatim
+
         Metal = 1116.9 -9627.678
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
     Input {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
+
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
     Output {
 \end_layout
 
 \begin_layout Verbatim
+
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
+
         Carbon = 24.0214
 \end_layout
 
 \begin_layout Verbatim
+
         CarbonDioxide = 176.038
 \end_layout
 
 \begin_layout Verbatim
+
         CarbonMonoxide = 476.1717
 \end_layout
 
 \begin_layout Verbatim
+
         Formaldehyde = 30.02598
 \end_layout
 
 \begin_layout Verbatim
+
         Hydrogen = 14.11116
 \end_layout
 
 \begin_layout Verbatim
+
         Water = 144.12224
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -7298,30 +7677,37 @@ EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
+
     name = LFOMix
 \end_layout
 
 \begin_layout Verbatim
+
     Resources {
 \end_layout
 
 \begin_layout Verbatim
+
         LiquidFuel = 9
 \end_layout
 
 \begin_layout Verbatim
+
         Oxidizer = 11
 \end_layout
 
 \begin_layout Verbatim
+
     }
 \end_layout
 
 \begin_layout Verbatim
+
 }
 \end_layout
 
@@ -7404,38 +7790,47 @@ default
 \end_layout
 
 \begin_layout Verbatim
+
 EL_ResourceRates {
 \end_layout
 
 \begin_layout Verbatim
+
     default = 5
 \end_layout
 
 \begin_layout Verbatim
+
     ElectricCharge = 1
 \end_layout
 
 \begin_layout Verbatim
+
     LiquidFuel = 0.36
 \end_layout
 
 \begin_layout Verbatim
+
     Oxidizer = 0.44
 \end_layout
 
 \begin_layout Verbatim
+
     MonoPropellant = 0.4
 \end_layout
 
 \begin_layout Verbatim
+
     XenonGas = 2
 \end_layout
 
 \begin_layout Verbatim
+
     Ore = 8
 \end_layout
 
 \begin_layout Verbatim
+
 } 
 \end_layout
 

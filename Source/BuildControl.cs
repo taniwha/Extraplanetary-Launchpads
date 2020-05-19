@@ -1022,6 +1022,12 @@ namespace ExtraplanetaryLaunchpads {
 				lockedParts = true;
 				return null;
 			}
+			if (ship.vesselDeltaV != null) {
+				// The delta-v module is not needed. It has its own gameObject
+				// for ShipConstruct.
+				UnityEngine.Object.Destroy (ship.vesselDeltaV.gameObject);
+				ship.vesselDeltaV = null;
+			}
 			if (!ship.shipPartsUnlocked) {
 				lockedParts = true;
 			}

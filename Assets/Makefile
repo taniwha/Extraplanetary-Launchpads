@@ -51,25 +51,25 @@ ${GUI_ICONS} : gui_icons.blend export-images.py
 	blender -noaudio --background gui_icons.blend -P export-images.py
 
 plaque.png: plaque.svg
-	inkscape --export-width=128 --export-height=128 --export-png=$@ $^
+	inkscape --export-width=128 --export-height=128 --export-type=png -o $@ $^
 
 kairyuu.png: kairyuu.svg
-	inkscape --export-width=256 --export-height=160 --export-png=$@ $^
+	inkscape --export-width=256 --export-height=160 --export-type=png -o $@ $^
 
 nightheron.png: nightheron.svg
-	inkscape --export-width=256 --export-height=160 --export-png=$@ $^
+	inkscape --export-width=256 --export-height=160 --export-type=png -o $@ $^
 
 kairyuu_scaled.png: kairyuu.svg
-	inkscape --export-width=64 --export-height=40 --export-background='#000000' --export-background-opacity=0 --export-png=$@ $^
+	inkscape --export-width=64 --export-height=40 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
 
 icon_button.png: icon_button.svg
-	inkscape --export-width=24 --export-height=24 --export-background='#000000' --export-background-opacity=0 --export-png=$@ $^
+	inkscape --export-width=24 --export-height=24 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
 
 icon_filter_n.png: icon_button.svg
-	sed -e 's/\#....../#000000/g' $^ | inkscape --export-width=32 --export-height=32 --export-background='#000000' --export-background-opacity=0 --export-png=$@ /dev/stdin
+	sed -e 's/\#....../#000000/g' $^ | inkscape --export-width=32 --export-height=32 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ /dev/stdin
 
 icon_filter_s.png: icon_button.svg
-	sed -e 's/\#....../#ffffff/g' $^ | inkscape --export-width=32 --export-height=32 --export-background='#000000' --export-background-opacity=0 --export-png=$@ /dev/stdin
+	sed -e 's/\#....../#ffffff/g' $^ | inkscape --export-width=32 --export-height=32 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ /dev/stdin
 
 clean:
 	rm -f kairyuu.png kairyuu_scaled.png icon_button.png icon_filter*.png ${GUI_ICONS}

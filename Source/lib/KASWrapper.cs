@@ -324,6 +324,7 @@ namespace ExtraplanetaryLaunchpads.KAS {
 			AbstractJoint_class = KASasm.GetTypes().Where (t => t.Name.Equals ("AbstractJoint")).FirstOrDefault ();
 			persistedSrcVesselInfo_field = AbstractJoint_class.GetField ("persistedSrcVesselInfo", KASWrapper.bindingFlags);
 			persistedTgtVesselInfo_field = AbstractJoint_class.GetField ("persistedTgtVesselInfo", KASWrapper.bindingFlags);
+			Debug.Log($"[EL.KASJointCableBase] '{persistedSrcVesselInfo_field}' '{persistedTgtVesselInfo_field}'");
 		}
 	}
 
@@ -364,7 +365,9 @@ namespace ExtraplanetaryLaunchpads.KAS {
 
 	public class KASWrapper {
 
-		internal const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
+		internal const BindingFlags bindingFlags = BindingFlags.NonPublic
+												 | BindingFlags.Instance
+												 | BindingFlags.Public;
 		static bool haveKAS = false;
 		static bool inited = false;
 

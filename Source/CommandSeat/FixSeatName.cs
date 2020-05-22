@@ -41,10 +41,12 @@ public class ELFixSeatName : PartModule
 				string name = seatNames[seat.seatPivotName];
 				string newName = seat.Events["BoardSeat"].guiName;
 				int end = newName.Length - part.partInfo.title.Length;
-				newName = newName.Substring(0, end);
-				seat.Events["BoardSeat"].guiName = newName + name;
-				// just in case
-				seat.seatName = seatNames[seat.seatPivotName];
+				if (end >= 0) {
+					newName = newName.Substring(0, end);
+					seat.Events["BoardSeat"].guiName = newName + name;
+					// just in case
+					seat.seatName = seatNames[seat.seatPivotName];
+				}
 			}
 		}
 	}

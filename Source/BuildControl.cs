@@ -1042,8 +1042,17 @@ namespace ExtraplanetaryLaunchpads {
 			craftVessel.vesselName = "EL craftVessel - " + craft.GetValue ("ship");
 			craftVessel.Initialize (true);
 			foreach (Part part in craftVessel.parts) {
-				part.ModulesOnStart ();
+				// Remove module that triggers OrbitDriver and cause temporary vessel being despawned due to illegal orbit parameters
+				if (part.Modules.Contains("kOSProcessor")) {
+					var kos = part.Modules["kOSProcessor"];
+					if (kos != null) {
+						part.Modules.Remove(kos);
+					}
+				}
+
+				part.ModulesOnStart();
 			}
+
 			if (ELSettings.B9Wings_Present) {
 				if (!InitializeB9Wings (craftVessel)
 					&& ELSettings.FAR_Present) {

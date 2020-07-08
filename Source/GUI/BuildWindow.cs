@@ -809,9 +809,10 @@ namespace ExtraplanetaryLaunchpads {
 		private void craftSelectComplete (string filename,
 										  CraftBrowserDialog.LoadType lt)
 		{
-			control.LoadCraft (filename, flagURL);
 			control.craftType = craftlist.craftType;
 			craftlist = null;
+
+			control.LoadCraft(filename, flagURL);
 		}
 
 		private void craftSelectCancel ()

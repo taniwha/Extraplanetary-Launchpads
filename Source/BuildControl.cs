@@ -718,16 +718,22 @@ namespace ExtraplanetaryLaunchpads {
 				Debug.LogWarning ($"File '{filename}' does not exist");
 				return;
 			}
-			string craftText = File.ReadAllText (filename);
-			ConfigNode craft = ConfigNode.Parse (craftText);
-			ReplaceLaunchClamps (craft);
 
-			state = State.Planning;
-			craftName = Localizer.Format (craft.GetValue ("ship"));
-			if ((buildCost = getBuildCost (craft, craftText)) != null) {
-				craftConfig = craft;
+			try {
+				string craftText = File.ReadAllText(filename);
+				ConfigNode craft = ConfigNode.Parse(craftText);
+				ReplaceLaunchClamps(craft);
+
+				state = State.Planning;
+				craftName = Localizer.Format(craft.GetValue("ship"));
+				if ((buildCost = getBuildCost(craft, craftText)) != null) {
+					craftConfig = craft;
+				}
+				PlaceCraftHull();
+			} catch (Exception e) {
+				Debug.LogException(e);
+				state = State.Idle;
 			}
-			PlaceCraftHull ();
 		}
 
 		public void UnloadCraft ()

@@ -6,7 +6,10 @@
 \origin unavailable
 \textclass scrartcl
 \begin_preamble
-\usepackage[pdf]{graphviz}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{dot2texi}
 \usepackage{marginfix}
 \usepackage{polyglossia}
 \setdefaultlanguage{english}
@@ -622,6 +625,14 @@ Construction Basics
 \end_layout
 
 \begin_layout Standard
+\begin_inset Wrap figure
+lines 0
+placement O
+overhang 0in
+width "50col%"
+status open
+
+\begin_layout Plain Layout
 \begin_inset Preview
 
 \begin_layout Standard
@@ -632,7 +643,8 @@ status open
 
 
 \backslash
-digraph[scale=0.5]{ConstructionBasics}{
+begin{dot2tex}[dot,tikz,options=-traw --autosize] digraph ConstructionBasics
+ {
 \end_layout
 
 \begin_layout Plain Layout
@@ -721,7 +733,26 @@ digraph[scale=0.5]{ConstructionBasics}{
 
 \begin_layout Plain Layout
 
-}
+} 
+\backslash
+end{dot2tex}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Resource flow chart
 \end_layout
 
 \end_inset

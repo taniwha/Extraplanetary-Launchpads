@@ -353,6 +353,35 @@ There are several mods that improve EL:
 \end_layout
 
 \begin_layout Description
+Diamond
+\begin_inset space ~
+\end_inset
+
+Grid
+\begin_inset space ~
+\end_inset
+
+Trusses
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
+Containers
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DG"
+literal "false"
+
+\end_inset
+
+ Truss and tank segments based off truncated triangles.
+ 
+\end_layout
+
+\begin_layout Description
 Kerbal
 \begin_inset space ~
 \end_inset
@@ -370,8 +399,8 @@ literal "true"
 \end_inset
 
  Keep track of when a build will be finished.
- Really, the most important mod for anybody wishing to run more than one
- mission at a time.
+ Really, the most important mod for anybody wishing to run multiple missions
+ in parallel, and useful even for those who run only one mission at a time.
 \end_layout
 
 \begin_layout Description
@@ -397,7 +426,19 @@ literal "true"
 \end_inset
 
  The original ISRU solution for KSP.
- Provides hot-spot mining of 
+ Provides hot-spot
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Areas where resource extraction is done at 100% of extractor capacity.
+ Other areas (those covered by the stock resource system) get 1% to 15%
+ extraction rate.
+\end_layout
+
+\end_inset
+
+ mining of 
 \noun on
 MetalOre
 \noun default
@@ -4631,7 +4672,7 @@ LiquidFuel
 Oxidizer
 \noun default
 .
- However, it should still server as inspiration.
+ However, it should still serve as inspiration.
 \end_layout
 
 \end_inset
@@ -6556,32 +6597,26 @@ Resources
 \end_layout
 
 \begin_layout Verbatim
-
 EL_Recipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 5
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6680,37 +6715,30 @@ literal "true"
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ModuleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = KerbalEVA
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 39
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 44.75
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6735,17 +6763,14 @@ EL_DefaultStructureRecipe
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_DefaultStructureRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -6873,32 +6898,26 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = Ablator
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7177,37 +7196,30 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_RecycleRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         ScrapMetal = 9
 \end_layout
 
 \begin_layout Verbatim
-
         loss = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7292,32 +7304,26 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_TransferRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = RocketParts
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         RocketParts = 1
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7402,42 +7408,34 @@ literal "true"
 
 \begin_deeper
 \begin_layout Verbatim
-
 EL_KerbalRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     structure = 10
 \end_layout
 
 \begin_layout Verbatim
-
     KerbalEVA = 83.75
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         Kethane = 30
 \end_layout
 
 \begin_layout Verbatim
-
         loss = -29
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7538,137 +7536,110 @@ efficiency
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = LFOFiredSmelter
 \end_layout
 
 \begin_layout Verbatim
-
     Input {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
-
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
-
         MetalOre = 1596.882
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
     Output {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 1
 \end_layout
 
 \begin_layout Verbatim
-
         CarbonDioxide = 1056.228
 \end_layout
 
 \begin_layout Verbatim
-
         Water = 288.24448
 \end_layout
 
 \begin_layout Verbatim
-
         Metal = 1116.9 -9627.678
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
     Input {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
-
         LFOMix = 864.49048 -5186.94288
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
     Output {
 \end_layout
 
 \begin_layout Verbatim
-
         efficiency = 0
 \end_layout
 
 \begin_layout Verbatim
-
         Carbon = 24.0214
 \end_layout
 
 \begin_layout Verbatim
-
         CarbonDioxide = 176.038
 \end_layout
 
 \begin_layout Verbatim
-
         CarbonMonoxide = 476.1717
 \end_layout
 
 \begin_layout Verbatim
-
         Formaldehyde = 30.02598
 \end_layout
 
 \begin_layout Verbatim
-
         Hydrogen = 14.11116
 \end_layout
 
 \begin_layout Verbatim
-
         Water = 144.12224
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7677,37 +7648,30 @@ EL_ConverterRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ResourceRecipe {
 \end_layout
 
 \begin_layout Verbatim
-
     name = LFOMix
 \end_layout
 
 \begin_layout Verbatim
-
     Resources {
 \end_layout
 
 \begin_layout Verbatim
-
         LiquidFuel = 9
 \end_layout
 
 \begin_layout Verbatim
-
         Oxidizer = 11
 \end_layout
 
 \begin_layout Verbatim
-
     }
 \end_layout
 
 \begin_layout Verbatim
-
 }
 \end_layout
 
@@ -7790,47 +7754,38 @@ default
 \end_layout
 
 \begin_layout Verbatim
-
 EL_ResourceRates {
 \end_layout
 
 \begin_layout Verbatim
-
     default = 5
 \end_layout
 
 \begin_layout Verbatim
-
     ElectricCharge = 1
 \end_layout
 
 \begin_layout Verbatim
-
     LiquidFuel = 0.36
 \end_layout
 
 \begin_layout Verbatim
-
     Oxidizer = 0.44
 \end_layout
 
 \begin_layout Verbatim
-
     MonoPropellant = 0.4
 \end_layout
 
 \begin_layout Verbatim
-
     XenonGas = 2
 \end_layout
 
 \begin_layout Verbatim
-
     Ore = 8
 \end_layout
 
 \begin_layout Verbatim
-
 } 
 \end_layout
 

@@ -157,7 +157,6 @@ namespace ExtraplanetaryLaunchpads {
 			cb.facility = craftFacility[(int) type];
 			cb.showMergeOption = showMergeOption;
 			cb.OnBrowseCancelled = onCancel;
-			cb.OnFileSelected = onFileSelected;
 			cb.OnConfigNodeSelected =
 				delegate (ConfigNode n, LoadType t) {
 					Debug.Log($"[CraftBrowserDialog] OnConfigNodeSelected - " + cb.selectedEntry.fullFilePath);

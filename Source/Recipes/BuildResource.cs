@@ -89,6 +89,7 @@ namespace ExtraplanetaryLaunchpads {
 				amount = mass;
 				mass = 0;
 			}
+			//Debug.Log($"BuildResource: {name} {ingredient.ratio} {density} {amount} {mass}");
 			kerbalHours = KerbalHours ();
 		}
 

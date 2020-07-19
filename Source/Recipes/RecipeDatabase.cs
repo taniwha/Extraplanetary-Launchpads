@@ -123,7 +123,12 @@ namespace ExtraplanetaryLaunchpads {
 					//print ("fake ingredient: " + ingredient.name);
 					continue;
 				}
-				ingredient.ratio /= ResourceDensity (ingredient.name);
+				double density = ResourceDensity (ingredient.name);
+				double ratio = ingredient.ratio;
+				if (density > 0) {
+					ingredient.ratio /= density;
+				}
+				//Debug.Log($"ProcessPart: {ingredient.name} {ratio} {density} {ingredient.ratio}");
 
 				RMResourceInfo resourceInfo;
 				if (!resources.ContainsKey (ingredient.name)) {

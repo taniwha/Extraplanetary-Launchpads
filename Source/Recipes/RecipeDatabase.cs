@@ -124,7 +124,7 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				double density = ResourceDensity (ingredient.name);
-				double ratio = ingredient.ratio;
+				//double ratio = ingredient.ratio;
 				if (density > 0) {
 					ingredient.ratio /= density;
 				}

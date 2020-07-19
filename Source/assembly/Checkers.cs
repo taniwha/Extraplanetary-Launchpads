@@ -66,7 +66,8 @@ namespace ExtraplanetaryLaunchpads
             //
 			if (Versioning.version_major == 1
 				&& (Versioning.version_minor == 8
-					|| Versioning.version_minor == 9)) {
+					|| Versioning.version_minor == 9
+					|| Versioning.version_minor == 10)) {
 				return Versioning.Revision == 1;
 			}
 			return false;

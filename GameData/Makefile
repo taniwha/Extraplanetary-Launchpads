@@ -17,6 +17,7 @@ SUBDIRS=\
 	ExtraplanetaryLaunchpads/Parts/ConstructionDrone\
 	ExtraplanetaryLaunchpads/Parts/ControlReference	\
 	ExtraplanetaryLaunchpads/Parts/LandingPad		\
+	ExtraplanetaryLaunchpads/Parts/Lathe			\
 	ExtraplanetaryLaunchpads/Parts/Mallet			\
 	ExtraplanetaryLaunchpads/Parts/MicroPad			\
 	ExtraplanetaryLaunchpads/Parts/RecycleBin		\

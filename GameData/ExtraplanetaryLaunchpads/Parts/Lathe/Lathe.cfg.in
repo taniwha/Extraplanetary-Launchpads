@@ -1,0 +1,56 @@
+values {
+	mass = ${math.floor(7.8 * modelSkinVolume * 1000 + 0.5)/1000}
+}
+PART
+{
+	name = ELLathe
+	module = Part
+	author = Bill Currie
+
+	MODEL {
+		model = ExtraplanetaryLaunchpads/Parts/Lathe/Lathe
+		position = 0, 0, 0
+		rotation = 0, 0, 0
+		scale = 1, 1, 1
+	}
+	rescaleFactor = 1.0
+	scale = 1.0
+
+	bulkheadProfiles = size1
+
+
+	TechRequired = advConstruction
+	entryCost = 400
+	cost = ${math.floor((mass * 600 * 25) * 100 + 0.5) / 100}
+	category = Utility
+	title = KS-ML Milling Lathe
+	manufacturer = Kairyuu Shipping
+	description = Increase production of scrap metal. Oh, and you might get some rocket parts out of it.
+	tags = cck-el
+
+	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
+	attachRules = 1,1,1,1,0
+
+	mass = ${mass}
+	dragModelType = default
+	maximum_drag = 0.2
+	minimum_drag = 0.15
+	angularDrag = 2
+	crashTolerance = 5
+	breakingForce = 2000
+	breakingTorque = 2000
+	maxTemp = 1000
+	heatConductivity = 0.12
+	skinInternalConductionMult = 1
+	emissiveConstant = 0.4
+
+	MODULE {
+		name = ELConverter
+		ConverterName = #EL_ConverterName_PartProduction // Part Production
+		StartActionName = #EL_EventGUIName_StartPartProduction // Start Part Production
+		StopActionName = #EL_EventGUIName_StopPartProduction // Stop Part Production
+		ConverterRecipe = MetalWorking
+		// kg/s: 1 lathe/milling machine
+		Rate = 0.0312
+	}
+}

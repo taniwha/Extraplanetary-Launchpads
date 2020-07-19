@@ -718,16 +718,17 @@ namespace ExtraplanetaryLaunchpads {
 				Debug.LogWarning ($"File '{filename}' does not exist");
 				return;
 			}
-			string craftText = File.ReadAllText (filename);
-			ConfigNode craft = ConfigNode.Parse (craftText);
-			ReplaceLaunchClamps (craft);
 
-			state = State.Planning;
-			craftName = Localizer.Format (craft.GetValue ("ship"));
-			if ((buildCost = getBuildCost (craft, craftText)) != null) {
+			string craftText = File.ReadAllText(filename);
+			ConfigNode craft = ConfigNode.Parse(craftText);
+			ReplaceLaunchClamps(craft);
+
+			craftName = Localizer.Format(craft.GetValue("ship"));
+			if ((buildCost = getBuildCost(craft, craftText)) != null) {
 				craftConfig = craft;
 			}
-			PlaceCraftHull ();
+			PlaceCraftHull();
+			state = State.Planning;
 		}
 
 		public void UnloadCraft ()
@@ -1014,6 +1015,16 @@ namespace ExtraplanetaryLaunchpads {
 			return called;
 		}
 
+		void SanitizePart(Part part) {
+			// Remove module that triggers OrbitDriver and cause temporary vessel being despawned due to illegal orbit parameters
+			if (part.Modules.Contains("kOSProcessor")) {
+				var kos = part.Modules["kOSProcessor"];
+				if (kos != null) {
+					part.Modules.Remove(kos);
+				}
+			}
+		}
+
 		public CostReport getBuildCost (ConfigNode craft, string craftText = null)
 		{
 			lockedParts = false;
@@ -1036,8 +1047,10 @@ namespace ExtraplanetaryLaunchpads {
 			craftVessel.vesselName = "EL craftVessel - " + craft.GetValue ("ship");
 			craftVessel.Initialize (true);
 			foreach (Part part in craftVessel.parts) {
-				part.ModulesOnStart ();
+				SanitizePart(part);
+				part.ModulesOnStart();
 			}
+
 			if (ELSettings.B9Wings_Present) {
 				if (!InitializeB9Wings (craftVessel)
 					&& ELSettings.FAR_Present) {

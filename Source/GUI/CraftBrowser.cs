@@ -157,7 +157,11 @@ namespace ExtraplanetaryLaunchpads {
 			cb.facility = craftFacility[(int) type];
 			cb.showMergeOption = showMergeOption;
 			cb.OnBrowseCancelled = onCancel;
-			cb.OnFileSelected = onFileSelected;
+			cb.OnConfigNodeSelected =
+				delegate (ConfigNode n, LoadType t) {
+					Debug.Log($"[CraftBrowserDialog] OnConfigNodeSelected - " + cb.selectedEntry.fullFilePath);
+					onFileSelected(cb.selectedEntry.fullFilePath, t);
+				};
 			cb.title = "Select a craft to load";
 			cb.profile = profile;
 

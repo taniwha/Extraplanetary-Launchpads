@@ -30,7 +30,7 @@ for tex in textures:
     image = bpy.data.images[tex]
     name = tex + ".png"
     path = os.path.join(blend_filepath, name)
-    if not image.filepath:
+    if image.source == 'GENERATED' or image.packed_files:
         print(tex, image.type, path)
         image.filepath_raw = path
         image.save()

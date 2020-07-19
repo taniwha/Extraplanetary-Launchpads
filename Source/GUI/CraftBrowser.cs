@@ -35,7 +35,7 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELCraftBrowser : CraftBrowserDialog
 	{
-		const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
+		const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 		static GameObject prefab;
 		static MethodInfo buildCraftList = typeof(CraftBrowserDialog).GetMethod ("BuildCraftList", bindingFlags);
 		static FieldInfo stoField;
@@ -43,6 +43,7 @@ namespace ExtraplanetaryLaunchpads {
 		static FieldInfo sfhField;
 		static FieldInfo svField;
 		static FieldInfo sdpField;
+		static FieldInfo onConfigNodeSelected = typeof(CraftBrowserDialog).GetField ("OnConfigNodeSelected", bindingFlags);
 
 		[SerializeField]
 		private Toggle tabSub;
@@ -144,6 +145,12 @@ namespace ExtraplanetaryLaunchpads {
 			Destroy (cbd);
 		}
 
+		void selCB (ConfigNode n, LoadType t)
+		{
+			Debug.Log($"[CraftBrowserDialog] OnConfigNodeSelected - " + selectedEntry.fullFilePath);
+			OnFileSelected(selectedEntry.fullFilePath, t);
+		}
+
 		public static ELCraftBrowser Spawn (ELCraftType type, string profile, SelectFileCallback onFileSelected, CancelledCallback onCancel, bool showMergeOption)
 		{
 			if (prefab == null) {
@@ -157,11 +164,11 @@ namespace ExtraplanetaryLaunchpads {
 			cb.facility = craftFacility[(int) type];
 			cb.showMergeOption = showMergeOption;
 			cb.OnBrowseCancelled = onCancel;
-			cb.OnConfigNodeSelected =
-				delegate (ConfigNode n, LoadType t) {
-					Debug.Log($"[CraftBrowserDialog] OnConfigNodeSelected - " + cb.selectedEntry.fullFilePath);
-					onFileSelected(cb.selectedEntry.fullFilePath, t);
-				};
+			cb.OnFileSelected = onFileSelected;
+			if (onConfigNodeSelected != null) {
+				var callback = Delegate.CreateDelegate (onConfigNodeSelected.FieldType, cb, typeof(ELCraftBrowser).GetMethod("selCB", bindingFlags));
+				onConfigNodeSelected.SetValue (cb, callback);
+			}
 			cb.title = "Select a craft to load";
 			cb.profile = profile;
 

@@ -1100,6 +1100,9 @@ namespace ExtraplanetaryLaunchpads {
 		void onVesselWasModified (Vessel v)
 		{
 			if (v == builder.vessel) {
+				if (craftRoot != null && craftRoot.vessel != builder.vessel) {
+					CleanupAfterRelease ();
+				}
 				FindVesselResources ();
 			}
 		}

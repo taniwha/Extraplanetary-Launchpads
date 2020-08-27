@@ -48,6 +48,8 @@ namespace ExtraplanetaryLaunchpads {
 		[SerializeField]
 		private Toggle tabSub;
 
+		private SelectFileCallback onFileSelected;
+
 		static EditorFacility []craftFacility = new EditorFacility[] {
 			EditorFacility.VAB,
 			EditorFacility.SPH,
@@ -148,7 +150,7 @@ namespace ExtraplanetaryLaunchpads {
 		void selCB (ConfigNode n, LoadType t)
 		{
 			Debug.Log($"[CraftBrowserDialog] OnConfigNodeSelected - " + selectedEntry.fullFilePath);
-			OnFileSelected(selectedEntry.fullFilePath, t);
+			onFileSelected(selectedEntry.fullFilePath, t);
 		}
 
 		public static ELCraftBrowser Spawn (ELCraftType type, string profile, SelectFileCallback onFileSelected, CancelledCallback onCancel, bool showMergeOption)
@@ -164,10 +166,12 @@ namespace ExtraplanetaryLaunchpads {
 			cb.facility = craftFacility[(int) type];
 			cb.showMergeOption = showMergeOption;
 			cb.OnBrowseCancelled = onCancel;
-			cb.OnFileSelected = onFileSelected;
+			cb.onFileSelected = onFileSelected;
 			if (onConfigNodeSelected != null) {
 				var callback = Delegate.CreateDelegate (onConfigNodeSelected.FieldType, cb, typeof(ELCraftBrowser).GetMethod("selCB", bindingFlags));
 				onConfigNodeSelected.SetValue (cb, callback);
+			} else {
+				cb.OnFileSelected = onFileSelected;
 			}
 			cb.title = "Select a craft to load";
 			cb.profile = profile;

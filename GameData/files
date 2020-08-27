@@ -61,8 +61,8 @@ ExtraplanetaryLaunchpads/Parts/LandingPad/LandingPad.mu
 ExtraplanetaryLaunchpads/Parts/LandingPad/LandingPad.png
 ExtraplanetaryLaunchpads/Parts/Lathe/Lathe.cfg
 ExtraplanetaryLaunchpads/Parts/Lathe/Lathe.mu
-ExtraplanetaryLaunchpads/Parts/Lathe/Lathe.png
-ExtraplanetaryLaunchpads/Parts/Lathe/Lathe_NRM.png
+ExtraplanetaryLaunchpads/Parts/Lathe/Lathe.dds
+ExtraplanetaryLaunchpads/Parts/Lathe/Lathe_NRM.dds
 ExtraplanetaryLaunchpads/Parts/Magnetometer/Magnetometer.png
 ExtraplanetaryLaunchpads/Parts/Magnetometer/model.mu
 ExtraplanetaryLaunchpads/Parts/Magnetometer/part.cfg

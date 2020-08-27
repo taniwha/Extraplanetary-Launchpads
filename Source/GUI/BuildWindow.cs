@@ -743,6 +743,10 @@ namespace ExtraplanetaryLaunchpads {
 				break;
 			case ELBuildControl.State.Planning:
 				SelectCraft ();
+				if (control.state != ELBuildControl.State.Planning) {
+					// the loaded craft was cleared
+					break;
+				}
 				SelectedCraft ();
 				if (control.lockedParts) {
 					resScroll.Begin ();

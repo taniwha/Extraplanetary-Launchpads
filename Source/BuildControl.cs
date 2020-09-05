@@ -36,6 +36,7 @@ namespace ExtraplanetaryLaunchpads {
 			void SetCraftMass (double craft_mass);
 			void SetShipTransform (Transform shipTransform, Part rootPart);
 			Transform PlaceShip (Transform shipTransform, Box vessel_bounds);
+			void RepositionShip (Vessel ship);
 			void PostBuild (Vessel craftVessel);
 			void PadSelection_start ();
 			void PadSelection ();
@@ -103,7 +104,6 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		public DockedVesselInfo vesselInfo { get; private set; }
-		Transform launchTransform;
 		public Part craftRoot { get; private set; }
 		public string craftName
 		{
@@ -124,8 +124,6 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 		}
-		Vessel craftVessel;
-		Vector3 craftOffset;
 
 		string _savesPath;
 		string savesPath
@@ -439,9 +437,8 @@ namespace ExtraplanetaryLaunchpads {
 			return v.rootPart.partTransform.TransformPoint (com);
 		}
 
-		private void SetCraftOrbit ()
+		private void SetCraftOrbit (Vessel craftVessel, OrbitDriver.UpdateMode mode)
 		{
-			var mode = OrbitDriver.UpdateMode.UPDATE;
 			craftVessel.orbitDriver.SetOrbitMode (mode);
 
 			var craftCoM = GetVesselWorldCoM (craftVessel);
@@ -458,7 +455,7 @@ namespace ExtraplanetaryLaunchpads {
 			Debug.Log (String.Format ("[EL] {0} {1}", orbit(corb), corb.pos));
 		}
 
-		private void CoupleWithCraft ()
+		private void CoupleWithCraft (Vessel craftVessel)
 		{
 			craftRoot = craftVessel.rootPart;
 			vesselInfo = new DockedVesselInfo ();
@@ -475,10 +472,11 @@ namespace ExtraplanetaryLaunchpads {
 		public delegate void PostCaptureDelegate ();
 		public PostCaptureDelegate PostCapture = () => { };
 
-		private IEnumerator CaptureCraft ()
+		private IEnumerator CaptureCraft (Vessel craftVessel)
 		{
-			Vector3 pos;
+			FlightGlobals.overrideOrbit = true;
 			while (true) {
+				Debug.Log($"[EL] Waiting to capture {craftVessel.vesselName}");
 				bool partsInitialized = true;
 				foreach (Part p in craftVessel.parts) {
 					if (!p.started) {
@@ -486,8 +484,8 @@ namespace ExtraplanetaryLaunchpads {
 						break;
 					}
 				}
-				pos = launchTransform.TransformPoint (craftOffset);
-				craftVessel.SetPosition (pos, true);
+				builder.RepositionShip (craftVessel);
+				SetCraftOrbit (craftVessel, OrbitDriver.UpdateMode.UPDATE);
 				if (partsInitialized) {
 					break;
 				}
@@ -496,12 +494,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			FlightGlobals.overrideOrbit = false;
-			SetCraftOrbit ();
+			SetCraftOrbit (craftVessel, OrbitDriver.UpdateMode.UPDATE);
 			craftVessel.GoOffRails ();
 
 			builder.SetCraftMass (0);
 
-			CoupleWithCraft ();
+			CoupleWithCraft (craftVessel);
 			state = State.Transfer;
 			PostCapture ();
 		}
@@ -644,13 +642,12 @@ namespace ExtraplanetaryLaunchpads {
 			var rootPart = nship.parts[0].localRoot;
 			var shipTransform = rootPart.transform;
 			builder.SetShipTransform (shipTransform, rootPart);
-			launchTransform = builder.PlaceShip (shipTransform, vessel_bounds);
+			builder.PlaceShip (shipTransform, vessel_bounds);
 
 			EnableExtendingLaunchClamps (nship);
 			ShipConstruction.AssembleForLaunch (nship, landedAt, landedAt,
 												flag, game, crew);
-			var FlightVessels = FlightGlobals.Vessels;
-			craftVessel = FlightVessels[FlightVessels.Count - 1];
+			var craftVessel = nship.parts[0].localRoot.GetComponent<Vessel> ();
 			craftVessel.launchedFrom = builder.LaunchedFrom;
 
 			FlightGlobals.ForceSetActiveVessel (craftVessel);
@@ -672,8 +669,6 @@ namespace ExtraplanetaryLaunchpads {
 				craftVessel.packed = packed;
 			}
 
-			Vector3 offset = craftVessel.transform.position - launchTransform.position;
-			craftOffset = launchTransform.InverseTransformDirection (offset);
 			SetupCraftResources (craftVessel);
 
 			KSP.UI.Screens.StageManager.BeginFlight ();
@@ -681,8 +676,8 @@ namespace ExtraplanetaryLaunchpads {
 			builtStuff = null;	// ensure pad mass gets reset
 			SetPadMass ();
 			if (builder.capture) {
-				FlightGlobals.overrideOrbit = true;
-				(builder as PartModule).StartCoroutine (CaptureCraft ());
+				var b = builder as PartModule;
+				b.StartCoroutine (CaptureCraft (craftVessel));
 			} else {
 				CleanupAfterRelease ();
 			}

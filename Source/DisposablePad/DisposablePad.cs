@@ -267,14 +267,29 @@ namespace ExtraplanetaryLaunchpads {
 			Debug.Log ($"[EL] position: {shipTransform.position} rotation: {shipTransform.rotation} right:{shipTransform.right} forward:{shipTransform.forward} up:{shipTransform.up}");
 		}
 
+		Quaternion relativeRotaion;
+		Vector3 relativePosition;
+
 		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
 		{
 			SetLaunchTransform ();
-			Vector3 pos = shipTransform.position;
-			Quaternion rot = shipTransform.rotation;
-			shipTransform.rotation = launchTransform.rotation * rot;
-			shipTransform.position = launchTransform.TransformPoint (pos);
+
+			relativeRotaion = shipTransform.rotation;
+			relativePosition = shipTransform.position;
+
+			Quaternion rot = launchTransform.rotation * relativeRotaion;
+			Vector3 pos = launchTransform.TransformPoint (relativePosition);
+			shipTransform.rotation = rot;
+			shipTransform.position = pos;
 			return launchTransform;
+		}
+
+		public void RepositionShip (Vessel ship)
+		{
+			Quaternion rot = launchTransform.rotation * relativeRotaion;
+			Vector3 pos = launchTransform.TransformPoint (relativePosition);
+			ship.SetRotation (rot, false);
+			ship.SetPosition (pos, true);
 		}
 
 		public void PostBuild (Vessel craftVessel)

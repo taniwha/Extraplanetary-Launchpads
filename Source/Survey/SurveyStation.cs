@@ -269,6 +269,9 @@ namespace ExtraplanetaryLaunchpads {
 		{
 		}
 
+		Quaternion relativeRotaion;
+		Vector3 relativePosition;
+
 		public Transform PlaceShip (Transform shipTransform, Box vessel_bounds)
 		{
 			if (site == null) {
@@ -288,12 +291,27 @@ namespace ExtraplanetaryLaunchpads {
 			xform.transform.rotation = points.GetOrientation ();
 			Debug.Log ($"[EL SurveyStation] launchPos {xform.position} {xform.rotation}");
 
-			Vector3 pos = shipTransform.position;
-			pos += points.ShiftBounds (xform, pos, vessel_bounds);
-			Quaternion rot = shipTransform.rotation;
-			shipTransform.rotation = xform.rotation * rot;
-			shipTransform.position = xform.TransformPoint (pos);
+			Vector3 shift = shipTransform.position;
+			shift += points.ShiftBounds (xform, shift, vessel_bounds);
+
+			relativeRotaion = shipTransform.rotation;
+			relativePosition = shift;
+
+			Quaternion rot = xform.rotation * relativeRotaion;
+			Vector3 pos = xform.TransformPoint (relativePosition);
+			shipTransform.rotation = rot;
+			shipTransform.position = pos;
 			return xform;
+		}
+
+		public void RepositionShip (Vessel ship)
+		{
+			Transform xform;
+			xform = part.FindModelTransform ("EL launch pos");
+			Quaternion rot = xform.rotation * relativeRotaion;
+			Vector3 pos = xform.TransformPoint (relativePosition);
+			ship.SetRotation (rot, false);
+			ship.SetPosition (pos, true);
 		}
 
 		public void PostBuild (Vessel craftVessel)

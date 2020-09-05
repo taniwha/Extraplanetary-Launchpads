@@ -651,6 +651,7 @@ namespace ExtraplanetaryLaunchpads {
 			craftVessel.launchedFrom = builder.LaunchedFrom;
 
 			FlightGlobals.ForceSetActiveVessel (craftVessel);
+			SetCraftOrbit (craftVessel, OrbitDriver.UpdateMode.IDLE);
 			builder.PostBuild (craftVessel);
 			if (builder.capture) {
 				craftVessel.Splashed = craftVessel.Landed = false;
@@ -1041,6 +1042,7 @@ namespace ExtraplanetaryLaunchpads {
 			Vessel craftVessel = ro.AddComponent<Vessel>();
 			craftVessel.vesselName = "EL craftVessel - " + craft.GetValue ("ship");
 			craftVessel.Initialize (true);
+			SetCraftOrbit (craftVessel, OrbitDriver.UpdateMode.IDLE);
 			foreach (Part part in craftVessel.parts) {
 				SanitizePart(part);
 				part.ModulesOnStart();

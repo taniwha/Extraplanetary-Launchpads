@@ -24,7 +24,7 @@ values {
 	scale3 = ${0.064}
 }
 PART {
-	name = Smelter
+	name = ELSmelter
 	module = Part
 	author = Skyler Lehmkuhl
 
@@ -113,7 +113,7 @@ PART {
 }
 
 PART {
-	name = SmallSmelter
+	name = ELSmallSmelter
 	module = Part
 	author = Skyler Lehmkuhl
 
@@ -208,7 +208,7 @@ PART {
 }
 
 PART {
-	name = TinySmelter
+	name = ELTinySmelter
 	module = Part
 	author = Skyler Lehmkuhl
 

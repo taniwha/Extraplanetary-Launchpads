@@ -26,6 +26,7 @@ EL_FILES := \
 	Hull/FaceSet.cs						\
 	Hull/RawMesh.cs						\
 	Hull/Triangle.cs					\
+	InternalParentConstraint.cs			\
 	Recipes/BuildCost.cs				\
 	Recipes/BuildResource.cs			\
 	Recipes/BuildResourceSet.cs			\

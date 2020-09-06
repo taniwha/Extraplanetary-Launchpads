@@ -136,6 +136,8 @@ ExtraplanetaryLaunchpads/Parts/launchpad/model.mu
 ExtraplanetaryLaunchpads/Parts/launchpad/model000.mbm
 ExtraplanetaryLaunchpads/Parts/launchpad/model001.mbm
 ExtraplanetaryLaunchpads/Parts/launchpad/part.cfg
+ExtraplanetaryLaunchpads/Parts/launchpad2/Bridge.Internal.cfg
+ExtraplanetaryLaunchpads/Parts/launchpad2/Bridge.Internal.mu
 ExtraplanetaryLaunchpads/Parts/launchpad2/launchpad2.mu
 ExtraplanetaryLaunchpads/Parts/launchpad2/pad.png
 ExtraplanetaryLaunchpads/Parts/launchpad2/part.cfg

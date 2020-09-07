@@ -818,7 +818,7 @@ namespace ExtraplanetaryLaunchpads {
 			return part_set;
 		}
 
-		internal void FindVesselResources ()
+		void FindVesselResources ()
 		{
 			var craft_parts = CraftParts ();
 			var pad_parts = new HashSet<Part> (builder.vessel.parts);
@@ -840,6 +840,14 @@ namespace ExtraplanetaryLaunchpads {
 															  craftRoot,
 															  null,
 															  false, true);
+			}
+		}
+
+		IEnumerator WaitAndFindVesselResources ()
+		{
+			yield return null;
+			if (builder.vessel != null) {
+				FindVesselResources ();
 			}
 		}
 
@@ -911,7 +919,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			PlaceCraftHull ();
-			FindVesselResources ();
+			(builder as PartModule).StartCoroutine (WaitAndFindVesselResources ());
 			SetPadMass ();
 		}
 
@@ -1100,7 +1108,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (craftRoot != null && craftRoot.vessel != builder.vessel) {
 					CleanupAfterRelease ();
 				}
-				FindVesselResources ();
+				(builder as PartModule).StartCoroutine (WaitAndFindVesselResources ());
 			}
 		}
 	}

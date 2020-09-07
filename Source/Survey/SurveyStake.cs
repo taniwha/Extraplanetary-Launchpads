@@ -16,13 +16,9 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
-using KSP.IO;
 using Highlighting;
 
 namespace ExtraplanetaryLaunchpads {
@@ -160,7 +156,7 @@ namespace ExtraplanetaryLaunchpads {
 				  unfocusedRange = 200f, guiName = "")]
 		public void NextUse()
 		{
-			use = (use + 1) % StakeUses.Count();
+			use = (use + 1) % StakeUses.Length;
 			Events["NextUse"].guiName = StakeUses[use];
 			UpdatePlaque ();
 			ELSurveyTracker.onStakeModified.Fire (this);

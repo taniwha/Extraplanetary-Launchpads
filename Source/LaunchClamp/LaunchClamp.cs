@@ -58,7 +58,7 @@ namespace ExtraplanetaryLaunchpads {
 		bool can_stretch;
 		bool enableExtension;
 
-		FXGroup release_fx;
+		FXGroup release_fx = null;
 		ConfigurableJoint clampJoint;
 
 		GameObject []clones;

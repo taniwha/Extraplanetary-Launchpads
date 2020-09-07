@@ -7,7 +7,7 @@ export PLUGINDIR	:= ${MODGAMEDATA}/Plugins
 export APIEXTDATA	:= ${PLUGINDIR}
 
 RESGEN2	:= resgen2
-GMCS	:= gmcs
+CSC		:= csc
 GIT		:= git
 TAR		:= tar
 ZIP		:= zip
@@ -24,7 +24,7 @@ all clean install:
 info:
 	@echo "${MODNAME} Build Information"
 	@echo "    resgen2:  ${RESGEN2}"
-	@echo "    gmcs:     ${GMCS}"
+	@echo "    gmcs:     ${CSC}"
 	@echo "    git:      ${GIT}"
 	@echo "    tar:      ${TAR}"
 	@echo "    zip:      ${ZIP}"

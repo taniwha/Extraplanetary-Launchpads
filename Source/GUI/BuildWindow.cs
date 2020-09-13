@@ -729,6 +729,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		void WindowGUI (int windowID)
 		{
+			var e = Event.current;
+			switch (e.type) {
+				case EventType.Layout:
+					if (control.craftBoMdirty) {
+						control.CreateBoM ();
+					}
+					break;
+			}
 			ELStyles.Init ();
 
 			SelectPad_start ();

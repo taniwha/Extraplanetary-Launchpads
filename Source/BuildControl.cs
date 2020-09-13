@@ -85,6 +85,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 		public List<string> craftBoM { get; private set; }
+		public bool craftBoMdirty { get; private set; }
 		public CostReport buildCost { get; private set; }
 		public CostReport builtStuff { get; private set; }
 		public State state { get; private set; }
@@ -725,6 +726,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			PlaceCraftHull();
 			state = State.Planning;
+			craftBoMdirty = true;
 		}
 
 		public void UnloadCraft ()
@@ -739,6 +741,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			string str;
 
+			craftBoMdirty = false;
 			if (craftConfig != null) {
 				craftBoM = new List<string> ();
 				var partCounts = new Dictionary<string, int> ();
@@ -761,6 +764,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				return true;
 			}
+			craftBoM = null;
 			return false;
 		}
 

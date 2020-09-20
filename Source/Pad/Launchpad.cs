@@ -334,5 +334,20 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			ELBuildWindow.updateCurrentPads ();
 		}
+
+		void OnCollisionStay (Collision collision)
+		{
+			// force any vessels landed on the pad to share the same situation
+			// works around a bug in KSP that sometimes glitches the landed
+			// vessel to not-landed
+			Part p = FlightGlobals.GetPartUpwardsCached (collision.collider.gameObject);
+			if (p != null) {
+				if (vessel.LandedOrSplashed) {
+					p.vessel.Landed = vessel.Landed;
+					p.vessel.Splashed = vessel.Splashed;
+					p.vessel.SetLandedAt (vessel.landedAt, null, vessel.displaylandedAt);
+				}
+			}
+		}
 	}
 }

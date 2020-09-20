@@ -50,6 +50,8 @@ namespace ExtraplanetaryLaunchpads {
 			string Name { get; set; }
 			string LandedAt { get; }
 			string LaunchedFrom { get; }
+
+			uint ID { get; }
 		}
 
 		public IBuilder builder { get; private set; }
@@ -85,6 +87,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 		public List<string> craftBoM { get; private set; }
+		public bool craftBoMdirty { get; private set; }
 		public CostReport buildCost { get; private set; }
 		public CostReport builtStuff { get; private set; }
 		public State state { get; private set; }
@@ -599,6 +602,11 @@ namespace ExtraplanetaryLaunchpads {
 				for (int j = 0; j < elc.Count; j++) {
 					elc[j].RotateTower ();
 				}
+				if (elc.Count < 1) {
+					if (p.Modules["ModuleRestockLaunchClamp"] != null) {
+						p.SendMessage("RotateTower", SendMessageOptions.DontRequireReceiver);
+					}
+				}
 			}
 		}
 
@@ -616,9 +624,9 @@ namespace ExtraplanetaryLaunchpads {
 					// ReplaceLaunchClamps will not do any replacement because
 					// the module uses a different name. Thus this will pick up
 					// the ReStock module.
-					var lc = p.FindModulesImplementing<LaunchClamp> ();
-					for (int j = 0; j < elc.Count; j++) {
-						lc[j].EnableExtension ();
+					var lc = p.Modules["ModuleRestockLaunchClamp"];
+					if (lc != null) {
+						(lc as LaunchClamp).EnableExtension ();
 					}
 				}
 			}
@@ -725,6 +733,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			PlaceCraftHull();
 			state = State.Planning;
+			craftBoMdirty = true;
 		}
 
 		public void UnloadCraft ()
@@ -739,6 +748,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			string str;
 
+			craftBoMdirty = false;
 			if (craftConfig != null) {
 				craftBoM = new List<string> ();
 				var partCounts = new Dictionary<string, int> ();
@@ -761,6 +771,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				return true;
 			}
+			craftBoM = null;
 			return false;
 		}
 
@@ -818,7 +829,7 @@ namespace ExtraplanetaryLaunchpads {
 			return part_set;
 		}
 
-		internal void FindVesselResources ()
+		void FindVesselResources ()
 		{
 			var craft_parts = CraftParts ();
 			var pad_parts = new HashSet<Part> (builder.vessel.parts);
@@ -840,6 +851,14 @@ namespace ExtraplanetaryLaunchpads {
 															  craftRoot,
 															  null,
 															  false, true);
+			}
+		}
+
+		IEnumerator WaitAndFindVesselResources ()
+		{
+			yield return null;
+			if (builder.vessel != null) {
+				FindVesselResources ();
 			}
 		}
 
@@ -911,7 +930,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			PlaceCraftHull ();
-			FindVesselResources ();
+			(builder as PartModule).StartCoroutine (WaitAndFindVesselResources ());
 			SetPadMass ();
 		}
 
@@ -1100,7 +1119,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (craftRoot != null && craftRoot.vessel != builder.vessel) {
 					CleanupAfterRelease ();
 				}
-				FindVesselResources ();
+				(builder as PartModule).StartCoroutine (WaitAndFindVesselResources ());
 			}
 		}
 	}

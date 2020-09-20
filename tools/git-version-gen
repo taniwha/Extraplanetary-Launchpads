@@ -190,10 +190,17 @@ fi
 
 v=`echo "$v" |sed "s/^$prefix//"`
 
-# Test whether to append the "-dirty" suffix only if the version
+# Test whether to append the branch "-dirty" suffixes only if the version
 # string we're using came from git.  I.e., skip the test if it's "UNKNOWN"
 # or if it came from .tarball-version.
 if test -n "$v_from_git"; then
+	branch=`git branch --show-current`
+	case "$branch" in
+		'master') ;;
+		*)
+			v="$v-$branch"
+			;;
+	esac
   # Don't declare a version "dirty" merely because a time stamp has changed.
   git update-index --refresh > /dev/null 2>&1
 

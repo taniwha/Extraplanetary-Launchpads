@@ -48,6 +48,7 @@ namespace ExtraplanetaryLaunchpads {
 		static Texture2D flagTexture;
 
 		List<ELBuildControl> launchpads;
+		ELVesselWorkNet worknet;
 		DropDownList pad_list;
 		ELBuildControl control;
 
@@ -154,10 +155,34 @@ namespace ExtraplanetaryLaunchpads {
 			node.AddValue ("link_lfo_sliders", link_lfo_sliders);
 		}
 
+		static ELVesselWorkNet FindWorkNet (Vessel v)
+		{
+			for (int i = 0; i < v.vesselModules.Count; i++) {
+				var worknet = v.vesselModules[i] as ELVesselWorkNet;
+				if (worknet != null) {
+					return worknet;
+				}
+			}
+			return null;
+		}
+
+		static ELBuildControl FindControl (Vessel v, uint id)
+		{
+			Part part = v[id];
+			if (part != null) {
+				var pad = part.FindModuleImplementing<ELBuildControl.IBuilder> ();
+				if (pad != null) {
+					return pad.control;
+				}
+			}
+			return null;
+		}
+
 		void BuildPadList (Vessel v)
 		{
 			launchpads = null;
 			pad_list = null;
+			worknet = null;
 
 			if (v.isEVA) {
 				control = null;
@@ -167,6 +192,10 @@ namespace ExtraplanetaryLaunchpads {
 			if (pads.Count < 1) {
 				control = null;
 			} else {
+				worknet = FindWorkNet (v);
+				if (worknet != null) {
+					control = FindControl (v, worknet.selectedPad);
+				}
 				launchpads = new List<ELBuildControl> ();
 				int control_index = -1;
 				for (int i = 0; i < pads.Count; i++) {
@@ -177,6 +206,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				if (control_index < 0) {
 					control_index = 0;
+					control = pads[0].control;
 				}
 				var pad_names = new List<string> ();
 				for (int ind = 0; ind < launchpads.Count; ind++) {
@@ -424,6 +454,7 @@ namespace ExtraplanetaryLaunchpads {
 				control.builder.Highlight (false);
 			}
 			control = selected_pad;
+			worknet.selectedPad = control.builder.ID;
 			pad_list.SelectItem (launchpads.IndexOf (control));
 			UpdateGUIState ();
 		}

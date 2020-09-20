@@ -120,6 +120,8 @@ namespace ExtraplanetaryLaunchpads {
 		public string LandedAt { get { return ""; } }
 		public string LaunchedFrom { get { return ""; } }
 
+		public uint ID { get { return part.flightID; } }
+
 		public void PadSelection_start ()
 		{
 		}

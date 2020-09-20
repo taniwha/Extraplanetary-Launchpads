@@ -50,6 +50,8 @@ namespace ExtraplanetaryLaunchpads {
 			string Name { get; set; }
 			string LandedAt { get; }
 			string LaunchedFrom { get; }
+
+			uint ID { get; }
 		}
 
 		public IBuilder builder { get; private set; }

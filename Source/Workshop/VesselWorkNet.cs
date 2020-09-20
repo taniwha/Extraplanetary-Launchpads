@@ -35,6 +35,9 @@ public class ELVesselWorkNet : VesselModule
 	public double lastUpdate;
 	public double Productivity { get; private set; }
 
+	[KSPField (isPersistant = true)]
+	public uint selectedPad;
+
 	public void ForceProductivityUpdate()
 	{
 		forceProductivityUpdate = true;

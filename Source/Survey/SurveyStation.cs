@@ -135,6 +135,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public uint ID { get { return part.flightID; } }
+
 		public bool isBusy
 		{
 			get {

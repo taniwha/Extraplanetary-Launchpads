@@ -5460,6 +5460,187 @@ ELExtractor
 
 \begin_layout Standard
 Extracts resources from the environment.
+ Note that 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELExtractor
+\end_layout
+
+\end_inset
+
+ works with both the stock resource system and with Kethane (auto-detected
+ if installed).
+ Can (with a little work
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Currently, this would require modifying EL's source to search for implementers
+ of IResourceProvider instead of simply adding the stock and Kethane (if
+ installed) providers.
+\end_layout
+
+\end_inset
+
+) be extended to support other resource providers.
+ All supported providers are treated equally in that the amount of resource
+ extracted from a provider is based on that provider's contribution to the
+ available resource at the location of extractor part's ground-hit location.
+ For example with Kethane installed, EL's auger will extract 
+\noun on
+MetalOre
+\noun default
+ from a Kethane deposit at a rate slightly lower than specified by 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+Rate
+\end_layout
+
+\end_inset
+
+ in the module files because the stock resource system will provide a certain
+ amount (based on concentration) as well, resulting in the total rate of
+ extraction being as specified, but if the auger misses a Kethane-based
+ deposit, the extraction rate will be determined by concentration multiplied
+ by the specified rate.
+\end_layout
+
+\begin_layout Paragraph
+Model Requirements
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELExtractor
+\end_layout
+
+\end_inset
+
+ requires the model to have a head transform (goes into the ground) and
+ a tail transform (does not go into the ground).
+ The transforms are used to do a physics ray-cast to determine both whether
+ the extractor has ground contact and the exact location of that contact.
+ The head transform must be outside any colliders in order to allow it into
+ the ground (visual mesh that penetrates the ground poses no problem).
+ The tail transform may be either inside or outside any colliders, but inside
+ is recommended to ensure that it cannot go into the ground.
+ The transforms may be animated: the ray-cast is performed each frame.
+\end_layout
+
+\begin_layout Paragraph
+Part Requirements
+\end_layout
+
+\begin_layout Standard
+None.
+\end_layout
+
+\begin_layout Paragraph
+Module Fields
+\end_layout
+
+\begin_layout Description
+EVARange Adjust the range (in meters) from which an EVA kerbal can activate
+ or deactivate the extractor.
+ Default is 
+\begin_inset Formula $1.5m$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+ResourceName The name of the resource to extract.
+ Required.
+\end_layout
+
+\begin_layout Description
+Rate The flow rate of the extractor, in 
+\begin_inset Formula $u/s$
+\end_inset
+
+ (resource units/second).
+ Defaults to 
+\begin_inset Formula $0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+flowMode How the extracted resource is distributed through the extractor
+ vessel.
+ Defaults to 
+\noun on
+
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+
+\noun on
+ALL_VESSEL
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+HeadTransform The name of the model transform used as the target of the
+ ray-cast used to detect ground contact.
+ This is the point of the model that needs to be in the ground for the part
+ to be considered in contact with the ground.
+\end_layout
+
+\begin_layout Description
+TailTransform The name of the model transform used as the source of the
+ ray-cast used to detect ground contact.
+ This is the point of the model that needs to be out of the ground for the
+ part to be considered in contact with the ground.
+\end_layout
+
+\begin_layout Description
+INPUT_RESOURCE{} Note that this is a node.
+ This is as per the stock resource extraction module (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELExtractor
+\end_layout
+
+\end_inset
+
+ is derives from 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+BaseDrill
+\end_layout
+
+\end_inset
+
+, so many of 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+BaseDrill
+\end_layout
+
+\end_inset
+
+'s fields and nodes are relevant).
 \end_layout
 
 \begin_layout Subsubsection

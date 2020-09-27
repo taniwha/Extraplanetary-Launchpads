@@ -64,7 +64,20 @@ Mods considered essential for getting the most out of EL:
   o Infernal Robotics. Makes it easier to move things around.
     http://forum.kerbalspaceprogram.com/threads/37707
 
-Please report all issues at https://github.com/taniwha-qf/Extraplanetary-Launchpads/issues
+Please report all issues at
+https://github.com/taniwha-qf/Extraplanetary-Launchpads/issues
 
 Many resource containers use HexCans by Greys
 (https://github.com/Greys0/HexCans).
+
+Notes for building:
+Note that EL depends on KodeUI: https://github.com/sarbian/KodeUI.git
+However, KodeUI is included as a git submodule. Use
+
+    git submodule init
+	git submodule update
+
+to get started and refer to the `git submodule --help` (or
+https://git-scm.com/book/en/v2/Git-Tools-Submodules) for further
+details. However, the tree has been set up to "just work" once
+submodules have been updated.

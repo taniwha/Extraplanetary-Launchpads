@@ -93,6 +93,8 @@ EL_FILES := \
 	Settings.cs							\
 	$e
 
+include KodeUI/KodeUI.inc
+
 RESGEN2		:= resgen2
 CSC			:= csc
 CSCFLAGS	:= -highentropyva- -noconfig -nostdlib+ -t:library -optimize -warnaserror -debug
@@ -135,10 +137,11 @@ UNITY := \
 	-r:UnityEngine.AnimationModule.dll \
 	-r:UnityEngine.CoreModule.dll \
 	-r:UnityEngine.PhysicsModule.dll \
+	-r:UnityEngine.Physics2DModule.dll \
 	-r:UnityEngine.InputLegacyModule.dll \
 	$e
 
-bin/Launchpad.dll: ${EL_FILES}
+bin/Launchpad.dll: ${EL_FILES} ${KodeUI}
 	@mkdir -p bin
 	${CSC} ${CSCFLAGS} ${SYSTEM} ${KSP} ${UNITY} -out:$@ $^
 

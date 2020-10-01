@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using KodeUI;
+
 using KSP.IO;
 using KSP.UI.Screens;
 
@@ -48,6 +50,7 @@ namespace ExtraplanetaryLaunchpads {
 		static Texture2D flagTexture;
 
 		List<ELBuildControl> launchpads;
+		Vessel vessel;
 		ELVesselWorkNet worknet;
 		DropDownList pad_list;
 		ELBuildControl control;
@@ -227,6 +230,8 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			BuildPadList (v);
 			UpdateGUIState ();
+			vessel = v;
+			mainWindow.SetVessel(vessel);
 		}
 
 		void onVesselWasModified (Vessel v)
@@ -245,6 +250,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void UpdateGUIState ()
 		{
+			bool old = enabled;
 			enabled = !hide_ui && launchpads != null && gui_enabled;
 			if (control != null) {
 				control.builder.Highlight (enabled && highlight_pad);
@@ -257,6 +263,13 @@ namespace ExtraplanetaryLaunchpads {
 					var p = launchpads[i];
 					p.builder.UpdateMenus (enabled && p == control);
 				}
+			}
+			if (!mainWindow) {
+				mainWindow = UIKit.CreateUI<ELMainWindow> (appCanvas.transform as RectTransform, "ELMainWindow");
+			}
+			if (old != enabled) {
+				mainWindow.gameObject.SetActive(enabled);
+				mainWindow.SetVessel (vessel);
 			}
 		}
 
@@ -291,8 +304,12 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateGUIState ();
 		}
 
+		Canvas appCanvas;
+		ELMainWindow mainWindow;
+
 		void Awake ()
 		{
+			appCanvas = DialogCanvasUtil.DialogCanvas;
 			instance = this;
 			GameEvents.onVesselChange.Add (onVesselChange);
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);

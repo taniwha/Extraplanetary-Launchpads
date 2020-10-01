@@ -74,6 +74,11 @@ EL_FILES := \
 	Recycler/Recycler.cs				\
 	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
+	UI/CraftControl.cs					\
+	UI/Localization.cs					\
+	UI/MainWindow.cs					\
+	UI/PadControl.cs					\
+	UI/StatusBar.cs						\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/ProtoWorkSink.cs			\
 	Workshop/VesselWorkNet.cs			\

@@ -42,7 +42,7 @@ namespace ExtraplanetaryLaunchpads {
 		static double minimum_alarm_time = 60;
 
 		static ELCraftBrowser craftlist = null;
-		static ScrollView resScroll = new ScrollView (680,300);
+		static ELScrollView resScroll = new ELScrollView (680,300);
 
 		static FlagBrowser flagBrowserPrefab;
 		static FlagBrowser flagBrowser;

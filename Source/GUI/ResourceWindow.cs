@@ -37,7 +37,7 @@ namespace ExtraplanetaryLaunchpads {
 		static bool gui_enabled = false;
 		static Rect windowpos;
 		static bool link_lfo_sliders = true;
-		static ScrollView resscroll = new ScrollView (680, 300);
+		static ELScrollView resscroll = new ELScrollView (680, 300);
 		static GUILayoutOption toggleWidth = GUILayout.Width (80);
 
 		public enum XferState {

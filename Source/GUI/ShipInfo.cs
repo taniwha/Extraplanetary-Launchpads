@@ -33,8 +33,8 @@ namespace ExtraplanetaryLaunchpads {
 		int parts_count;
 		public BuildCost buildCost;
 		CostReport cashed_cost;
-		ScrollView reqScroll = new ScrollView (100);
-		ScrollView optScroll = new ScrollView (100);
+		ELScrollView reqScroll = new ELScrollView (100);
+		ELScrollView optScroll = new ELScrollView (100);
 
 		public static void ToggleGUI ()
 		{
@@ -197,7 +197,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		private void ResourcePanel (string title,
 									List<BuildResource> resources,
-									ScrollView scroll)
+									ELScrollView scroll)
 		{
 			GUILayout.Label (title + ":");
 			GUILayout.BeginVertical (GUILayout.Height (100));

@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ScrollView
+	public class ELScrollView
 	{
 		public delegate void ScrollFunc ();
 		public ScrollFunc Begin { get; private set; }
@@ -32,7 +32,7 @@ namespace ExtraplanetaryLaunchpads {
 		GUILayoutOption width;
 		GUILayoutOption height;
 
-		public ScrollView (int width, int height)
+		public ELScrollView (int width, int height)
 		{
 			this.width = GUILayout.Width (width);
 			this.height = GUILayout.Height (height);
@@ -41,7 +41,7 @@ namespace ExtraplanetaryLaunchpads {
 			End = EndWidthHeight;
 		}
 
-		public ScrollView (int height)
+		public ELScrollView (int height)
 		{
 			this.height = GUILayout.Height (height);
 

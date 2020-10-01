@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,13 +27,12 @@ using TMPro;
 using KodeUI;
 
 using KSP.IO;
-using KSP.UI.Screens;
+using CBDLoadType = KSP.UI.Screens.CraftBrowserDialog.LoadType;
 
 namespace ExtraplanetaryLaunchpads {
 
 	public class ELCraftControl : Layout
 	{
-		Layout selectedCraft;
 
 		Sprite flagTexture;
 
@@ -41,6 +41,21 @@ namespace ExtraplanetaryLaunchpads {
 		UIButton reloadButton;
 		UIButton clearButton;
 
+		struct ResourcePair
+		{
+			public readonly BuildResource resource;
+			public readonly ELResourceDisplay display;
+			public ResourcePair (BuildResource resource, ELResourceDisplay display)
+			{
+				this.resource = resource;
+				this.display = display;
+			}
+		}
+
+		ScrollView craftView;
+		Layout selectedCraft;
+		Layout resourceList;
+		List<ResourcePair> requiredResources;
 		UIText craftName;
 		UIText craftBoM;
 		UIImage craftThumb;
@@ -49,6 +64,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		FlagBrowser flagBrowser;
 		ELCraftBrowser craftList;
+
+		static Texture2D genericCraftThumb;
 
 		static FlagBrowser _flagBrowserPrefab;
 		static FlagBrowser flagBrowserPrefab
@@ -64,9 +81,13 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void CreateUI()
 		{
+			if (!genericCraftThumb) {
+				genericCraftThumb = AssetBase.GetTexture("craftThumbGeneric");
+			}
+			requiredResources = new List<ResourcePair> ();
+
 			base.CreateUI ();
 
-			KodeUI.ScrollView scrollview;
 			UIScrollbar scrollbar;
 			UIText overflowText;
 
@@ -117,10 +138,13 @@ namespace ExtraplanetaryLaunchpads {
 						.Add<UIText> ()
 							.Text (ELLocalization.SelectedCraft)
 							.Finish ()
+						.Add<UIEmpty>()
+							.MinSize(15,-1)
+							.Finish()
 						.Add<UIText> (out craftName)
 							.Finish ()
 						.Finish ()
-					.Add<KodeUI.ScrollView> (out scrollview)
+					.Add<ScrollView> (out craftView)
 						.Horizontal (false)
 						.Vertical (true)
 						.Horizontal()
@@ -133,16 +157,22 @@ namespace ExtraplanetaryLaunchpads {
 						.Finish ()
 				.Finish ();
 
-			scrollview.VerticalScrollbar = scrollbar;
-			scrollview.Viewport.FlexibleLayout (true, true);
-			scrollview.Content
+			craftView.VerticalScrollbar = scrollbar;
+			craftView.Viewport.FlexibleLayout (true, true);
+			craftView.Content
 				.VertiLink ()
 				.ControlChildSize (true, true)
 				.ChildForceExpand (false, false)
 				.Anchor (AnchorPresets.HorStretchTop)
 				.PreferredSizeFitter(true, false)
 				.WidthDelta(0)
-				// resources
+				.Add<Layout> (out resourceList)
+					.Vertical()
+					.ControlChildSize (true, true)
+					.ChildForceExpand (false, false)
+					.FlexibleLayout (true, false)
+					.SizeDelta (0, 0)
+					.Finish ()
 				.Add<Layout> ()
 					.Horizontal ()
 					.ControlChildSize (true, false)
@@ -177,8 +207,7 @@ namespace ExtraplanetaryLaunchpads {
 			craftBoM.tmpText.linkedTextComponent = overflowText.tmpText;
 		}
 
-		void craftSelectComplete (string filename,
-								  CraftBrowserDialog.LoadType lt)
+		void craftSelectComplete (string filename, CBDLoadType lt)
 		{
 			control.craftType = craftList.craftType;
 			craftList = null;
@@ -189,6 +218,7 @@ namespace ExtraplanetaryLaunchpads {
 			selectCraftButton.interactable = true;
 			reloadButton.interactable = enable;
 			clearButton.interactable = enable;
+			UpdateCraftInfo ();
 		}
 
 		void craftSelectCancel ()
@@ -275,18 +305,71 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		Sprite GetThumbnail()
+		{
+			string path = control.filename;
+			bool isStock = path.Substring(0, 6) == "Ships/";
+			string craftType = control.craftType.ToString();
+			string thumbName = Path.GetFileNameWithoutExtension(path);
+			string thumbPath;
+			if (isStock) {
+				thumbPath = $"Ships/@thumbs/{craftType}/{thumbName}.png";
+			} else {
+				thumbPath = $"thumbs/{HighLogic.SaveFolder}_{craftType}_{thumbName}.png";
+			}
+			var thumbTex = genericCraftThumb;
+			EL_Utils.LoadImage (ref thumbTex, thumbPath);
+			return MakeSprite(genericCraftThumb);
+		}
+
+		void RebuildResourcList (List<BuildResource> resources)
+		{
+			var resourceRect = resourceList.rectTransform;
+			int i = 0;
+			int childCount = resourceRect.childCount;
+			requiredResources.Clear ();
+			foreach (var res in resources) {
+				ELResourceDisplay display;
+				if (i < childCount) {
+					var child = resourceRect.GetChild(i);
+					display = child.GetComponent<ELResourceDisplay> ();
+				} else {
+					display = resourceList.Add<ELResourceDisplay> ();
+					display.Finish ();
+				}
+				requiredResources.Add (new ResourcePair (res, display));
+				display.ResourceName = res.name;
+				display.RequiredAmount = res.amount;
+
+				double available;
+				available = control.padResources.ResourceAmount (res.name);
+				display.AvailableAmount = available;
+				i++;
+			}
+			while (i < childCount) {
+				var go = resourceRect.GetChild (i++).gameObject;
+				Destroy (go);
+			}
+		}
+
 		void UpdateCraftInfo ()
 		{
 			if (control != null) {
 				bool enable = control.craftConfig != null;
 				selectedCraft.gameObject.SetActive (enable);
+				craftView.gameObject.SetActive (enable);
 
-				craftName.Text (control.craftName);
-				if (control.craftBoM != null || control.CreateBoM ()) {
-					craftBoM.Text(String.Join ("\n", control.craftBoM));
+				if (enable) {
+					craftName.Text (control.craftName);
+					RebuildResourcList (control.buildCost.required);
+					if (control.craftBoM != null || control.CreateBoM ()) {
+						craftBoM.Text(String.Join ("\n", control.craftBoM));
+					}
+					craftThumb.image.sprite = GetThumbnail();
 				}
 			} else {
 				selectedCraft.gameObject.SetActive (false);
+				craftView.gameObject.SetActive (false);
 			}
 		}
 

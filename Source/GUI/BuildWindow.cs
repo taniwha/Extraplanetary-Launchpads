@@ -327,6 +327,9 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onHideUI.Remove (onHideUI);
 			GameEvents.onShowUI.Remove (onShowUI);
 			GameEvents.onVesselSwitchingToUnloaded.Remove (VMSaveHack);
+			if (mainWindow) {
+				Destroy (mainWindow);
+			}
 		}
 
 		float ResourceLine (string label, string resourceName, float fraction,

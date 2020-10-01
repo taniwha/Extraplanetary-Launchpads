@@ -36,5 +36,6 @@ namespace ExtraplanetaryLaunchpads {
 		public static string Reload { get; } = "Reload";
 		public static string Clear { get; } = "Clear";
 		public static string Pad { get; } = "pad";
+		public static string NotAvailable { get; } = "N/A";
 	}
 }

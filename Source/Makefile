@@ -78,6 +78,7 @@ EL_FILES := \
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
 	UI/PadControl.cs					\
+	UI/ResourceDisplay.cs				\
 	UI/StatusBar.cs						\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/ProtoWorkSink.cs			\
@@ -144,6 +145,7 @@ UNITY := \
 	-r:UnityEngine.PhysicsModule.dll \
 	-r:UnityEngine.Physics2DModule.dll \
 	-r:UnityEngine.InputLegacyModule.dll \
+	-r:UnityEngine.ImageConversionModule.dll \
 	$e
 
 bin/Launchpad.dll: ${EL_FILES} ${KodeUI}

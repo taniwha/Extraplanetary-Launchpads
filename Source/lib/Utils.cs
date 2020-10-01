@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections;
@@ -23,7 +24,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-using KSP.IO;
 using Experience;
 
 namespace ExtraplanetaryLaunchpads {
@@ -176,6 +176,21 @@ namespace ExtraplanetaryLaunchpads {
 				return true;
 			}
 			return false;
+		}
+
+		static string applicationRoot;
+		public static bool LoadImage (ref Texture2D tex, string filename)
+		{
+			if (applicationRoot == null) {
+				applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+			}
+			bool ret = false;
+			string path = $"{applicationRoot}/{filename}";
+			if (File.Exists (path)) {
+				ImageConversion.LoadImage (tex, File.ReadAllBytes (path));
+				ret = true;
+			}
+			return ret;
 		}
 	}
 }

@@ -22,7 +22,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace ExtraplanetaryLaunchpads {
-	public class BuildResourceSet : ICollection
+	public class BuildResourceSet : ICollection<BuildResource>
 	{
 		Dictionary<string, BuildResource> resources;
 
@@ -47,14 +47,26 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void CopyTo (Array array, int index)
+		public bool IsReadOnly { get { return false; } }
+
+		public bool Contains (BuildResource res)
+		{
+			return resources.ContainsKey(res.name);
+		}
+
+		public void CopyTo (BuildResource []array, int index)
 		{
 			foreach (var res in resources.Values) {
 				array.SetValue (res, index++);
 			}
 		}
 
-		public IEnumerator GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return resources.Values.GetEnumerator ();
+		}
+
+		public IEnumerator<BuildResource> GetEnumerator ()
 		{
 			return resources.Values.GetEnumerator ();
 		}
@@ -80,9 +92,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void Remove (BuildResource res)
+		public bool Remove (BuildResource res)
 		{
-			resources.Remove (res.name);
+			return resources.Remove (res.name);
 		}
 
 		public void Clear ()

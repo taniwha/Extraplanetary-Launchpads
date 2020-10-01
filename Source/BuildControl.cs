@@ -603,7 +603,7 @@ namespace ExtraplanetaryLaunchpads {
 					elc[j].RotateTower ();
 				}
 				if (elc.Count < 1) {
-					if (p.Modules["ModuleRestockLaunchClamp"] != null) {
+					if (p.Modules.GetModule("ModuleRestockLaunchClamp") != null) {
 						p.SendMessage("RotateTower", SendMessageOptions.DontRequireReceiver);
 					}
 				}
@@ -624,7 +624,7 @@ namespace ExtraplanetaryLaunchpads {
 					// ReplaceLaunchClamps will not do any replacement because
 					// the module uses a different name. Thus this will pick up
 					// the ReStock module.
-					var lc = p.Modules["ModuleRestockLaunchClamp"];
+					var lc = p.Modules.GetModule("ModuleRestockLaunchClamp");
 					if (lc != null) {
 						(lc as LaunchClamp).EnableExtension ();
 					}

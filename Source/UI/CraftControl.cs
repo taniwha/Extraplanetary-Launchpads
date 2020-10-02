@@ -41,6 +41,7 @@ namespace ExtraplanetaryLaunchpads {
 		UIButton selectFlagButton;
 		UIButton reloadButton;
 		UIButton clearButton;
+		UIButton buildButton;
 
 		struct ResourcePair
 		{
@@ -156,7 +157,14 @@ namespace ExtraplanetaryLaunchpads {
 							.PreferredWidth (15)
 							.Finish ()
 						.Finish ()
-				.Finish ();
+						.Finish ()
+					.Finish ()
+				.Add<UIButton> (out buildButton)
+					.Text (ELLocalization.Build)
+					.OnClick (BuildCraft)
+					.FlexibleLayout (true, true)
+					.Finish()
+				.Finish();
 
 			craftView.VerticalScrollbar = scrollbar;
 			craftView.Viewport.FlexibleLayout (true, true);
@@ -208,6 +216,13 @@ namespace ExtraplanetaryLaunchpads {
 			craftBoM.tmpText.linkedTextComponent = overflowText.tmpText;
 		}
 
+		void BuildCraft ()
+		{
+			if (control != null && control.builder.canBuild) {
+				control.BuildCraft ();
+			}
+		}
+
 		void craftSelectComplete (string filename, CBDLoadType lt)
 		{
 			control.craftType = craftList.craftType;
@@ -219,6 +234,7 @@ namespace ExtraplanetaryLaunchpads {
 			selectCraftButton.interactable = true;
 			reloadButton.interactable = enable;
 			clearButton.interactable = enable;
+			buildButton.interactable = enable && control.builder.canBuild;
 			UpdateCraftInfo ();
 		}
 
@@ -287,6 +303,7 @@ namespace ExtraplanetaryLaunchpads {
 			control.UnloadCraft ();
 			reloadButton.interactable = false;
 			clearButton.interactable = false;
+			buildButton.interactable = false;
 		}
 
 		public override void Style ()
@@ -391,11 +408,13 @@ namespace ExtraplanetaryLaunchpads {
 				bool enable = control.craftConfig != null;
 				reloadButton.interactable = enable;
 				clearButton.interactable = enable;
+				buildButton.interactable = enable && control.builder.canBuild;
 			} else {
 				selectCraftButton.interactable = false;
 				selectFlagButton.interactable = false;
 				reloadButton.interactable = false;
 				clearButton.interactable = false;
+				buildButton.interactable = false;
 			}
 		}
 	}

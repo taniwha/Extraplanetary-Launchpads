@@ -65,7 +65,7 @@ Mods considered essential for getting the most out of EL:
     http://forum.kerbalspaceprogram.com/threads/37707
 
 Please report all issues at
-https://github.com/taniwha-qf/Extraplanetary-Launchpads/issues
+https://github.com/taniwha/Extraplanetary-Launchpads/issues
 
 Many resource containers use HexCans by Greys
 (https://github.com/Greys0/HexCans).

@@ -157,7 +157,6 @@ namespace ExtraplanetaryLaunchpads {
 							.PreferredWidth (15)
 							.Finish ()
 						.Finish ()
-						.Finish ()
 					.Finish ()
 				.Add<UIButton> (out buildButton)
 					.Text (ELLocalization.Build)
@@ -396,11 +395,13 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void SetControl (ELBuildControl control)
+		public void UpdateControl (ELBuildControl control)
 		{
 			this.control = control;
-
-			if (control != null) {
+			if (control != null
+				&& (control.state == ELBuildControl.State.Idle
+					|| control.state == ELBuildControl.State.Planning)) {
+				gameObject.SetActive (true);
 				UpdateFlag ();
 				UpdateCraftInfo ();
 				selectCraftButton.interactable = true;
@@ -410,6 +411,7 @@ namespace ExtraplanetaryLaunchpads {
 				clearButton.interactable = enable;
 				buildButton.interactable = enable && control.builder.canBuild;
 			} else {
+				gameObject.SetActive (false);
 				selectCraftButton.interactable = false;
 				selectFlagButton.interactable = false;
 				reloadButton.interactable = false;

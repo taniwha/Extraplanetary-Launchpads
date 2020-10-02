@@ -74,6 +74,7 @@ EL_FILES := \
 	Recycler/Recycler.cs				\
 	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
+	UI/BuildView.cs						\
 	UI/CraftView.cs						\
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\

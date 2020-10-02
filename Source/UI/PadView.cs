@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using TMPro;
 
 using KodeUI;
@@ -33,17 +34,26 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELPadView : LayoutAnchor
 	{
+		public class PadEvent : UnityEvent<ELBuildControl> {}
+		PadEvent padEvent = new PadEvent ();
+
+		public void AddListener (UnityAction<ELBuildControl> action)
+		{
+			padEvent.AddListener (action);
+			action.Invoke (control);
+		}
+
+
 		Vessel vessel;
 		ELVesselWorkNet worknet;
 		ELBuildControl _control;
+
 		public ELBuildControl control
 		{
 			get { return _control; }
 			private set {
 				_control = value;
-				if (_craftView != null) {
-					_craftView.SetControl (_control);
-				}
+				padEvent.Invoke (_control);
 			}
 		}
 
@@ -53,15 +63,20 @@ namespace ExtraplanetaryLaunchpads {
 		UIDropdown padSelector;
 		UIToggle highlightPad;
 
-		ELCraftView _craftView;
-		public ELCraftView craftView
+		protected override void Awake ()
 		{
-			get { return _craftView; }
-			set {
-				_craftView = value;
-				if (_craftView != null) {
-					_craftView.SetControl (control);
-				}
+			ELBuildControl.onBuildStateChanged.Add (onBuildStateChanged);
+		}
+
+		protected override void OnDestroy ()
+		{
+			ELBuildControl.onBuildStateChanged.Remove (onBuildStateChanged);
+		}
+
+		void onBuildStateChanged (ELBuildControl control)
+		{
+			if (control == this.control) {
+				padEvent.Invoke (control);
 			}
 		}
 

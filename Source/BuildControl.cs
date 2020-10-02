@@ -1040,6 +1040,35 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void RemoveFX(Part part)
+		{
+			for (int i = part.fxGroups.Count; i-- > 0; ) {
+				var group = part.fxGroups[i];
+				for (int j = group.fxEmittersNewSystem.Count; j-- > 0; ) {
+					var psys = group.fxEmittersNewSystem[j];
+					if (psys && psys.gameObject) {
+						UnityEngine.Object.Destroy (psys.gameObject);
+					}
+				}
+				group.fxEmittersNewSystem.Clear();
+				for (int j = group.lights.Count; j-- > 0; ) {
+					var light = group.lights[j];
+					if (light && light.gameObject) {
+						UnityEngine.Object.Destroy (light.gameObject);
+					}
+				}
+				group.lights.Clear();
+				if (group.sfx) {
+					UnityEngine.Object.Destroy (group.sfx);
+					group.sfx = null;
+				}
+				if (group.audio) {
+					UnityEngine.Object.Destroy (group.audio);
+					group.audio = null;
+				}
+			}
+		}
+
 		public CostReport getBuildCost (ConfigNode craft, string craftText = null)
 		{
 			lockedParts = false;
@@ -1063,6 +1092,7 @@ namespace ExtraplanetaryLaunchpads {
 			craftVessel.Initialize (true);
 			SetCraftOrbit (craftVessel, OrbitDriver.UpdateMode.IDLE);
 			foreach (Part part in craftVessel.parts) {
+				RemoveFX(part);
 				SanitizePart(part);
 				part.ModulesOnStart();
 			}

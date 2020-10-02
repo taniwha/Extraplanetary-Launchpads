@@ -146,6 +146,8 @@ UNITY := \
 	-r:UnityEngine.Physics2DModule.dll \
 	-r:UnityEngine.InputLegacyModule.dll \
 	-r:UnityEngine.ImageConversionModule.dll \
+	-r:UnityEngine.ParticleSystemModule.dll \
+	-r:UnityEngine.AudioModule.dll \
 	$e
 
 bin/Launchpad.dll: ${EL_FILES} ${KodeUI}

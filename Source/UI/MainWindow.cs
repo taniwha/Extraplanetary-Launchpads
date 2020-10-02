@@ -31,8 +31,8 @@ namespace ExtraplanetaryLaunchpads {
 	public class ELMainWindow : Window
 	{
 		ELStatusBar statusBar;
-		ELPadControl padControl;
-		ELCraftControl craftControl;
+		ELPadView padView;
+		ELCraftView craftView;
 
 		public override void CreateUI()
 		{
@@ -48,12 +48,12 @@ namespace ExtraplanetaryLaunchpads {
 
 				.Add<ELStatusBar>(out statusBar, "StatusBar")
 					.Finish()
-				.Add<ELPadControl>(out padControl, "PadControl")
+				.Add<ELPadView>(out padView, "PadView")
 					.Finish()
-				.Add<ELCraftControl>(out craftControl, "CraftControl")
+				.Add<ELCraftView>(out craftView, "CraftView")
 					.Finish()
 				.Finish();
-			padControl.craftControl = craftControl;
+			padView.craftView = craftView;
 		}
 
 		public override void Style ()
@@ -64,7 +64,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void SetVessel (Vessel vessel)
 		{
 			statusBar.SetVessel (vessel);
-			padControl.SetVessel (vessel);
+			padView.SetVessel (vessel);
 		}
 	}
 }

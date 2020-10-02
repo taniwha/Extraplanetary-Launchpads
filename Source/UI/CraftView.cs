@@ -32,7 +32,7 @@ using CBDLoadType = KSP.UI.Screens.CraftBrowserDialog.LoadType;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELCraftControl : Layout
+	public class ELCraftView : Layout
 	{
 
 		Sprite flagTexture;

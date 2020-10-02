@@ -74,10 +74,10 @@ EL_FILES := \
 	Recycler/Recycler.cs				\
 	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
-	UI/CraftControl.cs					\
+	UI/CraftView.cs						\
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
-	UI/PadControl.cs					\
+	UI/PadView.cs						\
 	UI/ResourceLine.cs					\
 	UI/StatusBar.cs						\
 	Workshop/ConstructionSkill.cs		\

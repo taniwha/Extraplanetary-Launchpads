@@ -31,7 +31,7 @@ namespace ExtraplanetaryLaunchpads {
 
 	using OptionData = TMP_Dropdown.OptionData;
 
-	public class ELPadControl : LayoutAnchor
+	public class ELPadView : LayoutAnchor
 	{
 		Vessel vessel;
 		ELVesselWorkNet worknet;
@@ -41,8 +41,8 @@ namespace ExtraplanetaryLaunchpads {
 			get { return _control; }
 			private set {
 				_control = value;
-				if (_craftControl != null) {
-					_craftControl.SetControl (_control);
+				if (_craftView != null) {
+					_craftView.SetControl (_control);
 				}
 			}
 		}
@@ -53,14 +53,14 @@ namespace ExtraplanetaryLaunchpads {
 		UIDropdown padSelector;
 		UIToggle highlightPad;
 
-		ELCraftControl _craftControl;
-		public ELCraftControl craftControl
+		ELCraftView _craftView;
+		public ELCraftView craftView
 		{
-			get { return _craftControl; }
+			get { return _craftView; }
 			set {
-				_craftControl = value;
-				if (_craftControl != null) {
-					_craftControl.SetControl (control);
+				_craftView = value;
+				if (_craftView != null) {
+					_craftView.SetControl (control);
 				}
 			}
 		}

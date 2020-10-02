@@ -39,8 +39,8 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		string displayAmount (double amount) {
-			if (amount > 1000000) {
-				return Math.Round((amount / 1000000), 2).ToString() + " M";
+			if (amount > 1e5) {
+				return Math.Round((amount / 1e6), 2).ToString() + " M";
 			} else {
 				return Math.Round(amount, 2).ToString();
 			}
@@ -88,14 +88,14 @@ namespace ExtraplanetaryLaunchpads {
 			base.CreateUI ();
 
 			Vector2 nameMin = new Vector2 (0, 0);
-			Vector2 nameMax = new Vector2 (0.20f, 1);
-			Vector2 fractionMin = new Vector2 (0.225f, 0);
-			Vector2 fractionMax = new Vector2 (0.725f, 1);
-			Vector2 amountsMin = new Vector2 (0.75f, 0);
+			Vector2 nameMax = new Vector2 (0.175f, 1);
+			Vector2 fractionMin = new Vector2 (0.20f, 0);
+			Vector2 fractionMax = new Vector2 (0.65f, 1);
+			Vector2 amountsMin = new Vector2 (0.675f, 0);
 			Vector2 amountsMax = new Vector2 (1, 1);
 			var requiredMin = new Vector2 (0, 0);
-			var requiredMax = new Vector2 (0.45f, 1);
-			var availableMin = new Vector2 (0.55f, 0);
+			var requiredMax = new Vector2 (0.475f, 1);
+			var availableMin = new Vector2 (0.525f, 0);
 			var availableMax = new Vector2 (1, 1);
 			var textMargins = new Vector4 (5, 5, 10, 10);
 
@@ -144,6 +144,7 @@ namespace ExtraplanetaryLaunchpads {
 							.Finish()
 						.Add<UIText> (out required)
 							.Text ("500")
+							.Size (12)
 							.Margin (textMargins)
 							.Alignment (TextAlignmentOptions.Right)
 							.Anchor (AnchorPresets.StretchAll)
@@ -162,6 +163,7 @@ namespace ExtraplanetaryLaunchpads {
 							.Finish ()
 						.Add<UIText> (out available)
 							.Text ("1000")
+							.Size (12)
 							.Margin (textMargins)
 							.Alignment (TextAlignmentOptions.Right)
 							.Anchor (AnchorPresets.StretchAll)

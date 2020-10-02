@@ -308,17 +308,14 @@ namespace ExtraplanetaryLaunchpads {
 		Sprite GetThumbnail()
 		{
 			string path = control.filename;
-			bool isStock = path.Substring(0, 6) == "Ships/";
 			string craftType = control.craftType.ToString();
 			string thumbName = Path.GetFileNameWithoutExtension(path);
-			string thumbPath;
-			if (isStock) {
-				thumbPath = $"Ships/@thumbs/{craftType}/{thumbName}.png";
-			} else {
-				thumbPath = $"thumbs/{HighLogic.SaveFolder}_{craftType}_{thumbName}.png";
-			}
+			string thumbPath = $"thumbs/{HighLogic.SaveFolder}_{craftType}_{thumbName}.png";
 			var thumbTex = genericCraftThumb;
-			EL_Utils.LoadImage (ref thumbTex, thumbPath);
+			if (!EL_Utils.LoadImage (ref thumbTex, thumbPath)) {
+				thumbPath = $"Ships/@thumbs/{craftType}/{thumbName}.png";
+				EL_Utils.LoadImage (ref thumbTex, thumbPath);
+			}
 			return MakeSprite(genericCraftThumb);
 		}
 

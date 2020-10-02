@@ -18,6 +18,7 @@ along with Extraplanetary Launchpads.  If not, see
 using System;
 using System.IO;
 using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -349,6 +350,14 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		IEnumerator WaitAndRebuildResourcList (List<BuildResource> resources)
+		{
+			while (control.padResources == null) {
+				yield return null;
+			}
+			RebuildResourcList (resources);
+		}
+
 		void UpdateCraftInfo ()
 		{
 			if (control != null) {
@@ -358,7 +367,7 @@ namespace ExtraplanetaryLaunchpads {
 
 				if (enable) {
 					craftName.Text (control.craftName);
-					RebuildResourcList (control.buildCost.required);
+					StartCoroutine (WaitAndRebuildResourcList (control.buildCost.required));
 					if (control.craftBoM != null || control.CreateBoM ()) {
 						craftBoM.Text(String.Join ("\n", control.craftBoM));
 					}

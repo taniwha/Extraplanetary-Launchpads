@@ -185,7 +185,7 @@ namespace ExtraplanetaryLaunchpads {
 				applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
 			}
 			bool ret = false;
-			string path = $"{applicationRoot}/{filename}";
+			string path = $"{applicationRoot}{filename}";
 			if (File.Exists (path)) {
 				ImageConversion.LoadImage (tex, File.ReadAllBytes (path));
 				ret = true;

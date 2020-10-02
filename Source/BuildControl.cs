@@ -29,6 +29,8 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELBuildControl : ELWorkSink
 	{
+		public static readonly EventData<ELBuildControl> onBuildStateChanged = new EventData<ELBuildControl> ("onBuildStateChanged");
+
 		public interface IBuilder
 		{
 			void Highlight (bool on);
@@ -90,7 +92,14 @@ namespace ExtraplanetaryLaunchpads {
 		public bool craftBoMdirty { get; private set; }
 		public CostReport buildCost { get; private set; }
 		public CostReport builtStuff { get; private set; }
-		public State state { get; private set; }
+		State _state;
+		public State state {
+			get { return _state; }
+			private set {
+				_state = value;
+				onBuildStateChanged.Fire (this);
+			}
+		}
 		public bool paused { get; private set; }
 		public string KACalarmID = "";
 
@@ -889,11 +898,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (node.HasValue ("state")) {
 				var s = node.GetValue ("state");
-				state = (State) Enum.Parse (typeof (State), s);
-				if (state == State.Dewarping) {
+				_state = (State) Enum.Parse (typeof (State), s);
+				if (_state == State.Dewarping) {
 					// The game got saved while the Dewarping state was still
 					// active. Rather than restarting the dewarp coroutine,
 					// Just jump straight to the Complete state.
+					// DO want to fire the state for switch to Complete
 					state = State.Complete;
 				}
 			}

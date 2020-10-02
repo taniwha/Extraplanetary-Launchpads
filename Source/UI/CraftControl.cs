@@ -46,8 +46,8 @@ namespace ExtraplanetaryLaunchpads {
 		struct ResourcePair
 		{
 			public readonly BuildResource resource;
-			public readonly ELResourceDisplay display;
-			public ResourcePair (BuildResource resource, ELResourceDisplay display)
+			public readonly ELResourceLine display;
+			public ResourcePair (BuildResource resource, ELResourceLine display)
 			{
 				this.resource = resource;
 				this.display = display;
@@ -344,12 +344,12 @@ namespace ExtraplanetaryLaunchpads {
 			int childCount = resourceRect.childCount;
 			requiredResources.Clear ();
 			foreach (var res in resources) {
-				ELResourceDisplay display;
+				ELResourceLine display;
 				if (i < childCount) {
 					var child = resourceRect.GetChild(i);
-					display = child.GetComponent<ELResourceDisplay> ();
+					display = child.GetComponent<ELResourceLine> ();
 				} else {
-					display = resourceList.Add<ELResourceDisplay> ();
+					display = resourceList.Add<ELResourceLine> ();
 					display.Finish ();
 				}
 				requiredResources.Add (new ResourcePair (res, display));

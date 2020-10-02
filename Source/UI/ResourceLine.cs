@@ -25,7 +25,7 @@ using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELResourceDisplay : LayoutAnchor
+	public class ELResourceLine : LayoutAnchor
 	{
 		UIText resourceName;
 		UISlider fraction;

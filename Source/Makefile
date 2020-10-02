@@ -78,7 +78,7 @@ EL_FILES := \
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
 	UI/PadControl.cs					\
-	UI/ResourceDisplay.cs				\
+	UI/ResourceLine.cs					\
 	UI/StatusBar.cs						\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/ProtoWorkSink.cs			\

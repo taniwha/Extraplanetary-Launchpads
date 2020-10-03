@@ -31,30 +31,6 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELResourceDisplay : Layout
 	{
-		public abstract class BaseResourceLine : IResourceLine
-		{
-			protected string name;
-			protected BuildResource buildResource;
-			protected RMResourceInfo padResource;
-
-			public virtual string ResourceName { get { return name; } }
-			public abstract string ResourceInfo { get; }
-			public abstract double ResourceFraction { get; }
-			public virtual double RequiredAmount {
-				get { return buildResource.amount; }
-			}
-			public virtual double AvailableAmount {
-				get { return padResource != null ? padResource.amount : 0; }
-			}
-
-			public BaseResourceLine (BuildResource build, RMResourceInfo pad)
-			{
-				name = build.name;
-				buildResource = build;
-				padResource = pad;
-			}
-		}
-
 		List<IResourceLine> resources;
 
 		public override void CreateUI()

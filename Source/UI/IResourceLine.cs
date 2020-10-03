@@ -30,7 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 		string ResourceName { get; }
 		string ResourceInfo { get; }
 		double ResourceFraction { get; }
-		double RequiredAmount { get; }
+		double BuildAmount { get; }
 		double AvailableAmount { get; }
 	}
 }

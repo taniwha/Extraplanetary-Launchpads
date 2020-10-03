@@ -34,12 +34,15 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELBuildView : Layout
 	{
-		public class ProgressResource : ELResourceDisplay.BaseResourceLine
+		public class ProgressResource : IResourceLine
 		{
 			ELBuildControl control;
-			BuildResource requiredResource;
+			BuildResource built;
+			BuildResource required;
+			RMResourceInfo available;
 
-			public override string ResourceInfo
+			public string ResourceName { get { return built.name; } }
+			public string ResourceInfo
 			{
 				get {
 					if (control.paused) {
@@ -54,11 +57,13 @@ namespace ExtraplanetaryLaunchpads {
 					return percent;
 				}
 			}
-			public override double ResourceFraction
+			public double BuildAmount { get { return built.amount; } }
+			public double AvailableAmount { get { return available.amount; } }
+			public double ResourceFraction
 			{
 				get {
-					double required = requiredResource.amount;
-					double built = RequiredAmount;
+					double required = this.required.amount;
+					double built = this.built.amount;
 
 					if (required < 0) {
 						return 0;
@@ -74,24 +79,25 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			public ProgressResource (BuildResource built, BuildResource required, RMResourceInfo pad, ELBuildControl control)
-				: base (built, pad)
 			{
+				this.built = built;
+				this.required = required;
+				this.available = pad;
 				this.control = control;
-				requiredResource = required;
 			}
 
 			public double CalculateETA ()
 			{
 				double frames;
-				if (buildResource.deltaAmount <= 0) {
+				if (built.deltaAmount <= 0) {
 					return 0;
 				}
 				if (control.state == ELBuildControl.State.Building) {
-					frames = buildResource.amount / buildResource.deltaAmount;
+					frames = built.amount / built.deltaAmount;
 				} else {
-					double remaining = buildResource.amount;
-					remaining -= requiredResource.amount;
-					frames = remaining / buildResource.deltaAmount;
+					double remaining = built.amount;
+					remaining -= required.amount;
+					frames = remaining / built.deltaAmount;
 				}
 				return frames * TimeWarp.fixedDeltaTime;
 			}

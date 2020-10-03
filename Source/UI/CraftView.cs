@@ -34,14 +34,20 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELCraftView : Layout
 	{
-		class RequiredResource : ELResourceDisplay.BaseResourceLine
+		class RequiredResource : IResourceLine
 		{
-			public override string ResourceInfo { get { return null; } }
-			public override double ResourceFraction
+			BuildResource required;
+			RMResourceInfo available;
+
+			public string ResourceName { get { return required.name; } }
+			public string ResourceInfo { get { return null; } }
+			public double BuildAmount { get { return required.amount; } }
+			public double AvailableAmount { get { return available.amount; } }
+			public double ResourceFraction
 			{
 				get {
-					double required = RequiredAmount;
-					double available = AvailableAmount;
+					double required = this.required.amount;
+					double available = this.available.amount;
 
 					if (available < 0) {
 						return 0;
@@ -53,8 +59,10 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			public RequiredResource (BuildResource build, RMResourceInfo pad)
-				: base (build, pad)
-			{ }
+			{
+				this.required = build;
+				this.available = pad;
+			}
 		}
 
 		Sprite flagTexture;

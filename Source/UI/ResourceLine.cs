@@ -30,12 +30,12 @@ namespace ExtraplanetaryLaunchpads {
 		UIText resourceName;
 		UISlider fraction;
 		UIText info;
-		UIText required;
+		UIText amount;
 		UIText available;
 
 		IResourceLine resource;
 
-		string displayAmount (double amount) {
+		static string displayAmount (double amount) {
 			if (amount > 1e5) {
 				return Math.Round((amount / 1e6), 2).ToString() + " M";
 			} else {
@@ -51,20 +51,20 @@ namespace ExtraplanetaryLaunchpads {
 			double frac = resource.ResourceFraction;
 			fraction.slider.SetValueWithoutNotify ((float) frac);
 
-			double required = resource.RequiredAmount;
+			double amount = resource.BuildAmount;
 			double available = resource.AvailableAmount;
 
 			if (available >= 0) {
 				this.available.Text (displayAmount (available));
 			}
 			Color color = UnityEngine.Color.green;
-			if (available >= 0 && available < required) {
+			if (available >= 0 && available < amount) {
 				color = UnityEngine.Color.yellow;
 			} else if (available < 0) {
 				color = UnityEngine.Color.white;
 			}
-			this.required.Color(color).Style();
-			this.required.Text (displayAmount (required));
+			this.amount.Color(color).Style();
+			this.amount.Text (displayAmount (amount));
 		}
 
 		public override void CreateUI()
@@ -136,7 +136,7 @@ namespace ExtraplanetaryLaunchpads {
 							.Anchor (AnchorPresets.StretchAll)
 							.SizeDelta (0, 0)
 							.Finish()
-						.Add<UIText> (out required)
+						.Add<UIText> (out amount)
 							.Text ("500")
 							.Size (12)
 							.Margin (textMargins)
@@ -179,7 +179,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			this.resource = resource;
 			resourceName.Text (resource.ResourceName);
-			required.Text (displayAmount (resource.RequiredAmount));
+			amount.Text (displayAmount (resource.BuildAmount));
 			if (resource.AvailableAmount >= 0) {
 				available.Text (displayAmount (resource.AvailableAmount));
 			} else {

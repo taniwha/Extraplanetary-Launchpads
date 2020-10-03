@@ -222,6 +222,8 @@ namespace ExtraplanetaryLaunchpads {
 
 			craftBoM.tmpText.overflowMode = TextOverflowModes.Linked;
 			craftBoM.tmpText.linkedTextComponent = overflowText.tmpText;
+
+			selectFlagButton.ChildImage.AspectRatioSizeFitter (AspectRatioFitter.AspectMode.FitInParent, 1.6f);
 		}
 
 		void BuildCraft ()

@@ -166,13 +166,19 @@ namespace ExtraplanetaryLaunchpads {
 		public void PauseBuild ()
 		{
 			if (state == State.Building || state == State.Canceling) {
-				paused = true;
+				if (!paused) {
+					paused = true;
+					onBuildStateChanged.Fire (this);
+				}
 			}
 		}
 
 		public void ResumeBuild ()
 		{
-			paused = false;
+			if (paused) {
+				paused = false;
+				onBuildStateChanged.Fire (this);
+			}
 		}
 
 		public bool isActive

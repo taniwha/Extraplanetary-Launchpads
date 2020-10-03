@@ -47,6 +47,10 @@ namespace ExtraplanetaryLaunchpads {
 					}
 					double fraction = ResourceFraction;
 					string percent = (fraction * 100).ToString ("G4") + "%";
+					double eta = CalculateETA ();
+					if (eta > 0) {
+						percent += " " + EL_Utils.TimeSpanString (eta);
+					}
 					return percent;
 				}
 			}
@@ -58,10 +62,13 @@ namespace ExtraplanetaryLaunchpads {
 
 					if (required < 0) {
 						return 0;
-					} else if (built < required) {
+					}
+					if (built < 0) {
+						return 1;
+					} else if (built <= required) {
 						return (required - built) / required;
 					} else {
-						return 1;
+						return 0;
 					}
 				}
 			}
@@ -72,6 +79,22 @@ namespace ExtraplanetaryLaunchpads {
 				this.control = control;
 				requiredResource = required;
 			}
+
+			public double CalculateETA ()
+			{
+				double frames;
+				if (buildResource.deltaAmount <= 0) {
+					return 0;
+				}
+				if (control.state == ELBuildControl.State.Building) {
+					frames = buildResource.amount / buildResource.deltaAmount;
+				} else {
+					double remaining = buildResource.amount;
+					remaining -= requiredResource.amount;
+					frames = remaining / buildResource.deltaAmount;
+				}
+				return frames * TimeWarp.fixedDeltaTime;
+			}
 		}
 
 		UIButton pauseButton;
@@ -80,13 +103,19 @@ namespace ExtraplanetaryLaunchpads {
 
 		ScrollView craftView;
 		Layout selectedCraft;
-		Layout resourceList;
+		ELResourceDisplay resourceList;
 		UIText craftName;
+
+		List<IResourceLine> progressResources;
 
 		ELBuildControl control;
 
 		public override void CreateUI()
 		{
+			if (progressResources == null) {
+				progressResources = new List<IResourceLine> ();
+			}
+
 			base.CreateUI ();
 
 			UIScrollbar scrollbar;
@@ -163,12 +192,7 @@ namespace ExtraplanetaryLaunchpads {
 				.Anchor (AnchorPresets.HorStretchTop)
 				.PreferredSizeFitter(true, false)
 				.WidthDelta(0)
-				.Add<Layout> (out resourceList)
-					.Vertical()
-					.ControlChildSize (true, true)
-					.ChildForceExpand (false, false)
-					.FlexibleLayout (true, false)
-					.SizeDelta (0, 0)
+				.Add<ELResourceDisplay> (out resourceList)
 					.Finish ()
 				.Finish ();
 		}
@@ -235,13 +259,28 @@ namespace ExtraplanetaryLaunchpads {
 				&& (control.state == ELBuildControl.State.Building
 					|| control.state == ELBuildControl.State.Canceling)) {
 				gameObject.SetActive (true);
+				craftName.Text (control.craftName);
+				StartCoroutine (WaitAndRebuildResources ());
 			} else {
 				gameObject.SetActive (false);
 			}
 		}
 
+		static BuildResource FindResource (List<BuildResource> reslist, string name)
+		{
+			return reslist.Where(r => r.name == name).FirstOrDefault ();
+		}
+
 		void RebuildResources ()
 		{
+			progressResources.Clear ();
+			foreach (var res in control.builtStuff.required) {
+				var req = FindResource (control.buildCost.required, res.name);
+				var available = control.padResources[res.name];
+				var line = new ProgressResource (res, req, available, control);
+				progressResources.Add (line);
+			}
+			resourceList.Resources (progressResources);
 		}
 
 		IEnumerator WaitAndRebuildResources ()

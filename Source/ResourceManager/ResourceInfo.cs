@@ -26,5 +26,51 @@ using KSP.IO;
 namespace ExtraplanetaryLaunchpads {
 	public class RMResourceInfo {
 		public List<IResourceContainer> containers = new List<IResourceContainer>();
+
+		public bool flowState
+		{
+			get {
+				for (int i = containers.Count; i-- > 0; ) {
+					if (containers[i].flowState) {
+						return true;
+					}
+				}
+				return false;
+			}
+			set {
+				for (int i = containers.Count; i-- > 0; ) {
+					containers[i].flowState = value;
+				}
+			}
+		}
+
+		public double amount
+		{
+			get {
+				double amount = 0;
+				for (int i = containers.Count; i-- > 0; ) {
+					amount += containers[i].amount;
+				}
+				return amount;
+			}
+		}
+
+		public double maxAmount
+		{
+			get {
+				double maxAmount = 0;
+				for (int i = containers.Count; i-- > 0; ) {
+					maxAmount += containers[i].maxAmount;
+				}
+				return maxAmount;
+			}
+		}
+
+		public void RemoveAllResources ()
+		{
+			for (int i = containers.Count; i-- > 0; ) {
+				containers[i].amount = 0.0;
+			}
+		}
 	}
 }

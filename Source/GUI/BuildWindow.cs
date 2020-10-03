@@ -571,6 +571,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void RequiredResources ()
 		{
+			if (control.padResources == null) {
+				return;
+			}
 			ResourceHeader ("Resources required to build:");
 			foreach (var br in control.buildCost.required) {
 				double a = br.amount;

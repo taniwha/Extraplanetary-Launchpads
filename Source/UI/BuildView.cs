@@ -233,7 +233,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void CancelRestart ()
 		{
-			if (control.paused) {
+			if (control.state == ELBuildControl.State.Building) {
 				control.CancelBuild ();
 			} else {
 				control.UnCancelBuild ();
@@ -255,12 +255,30 @@ namespace ExtraplanetaryLaunchpads {
 		public void UpdateControl (ELBuildControl control)
 		{
 			this.control = control;
-			if (control != null
-				&& (control.state == ELBuildControl.State.Building
-					|| control.state == ELBuildControl.State.Canceling)) {
-				gameObject.SetActive (true);
-				craftName.Text (control.craftName);
-				StartCoroutine (WaitAndRebuildResources ());
+			if (control != null) {
+				bool enable = false;
+				bool complete = false;
+
+				switch (control.state) {
+					case ELBuildControl.State.Building:
+					case ELBuildControl.State.Canceling:
+						enable = true;
+						complete = false;
+						break;
+					case ELBuildControl.State.Complete:
+						enable = true;
+						complete = true;;
+						break;
+				}
+				gameObject.SetActive (enable);
+				if (enable) {
+					pauseButton.Text (PauseResumeText ());
+					cancelButton.Text (CancelRestartText ());
+					pauseButton.gameObject.SetActive (!complete);
+					finalizeButton.gameObject.SetActive (complete);
+					craftName.Text (control.craftName);
+					StartCoroutine (WaitAndRebuildResources ());
+				}
 			} else {
 				gameObject.SetActive (false);
 			}

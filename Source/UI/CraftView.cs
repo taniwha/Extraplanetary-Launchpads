@@ -34,6 +34,28 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELCraftView : Layout
 	{
+		class RequiredResource : ELResourceDisplay.BaseResourceLine
+		{
+			public override string ResourceInfo { get { return null; } }
+			public override double ResourceFraction
+			{
+				get {
+					double required = RequiredAmount;
+					double available = AvailableAmount;
+
+					if (available < 0) {
+						return 0;
+					} else if (available < required) {
+						return available / required;
+					}
+					return 1;
+				}
+			}
+
+			public RequiredResource (BuildResource build, RMResourceInfo pad)
+				: base (build, pad)
+			{ }
+		}
 
 		Sprite flagTexture;
 
@@ -43,21 +65,9 @@ namespace ExtraplanetaryLaunchpads {
 		UIButton clearButton;
 		UIButton buildButton;
 
-		struct ResourcePair
-		{
-			public readonly BuildResource resource;
-			public readonly ELResourceLine display;
-			public ResourcePair (BuildResource resource, ELResourceLine display)
-			{
-				this.resource = resource;
-				this.display = display;
-			}
-		}
-
 		ScrollView craftView;
 		Layout selectedCraft;
-		Layout resourceList;
-		List<ResourcePair> requiredResources;
+		ELResourceDisplay resourceList;
 		UIText craftName;
 		UIText craftBoM;
 		UIImage craftThumb;
@@ -66,6 +76,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		FlagBrowser flagBrowser;
 		ELCraftBrowser craftList;
+
+		List<IResourceLine> requiredResources;
 
 		static Texture2D genericCraftThumb;
 
@@ -86,7 +98,9 @@ namespace ExtraplanetaryLaunchpads {
 			if (!genericCraftThumb) {
 				genericCraftThumb = AssetBase.GetTexture("craftThumbGeneric");
 			}
-			requiredResources = new List<ResourcePair> ();
+			if (requiredResources == null) {
+				requiredResources = new List<IResourceLine> ();
+			}
 
 			base.CreateUI ();
 
@@ -174,12 +188,7 @@ namespace ExtraplanetaryLaunchpads {
 				.Anchor (AnchorPresets.HorStretchTop)
 				.PreferredSizeFitter(true, false)
 				.WidthDelta(0)
-				.Add<Layout> (out resourceList)
-					.Vertical()
-					.ControlChildSize (true, true)
-					.ChildForceExpand (false, false)
-					.FlexibleLayout (true, false)
-					.SizeDelta (0, 0)
+				.Add<ELResourceDisplay> (out resourceList)
 					.Finish ()
 				.Add<Layout> ()
 					.Horizontal ()
@@ -336,44 +345,6 @@ namespace ExtraplanetaryLaunchpads {
 			return MakeSprite(genericCraftThumb);
 		}
 
-		void RebuildResourcList (List<BuildResource> resources)
-		{
-			var resourceRect = resourceList.rectTransform;
-			int i = 0;
-			int childCount = resourceRect.childCount;
-			requiredResources.Clear ();
-			foreach (var res in resources) {
-				ELResourceLine display;
-				if (i < childCount) {
-					var child = resourceRect.GetChild(i);
-					display = child.GetComponent<ELResourceLine> ();
-				} else {
-					display = resourceList.Add<ELResourceLine> ();
-					display.Finish ();
-				}
-				requiredResources.Add (new ResourcePair (res, display));
-				display.ResourceName = res.name;
-				display.RequiredAmount = res.amount;
-
-				double available;
-				available = control.padResources.ResourceAmount (res.name);
-				display.AvailableAmount = available;
-				i++;
-			}
-			while (i < childCount) {
-				var go = resourceRect.GetChild (i++).gameObject;
-				Destroy (go);
-			}
-		}
-
-		IEnumerator WaitAndRebuildResourcList (List<BuildResource> resources)
-		{
-			while (control.padResources == null) {
-				yield return null;
-			}
-			RebuildResourcList (resources);
-		}
-
 		void UpdateCraftInfo ()
 		{
 			if (control != null) {
@@ -383,7 +354,7 @@ namespace ExtraplanetaryLaunchpads {
 
 				if (enable) {
 					craftName.Text (control.craftName);
-					StartCoroutine (WaitAndRebuildResourcList (control.buildCost.required));
+					StartCoroutine (WaitAndRebuildResources ());
 					if (control.craftBoM != null || control.CreateBoM ()) {
 						craftBoM.Text(String.Join ("\n", control.craftBoM));
 					}
@@ -418,6 +389,24 @@ namespace ExtraplanetaryLaunchpads {
 				clearButton.interactable = false;
 				buildButton.interactable = false;
 			}
+		}
+
+		void RebuildResources ()
+		{
+			requiredResources.Clear ();
+			foreach (var res in control.buildCost.required) {
+				var available = control.padResources[res.name];
+				requiredResources.Add (new RequiredResource (res, available));
+			}
+			resourceList.Resources (requiredResources);
+		}
+
+		IEnumerator WaitAndRebuildResources ()
+		{
+			while (control.padResources == null) {
+				yield return null;
+			}
+			RebuildResources ();
 		}
 	}
 }

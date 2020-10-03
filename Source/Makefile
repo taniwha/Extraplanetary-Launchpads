@@ -76,9 +76,11 @@ EL_FILES := \
 	Target/Target.cs					\
 	UI/BuildView.cs						\
 	UI/CraftView.cs						\
+	UI/IResourceLine.cs					\
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
 	UI/PadView.cs						\
+	UI/ResourceDisplay.cs				\
 	UI/ResourceLine.cs					\
 	UI/StatusBar.cs						\
 	Workshop/ConstructionSkill.cs		\

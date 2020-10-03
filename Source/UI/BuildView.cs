@@ -34,25 +34,53 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELBuildView : Layout
 	{
+		public class ProgressResource : ELResourceDisplay.BaseResourceLine
+		{
+			ELBuildControl control;
+			BuildResource requiredResource;
+
+			public override string ResourceInfo
+			{
+				get {
+					if (control.paused) {
+						return ELLocalization.Paused;
+					}
+					double fraction = ResourceFraction;
+					string percent = (fraction * 100).ToString ("G4") + "%";
+					return percent;
+				}
+			}
+			public override double ResourceFraction
+			{
+				get {
+					double required = requiredResource.amount;
+					double built = RequiredAmount;
+
+					if (required < 0) {
+						return 0;
+					} else if (built < required) {
+						return (required - built) / required;
+					} else {
+						return 1;
+					}
+				}
+			}
+
+			public ProgressResource (BuildResource built, BuildResource required, RMResourceInfo pad, ELBuildControl control)
+				: base (built, pad)
+			{
+				this.control = control;
+				requiredResource = required;
+			}
+		}
+
 		UIButton pauseButton;
 		UIButton finalizeButton;
 		UIButton cancelButton;
 
-		struct ResourcePair
-		{
-			public readonly BuildResource resource;
-			public readonly ELResourceLine display;
-			public ResourcePair (BuildResource resource, ELResourceLine display)
-			{
-				this.resource = resource;
-				this.display = display;
-			}
-		}
-
 		ScrollView craftView;
 		Layout selectedCraft;
 		Layout resourceList;
-		//List<ResourcePair> requiredResources;
 		UIText craftName;
 
 		ELBuildControl control;
@@ -210,6 +238,18 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				gameObject.SetActive (false);
 			}
+		}
+
+		void RebuildResources ()
+		{
+		}
+
+		IEnumerator WaitAndRebuildResources ()
+		{
+			while (control.padResources == null) {
+				yield return null;
+			}
+			RebuildResources ();
 		}
 	}
 }

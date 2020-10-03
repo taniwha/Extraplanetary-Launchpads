@@ -29,14 +29,11 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		UIText resourceName;
 		UISlider fraction;
+		UIText info;
 		UIText required;
 		UIText available;
 
-		public string ResourceName
-		{
-			get { return resourceName.tmpText.text; }
-			set { resourceName.tmpText.text = value; }
-		}
+		IResourceLine resource;
 
 		string displayAmount (double amount) {
 			if (amount > 1e5) {
@@ -46,41 +43,28 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		double requiredAmount;
-		public double RequiredAmount
+		public void UpdateDisplay()
 		{
-			get { return requiredAmount; }
-			set {
-				requiredAmount = value;
-				required.tmpText.text = displayAmount (value);
-				UpdateDsiplay ();
+			if (resource.ResourceInfo != null) {
+				info.Text(resource.ResourceInfo);
 			}
-		}
-
-		double availableAmount;
-		public double AvailableAmount
-		{
-			get { return availableAmount; }
-			set {
-				availableAmount = value;
-				available.tmpText.text = displayAmount (value);
-				UpdateDsiplay ();
-			}
-		}
-
-		void UpdateDsiplay()
-		{
-			double frac = 1;
-			Color color = UnityEngine.Color.green;
-			if (availableAmount >= 0 && availableAmount < requiredAmount) {
-				frac = availableAmount / requiredAmount;
-				color = UnityEngine.Color.yellow;
-			} else if (availableAmount < 0) {
-				color = UnityEngine.Color.white;
-				available.tmpText.text = ELLocalization.NotAvailable;
-			}
+			double frac = resource.ResourceFraction;
 			fraction.slider.SetValueWithoutNotify ((float) frac);
-			required.Color(color).Style();
+
+			double required = resource.RequiredAmount;
+			double available = resource.AvailableAmount;
+
+			if (available >= 0) {
+				this.available.Text (displayAmount (available));
+			}
+			Color color = UnityEngine.Color.green;
+			if (available >= 0 && available < required) {
+				color = UnityEngine.Color.yellow;
+			} else if (available < 0) {
+				color = UnityEngine.Color.white;
+			}
+			this.required.Color(color).Style();
+			this.required.Text (displayAmount (required));
 		}
 
 		public override void CreateUI()
@@ -123,11 +107,21 @@ namespace ExtraplanetaryLaunchpads {
 						.SizeDelta (0, 0)
 						.Finish ()
 					.Finish ()
-				.Add<UISlider> (out fraction, "ResourceFraction")
-					.Direction (Slider.Direction.LeftToRight)
-					.ShowHandle (false)
+				.Add<UIEmpty> ()
 					.Anchor (fractionMin, fractionMax)
 					.SizeDelta (0, 0)
+					.Add<UISlider> (out fraction, "ResourceFraction")
+						.Direction (Slider.Direction.LeftToRight)
+						.ShowHandle (false)
+						.Anchor (AnchorPresets.StretchAll)
+						.SizeDelta (0, 0)
+						.Finish ()
+					.Add<UIText> (out info, "ResourceInfo")
+						.Margin (textMargins)
+						.Alignment (TextAlignmentOptions.Center)
+						.Anchor (AnchorPresets.StretchAll)
+						.SizeDelta (0, 0)
+						.Finish ()
 					.Finish ()
 				.Add<UIEmpty> ()
 					.Anchor (amountsMin, amountsMax)
@@ -179,6 +173,24 @@ namespace ExtraplanetaryLaunchpads {
 		public override void Style ()
 		{
 			base.Style ();
+		}
+
+		public ELResourceLine Resource (IResourceLine resource)
+		{
+			this.resource = resource;
+			resourceName.Text (resource.ResourceName);
+			required.Text (displayAmount (resource.RequiredAmount));
+			if (resource.AvailableAmount >= 0) {
+				available.Text (displayAmount (resource.AvailableAmount));
+			} else {
+				available.Text (ELLocalization.NotAvailable);
+			}
+			return this;
+		}
+
+		void Update ()
+		{
+			UpdateDisplay ();
 		}
 	}
 }

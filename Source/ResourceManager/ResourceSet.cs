@@ -46,12 +46,7 @@ namespace ExtraplanetaryLaunchpads {
 		public bool GetFlowState (string res)
 		{
 			if (resources.ContainsKey (res)) {
-				RMResourceInfo info = resources[res];
-				for (int i = info.containers.Count; i-- > 0; ) {
-					if (info.containers[i].flowState) {
-						return true;
-					}
-				}
+				return resources[res].flowState;
 			}
 			return false;
 		}
@@ -59,10 +54,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void SetFlowState (string res, bool state)
 		{
 			if (resources.ContainsKey (res)) {
-				RMResourceInfo info = resources[res];
-				for (int i = info.containers.Count; i-- > 0; ) {
-					info.containers[i].flowState = state;
-				}
+				resources[res].flowState = state;
 			}
 		}
 
@@ -178,10 +170,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (resources_to_remove != null && !resources_to_remove.Contains (resource)) {
 					continue;
 				}
-				RMResourceInfo resourceInfo = pair.Value;
-				foreach (var container in resourceInfo.containers) {
-					container.amount = 0.0;
-				}
+				pair.Value.RemoveAllResources ();
 			}
 		}
 
@@ -192,11 +181,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (!resources.ContainsKey (resource))
 				return 0.0;
 			RMResourceInfo resourceInfo = resources[resource];
-			double capacity = 0.0;
-			foreach (var container in resourceInfo.containers) {
-				capacity += container.maxAmount;
-			}
-			return capacity;
+			return resourceInfo.maxAmount;
 		}
 
 		// Return the vessel's total available amount of the resource.
@@ -206,11 +191,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (!resources.ContainsKey (resource))
 				return 0.0;
 			RMResourceInfo resourceInfo = resources[resource];
-			double amount = 0.0;
-			foreach (var container in resourceInfo.containers) {
-				amount += container.amount;
-			}
-			return amount;
+			return resourceInfo.amount;
 		}
 
 		// Transfer a resource into (positive amount) or out of (negative

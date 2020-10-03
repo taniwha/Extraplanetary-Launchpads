@@ -328,7 +328,8 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onShowUI.Remove (onShowUI);
 			GameEvents.onVesselSwitchingToUnloaded.Remove (VMSaveHack);
 			if (mainWindow) {
-				Destroy (mainWindow);
+				Destroy (mainWindow.gameObject);
+				mainWindow = null;
 			}
 		}
 

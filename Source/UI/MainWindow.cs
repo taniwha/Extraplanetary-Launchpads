@@ -34,6 +34,7 @@ namespace ExtraplanetaryLaunchpads {
 		ELPadView padView;
 		ELCraftView craftView;
 		ELBuildView buildView;
+		ELTransferView transferView;
 
 		public override void CreateUI()
 		{
@@ -55,12 +56,16 @@ namespace ExtraplanetaryLaunchpads {
 					.Finish()
 				.Add<ELBuildView>(out buildView, "BuildView")
 					.Finish()
+				.Add<ELTransferView>(out transferView, "TransferView")
+					.Finish()
 				.Finish();
 
 			craftView.gameObject.SetActive (false);
 			buildView.gameObject.SetActive (false);
+			transferView.gameObject.SetActive (false);
 			padView.AddListener (craftView.UpdateControl);
 			padView.AddListener (buildView.UpdateControl);
+			padView.AddListener (transferView.UpdateControl);
 		}
 
 		public override void Style ()

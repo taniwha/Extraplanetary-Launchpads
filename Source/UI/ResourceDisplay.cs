@@ -35,7 +35,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void CreateUI()
 		{
-			this.Horizontal ()
+			this.Vertical ()
 				.ChildForceExpand(false,false)
 				.FlexibleLayout (true, false)
 				.SizeDelta (0, 0);

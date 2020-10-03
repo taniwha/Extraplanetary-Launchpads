@@ -46,5 +46,6 @@ namespace ExtraplanetaryLaunchpads {
 		public static string CancelBuild { get; } = "Cancel Build";
 		public static string RestartBuild { get; } = "Restart Build";
 		public static string Paused { get; } = "[paused]";
+		public static string Release { get; } = "Release";
 	}
 }

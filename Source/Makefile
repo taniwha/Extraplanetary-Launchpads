@@ -83,6 +83,7 @@ EL_FILES := \
 	UI/ResourceDisplay.cs				\
 	UI/ResourceLine.cs					\
 	UI/StatusBar.cs						\
+	UI/TransferView.cs					\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/ProtoWorkSink.cs			\
 	Workshop/VesselWorkNet.cs			\

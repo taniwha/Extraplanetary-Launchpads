@@ -33,4 +33,9 @@ namespace ExtraplanetaryLaunchpads {
 		double BuildAmount { get; }
 		double AvailableAmount { get; }
 	}
+
+	public interface IResourceLineAdjust
+	{
+		double ResourceFraction { set; }
+	}
 }

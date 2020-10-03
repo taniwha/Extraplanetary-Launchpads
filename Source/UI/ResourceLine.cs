@@ -113,6 +113,7 @@ namespace ExtraplanetaryLaunchpads {
 					.Add<UISlider> (out fraction, "ResourceFraction")
 						.Direction (Slider.Direction.LeftToRight)
 						.ShowHandle (false)
+						.OnValueChanged (OnFractionChanged)
 						.Anchor (AnchorPresets.StretchAll)
 						.SizeDelta (0, 0)
 						.Finish ()
@@ -168,11 +169,17 @@ namespace ExtraplanetaryLaunchpads {
 				.Finish ();
 			fraction.interactable = false;
 			fraction.slider.SetValueWithoutNotify(0.5f);
+			info.tmpText.raycastTarget = false;
 		}
 
 		public override void Style ()
 		{
 			base.Style ();
+		}
+
+		void OnFractionChanged (float frac)
+		{
+			(resource as IResourceLineAdjust).ResourceFraction = frac;
 		}
 
 		public ELResourceLine Resource (IResourceLine resource)
@@ -185,6 +192,9 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				available.Text (ELLocalization.NotAvailable);
 			}
+			bool adjust = resource is IResourceLineAdjust;
+			fraction.ShowHandle (adjust);
+			fraction.interactable = adjust;
 			return this;
 		}
 

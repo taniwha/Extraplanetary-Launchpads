@@ -118,6 +118,11 @@ namespace ExtraplanetaryLaunchpads {
 
 			base.CreateUI ();
 
+			var leftMin = new Vector2 (0, 0);
+			var leftMax = new Vector2 (0.5f, 1);
+			var rightMin = new Vector2 (0.5f, 0);
+			var rightMax = new Vector2 (1, 1);
+
 			UIScrollbar scrollbar;
 			Vertical ()
 				.ControlChildSize(true, true)
@@ -159,26 +164,28 @@ namespace ExtraplanetaryLaunchpads {
 							.Finish ()
 						.Finish ()
 					.Finish ()
-				.Add<Layout> ()
-					.Horizontal ()
-					.ControlChildSize (true, true)
-					.ChildForceExpand (false, false)
+				.Add<LayoutAnchor> ()
+					.DoPreferredHeight (true)
 					.FlexibleLayout (true, false)
 					.SizeDelta (0, 0)
 					.Add<UIButton> (out pauseButton)
 						.Text (PauseResumeText ())
 						.OnClick (PauseResume)
-						.FlexibleLayout (true, true)
+						.Anchor (leftMin, leftMax)
+						.SizeDelta (0, 0)
+						.PreferredWidth(0)
 						.Finish()
 					.Add<UIButton> (out finalizeButton)
 						.Text (ELLocalization.FinalizeBuild)
 						.OnClick (FinalizeBuild)
-						.FlexibleLayout (true, true)
+						.Anchor (leftMin, leftMax)
+						.SizeDelta (0, 0)
 						.Finish()
 					.Add<UIButton> (out cancelButton)
 						.Text (CancelRestartText ())
 						.OnClick (CancelRestart)
-						.FlexibleLayout (true, true)
+						.Anchor (rightMin, rightMax)
+						.SizeDelta (0, 0)
 						.Finish()
 					.Finish()
 				.Finish();

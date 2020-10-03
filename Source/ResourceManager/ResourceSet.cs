@@ -34,6 +34,15 @@ namespace ExtraplanetaryLaunchpads {
 		public bool balanced;
 		public string name;
 
+		public RMResourceInfo this[string res]
+		{
+			get {
+				RMResourceInfo info;
+				resources.TryGetValue (res, out info);
+				return info;
+			}
+		}
+
 		public bool GetFlowState (string res)
 		{
 			if (resources.ContainsKey (res)) {

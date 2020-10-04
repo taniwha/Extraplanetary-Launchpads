@@ -43,19 +43,28 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void UpdateText (UIText text, string str)
+		{
+			if (text.tmpText.text != str) {
+				text.Text (str);
+			}
+		}
+
 		public void UpdateDisplay()
 		{
 			if (resource.ResourceInfo != null) {
 				info.Text(resource.ResourceInfo);
 			}
 			double frac = resource.ResourceFraction;
-			fraction.slider.SetValueWithoutNotify ((float) frac);
+			if (frac != fraction.slider.value) {
+				fraction.slider.SetValueWithoutNotify ((float) frac);
+			}
 
 			double amount = resource.BuildAmount;
 			double available = resource.AvailableAmount;
 
 			if (available >= 0) {
-				this.available.Text (displayAmount (available));
+				UpdateText (this.available, displayAmount (available));
 			}
 			Color color = UnityEngine.Color.green;
 			if (available >= 0 && available < amount) {
@@ -64,7 +73,7 @@ namespace ExtraplanetaryLaunchpads {
 				color = UnityEngine.Color.white;
 			}
 			this.amount.Color(color).Style();
-			this.amount.Text (displayAmount (amount));
+			UpdateText (this.amount, displayAmount (amount));
 		}
 
 		public override void CreateUI()

@@ -30,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 	public class ELBuildControl : ELWorkSink
 	{
 		public static readonly EventData<ELBuildControl> onBuildStateChanged = new EventData<ELBuildControl> ("onBuildStateChanged");
+		public static readonly EventData<ELBuildControl, string, string> onPadRenamed = new EventData<ELBuildControl, string, string> ("onPadRenamed");
 
 		public interface IBuilder
 		{
@@ -189,6 +190,11 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		static BuildResource FindResource (List<BuildResource> reslist, string name)
+		{
+			return reslist.Where(r => r.name == name).FirstOrDefault ();
+		}
+
 		public double CalculateWork ()
 		{
 			if (paused) {
@@ -205,7 +211,7 @@ namespace ExtraplanetaryLaunchpads {
 			} else if (state == State.Canceling) {
 				for (int i = built.Count; i-- > 0; ) {
 					var res = built[i];
-					var cres = ELBuildWindow.FindResource (cost, res.name);
+					var cres = FindResource (cost, res.name);
 					hours += res.kerbalHours * (cres.amount - res.amount);
 				}
 			}
@@ -243,7 +249,7 @@ namespace ExtraplanetaryLaunchpads {
 				var cost = buildCost.required;
 
 				foreach (var bres in built) {
-					var cres = ELBuildWindow.FindResource (cost, bres.name);
+					var cres = FindResource (cost, bres.name);
 					mass += (cres.amount - bres.amount) * bres.density;
 				}
 			}
@@ -331,7 +337,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			int count = 0;
 			foreach (var bres in built) {
-				var cres = ELBuildWindow.FindResource (cost, bres.name);
+				var cres = FindResource (cost, bres.name);
 				if (cres.amount - bres.amount > 0) {
 					count++;
 				}
@@ -361,7 +367,7 @@ namespace ExtraplanetaryLaunchpads {
 
 				did_work = false;
 				foreach (var bres in built) {
-					var cres = ELBuildWindow.FindResource (cost, bres.name);
+					var cres = FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
 					if (remaining <= 0) {
 						continue;
@@ -982,6 +988,11 @@ namespace ExtraplanetaryLaunchpads {
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
 			DestroyCraftHull ();
+		}
+
+		public void OnRename (string oldName)
+		{
+			onPadRenamed.Fire (this, oldName, builder.Name);
 		}
 
 		void CleanupAfterRelease ()

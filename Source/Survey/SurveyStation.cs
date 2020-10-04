@@ -30,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string StationName = "";
+		string oldName = "";
 
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
@@ -366,6 +367,7 @@ namespace ExtraplanetaryLaunchpads {
 			ELSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
 			ELSurveyTracker.onSiteModified.Add (onSiteModified);
 			ELSurveyTracker.onStakeModified.Add (onStakeModified);
+			UpdateMenus (false);
 		}
 
 		void OnDestroy ()
@@ -384,20 +386,20 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
-			ELBuildWindow.HideGUI ();
+			ELWindowManager.HideBuildWindow ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
-			ELBuildWindow.ShowGUI ();
-			ELBuildWindow.SelectPad (control);
+			ELWindowManager.ShowBuildWindow (control);
 		}
 
 		[KSPEvent (guiActive = true, guiActiveEditor = true,
 				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
+			oldName = StationName;
 			ELRenameWindow.ShowGUI (this);
 		}
 
@@ -551,7 +553,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void OnRename ()
 		{
-			ELBuildWindow.updateCurrentPads ();
+			control.OnRename (oldName);
 		}
 	}
 }

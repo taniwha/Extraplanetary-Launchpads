@@ -78,5 +78,11 @@ namespace ExtraplanetaryLaunchpads {
 			statusBar.SetVessel (vessel);
 			padView.SetVessel (vessel);
 		}
+
+		public void SetControl (ELBuildControl control)
+		{
+			statusBar.SetVessel (control.builder.vessel);
+			padView.SetControl (control);
+		}
 	}
 }

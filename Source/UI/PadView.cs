@@ -66,17 +66,34 @@ namespace ExtraplanetaryLaunchpads {
 		protected override void Awake ()
 		{
 			ELBuildControl.onBuildStateChanged.Add (onBuildStateChanged);
+			ELBuildControl.onPadRenamed.Add (onPadRenamed);
 		}
 
 		protected override void OnDestroy ()
 		{
 			ELBuildControl.onBuildStateChanged.Remove (onBuildStateChanged);
+			ELBuildControl.onPadRenamed.Remove (onPadRenamed);
 		}
 
 		void onBuildStateChanged (ELBuildControl control)
 		{
 			if (control == this.control) {
 				padEvent.Invoke (control);
+			}
+		}
+
+		void onPadRenamed (ELBuildControl control, string oldName, string newName)
+		{
+			bool changed = false;
+			for (int i = padControls.Count; i-- > 0; ) {
+				if (padControls[i] == control) {
+					padNames[i].text = PadName (padControls[i].builder, i);
+					changed = true;
+				}
+			}
+
+			if (changed) {
+				padSelector.Options (padNames);
 			}
 		}
 
@@ -135,6 +152,19 @@ namespace ExtraplanetaryLaunchpads {
 		void SelectPad (int index)
 		{
 			control = padControls[index];
+			worknet.selectedPad = control.builder.ID;
+			UpdateMenus (gameObject.activeInHierarchy);
+		}
+
+		void UpdateMenus (bool visible)
+		{
+			if (padControls == null) {
+				return;
+			}
+			for (int i = padControls.Count; i-- > 0; ) {
+				bool selected = padControls[i] == control;
+				padControls[i].builder.UpdateMenus (visible && selected);
+			}
 		}
 
 		static ELVesselWorkNet FindWorkNet (Vessel v)
@@ -160,12 +190,20 @@ namespace ExtraplanetaryLaunchpads {
 			return null;
 		}
 
+		string PadName (ELBuildControl.IBuilder pad, int index)
+		{
+			if (String.IsNullOrEmpty (pad.Name)) {
+				return $"{ELLocalization.Pad}-{index}";
+			} else {
+				return pad.Name;
+			}
+		}
+
 		void BuildPadList ()
 		{
 			padNames.Clear ();
 			padControls.Clear ();
 			worknet = null;
-			control = null;
 			if (!vessel) {
 				return;
 			}
@@ -177,29 +215,41 @@ namespace ExtraplanetaryLaunchpads {
 				padSelector.interactable = false;
 			} else {
 				worknet = FindWorkNet (vessel);
-				if (worknet != null) {
+				if (worknet != null && control == null) {
 					control = FindControl (vessel, worknet.selectedPad);
 				}
 
 				for (int i = 0; i < pads.Count; i++) {
-					if (String.IsNullOrEmpty (pads[i].Name)) {
-						padNames.Add (new OptionData ($"{ELLocalization.Pad}-{i}"));
-					} else {
-						padNames.Add (new OptionData (pads[i].Name));
-					}
+					padNames.Add (new OptionData (PadName (pads[i], i)));
 					padControls.Add (pads[i].control);
 					if (control == pads[i].control) {
 						control_index = i;
 					}
 				}
 			}
+			if (control == null) {
+				control_index = 0;
+			}
+			if (control_index < padControls.Count) {
+				control = padControls[control_index];
+			}
 			padSelector.Options (padNames);
 			padSelector.SetValueWithoutNotify (control_index);
+
+			UpdateMenus (gameObject.activeInHierarchy);
 		}
 
 		public void SetVessel (Vessel vessel)
 		{
 			this.vessel = vessel;
+			control = null;
+			BuildPadList ();
+		}
+
+		public void SetControl (ELBuildControl control)
+		{
+			vessel = control.builder.vessel;
+			this.control = control;
 			BuildPadList ();
 		}
 
@@ -213,12 +263,14 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			base.OnEnable ();
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
+			UpdateMenus (gameObject.activeInHierarchy);
 		}
 
 		protected override void OnDisable ()
 		{
 			base.OnDisable ();
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
+			UpdateMenus (false);
 		}
 	}
 }

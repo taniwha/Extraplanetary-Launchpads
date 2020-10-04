@@ -30,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 		public string SpawnTransform;
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string PadName = "";
+		string oldName = "";
 
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
@@ -324,6 +325,7 @@ namespace ExtraplanetaryLaunchpads {
 				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);
 			}
 			control.OnStart ();
+			UpdateMenus (false);
 		}
 
 		void OnDestroy ()
@@ -336,20 +338,20 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
-			ELBuildWindow.HideGUI ();
+			ELWindowManager.HideBuildWindow ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
-			ELBuildWindow.ShowGUI ();
-			ELBuildWindow.SelectPad (control);
+			ELWindowManager.ShowBuildWindow (control);
 		}
 
 		[KSPEvent (guiActive = true, guiActiveEditor = true,
 				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
+			oldName = PadName;
 			ELRenameWindow.ShowGUI (this);
 		}
 
@@ -388,7 +390,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void OnRename ()
 		{
-			ELBuildWindow.updateCurrentPads ();
+			control.OnRename (oldName);
 		}
 	}
 }

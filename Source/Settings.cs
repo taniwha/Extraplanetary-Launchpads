@@ -202,9 +202,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		void ParseBuildWindow (ConfigNode settings)
 		{
-			if (settings.HasNode ("BuildWindow")) {
-				var node = settings.GetNode ("BuildWindow");
-				ELBuildWindow.LoadSettings (node);
+			if (settings.HasNode ("WindowManager")) {
+				var node = settings.GetNode ("WindowManager");
+				ELWindowManager.LoadSettings (node);
 			}
 		}
 
@@ -252,7 +252,7 @@ namespace ExtraplanetaryLaunchpads {
 			settings.AddValue ("DebugCraftHull", DebugCraftHull);
 
 			ELShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
-			ELBuildWindow.SaveSettings (settings.AddNode ("BuildWindow"));
+			ELWindowManager.SaveSettings (settings.AddNode ("WindowManager"));
 			ELResourceWindow.SaveSettings (settings.AddNode ("ResourceWindow"));
 		}
 

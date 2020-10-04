@@ -38,6 +38,7 @@ EL_FILES := \
 	Recipes/RecipeResourceContainer.cs	\
 	Recipes/RecipeDatabase.cs			\
 	Recipes/RecipeLoader.cs				\
+	Recipes/ResourceLink.cs				\
 	ResourceManager/IResourceContainer.cs		\
 	ResourceManager/KISResourceContainer.cs		\
 	ResourceManager/PartResourceContainer.cs	\
@@ -58,7 +59,6 @@ EL_FILES := \
     assembly/AssemblyInfo.cs			\
 	assembly/Checkers.cs				\
 	assembly/VersionReport.cs			\
-	GUI/BuildWindow.cs					\
 	GUI/CraftBrowser.cs					\
 	GUI/DropDownList.cs					\
 	GUI/EditorToolbar.cs				\
@@ -84,6 +84,7 @@ EL_FILES := \
 	UI/ResourceLine.cs					\
 	UI/StatusBar.cs						\
 	UI/TransferView.cs					\
+	UI/WindowManager.cs					\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/ProtoWorkSink.cs			\
 	Workshop/VesselWorkNet.cs			\
@@ -160,7 +161,7 @@ bin/Launchpad.dll: ${EL_FILES} ${KodeUI}
 
 clean:
 	rm -f ${TARGETS}* assembly/AssemblyInfo.cs bin/${MODNAME}.version
-	test -d bin && rmdir bin || true
+	rm -rf bin || true
 
 install: all
 	mkdir -p ${PLUGINDIR}

@@ -117,7 +117,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Awake ()
 		{
-			ELAppButton.Toggle += ELBuildWindow.ToggleGUI;
+			ELAppButton.Toggle += ELWindowManager.ToggleBuildWindow;
 			ELAppButton.RightToggle += ELResourceWindow.ToggleGUI;
 
 			if (ToolbarManager.Instance == null) {
@@ -127,7 +127,7 @@ namespace ExtraplanetaryLaunchpads {
 			ELBuildWindowButton.Visible = ELSettings.PreferBlizzy;
 			ELBuildWindowButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ELBuildWindowButton.ToolTip = "EL Build Window";
-			ELBuildWindowButton.OnClick += (e) => ELBuildWindow.ToggleGUI ();
+			ELBuildWindowButton.OnClick += (e) => ELWindowManager.ToggleBuildWindow ();
 		}
 
 		void OnDestroy()
@@ -135,7 +135,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (ELBuildWindowButton != null) {
 				ELBuildWindowButton.Destroy ();
 			}
-			ELAppButton.Toggle -= ELBuildWindow.ToggleGUI;
+			ELAppButton.Toggle -= ELWindowManager.ToggleBuildWindow;
 			ELAppButton.RightToggle -= ELResourceWindow.ToggleGUI;
 		}
 	}

@@ -106,20 +106,22 @@ namespace ExtraplanetaryLaunchpads {
 
 		void UpdateProductivity ()
 		{
+			string productivityStr = "----";
+			Color c = UnityEngine.Color.red;		//FIXME styles
+
 			if (worknet != null) {
 				double p = worknet.Productivity;
-				Color c = UnityEngine.Color.green;	//FIXME styles
+				c = UnityEngine.Color.green;		//FIXME styles
 				if (p <= 0) {
 					c = UnityEngine.Color.red;		//FIXME styles
 				} else if (p < 1) {
 					c = UnityEngine.Color.yellow;	//FIXME styles
 				}
-				productivityLabel.Color (c).Style();
-				productivity.Text($"{p:G3}").Color (c).Style();
-			} else {
-				Color c = UnityEngine.Color.red;	//FIXME styles
-				productivityLabel.Color (c).Style();
-				productivity.Text("----").Color (c).Style();
+				productivityStr = $"{p:G3}";
+			}
+			productivityLabel.Color (c).Style();
+			if (productivity.tmpText.text != productivityStr) {
+				productivity.Text(productivityStr).Color (c).Style();
 			}
 		}
 

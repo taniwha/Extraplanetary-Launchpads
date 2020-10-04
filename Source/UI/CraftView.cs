@@ -42,7 +42,15 @@ namespace ExtraplanetaryLaunchpads {
 			public string ResourceName { get { return required.name; } }
 			public string ResourceInfo { get { return null; } }
 			public double BuildAmount { get { return required.amount; } }
-			public double AvailableAmount { get { return available.amount; } }
+			public double AvailableAmount
+			{
+				get {
+					if (available == null) {
+						return 0;
+					}
+					return available.amount;
+				}
+			}
 			public double ResourceFraction
 			{
 				get {

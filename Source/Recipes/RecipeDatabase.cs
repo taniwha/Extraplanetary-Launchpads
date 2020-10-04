@@ -26,6 +26,7 @@ namespace ExtraplanetaryLaunchpads {
 	[KSPAddon (KSPAddon.Startup.Instantly, false)]
 	public class ELRecipeDatabase: MonoBehaviour
 	{
+		public static Dictionary<string, ResourceLink> resource_links;
 		public static Dictionary<string, double> resource_rates;
 		public static double default_resource_rate;
 		public static Dictionary<string, ConverterRecipe> converter_recipes;
@@ -142,6 +143,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Awake ()
 		{
+			resource_links = new Dictionary<string, ResourceLink> ();
 			resource_rates = new Dictionary<string, double> ();
 			// default to 5 kH/t (or per unit if 0 density)
 			default_resource_rate = 5;

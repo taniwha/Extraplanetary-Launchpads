@@ -34,12 +34,13 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELTransferView : Layout
 	{
-		public class TransferResource : IResourceLine, IResourceLineAdjust
+		class TransferResource : IResourceLine, IResourceLineAdjust
 		{
 			ELBuildControl control;
 			BuildResource optional;
 			RMResourceInfo capacity;
 			RMResourceInfo available;
+			public LinkedResources link;
 
 			public string ResourceName { get { return optional.name; } }
 			public string ResourceInfo
@@ -49,7 +50,15 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			public double BuildAmount { get { return optional.amount; } }
-			public double AvailableAmount { get { return available.amount; } }
+			public double AvailableAmount
+			{
+				get {
+					if (available == null) {
+						return 0;
+					}
+					return available.amount;
+				}
+			}
 			public double ResourceFraction
 			{
 				get {
@@ -57,7 +66,15 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				set {
 					optional.amount = value * capacity.maxAmount;
+					if (link != null) {
+						link.SetFraction (value);
+					}
 				}
+			}
+
+			public void SetFraction (double fraction)
+			{
+				optional.amount = fraction * capacity.maxAmount;
 			}
 
 			public TransferResource (BuildResource opt, RMResourceInfo cap, RMResourceInfo pad, ELBuildControl control)
@@ -69,21 +86,130 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		class LinkedResources : LayoutAnchor
+		{
+			List<IResourceLine> resources;
+			bool linked;
+
+			ELResourceDisplay display;
+			UIEmpty linkView;
+			UIToggle linkToggle;
+
+			public void SetFraction (double value)
+			{
+				if (linked) {
+					for (int i = resources.Count; i-- > 0; ) {
+						(resources[i] as TransferResource).SetFraction (value);
+					}
+				}
+			}
+
+			public override void CreateUI ()
+			{
+				base.CreateUI ();
+				this.DoPreferredHeight (true)
+					.FlexibleLayout (true, false)
+					.Add<ELResourceDisplay> (out display)
+						.Anchor (AnchorPresets.StretchAll)
+						.SizeDelta (-20, 0)
+						.Pivot (PivotPresets.TopLeft)
+						.Finish ()
+					.Add<UIEmpty> (out linkView)
+						.Anchor (AnchorPresets.VertStretchRight)
+						.Pivot (PivotPresets.MiddleRight)
+						.SizeDelta (20, 0)
+						.Add<UIImage> ("LinkTop")
+							.Type (Image.Type.Sliced)
+							.FlexibleLayout (true, true)
+							.SizeDelta (0, 0)
+							.Finish ()
+						.Add<UIToggle> (out linkToggle, "LinkToggle")
+							.OnValueChanged (UpdateLinked)
+							.SetIsOnWithoutNotify (false)
+							.Anchor (AnchorPresets.MiddleRight)
+							.Pivot (PivotPresets.MiddleRight)
+							.SizeDelta (20, 20)
+							.Finish ()
+						.Add<UIImage> ("LinkBottom")
+							.Type (Image.Type.Sliced)
+							.FlexibleLayout (true, true)
+							.SizeDelta (0, 0)
+							.Finish ()
+						.Finish ();
+				linkView.gameObject.SetActive (false);
+			}
+
+			void UpdateLinked (bool value)
+			{
+				linked = value;
+			}
+
+			public LinkedResources UnLinked ()
+			{
+				this.linked = false;
+				linkView.gameObject.SetActive (false);
+				return this;
+			}
+
+			public LinkedResources Linked (bool linked)
+			{
+				this.linked = linked;
+				linkView.gameObject.SetActive (true);
+				linkToggle.SetIsOnWithoutNotify (linked);
+				return this;
+			}
+
+			public LinkedResources Resources (List<IResourceLine> resources)
+			{
+				this.resources = resources;
+				for (int i = resources.Count; i-- > 0; ) {
+					(resources[i] as TransferResource).link = this;
+				}
+				display.Resources (resources);
+				return this;
+			}
+		}
+
+		public class Link
+		{
+			public List<IResourceLine> link { get; }
+			public int Count { get { return link.Count; } }
+			public void Clear () { link.Clear (); }
+			public Link ()
+			{
+				link = new List<IResourceLine> ();
+			}
+		}
+
 		UIButton releaseButton;
 
 		ScrollView craftView;
 		Layout selectedCraft;
-		ELResourceDisplay resourceList;
 		UIText craftName;
 
 		List<IResourceLine> transferResources;
 
 		ELBuildControl control;
 
+		Dictionary<string, Link> linkMap;
+		List<Link> linkList;
+
 		public override void CreateUI()
 		{
 			if (transferResources == null) {
 				transferResources = new List<IResourceLine> ();
+			}
+
+			if (linkMap == null) {
+				linkMap = new Dictionary<string, Link> ();
+				linkList = new List<Link> ();
+				foreach (var resLink in ELRecipeDatabase.resource_links.Values) {
+					var link = new Link ();
+					linkList.Add (link);
+					foreach (var res in resLink) {
+						linkMap[res] = link;
+					}
+				}
 			}
 
 			base.CreateUI ();
@@ -150,8 +276,6 @@ namespace ExtraplanetaryLaunchpads {
 				.Anchor (AnchorPresets.HorStretchTop)
 				.PreferredSizeFitter(true, false)
 				.WidthDelta(0)
-				.Add<ELResourceDisplay> (out resourceList)
-					.Finish ()
 				.Finish ();
 		}
 
@@ -180,14 +304,83 @@ namespace ExtraplanetaryLaunchpads {
 
 		void RebuildResources ()
 		{
+			for (int i = linkList.Count; i-- > 0; ) {
+				linkList[i].Clear();
+			}
 			transferResources.Clear ();
 			foreach (var res in control.buildCost.optional) {
 				var opt = control.craftResources[res.name];
-				var available = control.padResources[res.name];
-				var line = new TransferResource (res, opt, available, control);
-				transferResources.Add (line);
+				var avail = control.padResources[res.name];
+				var link = transferResources;
+				TransferResource tres;
+				if (linkMap.ContainsKey (res.name)) {
+					link = linkMap[res.name].link;
+					tres = new TransferResource (res, opt, avail, control);
+				} else {
+					tres = new TransferResource (res, opt, avail, control);
+				}
+				Debug.Log ($"[ELTransferView] RebuildResources {res.name} {opt} {avail} {link}");
+				link.Add (tres);
 			}
-			resourceList.Resources (transferResources);
+
+			int itemCount = 0;
+			for (int i = linkList.Count; i-- > 0; ) {
+				if(linkList[i].Count > 0) {
+					++itemCount;
+				}
+			}
+
+			var contentRect = craftView.Content.rectTransform;
+			int childCount = contentRect.childCount;
+			int childIndex = 0;
+			int itemIndex = 0;
+			if (transferResources.Count > 0) {
+				if (childIndex < childCount) {
+					var child = contentRect.GetChild (childIndex);
+					var item = child.GetComponent<LinkedResources> ();
+					item.Resources (transferResources)
+						.UnLinked ();
+					++childIndex;
+				} else {
+					craftView.Content
+						.Add<LinkedResources> ()
+							.Resources (transferResources)
+							.UnLinked ()
+							.FlexibleLayout(true, false)
+							.SizeDelta (0, 0)
+							.Finish ();
+				}
+			}
+			while (childIndex < childCount && itemIndex < itemCount) {
+				while (linkList[itemIndex].Count < 1) {
+					++itemIndex;
+					++itemCount;
+				}
+				var child = contentRect.GetChild (childIndex);
+				var item = child.GetComponent<LinkedResources> ();
+				item.Resources (linkList[itemIndex].link)
+					.Linked (true);	// FIXME save linked state
+				++childIndex;
+				++itemIndex;
+			}
+			while (childIndex < childCount) {
+				var go = contentRect.GetChild (childIndex++).gameObject;
+				Destroy (go);
+			}
+			while (itemIndex < itemCount) {
+				while (linkList[itemIndex].Count < 1) {
+					++itemIndex;
+					++itemCount;
+				}
+				craftView.Content
+					.Add<LinkedResources> ()
+					.Resources (linkList[itemIndex].link)
+					.Linked (true)	// FIXME save linked state
+					.FlexibleLayout(true, false)
+					.SizeDelta (0, 0)
+					.Finish ();
+				++itemIndex;
+			}
 		}
 
 		IEnumerator WaitAndRebuildResources ()

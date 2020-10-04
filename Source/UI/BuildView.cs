@@ -58,7 +58,15 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 			public double BuildAmount { get { return built.amount; } }
-			public double AvailableAmount { get { return available.amount; } }
+			public double AvailableAmount
+			{
+				get {
+					if (available == null) {
+						return 0;
+					}
+					return available.amount;
+				}
+			}
 			public double ResourceFraction
 			{
 				get {

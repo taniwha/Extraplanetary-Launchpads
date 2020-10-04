@@ -72,14 +72,14 @@ namespace ExtraplanetaryLaunchpads {
 			base.CreateUI ();
 
 			Vector2 nameMin = new Vector2 (0, 0);
-			Vector2 nameMax = new Vector2 (0.175f, 1);
-			Vector2 fractionMin = new Vector2 (0.20f, 0);
-			Vector2 fractionMax = new Vector2 (0.65f, 1);
-			Vector2 amountsMin = new Vector2 (0.675f, 0);
+			Vector2 nameMax = new Vector2 (0.2f, 1);
+			Vector2 fractionMin = new Vector2 (0.2f, 0);
+			Vector2 fractionMax = new Vector2 (0.7f, 1);
+			Vector2 amountsMin = new Vector2 (0.7f, 0);
 			Vector2 amountsMax = new Vector2 (1, 1);
 			var requiredMin = new Vector2 (0, 0);
-			var requiredMax = new Vector2 (0.475f, 1);
-			var availableMin = new Vector2 (0.525f, 0);
+			var requiredMax = new Vector2 (0.48f, 1);
+			var availableMin = new Vector2 (0.52f, 0);
 			var availableMax = new Vector2 (1, 1);
 			var textMargins = new Vector4 (5, 5, 10, 10);
 
@@ -101,6 +101,7 @@ namespace ExtraplanetaryLaunchpads {
 						.Finish()
 					.Add<UIText> (out resourceName)
 						.Text("resource")
+						.Size (15)
 						.Margin (textMargins)
 						.Alignment (TextAlignmentOptions.Left)
 						.Anchor (AnchorPresets.StretchAll)
@@ -118,6 +119,7 @@ namespace ExtraplanetaryLaunchpads {
 						.SizeDelta (0, 0)
 						.Finish ()
 					.Add<UIText> (out info, "ResourceInfo")
+						.Size (15)
 						.Margin (textMargins)
 						.Alignment (TextAlignmentOptions.Center)
 						.Anchor (AnchorPresets.StretchAll)
@@ -139,7 +141,7 @@ namespace ExtraplanetaryLaunchpads {
 							.Finish()
 						.Add<UIText> (out amount)
 							.Text ("500")
-							.Size (12)
+							.Size (15)
 							.Margin (textMargins)
 							.Alignment (TextAlignmentOptions.Right)
 							.Anchor (AnchorPresets.StretchAll)
@@ -158,7 +160,7 @@ namespace ExtraplanetaryLaunchpads {
 							.Finish ()
 						.Add<UIText> (out available)
 							.Text ("1000")
-							.Size (12)
+							.Size (15)
 							.Margin (textMargins)
 							.Alignment (TextAlignmentOptions.Right)
 							.Anchor (AnchorPresets.StretchAll)

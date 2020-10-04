@@ -84,5 +84,10 @@ namespace ExtraplanetaryLaunchpads {
 			statusBar.SetVessel (control.builder.vessel);
 			padView.SetControl (control);
 		}
+
+		public void SetVisible (bool visible)
+		{
+			gameObject.SetActive (visible);
+		}
 	}
 }

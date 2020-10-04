@@ -35,12 +35,32 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		static ELWindowManager instance;
 
-		static bool gui_enabled = true;
-		static Rect windowpos;
-
 		static double minimum_alarm_time = 60;
 
 		static bool KACinited = false;
+
+		struct WindowInfo {
+			public bool visible;
+			public Vector2 position;
+
+			public void Load (ConfigNode node)
+			{
+				string val = node.GetValue ("position");
+				if (val != null) {
+					ParseExtensions.TryParseVector2 (val, out position);
+				}
+				val = node.GetValue ("visible");
+				if (val != null) {
+					bool.TryParse (val, out visible);
+				}
+			}
+
+			public void Save (ConfigNode node)
+			{
+				node.AddValue ("position", position);
+				node.AddValue ("visible", visible);
+			}
+		}
 
 		internal void Start()
 		{
@@ -57,42 +77,39 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static void LoadSettings (ConfigNode node)
 		{
-			string val = node.GetValue ("rect");
-			if (val != null) {
-				Quaternion pos;
-				pos = ConfigNode.ParseQuaternion (val);
-				windowpos.x = pos.x;
-				windowpos.y = pos.y;
-				windowpos.width = pos.z;
-				windowpos.height = pos.w;
-			}
-			val = node.GetValue ("visible");
-			if (val != null) {
-				bool.TryParse (val, out gui_enabled);
-			}
-			val = node.GetValue ("minimum_alarm_time");
+			string val = node.GetValue ("minimum_alarm_time");
 			if (val != null) {
 				double.TryParse (val, out minimum_alarm_time);
+			}
+			if (node.HasNode ("MainWindow")) {
+				mainWindowInfo.Load (node.GetNode ("MainWindow"));
 			}
 		}
 
 		public static void SaveSettings (ConfigNode node)
 		{
+			if (mainWindow) {
+				mainWindowInfo.position = mainWindow.transform.localPosition;
+			}
+			mainWindowInfo.Save (node.AddNode ("MainWindow"));
 		}
 
 		public static void HideBuildWindow ()
 		{
 			if (mainWindow) {
-				mainWindow.gameObject.SetActive (false);
+				mainWindow.SetVisible (false);
 			}
+			mainWindowInfo.visible = false;
 		}
 
 		public static void ShowBuildWindow (ELBuildControl control)
 		{
 			if (!mainWindow) {
 				mainWindow = UIKit.CreateUI<ELMainWindow> (appCanvasRect, "ELMainWindow");
+				mainWindow.transform.position = mainWindowInfo.position;
 			}
-			mainWindow.gameObject.SetActive (true);
+			mainWindowInfo.visible = true;
+			mainWindow.SetVisible (true);
 			if (control != null) {
 				mainWindow.SetControl (control);
 			} else {
@@ -111,6 +128,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		static Canvas appCanvas;
 		static RectTransform appCanvasRect;
+
+		static WindowInfo mainWindowInfo = new WindowInfo ();
 		static ELMainWindow mainWindow;
 
 		void Awake ()
@@ -119,6 +138,9 @@ namespace ExtraplanetaryLaunchpads {
 			GameObject.DontDestroyOnLoad(this);
 			appCanvas = DialogCanvasUtil.DialogCanvas;
 			appCanvasRect = appCanvas.transform as RectTransform;
+
+			GameEvents.onGameSceneSwitchRequested.Add (onGameSceneSwitchRequested);
+			GameEvents.onLevelWasLoadedGUIReady.Add (onLevelWasLoadedGUIReady);
 		}
 
 		void OnDestroy ()
@@ -127,6 +149,24 @@ namespace ExtraplanetaryLaunchpads {
 			if (mainWindow) {
 				Destroy (mainWindow.gameObject);
 				mainWindow = null;
+			}
+			GameEvents.onGameSceneSwitchRequested.Remove (onGameSceneSwitchRequested);
+			GameEvents.onLevelWasLoadedGUIReady.Remove (onLevelWasLoadedGUIReady);
+		}
+
+		void onGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> data)
+		{
+			if (mainWindow) {
+				mainWindow.SetVisible (false);
+			}
+		}
+
+		void onLevelWasLoadedGUIReady(GameScenes scene)
+		{
+			if (scene == GameScenes.FLIGHT) {
+				if (mainWindowInfo.visible) {
+					ShowBuildWindow (null);
+				}
 			}
 		}
 	}

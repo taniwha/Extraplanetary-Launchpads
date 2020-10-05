@@ -50,7 +50,7 @@ namespace ExtraplanetaryLaunchpads {
 				.PreferredSizeFitter(true, true)
 				.Anchor(AnchorPresets.MiddleCenter)
 				.Pivot(PivotPresets.TopLeft)
-				.PreferredWidth(400)
+				.PreferredWidth(350)
 
 				.Add<ELTextInfoLine> (out dryMass)
 					.Label (ELLocalization.DryMass)

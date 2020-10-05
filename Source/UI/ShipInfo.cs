@@ -24,26 +24,47 @@ using UnityEngine;
 using KSP.UI.Screens;
 
 namespace ExtraplanetaryLaunchpads {
-	[KSPAddon (KSPAddon.Startup.EditorAny, true)]
+	[KSPAddon (KSPAddon.Startup.EditorAny, false)]
 	public class ELShipInfo : MonoBehaviour
 	{
-		public static ELShipInfoWindow shipInfoWindow { get; set; }
+		static ELShipInfo instance;
+
+		static ELShipInfoWindow _shipInfoWindow;
+		public static ELShipInfoWindow shipInfoWindow
+		{
+			get { return _shipInfoWindow; }
+			set {
+				_shipInfoWindow = value;
+				if (instance && _shipInfoWindow) {
+					instance.RebuildCost ();
+				}
+			}
+		}
 
 		int rebuild_list_wait_frames = 0;
 
-		private IEnumerator WaitAndRebuildList ()
+		private IEnumerator WaitAndRebuildCost ()
 		{
 			while (--rebuild_list_wait_frames > 0) {
 				yield return null;
 			}
+			RebuildCost ();
+		}
+
+		void RebuildCost ()
+		{
 			ShipConstruct ship = EditorLogic.fetch.ship;
-			//Debug.LogFormat ("ELShipInfo.WaitAndRebuildList: {0}", ship);
+			//Debug.LogFormat ("ELShipInfo.WaitAndRebuildCost: {0}", ship);
 
 			BuildCost buildCost = null;
 
 			if (ship == null || ship.parts == null || ship.parts.Count < 1
 				|| ship.parts[0] == null) {
-				yield break;
+				if (shipInfoWindow) {
+					buildCost = new BuildCost ();
+					shipInfoWindow.UpdateInfo (buildCost);
+				}
+				return;
 			}
 
 			if (ship.parts.Count > 0) {
@@ -69,7 +90,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (rebuild_list_wait_frames < wait_frames) {
 				rebuild_list_wait_frames += wait_frames;
 				if (rebuild_list_wait_frames == wait_frames) {
-					StartCoroutine (WaitAndRebuildList ());
+					StartCoroutine (WaitAndRebuildCost ());
 				}
 			}
 		}
@@ -91,6 +112,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Awake ()
 		{
+			instance = this;
 			GameEvents.onEditorShipModified.Add (onEditorShipModified);
 			GameEvents.onEditorRestart.Add (onEditorRestart);
 			GameEvents.onEditorLoad.Add (onEditorLoad);
@@ -98,6 +120,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void OnDestroy ()
 		{
+			instance = null;
 			GameEvents.onEditorShipModified.Remove (onEditorShipModified);
 			GameEvents.onEditorRestart.Remove (onEditorRestart);
 			GameEvents.onEditorLoad.Remove (onEditorLoad);

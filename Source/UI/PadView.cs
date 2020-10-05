@@ -119,7 +119,6 @@ namespace ExtraplanetaryLaunchpads {
 					.Anchor (leftMin, leftMax)
 					.SizeDelta (0, 0)
 					.Sprite(SpriteLoader.GetSprite("KodeUI/Default/background"))
-					.Color(UnityEngine.Color.blue)
 					.Add<UIDropdown> (out padSelector, "PadSelector")
 						.OnValueChanged (SelectPad)
 						.FlexibleLayout (true, true)
@@ -136,7 +135,6 @@ namespace ExtraplanetaryLaunchpads {
 					.Anchor (rightMin, rightMax)
 					.SizeDelta (0, 0)
 					.Sprite(SpriteLoader.GetSprite("KodeUI/Default/background"))
-					.Color(UnityEngine.Color.red)
 					// XXX pad / survey controls
 					.Finish ()
 				.Finish ();

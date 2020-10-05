@@ -192,15 +192,7 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateToolbarButton ();
 		}
 
-		void ParseShipInfo (ConfigNode settings)
-		{
-			if (settings.HasNode ("ShipInfo")) {
-				var node = settings.GetNode ("ShipInfo");
-				ELShipInfo.LoadSettings (node);
-			}
-		}
-
-		void ParseBuildWindow (ConfigNode settings)
+		void ParseWindowManager (ConfigNode settings)
 		{
 			if (settings.HasNode ("WindowManager")) {
 				var node = settings.GetNode ("WindowManager");
@@ -230,8 +222,7 @@ namespace ExtraplanetaryLaunchpads {
 			ParsePreferBlizzy (settings);
 			ParseShowCraftHull (settings);
 			ParseDebugCraftHull (settings);
-			ParseShipInfo (settings);
-			ParseBuildWindow (settings);
+			ParseWindowManager (settings);
 			ParseResourceWindow (settings);
 
 			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
@@ -251,7 +242,6 @@ namespace ExtraplanetaryLaunchpads {
 			settings.AddValue ("ShowCraftHull", ShowCraftHull);
 			settings.AddValue ("DebugCraftHull", DebugCraftHull);
 
-			ELShipInfo.SaveSettings (settings.AddNode ("ShipInfo"));
 			ELWindowManager.SaveSettings (settings.AddNode ("WindowManager"));
 			ELResourceWindow.SaveSettings (settings.AddNode ("ResourceWindow"));
 		}
@@ -308,9 +298,9 @@ namespace ExtraplanetaryLaunchpads {
 			uk = GUILayout.Toggle (uk, "Create alarms in Kerbal Alarm Clock");
 			use_KAC = uk;
 
-			bool si = ELShipInfo.showGUI;
-			si = GUILayout.Toggle (si, "Build Resources window currently visible in editor");
-			ELShipInfo.showGUI = si;
+			//bool si = ELShipInfo.showGUI;
+			//si = GUILayout.Toggle (si, "Build Resources window currently visible in editor");
+			//ELShipInfo.showGUI = si;
 
 			bool sch = ShowCraftHull;
 			sch = GUILayout.Toggle (sch, "Show craft hull during construction");

@@ -47,5 +47,10 @@ namespace ExtraplanetaryLaunchpads {
 		public static string RestartBuild { get; } = "Restart Build";
 		public static string Paused { get; } = "[paused]";
 		public static string Release { get; } = "Release";
+		public static string DryMass { get; } = "Dry mass";
+		public static string ResourceMass { get; } = "Resource mass";
+		public static string TotalMass { get; } = "Total mass";
+		public static string BuildTime { get; } = "Build time";
+		public static string KerbalHours { get; } = "Kh";
 	}
 }

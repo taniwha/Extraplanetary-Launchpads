@@ -30,7 +30,7 @@ using ExtraplanetaryLaunchpads_KACWrapper;
 
 namespace ExtraplanetaryLaunchpads {
 
-	[KSPAddon (KSPAddon.Startup.Flight, true)]
+	[KSPAddon (KSPAddon.Startup.MainMenu, true)]
 	public class ELWindowManager : MonoBehaviour
 	{
 		static ELWindowManager instance;
@@ -92,6 +92,11 @@ namespace ExtraplanetaryLaunchpads {
 				mainWindowInfo.position = mainWindow.transform.localPosition;
 			}
 			mainWindowInfo.Save (node.AddNode ("MainWindow"));
+
+			if (shipInfo) {
+				shipInfoInfo.position = shipInfo.transform.localPosition;
+			}
+			shipInfoInfo.Save (node.AddNode ("ShipInfo"));
 		}
 
 		public static void HideBuildWindow ()
@@ -126,11 +131,41 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public static void HideShipInfo ()
+		{
+			if (shipInfo) {
+				shipInfo.SetVisible (false);
+			}
+			shipInfoInfo.visible = false;
+		}
+
+		public static void ShowShipInfo (ELBuildControl control)
+		{
+			if (!shipInfo) {
+				shipInfo = UIKit.CreateUI<ELShipInfoWindow> (appCanvasRect, "ELShipInfo");
+				shipInfo.transform.position = shipInfoInfo.position;
+			}
+			shipInfoInfo.visible = true;
+			shipInfo.SetVisible (true);
+		}
+
+		public static void ToggleShipInfo ()
+		{
+			if (!shipInfo || !shipInfo.gameObject.activeSelf) {
+				ShowShipInfo (null);
+			} else {
+				HideShipInfo ();
+			}
+		}
+
 		static Canvas appCanvas;
 		static RectTransform appCanvasRect;
 
 		static WindowInfo mainWindowInfo = new WindowInfo ();
 		static ELMainWindow mainWindow;
+
+		static WindowInfo shipInfoInfo = new WindowInfo ();
+		static ELShipInfoWindow shipInfo;
 
 		void Awake ()
 		{
@@ -150,6 +185,10 @@ namespace ExtraplanetaryLaunchpads {
 				Destroy (mainWindow.gameObject);
 				mainWindow = null;
 			}
+			if (shipInfo) {
+				Destroy (shipInfo.gameObject);
+				shipInfo = null;
+			}
 			GameEvents.onGameSceneSwitchRequested.Remove (onGameSceneSwitchRequested);
 			GameEvents.onLevelWasLoadedGUIReady.Remove (onLevelWasLoadedGUIReady);
 		}
@@ -159,6 +198,9 @@ namespace ExtraplanetaryLaunchpads {
 			if (mainWindow) {
 				mainWindow.SetVisible (false);
 			}
+			if (shipInfo) {
+				shipInfo.SetVisible (false);
+			}
 		}
 
 		void onLevelWasLoadedGUIReady(GameScenes scene)
@@ -166,6 +208,11 @@ namespace ExtraplanetaryLaunchpads {
 			if (scene == GameScenes.FLIGHT) {
 				if (mainWindowInfo.visible) {
 					ShowBuildWindow (null);
+				}
+			}
+			if (scene == GameScenes.EDITOR) {
+				if (shipInfoInfo.visible) {
+					ShowShipInfo (null);
 				}
 			}
 		}

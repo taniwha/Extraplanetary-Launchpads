@@ -66,7 +66,6 @@ EL_FILES := \
 	GUI/RenameWindow.cs					\
 	GUI/ResourceWindow.cs				\
 	GUI/ScrollView.cs					\
-	GUI/ShipInfo.cs						\
 	GUI/Styles.cs						\
 	GUI/TextField.cs					\
 	LaunchClamp/LaunchClamp.cs			\
@@ -82,7 +81,10 @@ EL_FILES := \
 	UI/PadView.cs						\
 	UI/ResourceDisplay.cs				\
 	UI/ResourceLine.cs					\
+	UI/ShipInfo.cs						\
+	UI/ShipInfoWindow.cs				\
 	UI/StatusBar.cs						\
+	UI/TextInfoLine.cs					\
 	UI/TransferView.cs					\
 	UI/WindowManager.cs					\
 	Workshop/ConstructionSkill.cs		\

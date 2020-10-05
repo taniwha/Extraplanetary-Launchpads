@@ -52,5 +52,12 @@ namespace ExtraplanetaryLaunchpads {
 		public static string TotalMass { get; } = "Total mass";
 		public static string BuildTime { get; } = "Build time";
 		public static string KerbalHours { get; } = "Kh";
+		public static string RenameMicropad { get; } = "Rename Micro-pad";
+		public static string RenameLaunchpad { get; } = "Rename Launchpad";
+		public static string RenameSite { get; } = "Rename Site";
+		public static string RenameSurveyStation { get; } = "Rename Survey Station";
+		public static string Name { get; } = "Name";
+		public static string OK { get; } = "OK";
+		public static string Cancel { get; } = "Cancel";
 	}
 }

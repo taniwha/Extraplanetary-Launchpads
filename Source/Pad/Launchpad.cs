@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELLaunchpad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
+	public class ELLaunchpad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameDialog.IRenamable
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -298,7 +298,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void ShowRenameUI ()
 		{
 			oldName = PadName;
-			ELRenameWindow.ShowGUI (this);
+			ELRenameDialog.OpenDialog (ELLocalization.RenameLaunchpad, this);
 		}
 
 		public void UpdateMenus (bool visible)

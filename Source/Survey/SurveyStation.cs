@@ -26,7 +26,7 @@ using ModuleWheels;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
+	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameDialog.IRenamable
 	{
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string StationName = "";
@@ -202,7 +202,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (GUILayout.Button ("Rename Site", ELStyles.normal,
 								  GUILayout.ExpandWidth (false))) {
 				if (site != null) {
-					ELRenameWindow.ShowGUI (site);
+					ELRenameDialog.OpenDialog (ELLocalization.RenameSite, site);
 				}
 			}
 			GUI.enabled = en;
@@ -400,7 +400,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void ShowRenameUI ()
 		{
 			oldName = StationName;
-			ELRenameWindow.ShowGUI (this);
+			ELRenameDialog.OpenDialog (ELLocalization.RenameSurveyStation, this);
 		}
 
 		public void UpdateMenus (bool visible)

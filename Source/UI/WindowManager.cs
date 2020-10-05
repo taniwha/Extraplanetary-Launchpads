@@ -159,7 +159,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		static Canvas appCanvas;
-		static RectTransform appCanvasRect;
+		public static RectTransform appCanvasRect { get; private set; }
 
 		static WindowInfo mainWindowInfo = new WindowInfo ();
 		static ELMainWindow mainWindow;

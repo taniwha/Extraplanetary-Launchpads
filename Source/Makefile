@@ -63,7 +63,6 @@ EL_FILES := \
 	GUI/DropDownList.cs					\
 	GUI/EditorToolbar.cs				\
 	GUI/ProgressBar.cs					\
-	GUI/RenameWindow.cs					\
 	GUI/ResourceWindow.cs				\
 	GUI/ScrollView.cs					\
 	GUI/Styles.cs						\
@@ -79,6 +78,7 @@ EL_FILES := \
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
 	UI/PadView.cs						\
+	UI/RenameDialog.cs					\
 	UI/ResourceDisplay.cs				\
 	UI/ResourceLine.cs					\
 	UI/ShipInfo.cs						\

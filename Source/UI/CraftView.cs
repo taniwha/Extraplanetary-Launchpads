@@ -54,6 +54,9 @@ namespace ExtraplanetaryLaunchpads {
 			public double ResourceFraction
 			{
 				get {
+					if (this.available == null || this.required == null) {
+						return 0;
+					}
 					double required = this.required.amount;
 					double available = this.available.amount;
 

@@ -73,6 +73,7 @@ EL_FILES := \
 	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
 	UI/BuildView.cs						\
+	UI/BuildManagerView.cs				\
 	UI/CraftView.cs						\
 	UI/IResourceLine.cs					\
 	UI/Localization.cs					\

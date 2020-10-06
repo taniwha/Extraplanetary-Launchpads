@@ -16,38 +16,56 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.IO;
 using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 using KodeUI;
 
 using KSP.IO;
-using KSP.UI.Screens;
+using CBDLoadType = KSP.UI.Screens.CraftBrowserDialog.LoadType;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELMainWindow : Window
+	public class ELBuildManagerView : Layout
 	{
-		ELBuildManagerView buildManager;
+		ELStatusBar statusBar;
+		ELPadView padView;
+		ELCraftView craftView;
+		ELBuildView buildView;
+		ELTransferView transferView;
 
 		public override void CreateUI()
 		{
 			base.CreateUI ();
 
-			Title (ELVersionReport.GetVersion ())
-				.Vertical()
+			this.Vertical ()
 				.ControlChildSize(true, true)
 				.ChildForceExpand(false,false)
-				.PreferredSizeFitter(true, true)
-				.Anchor(AnchorPresets.MiddleCenter)
-				.Pivot(PivotPresets.TopLeft)
-				.PreferredWidth(695)
 
-				.Add<ELBuildManagerView> (out buildManager)
-					.Finish ()
-				.Finish();
+				.Add<ELStatusBar>(out statusBar, "StatusBar")
+					.Finish()
+				.Add<ELPadView>(out padView, "PadView")
+					.Finish()
+				.Add<ELCraftView>(out craftView, "CraftView")
+					.Finish()
+				.Add<ELBuildView>(out buildView, "BuildView")
+					.Finish()
+				.Add<ELTransferView>(out transferView, "TransferView")
+					.Finish()
+				;
+
+			craftView.gameObject.SetActive (false);
+			buildView.gameObject.SetActive (false);
+			transferView.gameObject.SetActive (false);
+			padView.AddListener (craftView.UpdateControl);
+			padView.AddListener (buildView.UpdateControl);
+			padView.AddListener (transferView.UpdateControl);
 		}
 
 		public override void Style ()
@@ -57,17 +75,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetVessel (Vessel vessel)
 		{
-			buildManager.SetVessel (vessel);
+			statusBar.SetVessel (vessel);
+			padView.SetVessel (vessel);
 		}
 
 		public void SetControl (ELBuildControl control)
 		{
-			buildManager.SetControl (control);
-		}
-
-		public void SetVisible (bool visible)
-		{
-			gameObject.SetActive (visible);
+			statusBar.SetVessel (control.builder.vessel);
+			padView.SetControl (control);
 		}
 	}
 }

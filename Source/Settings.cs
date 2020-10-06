@@ -200,14 +200,6 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void ParseResourceWindow (ConfigNode settings)
-		{
-			if (settings.HasNode ("ResourceWindow")) {
-				var node = settings.GetNode ("ResourceWindow");
-				ELResourceWindow.LoadSettings (node);
-			}
-		}
-
 		public override void OnLoad (ConfigNode config)
 		{
 			//Debug.Log (String.Format ("[EL] Settings load"));
@@ -223,7 +215,6 @@ namespace ExtraplanetaryLaunchpads {
 			ParseShowCraftHull (settings);
 			ParseDebugCraftHull (settings);
 			ParseWindowManager (settings);
-			ParseResourceWindow (settings);
 
 			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) {
 				enabled = true;
@@ -243,7 +234,6 @@ namespace ExtraplanetaryLaunchpads {
 			settings.AddValue ("DebugCraftHull", DebugCraftHull);
 
 			ELWindowManager.SaveSettings (settings.AddNode ("WindowManager"));
-			ELResourceWindow.SaveSettings (settings.AddNode ("ResourceWindow"));
 		}
 
 		void LoadGlobalSettings ()

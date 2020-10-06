@@ -118,7 +118,6 @@ namespace ExtraplanetaryLaunchpads {
 		public void Awake ()
 		{
 			ELAppButton.Toggle += ELWindowManager.ToggleBuildWindow;
-			ELAppButton.RightToggle += ELResourceWindow.ToggleGUI;
 
 			if (ToolbarManager.Instance == null) {
 				return;
@@ -136,7 +135,6 @@ namespace ExtraplanetaryLaunchpads {
 				ELBuildWindowButton.Destroy ();
 			}
 			ELAppButton.Toggle -= ELWindowManager.ToggleBuildWindow;
-			ELAppButton.RightToggle -= ELResourceWindow.ToggleGUI;
 		}
 	}
 

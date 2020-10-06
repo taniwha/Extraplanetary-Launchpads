@@ -63,7 +63,6 @@ EL_FILES := \
 	GUI/DropDownList.cs					\
 	GUI/EditorToolbar.cs				\
 	GUI/ProgressBar.cs					\
-	GUI/ResourceWindow.cs				\
 	GUI/ScrollView.cs					\
 	GUI/Styles.cs						\
 	GUI/TextField.cs					\
@@ -81,7 +80,12 @@ EL_FILES := \
 	UI/PadView.cs						\
 	UI/RenameDialog.cs					\
 	UI/ResourceDisplay.cs				\
+	UI/ResourceGroup.cs					\
+	UI/ResourceGroupView.cs				\
 	UI/ResourceLine.cs					\
+	UI/ResourceManagerView.cs			\
+	UI/ResourceModule.cs				\
+	UI/ResourceModuleView.cs			\
 	UI/ShipInfo.cs						\
 	UI/ShipInfoWindow.cs				\
 	UI/StatusBar.cs						\

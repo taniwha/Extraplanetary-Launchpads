@@ -31,6 +31,7 @@ namespace ExtraplanetaryLaunchpads {
 	public class ELMainWindow : Window
 	{
 		ELBuildManagerView buildManager;
+		ELResourceManagerView resourceManager;
 
 		public override void CreateUI()
 		{
@@ -47,6 +48,8 @@ namespace ExtraplanetaryLaunchpads {
 
 				.Add<ELBuildManagerView> (out buildManager)
 					.Finish ()
+				.Add<ELResourceManagerView> (out resourceManager)
+					.Finish ()
 				.Finish();
 		}
 
@@ -58,6 +61,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void SetVessel (Vessel vessel)
 		{
 			buildManager.SetVessel (vessel);
+			resourceManager.SetVessel (vessel);
 		}
 
 		public void SetControl (ELBuildControl control)
@@ -67,7 +71,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetVisible (bool visible)
 		{
-			gameObject.SetActive (visible);
+			SetActive (visible);
 		}
 	}
 }

@@ -430,7 +430,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			Part rootPart = vsl.parts[0].localRoot;
 			craftResourceManager = new RMResourceManager (vsl.parts, rootPart,
-														  false, true);
+														  false);
 			foreach (var br in buildCost.optional) {
 				var amount = craftResources.ResourceAmount (br.name);
 				craftResources.TransferResource (br.name, -amount);
@@ -858,12 +858,13 @@ namespace ExtraplanetaryLaunchpads {
 			//Debug.Log ($"[ELBuildControl] FindVesselResources pad {pad_parts.Count} craft {craft_parts.Count}");
 
 			string vesselName = builder.vessel.vesselName;
-			Part root = builder.part.localRoot;
+			Part vesselRoot = builder.part.localRoot;
 			//Debug.Log ($"[ELBuildControl] FindVesselResources pad");
 			padResourceManager = new RMResourceManager (vesselName,
-														pad_parts, root,
+														pad_parts,
+														vesselRoot,
 														craft_parts,
-														false, true);
+														false);
 
 			if (craft_parts.Count > 0) {
 				//Debug.Log ($"[ELBuildControl] FindVesselResources craft");
@@ -871,7 +872,7 @@ namespace ExtraplanetaryLaunchpads {
 															  craft_parts,
 															  craftRoot,
 															  null,
-															  false, true);
+															  false);
 			}
 		}
 

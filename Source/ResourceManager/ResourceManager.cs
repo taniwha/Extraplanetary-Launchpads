@@ -442,7 +442,8 @@ namespace ExtraplanetaryLaunchpads {
 		public RMResourceManager (string vesselName,
 								  IEnumerable<Part> parts, Part rootPart,
 								  HashSet<Part> excludeParts,
-								  bool addVessels, bool useFlightID)
+								  bool addVessels = true,
+								  bool useFlightID = true)
 		{
 			this.useFlightID = useFlightID;
 			this.addVessels = addVessels;
@@ -458,7 +459,8 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		public RMResourceManager (IEnumerable<Part> parts, Part rootPart,
-								  bool addVessels, bool useFlightID)
+								  bool addVessels = true,
+								  bool useFlightID = true)
 		{
 			this.useFlightID = useFlightID;
 			this.addVessels = addVessels;

@@ -62,16 +62,27 @@ namespace ExtraplanetaryLaunchpads {
 #endregion
 		public string name { get { return set.name; } }
 		public RMResourceSet set { get; set; }
-		public XferState xferState { get; set; }
+		RMResourceManager manager;
+		XferState _xferState;
+		public XferState xferState {
+			get { return _xferState; }
+			set {
+				if (_xferState != value) {
+					manager.MoveSet (_xferState, value, set, resourceName);
+				}
+				_xferState = value;
+			}
+		}
 		public bool flowState {
 			get { return set.GetFlowState (resourceName); }
 			set { set.SetFlowState (resourceName, value); }
 		}
 
-		public ResourceModule (RMResourceSet set, string resourceName)
+		public ResourceModule (RMResourceSet set, string resourceName, RMResourceManager manager)
 		{
 			this.set = set;
 			this.resourceName = resourceName;
+			this.manager = manager;
 			xferState = XferState.Hold;
 		}
 

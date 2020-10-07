@@ -73,7 +73,7 @@ namespace ExtraplanetaryLaunchpads {
 					mod.set = set;
 				} else {
 					Debug.Log ($"[ResourceGroup] BuildModules adding {moduleName}");
-					var mod = new ResourceModule (set, resourceName);
+					var mod = new ResourceModule (set, resourceName, manager);
 					moduleDict[moduleName] = mod;
 					modules.Add (mod);
 				}

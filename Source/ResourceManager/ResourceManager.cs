@@ -28,6 +28,12 @@ namespace ExtraplanetaryLaunchpads {
 
 	using KAS;
 
+	public enum XferState {
+		Hold,
+		In,
+		Out,
+	};
+
 	public class RMResourceManager
 	{
 		class ConnectedPartSet {
@@ -69,6 +75,32 @@ namespace ExtraplanetaryLaunchpads {
 		public RMResourceSet masterSet;
 		bool useFlightID;
 		bool addVessels;
+
+		public ResourceXferControl xferControl { get; private set; }
+
+		public ResourceXferControl CreateXferControl ()
+		{
+			if (xferControl == null) {
+				xferControl = new ResourceXferControl ();
+			}
+			return xferControl;
+		}
+
+		public void MoveSet (XferState from, XferState to, RMResourceSet set,
+							 string resourceName)
+		{
+			if (from == XferState.In) {
+				xferControl.RemoveDestination (set, resourceName);
+			} else if (from == XferState.Out) {
+				xferControl.RemoveSource (set, resourceName);
+			}
+			if (to == XferState.In) {
+				xferControl.AddDestination (set, resourceName);
+			} else if (to == XferState.Out) {
+				xferControl.AddSource (set, resourceName);
+			}
+			xferControl.CheckTransfer ();
+		}
 
 		void ExpandPartMap (IEnumerable<Part> parts)
 		{

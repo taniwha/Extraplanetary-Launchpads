@@ -46,6 +46,7 @@ EL_FILES := \
 	ResourceManager/ResourceManager.cs			\
 	ResourceManager/ResourceSet.cs				\
 	ResourceManager/ResourceSetContainer.cs		\
+	ResourceManager/ResourceXferControl.cs		\
 	Survey/Billboard.cs					\
 	Survey/Points.cs					\
 	Survey/SiteBody.cs					\
@@ -87,7 +88,6 @@ EL_FILES := \
 	UI/ResourceManagerView.cs			\
 	UI/ResourceModule.cs				\
 	UI/ResourceModuleView.cs			\
-	UI/ResourceXferControl.cs			\
 	UI/ShipInfo.cs						\
 	UI/ShipInfoWindow.cs				\
 	UI/StatusBar.cs						\

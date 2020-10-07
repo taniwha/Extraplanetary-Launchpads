@@ -32,35 +32,8 @@ using CBDLoadType = KSP.UI.Screens.CraftBrowserDialog.LoadType;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public enum XferState {
-		Hold,
-		In,
-		Out,
-	};
-
 	public class ELResourceManagerView : Layout
 	{
-		/*class TransferResource : IResourceLine
-		{
-			RMResourceInfo resource;
-
-			public string ResourceName { get { return resource.name; } }
-			public string ResourceInfo { get { return null; } }
-			public double BuildAmount { get { return resource.amount; } }
-			public double AvailableAmount { get { return resource.maxAmount; } }
-			public double ResourceFraction
-			{
-				get {
-					return resource.amount / resource.maxAmount;
-				}
-			}
-
-			public TransferResource (RMResourceInfo resource)
-			{
-				this.resource = resource;
-			}
-		}*/
-
 		ResourceGroup.List resourceGroups;
 		ResourceGroup.Dict resourceGroupDict;
 		ScrollView resourceView;
@@ -126,7 +99,10 @@ namespace ExtraplanetaryLaunchpads {
 				.Finish ();
 
 			resourceGroups.Content = resourceView.Content;
+		}
 
+		void onTransferableChanged ()
+		{
 			transferButton.interactable = false;
 		}
 
@@ -185,6 +161,9 @@ namespace ExtraplanetaryLaunchpads {
 			var parts = vessel.parts;
 			Part rootPart = parts[0].localRoot;
 			var manager = new RMResourceManager (parts, rootPart);
+			manager.CreateXferControl ();
+			manager.xferControl.onTransferableChanged += onTransferableChanged;
+			onTransferableChanged ();
 			RebuildResources (manager);
 		}
 	}

@@ -33,6 +33,22 @@ namespace ExtraplanetaryLaunchpads {
 		XferSet dstSets;
 		XferSet srcSets;
 
+		public delegate void OnTransferableChanged ();
+		public OnTransferableChanged onTransferableChanged = delegate { };
+
+		bool _canTransfer;
+		public bool canTransfer
+		{
+			get { return _canTransfer; }
+			set {
+				bool changed = _canTransfer != value;
+				_canTransfer = value;
+				if (changed) {
+					onTransferableChanged ();
+				}
+			}
+		}
+
 		public ResourceXferControl()
 		{
 			dstSets = new XferSet ();
@@ -67,26 +83,45 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void AddDestination (RMResourceSet set, string resourceName)
 		{
+			Debug.Log ($"[ResourceXferControl] AddDestination {set.name} {resourceName}");
 			AddSet (dstSets, set, resourceName);
 		}
 
 		public void RemoveDestination (RMResourceSet set, string resourceName)
 		{
+			Debug.Log ($"[ResourceXferControl] RemoveDestination {set.name} {resourceName}");
 			RemoveSet (dstSets, set, resourceName);
 		}
 
 		public void AddSource (RMResourceSet set, string resourceName)
 		{
+			Debug.Log ($"[ResourceXferControl] AddSource {set.name} {resourceName}");
 			AddSet (srcSets, set, resourceName);
 		}
 
 		public void RemoveSource (RMResourceSet set, string resourceName)
 		{
+			Debug.Log ($"[ResourceXferControl] RemoveSource {set.name} {resourceName}");
 			RemoveSet (srcSets, set, resourceName);
+		}
+
+		public void CheckTransfer ()
+		{
+			bool intersect = false;
+			foreach (string r in dstSets.Keys) {
+				if (srcSets.ContainsKey (r)) {
+					intersect = true;
+					break;
+				}
+			}
+			canTransfer = intersect;
 		}
 
 		public bool TransferResources (double deltaTime)
 		{
+			if (!canTransfer) {
+				return false;
+			}
 			bool didSomething = false;
 			foreach (string res in dstSets.Keys) {
 				var dst = dstSets[res];

@@ -61,5 +61,8 @@ namespace ExtraplanetaryLaunchpads {
 		public static string Cancel { get; } = "Cancel";
 		public static string StartTransfer { get; } = "Start Transfer";
 		public static string StopTransfer { get; } = "Stop Transfer";
+		public static string Hold { get; } = "Hold";
+		public static string In { get; } = "In";
+		public static string Out { get; } = "Out";
 	}
 }

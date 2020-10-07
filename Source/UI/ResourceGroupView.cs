@@ -73,7 +73,6 @@ namespace ExtraplanetaryLaunchpads {
 					.ChildForceExpand(false,false)
 					.Finish ()
 				;
-			moduleView.SetActive (false);
 		}
 
 		void SetOpen (bool open)

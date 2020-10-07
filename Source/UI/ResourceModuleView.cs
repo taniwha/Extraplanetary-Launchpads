@@ -34,11 +34,13 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELResourceModuleView : Layout
 	{
+		ResourceModule module;
+
 		ELResourceLine resourceLine;
-		UIToggle holdToggle;
-		UIToggle inToggle;
-		UIToggle outToggle;
-		UIToggle flowToggle;
+		ToggleText holdToggle;
+		ToggleText inToggle;
+		ToggleText outToggle;
+		MiniToggle flowToggle;
 
 		public override void CreateUI()
 		{
@@ -49,29 +51,37 @@ namespace ExtraplanetaryLaunchpads {
 			this.Horizontal ()
 				.ControlChildSize(true, true)
 				.ChildForceExpand(false,false)
+				.Padding (0, 8, 0, 0)
 				.ToggleGroup (out modeGroup)
-
 				.Add<UIEmpty> ()
-					.SizeDelta (0, 0)
 					.PreferredSize (32, -1)
+					.SizeDelta (0, 0)
 					.Finish ()
 				.Add<ELResourceLine> (out resourceLine)
 					.FlexibleLayout (true, false)
 					.SizeDelta (0, 0)
 					.Finish ()
-				.Add<UIToggle> (out holdToggle)
+				.Add<ToggleText> (out holdToggle)
 					.Group (modeGroup)
+					.Text (ELLocalization.Hold)
 					.OnValueChanged ((b) => { SetState (b, XferState.Hold); })
 					.Finish ()
-				.Add<UIToggle> (out inToggle)
+				.Add<ToggleText> (out inToggle)
 					.Group (modeGroup)
+					.Text (ELLocalization.In)
 					.OnValueChanged ((b) => { SetState (b, XferState.In); })
 					.Finish ()
-				.Add<UIToggle> (out outToggle)
+				.Add<ToggleText> (out outToggle)
 					.Group (modeGroup)
+					.Text (ELLocalization.Out)
 					.OnValueChanged ((b) => { SetState (b, XferState.Out); })
 					.Finish ()
-				.Add<UIToggle> (out flowToggle)
+				.Add<UIEmpty> ()
+					.PreferredSize (8, -1)
+					.FlexibleLayout (false, true)
+					.SizeDelta (0, 0)
+					.Finish ()
+				.Add<MiniToggle> (out flowToggle)
 					.OnValueChanged (SetFlowState)
 					.Finish ()
 				;
@@ -85,11 +95,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		void SetFlowState (bool on)
 		{
+			module.flowState = on;
 		}
 
 		public ELResourceModuleView Module (ResourceModule module)
 		{
+			this.module = module;
 			resourceLine.Resource (module);
+			flowToggle.SetIsOnWithoutNotify (module.flowState);
 			return this;
 		}
 	}

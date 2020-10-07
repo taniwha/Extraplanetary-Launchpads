@@ -77,6 +77,7 @@ EL_FILES := \
 	UI/IResourceLine.cs					\
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
+	UI/MiniToggle.cs					\
 	UI/PadView.cs						\
 	UI/RenameDialog.cs					\
 	UI/ResourceDisplay.cs				\
@@ -90,6 +91,7 @@ EL_FILES := \
 	UI/ShipInfoWindow.cs				\
 	UI/StatusBar.cs						\
 	UI/TextInfoLine.cs					\
+	UI/ToggleText.cs					\
 	UI/TransferView.cs					\
 	UI/WindowManager.cs					\
 	Workshop/ConstructionSkill.cs		\

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 using KodeUI;
@@ -32,7 +33,7 @@ using CBDLoadType = KSP.UI.Screens.CraftBrowserDialog.LoadType;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELResourceModuleView : Layout
+	public class ELResourceModuleView : Layout, IPointerEnterHandler, IPointerExitHandler
 	{
 		ResourceModule module;
 
@@ -45,6 +46,8 @@ namespace ExtraplanetaryLaunchpads {
 		public override void CreateUI()
 		{
 			base.CreateUI ();
+
+			gameObject.AddComponent<Touchable>();
 
 			ToggleGroup modeGroup;
 
@@ -90,6 +93,7 @@ namespace ExtraplanetaryLaunchpads {
 		void SetState (bool on, XferState state)
 		{
 			if (on) {
+				Debug.Log ($"[ELResourceModuleView] SetState {state}");
 				module.xferState = state;
 			}
 		}
@@ -109,5 +113,16 @@ namespace ExtraplanetaryLaunchpads {
 			flowToggle.SetIsOnWithoutNotify (module.flowState);
 			return this;
 		}
+#region OnPointerEnter/Exit
+		public void OnPointerEnter (PointerEventData eventData)
+		{
+			module.HighlightModule (true);
+		}
+
+		public void OnPointerExit (PointerEventData eventData)
+		{
+			module.HighlightModule (false);
+		}
+#endregion
 	}
 }

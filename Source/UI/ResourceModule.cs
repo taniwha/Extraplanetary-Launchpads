@@ -75,6 +75,37 @@ namespace ExtraplanetaryLaunchpads {
 			xferState = XferState.Hold;
 		}
 
+		static void HighlightPart (Part part, bool on)
+		{
+			if (on) {
+				part.SetHighlightColor (XKCDColors.LightSeaGreen);
+				part.SetHighlight (true, false);
+			} else {
+				part.SetHighlightDefault ();
+			}
+		}
+
+		static void HighlightSet (RMResourceSet set, string res, bool on)
+		{
+			RMResourceInfo info;
+			if (!set.resources.TryGetValue (res, out info)) {
+				return;
+			}
+			for ( int i = info.containers.Count; i-- > 0; ) {
+				var c = info.containers[i];
+				if (c is PartResourceContainer pc) {
+					HighlightPart (pc.part, on);
+				} else if (c is ResourceSetContainer sc) {
+					HighlightSet (sc.set, res, on);
+				}
+			}
+		}
+
+		public void HighlightModule (bool on)
+		{
+			HighlightSet (set, resourceName, on);
+		}
+
 		public class Dict : Dictionary<string, ResourceModule> { }
 		public class List : List<ResourceModule>, UIKit.IListObject
 		{

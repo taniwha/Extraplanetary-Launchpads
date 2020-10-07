@@ -87,6 +87,7 @@ EL_FILES := \
 	UI/ResourceManagerView.cs			\
 	UI/ResourceModule.cs				\
 	UI/ResourceModuleView.cs			\
+	UI/ResourceXferControl.cs			\
 	UI/ShipInfo.cs						\
 	UI/ShipInfoWindow.cs				\
 	UI/StatusBar.cs						\

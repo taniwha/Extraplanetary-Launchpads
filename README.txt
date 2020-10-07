@@ -75,7 +75,7 @@ Note that EL depends on KodeUI: https://github.com/sarbian/KodeUI.git
 However, KodeUI is included as a git submodule. Use
 
     git submodule init
-	git submodule update
+    git submodule update
 
 to get started and refer to the `git submodule --help` (or
 https://git-scm.com/book/en/v2/Git-Tools-Submodules) for further

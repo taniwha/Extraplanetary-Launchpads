@@ -67,5 +67,11 @@ namespace ExtraplanetaryLaunchpads {
 			toggle.OnValueChanged (action);
 			return this;
 		}
+
+		public ToggleText SetIsOnWithoutNotify (bool on)
+		{
+			toggle.SetIsOnWithoutNotify (on);
+			return this;
+		}
 	}
 }

@@ -90,6 +90,7 @@ namespace ExtraplanetaryLaunchpads {
 		void SetState (bool on, XferState state)
 		{
 			if (on) {
+				module.xferState = state;
 			}
 		}
 
@@ -102,6 +103,9 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			this.module = module;
 			resourceLine.Resource (module);
+			holdToggle.SetIsOnWithoutNotify (module.xferState == XferState.Hold);
+			inToggle.SetIsOnWithoutNotify (module.xferState == XferState.In);
+			outToggle.SetIsOnWithoutNotify (module.xferState == XferState.Out);
 			flowToggle.SetIsOnWithoutNotify (module.flowState);
 			return this;
 		}

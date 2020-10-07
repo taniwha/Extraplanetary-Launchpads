@@ -36,7 +36,7 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		ResourceGroup resource;
 
-		UIToggle openToggle;
+		MiniToggle openToggle;
 		ELResourceLine resourceLine;
 		Layout moduleView;
 		public Layout ModuleView { get { return moduleView; } }
@@ -53,14 +53,11 @@ namespace ExtraplanetaryLaunchpads {
 					.ControlChildSize(true, true)
 					.ChildForceExpand(false,false)
 
-					.Add<UIEmpty> ()
+					.Add<MiniToggle> (out openToggle)
+						.OnValueChanged (SetOpen)
 						.PreferredSize (32, -1)
 						.FlexibleLayout (false, true)
 						.SizeDelta (0, 0)
-						.Add<UIToggle> (out openToggle)
-							.OnValueChanged (SetOpen)
-							.AspectRatioSizeFitter (AspectRatioFitter.AspectMode.FitInParent, 1)
-							.Finish ()
 						.Finish ()
 					.Add<ELResourceLine> (out resourceLine)
 						.FlexibleLayout (true, false)

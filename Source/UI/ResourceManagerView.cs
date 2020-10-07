@@ -39,6 +39,22 @@ namespace ExtraplanetaryLaunchpads {
 		ScrollView resourceView;
 		UIButton transferButton;
 
+		ResourceXferControl xferControl;
+		bool _transferring;
+		bool transferring
+		{
+			get { return _transferring; }
+			set {
+				_transferring = value;
+				if (_transferring) {
+					transferButton.Text (ELLocalization.StopTransfer);
+					StartCoroutine (TransferResources ());
+				} else {
+					transferButton.Text (ELLocalization.StartTransfer);
+				}
+			}
+		}
+
 		public override void CreateUI()
 		{
 			if (resourceGroups == null) {
@@ -103,11 +119,21 @@ namespace ExtraplanetaryLaunchpads {
 
 		void onTransferableChanged ()
 		{
-			transferButton.interactable = false;
+			transferButton.interactable = xferControl.canTransfer;
+		}
+
+		IEnumerator TransferResources ()
+		{
+			while (transferring
+				   && xferControl.TransferResources (TimeWarp.fixedDeltaTime)) {
+				yield return new WaitForFixedUpdate ();
+			}
+			transferring = false;
 		}
 
 		void ToggleTransfer ()
 		{
+			transferring = !transferring;
 		}
 
 		void RebuildResources (RMResourceManager resourceManager)
@@ -156,13 +182,19 @@ namespace ExtraplanetaryLaunchpads {
 			SetVessel (vessel);
 		}
 
+		protected override void OnDisable ()
+		{
+			transferring = false;
+		}
+
 		public void SetVessel (Vessel vessel)
 		{
 			var parts = vessel.parts;
 			Part rootPart = parts[0].localRoot;
 			var manager = new RMResourceManager (parts, rootPart);
-			manager.CreateXferControl ();
-			manager.xferControl.onTransferableChanged += onTransferableChanged;
+			xferControl = manager.CreateXferControl ();
+			xferControl.onTransferableChanged += onTransferableChanged;
+			transferring = false;
 			onTransferableChanged ();
 			RebuildResources (manager);
 		}

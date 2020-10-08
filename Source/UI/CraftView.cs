@@ -17,17 +17,15 @@ along with Extraplanetary Launchpads.  If not, see
 */
 using System;
 using System.IO;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 using KodeUI;
 
-using KSP.IO;
+//using KSP.IO;
 using CBDLoadType = KSP.UI.Screens.CraftBrowserDialog.LoadType;
 
 namespace ExtraplanetaryLaunchpads {

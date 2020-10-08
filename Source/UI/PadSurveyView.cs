@@ -15,17 +15,12 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using TMPro;
 
 using KodeUI;
-
-using KSP.IO;
-using KSP.UI.Screens;
 
 namespace ExtraplanetaryLaunchpads {
 

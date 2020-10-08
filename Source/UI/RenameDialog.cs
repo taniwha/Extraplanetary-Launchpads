@@ -39,7 +39,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			base.CreateUI ();
 
-			this.Title ("Rename")
+			this.Title (ELLocalization.Rename)
 				.Vertical()
 				.ControlChildSize (true, true)
 				.ChildForceExpand (false,false)

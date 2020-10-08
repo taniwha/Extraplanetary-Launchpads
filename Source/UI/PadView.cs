@@ -54,6 +54,7 @@ namespace ExtraplanetaryLaunchpads {
 			private set {
 				_control = value;
 				padEvent.Invoke (_control);
+				launchpadView.SetControl (control);
 				surveyView.SetControl (control);
 			}
 		}
@@ -64,6 +65,7 @@ namespace ExtraplanetaryLaunchpads {
 		UIDropdown padSelector;
 		UIToggle highlightPad;
 
+		ELPadLaunchpadView launchpadView;
 		ELPadSurveyView surveyView;
 
 		protected override void Awake ()
@@ -136,7 +138,8 @@ namespace ExtraplanetaryLaunchpads {
 					.DoMinHeight (true)
 					.Anchor (rightMin, rightMax)
 					.SizeDelta (0, 0)
-					// XXX pad / survey controls
+					.Add<ELPadLaunchpadView> (out launchpadView)
+						.Finish ()
 					.Add<ELPadSurveyView> (out surveyView)
 						.Finish ()
 					.Finish ()

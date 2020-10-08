@@ -79,6 +79,7 @@ EL_FILES := \
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
 	UI/MiniToggle.cs					\
+	UI/PadLaunchpadView.cs				\
 	UI/PadSurveyView.cs					\
 	UI/PadView.cs						\
 	UI/RenameDialog.cs					\

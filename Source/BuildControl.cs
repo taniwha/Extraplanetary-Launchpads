@@ -41,9 +41,6 @@ namespace ExtraplanetaryLaunchpads {
 			Transform PlaceShip (Transform shipTransform, Box vessel_bounds);
 			void RepositionShip (Vessel ship);
 			void PostBuild (Vessel craftVessel);
-			void PadSelection_start ();
-			void PadSelection ();
-			void PadSelection_end ();
 
 			bool canBuild { get; }
 			bool capture { get; }

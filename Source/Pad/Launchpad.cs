@@ -43,7 +43,7 @@ namespace ExtraplanetaryLaunchpads {
 		Transform launchTransform;
 		double craft_mass;
 
-		int rotationIndex;
+		public int rotationIndex { get; private set; }
 
 		static Quaternion []rotations = {
 			new Quaternion(0, 0, 0, 1),
@@ -51,8 +51,6 @@ namespace ExtraplanetaryLaunchpads {
 			new Quaternion(0, 1, 0, 0),
 			new Quaternion(0, 0.707106781f, 0, 0.707106781f),
 		};
-
-		static string []rotationLabels = {"12:00", "09:00", "06:00", "03:00"};
 
 		public override string GetInfo ()
 		{
@@ -123,39 +121,22 @@ namespace ExtraplanetaryLaunchpads {
 
 		public uint ID { get { return part.flightID; } }
 
-		public void PadSelection_start ()
+		public int RotateLeft ()
 		{
+			if (++rotationIndex > 3) {
+				rotationIndex = 0;
+			}
+			control.PlaceCraftHull ();
+			return rotationIndex;
 		}
 
-		public void PadSelection ()
+		public int RotateRight ()
 		{
-			bool rotated = false;
-
-			GUILayout.BeginHorizontal ();
-			if (GUILayout.Button ("->", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
-				if (--rotationIndex < 0) {
-					rotationIndex = 3;
-				}
-				rotated = true;
+			if (--rotationIndex < 0) {
+				rotationIndex = 3;
 			}
-			if (GUILayout.Button ("<-", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
-				if (++rotationIndex > 3) {
-					rotationIndex = 0;
-				}
-				rotated = true;
-			}
-			GUILayout.Label (rotationLabels[rotationIndex], ELStyles.normal);
-			GUILayout.EndHorizontal ();
-
-			if (rotated) {
-				control.PlaceCraftHull ();
-			}
-		}
-
-		public void PadSelection_end ()
-		{
+			control.PlaceCraftHull ();
+			return rotationIndex;
 		}
 
 		public void Highlight (bool on)

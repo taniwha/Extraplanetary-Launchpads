@@ -61,7 +61,6 @@ EL_FILES := \
 	assembly/Checkers.cs				\
 	assembly/VersionReport.cs			\
 	GUI/CraftBrowser.cs					\
-	GUI/EditorToolbar.cs				\
 	LaunchClamp/LaunchClamp.cs			\
 	Pad/Launchpad.cs					\
 	Recycler/Recycler.cs				\
@@ -103,6 +102,7 @@ EL_FILES := \
 	lib/KACWrapper.cs					\
 	lib/KerbalStatsWrapper.cs			\
 	lib/Utils.cs						\
+	toolbar/EditorToolbar.cs			\
 	toolbar/Toolbar.cs					\
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\

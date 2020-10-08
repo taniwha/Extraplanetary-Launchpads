@@ -52,6 +52,7 @@ namespace ExtraplanetaryLaunchpads {
 		public static string TotalMass { get; } = "Total mass";
 		public static string BuildTime { get; } = "Build time";
 		public static string KerbalHours { get; } = "Kh";
+		public static string Rename { get; } = "Rename";
 		public static string RenameMicropad { get; } = "Rename Micro-pad";
 		public static string RenameLaunchpad { get; } = "Rename Launchpad";
 		public static string RenameSite { get; } = "Rename Site";
@@ -64,5 +65,7 @@ namespace ExtraplanetaryLaunchpads {
 		public static string Hold { get; } = "Hold";
 		public static string In { get; } = "In";
 		public static string Out { get; } = "Out";
+		public static string WarningNoSite { get; } = "No sites found.";
+		public static string WarningNoSite2 { get; } = "No sites found. Explosions likely.";
 	}
 }

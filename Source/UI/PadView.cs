@@ -54,6 +54,7 @@ namespace ExtraplanetaryLaunchpads {
 			private set {
 				_control = value;
 				padEvent.Invoke (_control);
+				surveyView.SetControl (control);
 			}
 		}
 
@@ -62,6 +63,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		UIDropdown padSelector;
 		UIToggle highlightPad;
+
+		ELPadSurveyView surveyView;
 
 		protected override void Awake ()
 		{
@@ -128,14 +131,14 @@ namespace ExtraplanetaryLaunchpads {
 						.PreferredSize (25, 25)
 						.Finish ()
 					.Finish ()
-				.Add<LayoutPanel> ()
-					.Horizontal ()
-					.ControlChildSize (true, true)
-					.ChildForceExpand (false, false)
+				.Add<LayoutAnchor> ()
+					.DoPreferredHeight (true)
+					.DoMinHeight (true)
 					.Anchor (rightMin, rightMax)
 					.SizeDelta (0, 0)
-					.Sprite(SpriteLoader.GetSprite("KodeUI/Default/background"))
 					// XXX pad / survey controls
+					.Add<ELPadSurveyView> (out surveyView)
+						.Finish ()
 					.Finish ()
 				.Finish ();
 

@@ -39,8 +39,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		EL_VirtualPad virtualPad;
 		DropDownList site_list;
-		List<SurveySite> available_sites;
-		SurveySite site;
+		internal List<SurveySite> available_sites { get; private set; }
+		internal SurveySite site { get; private set; }
 		double craft_mass;
 		[KSPField (guiName = "Range", guiActive = true)]
 		float range = 20;
@@ -164,7 +164,7 @@ namespace ExtraplanetaryLaunchpads {
 			site_list.DrawBlockingSelector ();
 		}
 
-		void SetSite (SurveySite selected_site)
+		internal void SetSite (SurveySite selected_site)
 		{
 			if (site == selected_site) {
 				if (site != null && virtualPad != null) {

@@ -38,7 +38,6 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField] public float EVARange = 0;
 
 		EL_VirtualPad virtualPad;
-		DropDownList site_list;
 		internal List<SurveySite> available_sites { get; private set; }
 		internal SurveySite site { get; private set; }
 		double craft_mass;
@@ -154,16 +153,6 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void PadSelection_start ()
-		{
-			if (site_list == null) {
-				return;
-			}
-			site_list.styleListItem = ELStyles.listItem;
-			site_list.styleListBox = ELStyles.listBox;
-			site_list.DrawBlockingSelector ();
-		}
-
 		internal void SetSite (SurveySite selected_site)
 		{
 			if (site == selected_site) {
@@ -188,52 +177,8 @@ namespace ExtraplanetaryLaunchpads {
 					virtualPad.SetSite (site);
 				}
 			}
-			if (site_list != null) {
-				site_list.SelectItem (available_sites.IndexOf (site));
-			}
 			control.PlaceCraftHull ();
 			// The build window will take care of turning on highlighting
-		}
-
-		void RenameSite ()
-		{
-			bool en = GUI.enabled;
-			GUI.enabled = en && (site != null);
-			if (GUILayout.Button ("Rename Site", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
-				if (site != null) {
-					ELRenameDialog.OpenDialog (ELLocalization.RenameSite, site);
-				}
-			}
-			GUI.enabled = en;
-		}
-
-		public void PadSelection ()
-		{
-			if (site_list == null) {
-				GUILayout.BeginHorizontal ();
-				if (control.state == ELBuildControl.State.Complete) {
-					GUILayout.Label ("No sites found. Explosions likely.",
-									 ELStyles.red);
-				} else {
-					GUILayout.Label ("No sites found.");
-				}
-				GUILayout.EndHorizontal ();
-			} else {
-				GUILayout.BeginHorizontal ();
-				site_list.DrawButton ();
-				SetSite (available_sites[site_list.SelectedIndex]);
-				RenameSite ();
-				GUILayout.EndHorizontal ();
-			}
-		}
-
-		public void PadSelection_end ()
-		{
-			if (site_list != null) {
-				site_list.DrawDropDown();
-				site_list.CloseOnOutsideClick();
-			}
 		}
 
 		public void Highlight (bool on)
@@ -414,7 +359,6 @@ namespace ExtraplanetaryLaunchpads {
 			available_sites = ELSurveyTracker.instance.FindSites (vessel, range);
 			if (available_sites == null || available_sites.Count < 1) {
 				Highlight (false);
-				site_list = null;
 				SetSite (null);
 			} else {
 				var slist = new List<string> ();
@@ -425,7 +369,6 @@ namespace ExtraplanetaryLaunchpads {
 					Highlight (false);
 					SetSite (available_sites[0]);
 				}
-				site_list = new DropDownList (slist);
 			}
 		}
 

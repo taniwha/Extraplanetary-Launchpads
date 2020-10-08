@@ -61,12 +61,7 @@ EL_FILES := \
 	assembly/Checkers.cs				\
 	assembly/VersionReport.cs			\
 	GUI/CraftBrowser.cs					\
-	GUI/DropDownList.cs					\
 	GUI/EditorToolbar.cs				\
-	GUI/ProgressBar.cs					\
-	GUI/ScrollView.cs					\
-	GUI/Styles.cs						\
-	GUI/TextField.cs					\
 	LaunchClamp/LaunchClamp.cs			\
 	Pad/Launchpad.cs					\
 	Recycler/Recycler.cs				\

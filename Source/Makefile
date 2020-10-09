@@ -68,6 +68,7 @@ EL_FILES := \
 	Target/Target.cs					\
 	UI/BuildView.cs						\
 	UI/BuildManagerView.cs				\
+	UI/CraftThumb.cs					\
 	UI/CraftView.cs						\
 	UI/IResourceLine.cs					\
 	UI/Localization.cs					\

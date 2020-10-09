@@ -87,12 +87,11 @@ namespace ExtraplanetaryLaunchpads {
 		ELResourceDisplay resourceList;
 		UIText craftName;
 		UIText craftBoM;
-		UIImage craftThumb;
+		ELCraftThumb craftThumb;
 
 		ELBuildControl control;
 
 		FlagBrowser flagBrowser;
-		ELCraftBrowser craftList;
 
 		List<IResourceLine> requiredResources;
 
@@ -218,11 +217,9 @@ namespace ExtraplanetaryLaunchpads {
 						.FlexibleLayout (true, false)
 						.SizeDelta (0, 256)
 						.Finish ()
-					.Add<UIImage> (out craftThumb)
+					.Add<ELCraftThumb> (out craftThumb)
 						.Anchor (AnchorPresets.TopLeft)
 						.Pivot (PivotPresets.TopLeft)
-						.SizeDelta (256, 256)
-						.MinSize (256, 256)
 						.Finish ()
 					.Finish ()
 				.Add<Layout> ()
@@ -250,10 +247,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void craftSelectComplete (string filename, CBDLoadType lt)
+		void craftSelectComplete (string filename, ELCraftType craftType)
 		{
-			control.craftType = craftList.craftType;
-			craftList = null;
+			control.craftType = craftType;
 
 			control.LoadCraft (filename, control.flagname);
 
@@ -267,19 +263,15 @@ namespace ExtraplanetaryLaunchpads {
 
 		void craftSelectCancel ()
 		{
-			craftList = null;
 			selectCraftButton.interactable = true;
 		}
 
 		void SelectCraft ()
 		{
-			string path = HighLogic.SaveFolder;
+			string path = "";
 
-			craftList = ELCraftBrowser.Spawn (control.craftType,
-											  path,
-											  craftSelectComplete,
-											  craftSelectCancel,
-											  false);
+			ELCraftBrowser.OpenDialog (control.craftType, path,
+									   craftSelectComplete, craftSelectCancel);
 			selectCraftButton.interactable = false;
 		}
 
@@ -287,19 +279,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			flagBrowser = null;
 			selectFlagButton.interactable = true;
-		}
-
-		static Sprite MakeSprite (Texture2D tex)
-		{
-			var rect = new Rect (0, 0, tex.width, tex.height);
-			var pivot = new Vector2 (0.5f, 0.5f);
-			float pixelsPerUnity = 100;
-			uint extrude = 0;
-			var type = SpriteMeshType.Tight;
-			var border = Vector4.zero;
-
-			return UnityEngine.Sprite.Create (tex, rect, pivot, pixelsPerUnity,
-											  extrude, type, border);
 		}
 
 		void OnFlagSelected (FlagBrowser.FlagEntry selected)
@@ -345,23 +324,9 @@ namespace ExtraplanetaryLaunchpads {
 					control.flagname = control.builder.part.flagURL;
 				}
 				var tex = GameDatabase.Instance.GetTexture (control.flagname, false);
-				flagTexture = MakeSprite (tex);
+				flagTexture = EL_Utils.MakeSprite (tex);
 				selectFlagButton.Image (flagTexture);
 			}
-		}
-
-		Sprite GetThumbnail()
-		{
-			string path = control.filename;
-			string craftType = control.craftType.ToString();
-			string thumbName = Path.GetFileNameWithoutExtension(path);
-			string thumbPath = $"thumbs/{HighLogic.SaveFolder}_{craftType}_{thumbName}.png";
-			var thumbTex = genericCraftThumb;
-			if (!EL_Utils.LoadImage (ref thumbTex, thumbPath)) {
-				thumbPath = $"Ships/@thumbs/{craftType}/{thumbName}.png";
-				EL_Utils.LoadImage (ref thumbTex, thumbPath);
-			}
-			return MakeSprite(genericCraftThumb);
 		}
 
 		void UpdateCraftInfo ()
@@ -377,7 +342,7 @@ namespace ExtraplanetaryLaunchpads {
 					if (control.craftBoM != null || control.CreateBoM ()) {
 						craftBoM.Text(String.Join ("\n", control.craftBoM));
 					}
-					craftThumb.image.sprite = GetThumbnail();
+					craftThumb.Craft (control.craftType, control.filename);
 				}
 			} else {
 				selectedCraft.gameObject.SetActive (false);

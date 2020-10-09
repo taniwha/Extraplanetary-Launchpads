@@ -192,5 +192,18 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			return ret;
 		}
+
+		public static Sprite MakeSprite (Texture2D tex)
+		{
+			var rect = new Rect (0, 0, tex.width, tex.height);
+			var pivot = new Vector2 (0.5f, 0.5f);
+			float pixelsPerUnity = 100;
+			uint extrude = 0;
+			var type = SpriteMeshType.Tight;
+			var border = Vector4.zero;
+
+			return Sprite.Create (tex, rect, pivot, pixelsPerUnity, extrude,
+								  type, border);
+		}
 	}
 }

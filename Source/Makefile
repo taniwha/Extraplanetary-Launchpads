@@ -60,7 +60,6 @@ EL_FILES := \
     assembly/AssemblyInfo.cs			\
 	assembly/Checkers.cs				\
 	assembly/VersionReport.cs			\
-	GUI/CraftBrowser.cs					\
 	LaunchClamp/LaunchClamp.cs			\
 	Pad/Launchpad.cs					\
 	Recycler/Recycler.cs				\
@@ -68,7 +67,10 @@ EL_FILES := \
 	Target/Target.cs					\
 	UI/BuildView.cs						\
 	UI/BuildManagerView.cs				\
+	UI/CraftBrowser.cs					\
 	UI/CraftThumb.cs					\
+	UI/CraftItem.cs						\
+	UI/CraftItemView.cs					\
 	UI/CraftView.cs						\
 	UI/IResourceLine.cs					\
 	UI/Localization.cs					\

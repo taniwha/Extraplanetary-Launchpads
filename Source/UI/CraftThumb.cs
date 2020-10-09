@@ -52,7 +52,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static string StockPath (ELCraftType craftType, string craftFile)
 		{
-			string type = craftFile.ToString ();
+			string type = craftType.ToString ();
 			string thumbName = Path.GetFileNameWithoutExtension(craftFile);
 			return $"Ships/@thumbs/{type}/{thumbName}.png";
 		}

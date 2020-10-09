@@ -29,6 +29,12 @@ namespace ExtraplanetaryLaunchpads {
 		MiniToggle toggle;
 		UIText label;
 
+		public bool interactable
+		{
+			get { return toggle.interactable; }
+			set { toggle.interactable = value; }
+		}
+
 		public override void CreateUI()
 		{
 			var toggleMin = new Vector2 (0, 0.25f);

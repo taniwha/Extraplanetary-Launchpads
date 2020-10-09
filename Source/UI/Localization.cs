@@ -58,5 +58,10 @@ namespace ExtraplanetaryLaunchpads {
 		public static string Out { get; } = "Out";
 		public static string WarningNoSite { get; } = "No sites found.";
 		public static string WarningNoSite2 { get; } = "No sites found. Explosions likely.";
+		public static string VAB { get; } = "VAB"; // #autoLOC_6002108
+		public static string SPH { get; } = "SPH"; // #autoLOC_6002119
+		public static string SubAss { get; } = "Sub";
+		public static string Part { get; } = "Part"; // #autoLOC_6100048
+		public static string StockVessels { get; } = "Stock Vessels";
 	}
 }

@@ -33,7 +33,7 @@ using ExtraplanetaryLaunchpads_KACWrapper;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public enum ELCraftType { VAB, SPH, SubAss };
+	public enum ELCraftType { VAB, SPH, SubAss, Part };
 
 	public class ELCraftBrowser : Window
 	{
@@ -58,6 +58,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public ELCraftType craftType { get; private set; }
 
+		ELCraftTypeSelector typeSelector;
 		ScrollView craftList;
 		ELCraftThumb craftThumb;
 		ScrollView craftInfo;
@@ -97,6 +98,10 @@ namespace ExtraplanetaryLaunchpads {
 				.PreferredSizeFitter (true, true)
 				.Anchor (AnchorPresets.MiddleCenter)
 				.Pivot (PivotPresets.MiddleCenter)
+				.Add <ELCraftTypeSelector> (out typeSelector)
+					.OnSelectionChanged (CraftTypeSelected)
+					.FlexibleLayout (true, true)
+					.Finish ()
 				.Add <Layout> ()
 					.Horizontal ()
 					.ControlChildSize (true, true)
@@ -251,29 +256,42 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void SetRelativePath (ELCraftType craftType, string path)
+		void CraftTypeSelected ()
+		{
+			SetRelativePath (typeSelector.craftType, typeSelector.stockCraft, "");
+		}
+
+		void SetRelativePath (ELCraftType craftType, bool stock, string path)
 		{
 			SetActive (true);
 			this.craftType = craftType;
 			relativePath = path;
-			ScanDirectory (craftType, path);
+			ScanDirectory (craftType, stock, path);
 		}
 
-		bool ScanDirectory (ELCraftType type, string path)
+		bool ScanDirectory (ELCraftType type, bool stock, string path)
 		{
 			string profile = HighLogic.SaveFolder;
-			string savePath = $"{KSPUtil.ApplicationRootPath}saves/{profile}/";
+			string basePath = KSPUtil.ApplicationRootPath;
 
 			craftItems.Clear ();
 			selectedCraft = null;
 
+			if (!stock) {
+				basePath = basePath + $"saves/{profile}/";
+			}
+
 			switch (type) {
 				case ELCraftType.VAB:
 				case ELCraftType.SPH:
-					path = $"{savePath}Ships/{type.ToString ()}/{path}";
+					path = $"{basePath}Ships/{type.ToString ()}/{path}";
 					break;
 				case ELCraftType.SubAss:
-					path = $"{savePath}Subassemblies/{path}";
+					var subassPath = $"{basePath}Subassemblies/";
+					if (!Directory.Exists (subassPath)) {
+						Directory.CreateDirectory (subassPath);
+					}
+					path = $"{subassPath}{path}";
 					break;
 			}
 
@@ -284,11 +302,17 @@ namespace ExtraplanetaryLaunchpads {
 				var fi = files[i];
 				string fp = fi.FullName;
 				string mp = fi.FullName.Replace (fi.Extension, ".loadmeta");
-				string tp = ELCraftThumb.UserPath (type, fp);
+				string tp;
+				if (stock) {
+					tp = ELCraftThumb.StockPath (type, fp);
+				} else {
+					tp = ELCraftThumb.UserPath (type, fp);
+				}
 				craftItems.Add (new ELCraftItem (fp, mp, tp, type));
 			}
 
 			UIKit.UpdateListContent (craftItems);
+			craftItems.Select (0);
 			return true;
 		}
 
@@ -303,7 +327,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			craftBrowser.OnFileSelected = onFileSelected;
 			craftBrowser.OnBrowseCancelled = onCancel;
-			craftBrowser.SetRelativePath (craftType, path);
+			craftBrowser.SetRelativePath (craftType, false, path);
 		}
 	}
 }

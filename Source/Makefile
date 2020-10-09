@@ -68,9 +68,10 @@ EL_FILES := \
 	UI/BuildView.cs						\
 	UI/BuildManagerView.cs				\
 	UI/CraftBrowser.cs					\
-	UI/CraftThumb.cs					\
 	UI/CraftItem.cs						\
 	UI/CraftItemView.cs					\
+	UI/CraftThumb.cs					\
+	UI/CraftTypeSelector.cs				\
 	UI/CraftView.cs						\
 	UI/IResourceLine.cs					\
 	UI/Localization.cs					\

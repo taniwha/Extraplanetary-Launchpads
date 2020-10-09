@@ -118,6 +118,12 @@ namespace ExtraplanetaryLaunchpads {
 			return this;
 		}
 
+		public ELCraftItemView Select ()
+		{
+			toggle.isOn = true;
+			return this;
+		}
+
 		public ELCraftItemView Craft (ELCraftItem craft)
 		{
 			this.craft = craft;

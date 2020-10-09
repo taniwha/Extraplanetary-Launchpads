@@ -98,6 +98,15 @@ namespace ExtraplanetaryLaunchpads {
 			{
 				this.group = group;
 			}
+
+			public void Select (int index)
+			{
+				if (index >= 0 && index < Count) {
+					var child = Content.rectTransform.GetChild (index);
+					var view = child.GetComponent<ELCraftItemView> ();
+					view.Select ();
+				}
+			}
 		}
 	}
 }

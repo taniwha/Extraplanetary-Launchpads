@@ -17,8 +17,10 @@ along with Extraplanetary Launchpads.  If not, see
 */
 using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using TMPro;
 
@@ -50,6 +52,63 @@ namespace ExtraplanetaryLaunchpads {
 			base.OnDestroy ();
 		}
 
+		static Vector4 angles;
+		static float fovFactor = 0.9f;
+
+		static IEnumerator capture (ShipConstruct ship, string thumbName)
+		{
+			yield return null;
+
+			var savedScene = SceneManager.GetActiveScene ();
+			CraftThumbnail.TakeSnaphot (ship, 256, "thumbs", thumbName,
+										angles.x, angles.y, angles.z, angles.w,
+										fovFactor);
+			for (int i = ship.parts.Count; i-- > 0; ) {
+				UnityEngine.Object.Destroy (ship.parts[i].gameObject);
+			}
+		}
+
+		public static void Capture (ConfigNode craft, ELCraftType craftType, string craftFile)
+		{
+			var ship = new ShipConstruct ();
+			ship.LoadShip (craft);
+
+			if (ship.vesselDeltaV != null) {
+				// The delta-v module is not needed. It has its own gameObject
+				// for ShipConstruct.
+				UnityEngine.Object.Destroy (ship.vesselDeltaV.gameObject);
+				ship.vesselDeltaV = null;
+			}
+			// Need to keep the parts around for a few frames, but
+			// Part.FixedUpdate throws if things are not set up properly
+			// (which they won't be), but setting the state to PLACEMENT gets
+			// around this by tricking the part into thinking its being placed
+			// in the editor
+			for (int i = ship.parts.Count; i-- > 0; ) {
+				ship.parts[i].State = PartStates.PLACEMENT;
+			}
+
+			if (craftType == ELCraftType.SPH) {
+				angles = new Vector4 (35, 135, 35, 135);
+			} else {
+				angles = new Vector4 (45, 45, 45, 45);
+			}
+
+			string thumbName = UserThumbName (craftType, craftFile);
+			// Need to wait a frame for the parts to be renderable
+			// (don't know why, but my guess is to give the various renderers
+			// a chance to set themselves up)
+			HighLogic.fetch.StartCoroutine (capture (ship, thumbName));
+		}
+
+		public static string UserThumbName (ELCraftType craftType, string craftFile)
+		{
+			string saveDir = HighLogic.SaveFolder;
+			string type = craftType.ToString ();
+			string thumbName = Path.GetFileNameWithoutExtension(craftFile);
+			return $"{saveDir}_{type}_{thumbName}";
+		}
+
 		public static string StockPath (ELCraftType craftType, string craftFile)
 		{
 			string type = craftType.ToString ();
@@ -59,10 +118,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static string UserPath (ELCraftType craftType, string craftFile)
 		{
-			string saveDir = HighLogic.SaveFolder;
-			string type = craftType.ToString ();
-			string thumbName = Path.GetFileNameWithoutExtension(craftFile);
-			return $"thumbs/{saveDir}_{type}_{thumbName}.png";
+			return $"thumbs/{UserThumbName (craftType, craftFile)}.png";
 		}
 
 		public ELCraftThumb Craft (ELCraftType craftType, string craftFile)

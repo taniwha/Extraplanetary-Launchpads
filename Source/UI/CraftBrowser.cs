@@ -64,6 +64,7 @@ namespace ExtraplanetaryLaunchpads {
 		ScrollView craftInfo;
 		UIText craftDescription;
 		UIButton loadButton;
+		UIButton generateThumb;
 
 		ELCraftItem.List craftItems;
 		ToggleGroup craftGroup;
@@ -124,6 +125,13 @@ namespace ExtraplanetaryLaunchpads {
 						.ControlChildSize (true, true)
 						.ChildForceExpand (false,false)
 						.Add<ELCraftThumb> (out craftThumb)
+							.Add<UIButton> (out generateThumb)
+								.Text ("Generate")
+								.OnClick (GenerateThumb)
+								.Anchor (AnchorPresets.StretchAll)
+								.SizeDelta (0, 0)
+								.Color (new UnityEngine.Color (0,0,0,0))
+								.Finish ()
 							.Finish ()
 						.Add<ScrollView> (out craftInfo)
 							.Horizontal (false)
@@ -196,6 +204,12 @@ namespace ExtraplanetaryLaunchpads {
 			craftItems = new ELCraftItem.List (craftGroup);
 			craftItems.Content = craftList.Content;
 			craftItems.onSelected = OnSelected;
+		}
+
+		void GenerateThumb ()
+		{
+			ELCraftThumb.Capture (selectedCraft.node, selectedCraft.type,
+								  selectedCraft.fullPath);
 		}
 
 		void Cancel ()

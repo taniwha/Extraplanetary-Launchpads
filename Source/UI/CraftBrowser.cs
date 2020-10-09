@@ -236,7 +236,6 @@ namespace ExtraplanetaryLaunchpads {
 		void OnSelected (ELCraftItem craft)
 		{
 			if (selectedCraft == craft && Mouse.Left.GetDoubleClick (true)) {
-				Debug.Log ($"    double click!!");
 				LoadCraft ();
 			} else {
 				selectedCraft = craft;

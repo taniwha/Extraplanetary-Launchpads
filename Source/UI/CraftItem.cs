@@ -102,6 +102,7 @@ namespace ExtraplanetaryLaunchpads {
 			public void Select (int index)
 			{
 				if (index >= 0 && index < Count) {
+					group.SetAllTogglesOff (false);
 					var child = Content.rectTransform.GetChild (index);
 					var view = child.GetComponent<ELCraftItemView> ();
 					view.Select ();

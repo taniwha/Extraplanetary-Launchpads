@@ -99,8 +99,8 @@ namespace ExtraplanetaryLaunchpads {
 					.Alignment (TextAlignmentOptions.Center)
 					.Size (12)
 					.FlexibleLayout (true, false)
-					.Finish ();
-				Finish ();
+					.Finish ()
+				.Finish ();
 		}
 
 		void onSubmit (string str)

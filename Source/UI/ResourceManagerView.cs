@@ -24,7 +24,7 @@ using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELResourceManagerView : Layout
+	public class ELResourceManagerView : Layout, TabController.ITabItem
 	{
 		ResourceGroup.List resourceGroups;
 		ResourceGroup.Dict resourceGroupDict;
@@ -190,5 +190,13 @@ namespace ExtraplanetaryLaunchpads {
 			onTransferableChanged ();
 			RebuildResources (manager);
 		}
+#region TabController.ITabItem
+		public string TabName { get { return ELLocalization.ResourceManager; } }
+		public bool TabEnabled { get { return resourceGroups.Count > 0; } }
+		public void SetTabVisible (bool visible)
+		{
+			SetActive (visible);
+		}
+#endregion
 	}
 }

@@ -19,7 +19,7 @@ using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELBuildManagerView : Layout
+	public class ELBuildManagerView : Layout, TabController.ITabItem
 	{
 		ELStatusBar statusBar;
 		ELPadView padView;
@@ -71,5 +71,13 @@ namespace ExtraplanetaryLaunchpads {
 			statusBar.SetVessel (control.builder.vessel);
 			padView.SetControl (control);
 		}
+#region TabController.ITabItem
+		public string TabName { get { return ELLocalization.BuildManager; } }
+		public bool TabEnabled { get { return padView.control != null; } }
+		public void SetTabVisible (bool visible)
+		{
+			SetActive (visible);
+		}
+#endregion
 	}
 }

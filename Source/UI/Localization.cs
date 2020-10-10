@@ -20,6 +20,8 @@ namespace ExtraplanetaryLaunchpads {
 
 	public static class ELLocalization
 	{
+		public static string BuildManager { get; } = "Build Manager";
+		public static string ResourceManager { get; } = "Resource Manager";
 		public static string Productivity { get; } = "Productivity:";
 		public static string SelectCraft { get; } = "Select Craft";
 		public static string SelectedCraft { get; } = "Selected Craft";

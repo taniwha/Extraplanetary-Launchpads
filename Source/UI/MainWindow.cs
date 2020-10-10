@@ -15,12 +15,15 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
+using System.Collections.Generic;
+
 using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
 	public class ELMainWindow : Window
 	{
+		TabController tabController;
 		ELBuildManagerView buildManager;
 		ELResourceManagerView resourceManager;
 
@@ -37,11 +40,24 @@ namespace ExtraplanetaryLaunchpads {
 				.Pivot(PivotPresets.TopLeft)
 				.PreferredWidth(695)
 
+				.Add<TabController> (out tabController)
+					.Horizontal ()
+					.ControlChildSize (true, true)
+					.ChildForceExpand(false,false)
+					.FlexibleLayout (true, false)
+					.Finish ()
+
 				.Add<ELBuildManagerView> (out buildManager)
 					.Finish ()
 				.Add<ELResourceManagerView> (out resourceManager)
 					.Finish ()
 				.Finish();
+
+			var tabItems = new List<TabController.ITabItem> () {
+				buildManager,
+				resourceManager,
+			};
+			tabController.Items (tabItems);
 		}
 
 		public override void Style ()
@@ -53,11 +69,13 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			buildManager.SetVessel (vessel);
 			resourceManager.SetVessel (vessel);
+			tabController.UpdateTabStates ();
 		}
 
 		public void SetControl (ELBuildControl control)
 		{
 			buildManager.SetControl (control);
+			tabController.UpdateTabStates ();
 		}
 
 		public void SetVisible (bool visible)

@@ -199,7 +199,7 @@ namespace ExtraplanetaryLaunchpads {
 
 
 			relativePath = "";
-			craftThumb.Craft (ELCraftType.SubAss, "");
+			craftThumb.Craft ("");
 
 			craftItems = new ELCraftItem.List (craftGroup);
 			craftItems.Content = craftList.Content;

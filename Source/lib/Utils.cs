@@ -214,6 +214,14 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public static void DisableModules (GameObject obj)
+		{
+			var modules = obj.GetComponentsInChildren<PartModule> ();
+			for (int i = modules.Length; i-- > 0; ) {
+				modules[i].enabled = false;
+			}
+		}
+
 		public static void SetLightMasks (GameObject obj, int mask)
 		{
 			var lights = obj.GetComponentsInChildren<Light> ();

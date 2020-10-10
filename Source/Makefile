@@ -71,6 +71,7 @@ EL_FILES := \
 	UI/CraftItem.cs						\
 	UI/CraftItemView.cs					\
 	UI/CraftThumb.cs					\
+	UI/CraftThumbManager.cs				\
 	UI/CraftTypeSelector.cs				\
 	UI/CraftView.cs						\
 	UI/IResourceLine.cs					\

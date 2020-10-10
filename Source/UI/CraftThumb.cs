@@ -29,26 +29,16 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELCraftThumb : UIImage
 	{
-		static Texture2D genericCraftThumb;
+		ELCraftThumbManager.ThumbSprite thumbSprite;
 
 		public override void CreateUI ()
 		{
-			if (!genericCraftThumb) {
-				genericCraftThumb = AssetBase.GetTexture("craftThumbGeneric");
-			}
-
 			base.CreateUI ();
 
 			this.SizeDelta (256, 256)
 				.MinSize (256, 256)
 				.PreferredSize (256, 256)
 				;
-		}
-
-		protected override void OnDestroy ()
-		{
-			Destroy (image.sprite);
-			base.OnDestroy ();
 		}
 
 		const int thumbLayer = 8;
@@ -94,7 +84,7 @@ namespace ExtraplanetaryLaunchpads {
 				lightObj.transform.SetParent (thumbRig.transform, false);
 				lightObj.transform.localPosition = tetraHedron[i] * thumbLightDist;
 				lightObj.transform.localRotation = Quaternion.LookRotation (-tetraHedron[i], Vector3.up);
-				Debug.Log ($"[ELCraftThumb] CreateRig light {i} {lightObj.transform.localPosition} {lightObj.transform.forward}");
+				//Debug.Log ($"[ELCraftThumb] CreateRig light {i} {lightObj.transform.localPosition} {lightObj.transform.forward}");
 
 				var light = lightObj.AddComponent<Light> ();
 				light.cullingMask = thumbMask;
@@ -133,7 +123,7 @@ namespace ExtraplanetaryLaunchpads {
 			return tex;
 		}
 
-		static IEnumerator capture (ShipConstruct ship, string thumbName)
+		static IEnumerator capture (ShipConstruct ship, string thumbPath, bool savedHL)
 		{
 			yield return null;
 
@@ -144,22 +134,26 @@ namespace ExtraplanetaryLaunchpads {
 
 			var tex = takeSnapshot (ship);
 			var png = tex.EncodeToPNG ();
-			GameObject.Destroy (tex);
 
-			string dir = KSPUtil.ApplicationRootPath + "thumbs/";
-			string path = dir + thumbName + ".png";
+			string dir = KSPUtil.ApplicationRootPath;
+			string path = dir + thumbPath;
+
+			if (!ELCraftThumbManager.UpdateThumbCache (thumbPath, tex)) {
+				GameObject.Destroy (tex);
+			}
 
 			if (!Directory.Exists (dir)) {
 				Directory.CreateDirectory (dir);
 			}
 			File.WriteAllBytes (path, png);
 
-			Debug.Log ($"[ELCraftThumb] capture {path}");
+			//Debug.Log ($"[ELCraftThumb] capture {path}");
 
 			for (int i = ship.parts.Count; i-- > 0; ) {
 				GameObject.Destroy (ship.parts[i].gameObject);
 			}
 
+			HighLogic.LoadedSceneIsEditor = savedHL;
 			thumbRig.SetActive (false);
 		}
 
@@ -168,6 +162,13 @@ namespace ExtraplanetaryLaunchpads {
 			var ship = new ShipConstruct ();
 			ship.LoadShip (craft);
 
+			// Need to keep the parts around for a few frames, but
+			// various modules throw if things are not set up properly (which
+			// they won't be), but tricking the parts and their modules into
+			// thinking they're being placed in the editor fixes things
+			bool savedHL = HighLogic.LoadedSceneIsEditor;
+			HighLogic.LoadedSceneIsEditor = true;
+
 			if (ship.vesselDeltaV != null) {
 				// The delta-v module is not needed. It has its own gameObject
 				// for ShipConstruct.
@@ -175,11 +176,8 @@ namespace ExtraplanetaryLaunchpads {
 				ship.vesselDeltaV = null;
 			}
 			for (int i = ship.parts.Count; i-- > 0; ) {
-				// Need to keep the parts around for a few frames, but
-				// Part.FixedUpdate throws if things are not set up properly
-				// (which they won't be), but setting the state to PLACEMENT
-				// gets around this by tricking the part into thinking its
-				// being placed in the editor
+				// See comment for HighLogic
+				ship.parts[i].ResumeState = PartStates.PLACEMENT;
 				ship.parts[i].State = PartStates.PLACEMENT;
 
 				// Make sure the part and main scene won't interact physcally
@@ -187,6 +185,7 @@ namespace ExtraplanetaryLaunchpads {
 				// not rendered by the scene cameras), and removing the
 				// colliders ensures that the parts can't collide with anything
 				EL_Utils.RemoveColliders (ship.parts[i].gameObject);
+
 				EL_Utils.SetLightMasks (ship.parts[i].gameObject, thumbMask);
 				EL_Utils.SetLayer (ship.parts[i].gameObject, thumbLayer, true);
 			}
@@ -197,7 +196,7 @@ namespace ExtraplanetaryLaunchpads {
 				angles = new Vector2 (45, 45);
 			}
 
-			string thumbName = UserThumbName (craftType, craftFile);
+			string thumbPath = UserPath (craftType, craftFile);
 			if (!thumbRig) {
 				CreateRig ();
 			}
@@ -205,7 +204,7 @@ namespace ExtraplanetaryLaunchpads {
 			// Need to wait a frame for the parts to be renderable
 			// (don't know why, but my guess is to give the various renderers
 			// a chance to set themselves up)
-			HighLogic.fetch.StartCoroutine (capture (ship, thumbName));
+			HighLogic.fetch.StartCoroutine (capture (ship, thumbPath, savedHL));
 		}
 
 		public static string UserThumbName (ELCraftType craftType, string craftFile)
@@ -228,9 +227,10 @@ namespace ExtraplanetaryLaunchpads {
 			return $"thumbs/{UserThumbName (craftType, craftFile)}.png";
 		}
 
+		//FIXME remove
 		public ELCraftThumb Craft (ELCraftType craftType, string craftFile)
 		{
-			string saveDir = HighLogic.SaveFolder;
+			/*string saveDir = HighLogic.SaveFolder;
 			string type = craftType.ToString ();
 			string thumbName = Path.GetFileNameWithoutExtension(craftFile);
 			string thumbPath = $"thumbs/{saveDir}_{type}_{thumbName}.png";
@@ -243,19 +243,24 @@ namespace ExtraplanetaryLaunchpads {
 				EL_Utils.LoadImage (ref thumbTex, thumbPath);
 			}
 			Destroy (image.sprite);
-			image.sprite = EL_Utils.MakeSprite (thumbTex);
+			image.sprite = EL_Utils.MakeSprite (thumbTex);*/
 
 			return this;
 		}
 
+		void onSpriteUpdate (ELCraftThumbManager.ThumbSprite thumbSprite)
+		{
+			image.sprite = thumbSprite.sprite;
+		}
+
 		public ELCraftThumb Craft (string thumbPath)
 		{
-			var thumbTex = GameObject.Instantiate (genericCraftThumb) as Texture2D;
-			bool ok = EL_Utils.LoadImage (ref thumbTex, thumbPath);
-			Debug.Log ($"[ELCraftThumb] Craft {thumbPath} {ok}");
-			Destroy (image.sprite);
-			image.sprite = EL_Utils.MakeSprite (thumbTex);
-
+			if (thumbSprite != null) {
+				thumbSprite.onUpdate.RemoveListener (onSpriteUpdate);
+			}
+			thumbSprite = ELCraftThumbManager.GetThumb (thumbPath);
+			thumbSprite.onUpdate.AddListener (onSpriteUpdate);
+			image.sprite = thumbSprite.sprite;
 			return this;
 		}
 	}

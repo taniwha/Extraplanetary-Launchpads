@@ -329,6 +329,22 @@ namespace ExtraplanetaryLaunchpads {
 			return true;
 		}
 
+		protected override void Awake ()
+		{
+			GameEvents.onGameSceneSwitchRequested.Add (onGameSceneSwitchRequested);
+		}
+
+		protected override void OnDestroy ()
+		{
+			GameEvents.onGameSceneSwitchRequested.Remove (onGameSceneSwitchRequested);
+		}
+
+		void onGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> data)
+		{
+			// scene change is effectively Cancel :)
+			Cancel ();
+		}
+
 		static ELCraftBrowser craftBrowser;
 
 		public static void OpenDialog (ELCraftType craftType, string path,

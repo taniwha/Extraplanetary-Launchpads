@@ -76,7 +76,7 @@ ELGenericCraftThumb.png: EL_UntitledSpacecraft.svg
 	inkscape --export-width=256 --export-height=256 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
 
 clean:
-	rm -f kairyuu.png kairyuu_scaled.png icon_button.png icon_filter*.png ${GUI_ICONS}
+	rm -f ${ICONS} ${FLAGS} ${MISC} ${GUI_ICONS}
 
 install: all
 	mkdir -p ${MODGAMEDATA}/Agencies ${MODGAMEDATA}/Flags

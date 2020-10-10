@@ -25,6 +25,7 @@ FLAGS := \
 	nightheron.png
 
 MISC := \
+	ELGenericCraftThumb.png \
 	kairyuu_scaled.png	\
 	plaque.png
 
@@ -71,6 +72,9 @@ icon_filter_n.png: icon_button.svg
 icon_filter_s.png: icon_button.svg
 	sed -e 's/\#....../#ffffff/g' $^ | inkscape --export-width=32 --export-height=32 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ /dev/stdin
 
+ELGenericCraftThumb.png: EL_UntitledSpacecraft.svg
+	inkscape --export-width=256 --export-height=256 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
+
 clean:
 	rm -f kairyuu.png kairyuu_scaled.png icon_button.png icon_filter*.png ${GUI_ICONS}
 
@@ -79,7 +83,7 @@ install: all
 	cp kairyuu.png kairyuu_scaled.png ${MODGAMEDATA}/Agencies
 	cp nightheron.png ${MODGAMEDATA}/Flags
 	mkdir -p ${MODGAMEDATA}/Textures
-	cp icon_button.png icon_filter*.png plaque.png ${MODGAMEDATA}/Textures
+	cp ELGenericCraftThumb.png icon_button.png icon_filter*.png plaque.png ${MODGAMEDATA}/Textures
 	#cp ${GUI_ICONS} ${MODGAMEDATA}/Textures
 
 .PHONY: all clean install

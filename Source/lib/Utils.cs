@@ -179,6 +179,14 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		static string applicationRoot;
+		public static bool KSPFileExists (string filename)
+		{
+			if (applicationRoot == null) {
+				applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+			}
+			return File.Exists (applicationRoot + filename);
+		}
+
 		public static bool LoadImage (ref Texture2D tex, string filename)
 		{
 			if (applicationRoot == null) {

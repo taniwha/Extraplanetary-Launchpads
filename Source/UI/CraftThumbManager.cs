@@ -51,14 +51,21 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		static string GenericThumbName = "GameData/ExtraplanetaryLaunchpads/Textures/ELGenericCraftThumb.png";
 		static Texture2D genericCraftThumb;
 
 		static Dictionary<string, ThumbSprite> thumbnailCache = new Dictionary<string, ThumbSprite> ();
 		public static ThumbSprite GetThumb (string thumbPath)
 		{
-			// FIXME use new icon :)
 			if (!genericCraftThumb) {
-				genericCraftThumb = AssetBase.GetTexture("craftThumbGeneric");
+				if (EL_Utils.KSPFileExists (GenericThumbName)) {
+					var tex = new Texture2D (256, 256, TextureFormat.ARGB32, false);
+					EL_Utils.LoadImage (ref tex, GenericThumbName);
+					genericCraftThumb = tex;
+				} else {
+					// ick, but better than nothing
+					genericCraftThumb = AssetBase.GetTexture("craftThumbGeneric");
+				}
 			}
 
 			ThumbSprite thumb;
@@ -68,7 +75,6 @@ namespace ExtraplanetaryLaunchpads {
 
 			var thumbTex = GameObject.Instantiate (genericCraftThumb) as Texture2D;
 			bool ok = EL_Utils.LoadImage (ref thumbTex, thumbPath);
-			Debug.Log ($"[ELCraftThumbManager] GetThumb {thumbPath} {ok}");
 			var sprite = EL_Utils.MakeSprite (thumbTex);
 
 			if (thumb == null) {
@@ -85,15 +91,12 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			ThumbSprite thumb;
 			tex.Apply ();
-			Debug.Log ($"[ELCraftThumbManager] UpdateThumbCache {thumbPath} {tex}");
 			if (thumbnailCache.TryGetValue (thumbPath, out thumb)) {
-				Debug.Log ($"    update");
 				GameObject.Destroy (thumb.sprite.texture);
 				GameObject.Destroy (thumb.sprite);
 				thumb.sprite = EL_Utils.MakeSprite (tex);
 				return true;
 			}
-			Debug.Log ($"    new");
 			return false;
 		}
 	}

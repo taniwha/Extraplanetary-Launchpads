@@ -205,5 +205,32 @@ namespace ExtraplanetaryLaunchpads {
 			return Sprite.Create (tex, rect, pivot, pixelsPerUnity, extrude,
 								  type, border);
 		}
+
+		public static void RemoveColliders (GameObject obj)
+		{
+			var colliders = obj.GetComponentsInChildren<Collider> ();
+			for (int i = colliders.Length; i-- > 0; ) {
+				UnityEngine.Object.Destroy (colliders[i]);
+			}
+		}
+
+		public static void SetLightMasks (GameObject obj, int mask)
+		{
+			var lights = obj.GetComponentsInChildren<Light> ();
+			for (int i = lights.Length; i-- > 0; ) {
+				lights[i].cullingMask = mask;
+			}
+		}
+
+		public static void SetLayer (GameObject obj, int layer, bool recursive)
+		{
+			obj.layer = layer;
+			if (recursive) {
+				for (int i = obj.transform.childCount; i-- > 0; ) {
+					var child = obj.transform.GetChild (i).gameObject;
+					SetLayer (child, layer, true);
+				}
+			}
+		}
 	}
 }

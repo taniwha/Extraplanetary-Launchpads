@@ -74,7 +74,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			var thumbTex = GameObject.Instantiate (genericCraftThumb) as Texture2D;
-			bool ok = EL_Utils.LoadImage (ref thumbTex, thumbPath);
+			if (!String.IsNullOrEmpty (thumbPath)) {
+				EL_Utils.LoadImage (ref thumbTex, thumbPath);
+			}
 			var sprite = EL_Utils.MakeSprite (thumbTex);
 
 			if (thumb == null) {

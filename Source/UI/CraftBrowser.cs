@@ -59,6 +59,7 @@ namespace ExtraplanetaryLaunchpads {
 		public ELCraftType craftType { get; private set; }
 
 		ELCraftTypeSelector typeSelector;
+		ELPartSelector partSelector;
 		ScrollView craftList;
 		ELCraftThumb craftThumb;
 		ScrollView craftInfo;
@@ -89,7 +90,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			base.CreateUI ();
 
-			UIScrollbar list_scrollbar;
+			UIScrollbar craftList_scrollbar;
 			UIScrollbar info_scrollbar;
 
 			this.Title (ELLocalization.SelectCraft)
@@ -108,6 +109,9 @@ namespace ExtraplanetaryLaunchpads {
 					.ControlChildSize (true, true)
 					.ChildForceExpand (false,false)
 
+					.Add <ELPartSelector> (out partSelector)
+						.PreferredSize (321, -1)
+						.Finish ()
 					.Add <ScrollView> (out craftList)
 						.Horizontal (false)
 						.Vertical (true)
@@ -115,7 +119,7 @@ namespace ExtraplanetaryLaunchpads {
 						.ControlChildSize (true, true)
 						.ChildForceExpand (false, true)
 						.PreferredSize (321, -1)
-						.Add<UIScrollbar> (out list_scrollbar, "Scrollbar")
+						.Add<UIScrollbar> (out craftList_scrollbar, "Scrollbar")
 							.Direction(Scrollbar.Direction.BottomToTop)
 							.PreferredWidth (15)
 							.Finish ()
@@ -169,7 +173,7 @@ namespace ExtraplanetaryLaunchpads {
 					.Finish ()
 				.Finish ();
 
-			craftList.VerticalScrollbar = list_scrollbar;
+			craftList.VerticalScrollbar = craftList_scrollbar;
 			craftList.Viewport.FlexibleLayout (true, true);
 			craftList.Content
 				.Vertical ()
@@ -279,7 +283,14 @@ namespace ExtraplanetaryLaunchpads {
 			SetActive (true);
 			this.craftType = craftType;
 			relativePath = path;
-			ScanDirectory (craftType, stock, path);
+			if (craftType == ELCraftType.Part) {
+				partSelector.SetVisible (true);
+				craftList.SetActive (false);
+			} else {
+				partSelector.SetVisible (false);
+				craftList.SetActive (true);
+				ScanDirectory (craftType, stock, path);
+			}
 		}
 
 		bool ScanDirectory (ELCraftType type, bool stock, string path)

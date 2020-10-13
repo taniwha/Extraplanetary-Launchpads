@@ -23,7 +23,7 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		ELStatusBar statusBar;
 		ELPadView padView;
-		ELCraftView craftView;
+		ELBuildCraftView craftView;
 		ELBuildView buildView;
 		ELTransferView transferView;
 
@@ -39,7 +39,7 @@ namespace ExtraplanetaryLaunchpads {
 					.Finish()
 				.Add<ELPadView>(out padView, "PadView")
 					.Finish()
-				.Add<ELCraftView>(out craftView, "CraftView")
+				.Add<ELBuildCraftView>(out craftView, "BuildCraftView")
 					.Finish()
 				.Add<ELBuildView>(out buildView, "BuildView")
 					.Finish()

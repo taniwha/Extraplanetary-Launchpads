@@ -73,7 +73,7 @@ EL_FILES := \
 	UI/CraftThumb.cs					\
 	UI/CraftThumbManager.cs				\
 	UI/CraftTypeSelector.cs				\
-	UI/CraftView.cs						\
+	UI/BuildCraftView.cs				\
 	UI/IResourceLine.cs					\
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\

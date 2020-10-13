@@ -30,7 +30,7 @@ using CBDLoadType = KSP.UI.Screens.CraftBrowserDialog.LoadType;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELCraftView : Layout
+	public class ELBuildCraftView : Layout
 	{
 		class RequiredResource : IResourceLine
 		{

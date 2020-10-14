@@ -373,6 +373,12 @@ namespace ExtraplanetaryLaunchpads {
 		}
 #endregion
 
+		class PartSelectionEvent : UnityEvent<bool, bool> { }
+		PartSelectionEvent onSelectionChanged;
+
+		SelectFileCallback OnFileSelected;
+		CancelledCallback OnBrowseCancelled;
+
 		ScrollView categoryView;
 		ScrollView partListView;
 		ELPartList partList;
@@ -384,6 +390,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void CreateUI ()
 		{
+			onSelectionChanged = new PartSelectionEvent ();
+
 			base.CreateUI ();
 
 			UIScrollbar part_scrollbar;
@@ -391,6 +399,7 @@ namespace ExtraplanetaryLaunchpads {
 			this.Horizontal()
 				.ControlChildSize (true, true)
 				.ChildForceExpand (false, true)
+				.PreferredSize (247, 512)
 				.Add<ScrollView> (out categoryView)
 					.Horizontal (false)
 					.Vertical (true)
@@ -449,6 +458,12 @@ namespace ExtraplanetaryLaunchpads {
 			partList = new ELPartList (partGroup);
 			partList.Content = partListView.Content;
 			CreateLight (partListView.transform);
+		}
+
+		public ELPartSelector OnSelectionChanged (UnityAction<bool, bool> action)
+		{
+			onSelectionChanged.AddListener (action);
+			return this;
 		}
 
 		void CreateLight (Transform parent)
@@ -518,10 +533,17 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void SetVisible (bool visible)
+		public void SetDelegates (SelectFileCallback onFileSelected,
+								  CancelledCallback onCancel)
 		{
-			SetActive (visible);
-			if (visible) {
+			OnFileSelected = onFileSelected;
+			OnBrowseCancelled = onCancel;
+		}
+
+		public void SetCraftType (ELCraftType craftType, bool stock)
+		{
+			if (craftType == ELCraftType.Part) {
+				SetActive (true);
 				if (partCategories == null) {
 					BuildCategories ();
 				}
@@ -537,6 +559,7 @@ namespace ExtraplanetaryLaunchpads {
 				Debug.Log ($"[ELPartSelector] SetVisible {categoryList.Count}");
 				UIKit.UpdateListContent (categoryList);
 			} else {
+				SetActive (false);
 				partList.Clear ();
 				UIKit.UpdateListContent (partList);
 			}

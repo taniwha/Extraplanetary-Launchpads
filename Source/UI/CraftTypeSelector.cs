@@ -106,16 +106,21 @@ namespace ExtraplanetaryLaunchpads {
 		{
 		}
 
-		void SetType (ELCraftType type)
+		void UpdateControls ()
 		{
-			if (type == ELCraftType.VAB || type == ELCraftType.SPH) {
+			if (craftType == ELCraftType.VAB || craftType == ELCraftType.SPH) {
 				stockToggle.interactable = true;
 				stockToggle.SetIsOnWithoutNotify (stockCraft);
 			} else {
 				stockToggle.interactable = false;
 				stockToggle.SetIsOnWithoutNotify (false);
 			}
+		}
+
+		void SetType (ELCraftType type)
+		{
 			craftType = type;
+			UpdateControls ();
 			onSelectionChanged.Invoke ();
 		}
 
@@ -129,6 +134,13 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			onSelectionChanged.AddListener (action);
 			return this;
+		}
+
+		public void SetCraftType (ELCraftType craftType, bool stock)
+		{
+			this.craftType = craftType;
+			stockCraft = stock;
+			UpdateControls ();
 		}
 #region ILayoutElement
 		Vector2 minSize;

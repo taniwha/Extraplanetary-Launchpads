@@ -70,6 +70,7 @@ EL_FILES := \
 	UI/CraftBrowser.cs					\
 	UI/CraftItem.cs						\
 	UI/CraftItemView.cs					\
+	UI/CraftSelector.cs					\
 	UI/CraftThumb.cs					\
 	UI/CraftThumbManager.cs				\
 	UI/CraftTypeSelector.cs				\

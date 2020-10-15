@@ -339,8 +339,13 @@ namespace ExtraplanetaryLaunchpads {
 				if (enable) {
 					craftName.Text (control.craftName);
 					StartCoroutine (WaitAndRebuildResources ());
-					if (control.craftBoM != null || control.CreateBoM ()) {
-						craftBoM.Text(String.Join ("\n", control.craftBoM));
+					if (control.craftBoM == null || control.craftBoMdirty) {
+						control.CreateBoM ();
+					}
+					if (control.craftBoM != null) {
+						craftBoM.Text (String.Join ("\n", control.craftBoM));
+					} else {
+						craftBoM.Text ("");
 					}
 					craftThumb.Craft (control.craftType, control.filename);
 				}

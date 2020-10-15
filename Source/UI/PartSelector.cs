@@ -333,6 +333,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			ToggleGroup group;
 
+			public UnityAction<AvailablePart> onSelected { get; set; }
 			public Layout Content { get; set; }
 			public RectTransform RectTransform
 			{
@@ -364,9 +365,7 @@ namespace ExtraplanetaryLaunchpads {
 			void select (int index, bool on)
 			{
 				if (on) {
-					var ap = this[index];
-					Debug.Log ($"[ELPartList] select {index}i {ap.iconScale}");
-					EL_Utils.dumpxform (ap.iconPrefab.transform, false);
+					onSelected.Invoke (this[index]);
 				}
 			}
 		}
@@ -380,8 +379,14 @@ namespace ExtraplanetaryLaunchpads {
 
 		ScrollView categoryView;
 		ScrollView partListView;
+		ELPartPreview partPreview;
+		ScrollView partInfoView;
+		UIText partInfo;
+
 		ELPartList partList;
 		ELPartCategory.List categoryList;
+
+		AvailablePart selectedPart;
 
 		class APList : List<AvailablePart> { }
 		class CategoryDict : Dictionary<PartCategories, APList> { }
@@ -394,11 +399,12 @@ namespace ExtraplanetaryLaunchpads {
 			base.CreateUI ();
 
 			UIScrollbar part_scrollbar;
+			UIScrollbar info_scrollbar;
 
 			this.Horizontal()
 				.ControlChildSize (true, true)
-				.ChildForceExpand (false, true)
-				.PreferredSize (247, 512)
+				.ChildForceExpand (false, false)
+				.PreferredSize (-1, 512)
 				.Add<ScrollView> (out categoryView)
 					.Horizontal (false)
 					.Vertical (true)
@@ -413,9 +419,31 @@ namespace ExtraplanetaryLaunchpads {
 					.ControlChildSize (true, true)
 					.ChildForceExpand (false, true)
 					.FlexibleLayout (true, true)
+					.PreferredSize (215, 512)
 					.Add<UIScrollbar> (out part_scrollbar, "Scrollbar")
 						.Direction(Scrollbar.Direction.BottomToTop)
 						.PreferredWidth (15)
+						.Finish ()
+					.Finish ()
+				.Add<Layout> ()
+					.Vertical ()
+					.ControlChildSize (true, true)
+					.ChildForceExpand (false, false)
+					.FlexibleLayout (true, true)
+					.Add<ELPartPreview> (out partPreview)
+						.PreferredSize (256, 256)
+						.Finish ()
+					.Add<ScrollView> (out partInfoView)
+						.Horizontal (false)
+						.Vertical (true)
+						.Horizontal()
+						.ControlChildSize (true, true)
+						.ChildForceExpand (false, true)
+						.FlexibleLayout (true, true)
+						.Add<UIScrollbar> (out info_scrollbar, "Scrollbar")
+							.Direction(Scrollbar.Direction.BottomToTop)
+							.PreferredWidth (15)
+							.Finish ()
 						.Finish ()
 					.Finish ()
 				;
@@ -456,7 +484,39 @@ namespace ExtraplanetaryLaunchpads {
 
 			partList = new ELPartList (partGroup);
 			partList.Content = partListView.Content;
+			partList.onSelected = OnSelected;
 			CreateLight (partListView.transform);
+
+			partInfoView.VerticalScrollbar = info_scrollbar;
+			partInfoView.Viewport.FlexibleLayout (true, true);
+			partInfoView.Content
+				.Vertical ()
+				.ControlChildSize (true, true)
+				.ChildForceExpand (false, false)
+				.Anchor (AnchorPresets.HorStretchTop)
+				.PreferredSizeFitter(true, false)
+				.WidthDelta(0)
+				.Add<UIText> (out partInfo)
+					.Alignment (TextAlignmentOptions.TopLeft)
+					.FlexibleLayout (true, true)
+					.Finish ()
+				.Finish ();
+		}
+
+		public override void Style ()
+		{
+		}
+
+		void OnSelected (AvailablePart availablePart)
+		{
+			if (availablePart != null) {
+				selectedPart = availablePart;
+				partPreview.AvailablePart (availablePart);
+				partInfo.Text (availablePart.title);
+			} else {
+				partPreview.AvailablePart (null);
+				partInfo.Text ("");
+			}
 		}
 
 		public ELPartSelector OnSelectionChanged (UnityAction<bool, bool> action)
@@ -486,10 +546,6 @@ namespace ExtraplanetaryLaunchpads {
 				var item = parts.GetChild (i).GetComponent<ELPartItemView> ();
 				TTC.SetScreenSpaceMaskMaterials (item.materials);
 			}
-		}
-
-		public override void Style ()
-		{
 		}
 
 		void CategorySelected (PartCategories category)

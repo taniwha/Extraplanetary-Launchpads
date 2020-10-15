@@ -82,6 +82,7 @@ EL_FILES := \
 	UI/PadLaunchpadView.cs				\
 	UI/PadSurveyView.cs					\
 	UI/PadView.cs						\
+	UI/PartPreview.cs					\
 	UI/PartSelector.cs					\
 	UI/RenameDialog.cs					\
 	UI/ResourceDisplay.cs				\

@@ -115,7 +115,6 @@ namespace ExtraplanetaryLaunchpads {
 						.Add<ELPartCategoryView> ()
 							.Group (group)
 							.Category (this[index])
-							.DebugLayout ()
 							.Finish ()
 						;
 				}
@@ -516,7 +515,10 @@ namespace ExtraplanetaryLaunchpads {
 				var ap = PartLoader.LoadedPartsList[i];
 				var cat = ap.category;
 				if (cat == PartCategories.none) {
-					if (ap.TechRequired == "Unresearcheable") {
+					if (ap.TechHidden || ap.TechRequired == "Unresearcheable") {
+						continue;
+					}
+					if (ap.name.StartsWith ("kerbalEVA") || ap.name == "flag") {
 						continue;
 					}
 				} else if (cat == PartCategories.Propulsion) {

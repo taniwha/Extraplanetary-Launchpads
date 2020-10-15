@@ -656,9 +656,23 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void LoadPart ()
 		{
+			string basePath = KSPUtil.ApplicationRootPath;
+			string profile = HighLogic.SaveFolder;
+			string saveDir = "Parts/";
+			string craft = "autopart.craft";
+			string dir = $"{basePath}saves/{profile}/{saveDir}";
+
+			string fullPath = $"{dir}{craft}";
+
 			ConfigNode node = CreateShip (selectedPart);
-			Debug.Log ($"[ELPartSelector] LoadPart {selectedPart.title}\n{node}");
-			OnFileSelected (node.ToString (), ELCraftType.Part);
+
+			Debug.Log ($"[ELPartSelector] LoadPart {selectedPart.title} {fullPath}\n{node}");
+			if (!Directory.Exists (dir)) {
+				Directory.CreateDirectory (dir);
+			}
+			node.Save (fullPath);
+
+			OnFileSelected (fullPath, ELCraftType.Part);
 		}
 	}
 }

@@ -21,18 +21,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using TMPro;
 
 using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELPartPreview : UIObject
+	public class ELPartPreview : UIObject,
+								 IBeginDragHandler,
+								 IDragHandler,
+								 IEndDragHandler
 	{
 		GameObject partIcon;
+		RectTransform canvasRect;
 
 		public override void CreateUI ()
 		{
+			gameObject.AddComponent<Touchable> ();
+
+			var canvas = GetComponentInParent <Canvas> ();
+			canvasRect = canvas.GetComponent <RectTransform> ();
+
 			this.Pivot (PivotPresets.MiddleCenter);
 		}
 
@@ -70,5 +80,63 @@ namespace ExtraplanetaryLaunchpads {
 			EL_Utils.SetLayer (partIcon, layer, true);
 			return this;
 		}
+
+#region dragging
+		const float r = 1;
+		const float t = r * r / 2;
+		Vector3 TrackballVector (Vector2 xyVec)
+		{
+			float d = xyVec.x * xyVec.x + xyVec.y * xyVec.y;
+			Vector3 vec = xyVec;
+
+			if (d < t) {
+				vec.z = -Mathf.Sqrt (r * r - d);
+			} else {
+				vec.z = -t / Mathf.Sqrt (d);
+			}
+			return vec;
+		}
+
+		Quaternion DragRotation (PointerEventData eventData)
+		{
+			var rect = rectTransform.rect;
+			float invSize = 2 / Mathf.Min (rect.width, rect.height);
+
+			Camera cam = eventData.pressEventCamera;
+			Vector2 delta = eventData.delta;
+			Vector2 endPos = eventData.position;
+			Vector2 startPos = endPos - delta;
+
+			RectTransformUtility.ScreenPointToLocalPointInRectangle (canvasRect, endPos, cam, out endPos);
+			RectTransformUtility.ScreenPointToLocalPointInRectangle (canvasRect, startPos, cam, out startPos);
+
+			endPos = endPos * invSize - Vector2.one;
+			startPos = startPos * invSize - Vector2.one;
+
+			Vector3 end = TrackballVector (endPos);
+			Vector3 start = TrackballVector (startPos);
+
+			Vector3 axis = Vector3.Cross (start, end);
+
+			float angle = delta.magnitude * invSize * 60;
+
+			return Quaternion.AngleAxis (angle, axis);
+		}
+
+		public void OnBeginDrag (PointerEventData eventData)
+		{
+		}
+
+		public void OnDrag (PointerEventData eventData)
+		{
+			Quaternion q = DragRotation (eventData);
+			Quaternion rot = partIcon.transform.rotation;
+			partIcon.transform.rotation = q * rot;
+		}
+
+		public void OnEndDrag (PointerEventData eventData)
+		{
+		}
+#endregion
 	}
 }

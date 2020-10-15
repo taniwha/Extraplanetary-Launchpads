@@ -103,7 +103,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			SetActive (false);
 			if (craftType == ELCraftType.Part) {
-				//partSelector
+				partSelector.LoadPart ();
 			} else {
 				craftSelector.LoadCraft ();
 			}
@@ -120,7 +120,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void CraftTypeSelected ()
 		{
-			var craftType = typeSelector.craftType;
+			craftType = typeSelector.craftType;
 			var stockCraft = typeSelector.stockCraft;
 			craftSelector.SetCraftType (craftType, stockCraft);
 			partSelector.SetCraftType (craftType, stockCraft);

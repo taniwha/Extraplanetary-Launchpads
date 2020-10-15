@@ -513,9 +513,11 @@ namespace ExtraplanetaryLaunchpads {
 				selectedPart = availablePart;
 				partPreview.AvailablePart (availablePart);
 				partInfo.Text (availablePart.title);
+				onSelectionChanged.Invoke (true, Mouse.Left.GetDoubleClick (true));
 			} else {
 				partPreview.AvailablePart (null);
 				partInfo.Text ("");
+				onSelectionChanged.Invoke (false, false);
 			}
 		}
 
@@ -621,6 +623,42 @@ namespace ExtraplanetaryLaunchpads {
 				partList.Clear ();
 				UIKit.UpdateListContent (partList);
 			}
+		}
+
+		static ConfigNode CreateShip(AvailablePart availablePart)
+		{
+			var part = GameObject.Instantiate (availablePart.partPrefab) as Part;
+			ConfigNode node = new ConfigNode();
+
+			node.AddValue("ship", availablePart.title);
+			node.AddValue("version", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision);
+			node.AddValue("description", "EL constructed part");
+			node.AddValue("type", "VAB");
+			node.AddValue("persistentId", 0);
+			node.AddValue("rot", Quaternion.identity);
+			node.AddValue("vesselType", part.vesselType);
+
+			part.onBackup();
+			ConfigNode partNode = node.AddNode("PART");
+
+			partNode.AddValue("part", part.partInfo.name + "_" + part.craftID);
+			partNode.AddValue("partName", part.partName);
+			partNode.AddValue("persistentId", part.persistentId);
+			partNode.AddValue("pos", Vector3.zero);
+			partNode.AddValue("attPos", Vector3.zero);
+			partNode.AddValue("attPos0", Vector3.zero);
+			partNode.AddValue("rot", Quaternion.identity);
+			partNode.AddValue("attRot", Quaternion.identity);
+			partNode.AddValue("attRot0", Quaternion.identity);
+
+			return node;
+		}
+
+		public void LoadPart ()
+		{
+			ConfigNode node = CreateShip (selectedPart);
+			Debug.Log ($"[ELPartSelector] LoadPart {selectedPart.title}\n{node}");
+			OnFileSelected (node.ToString (), ELCraftType.Part);
 		}
 	}
 }

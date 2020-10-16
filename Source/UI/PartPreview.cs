@@ -34,14 +34,10 @@ namespace ExtraplanetaryLaunchpads {
 								 IEndDragHandler
 	{
 		GameObject partIcon;
-		RectTransform canvasRect;
 
 		public override void CreateUI ()
 		{
 			gameObject.AddComponent<Touchable> ();
-
-			var canvas = GetComponentInParent <Canvas> ();
-			canvasRect = canvas.GetComponent <RectTransform> ();
 
 			this.Pivot (PivotPresets.MiddleCenter);
 		}
@@ -107,11 +103,13 @@ namespace ExtraplanetaryLaunchpads {
 			Vector2 endPos = eventData.position;
 			Vector2 startPos = endPos - delta;
 
-			RectTransformUtility.ScreenPointToLocalPointInRectangle (canvasRect, endPos, cam, out endPos);
-			RectTransformUtility.ScreenPointToLocalPointInRectangle (canvasRect, startPos, cam, out startPos);
+			RectTransformUtility.ScreenPointToLocalPointInRectangle (rectTransform, endPos, cam, out endPos);
+			RectTransformUtility.ScreenPointToLocalPointInRectangle (rectTransform, startPos, cam, out startPos);
 
-			endPos = endPos * invSize - Vector2.one;
-			startPos = startPos * invSize - Vector2.one;
+			// The pivot is at the center of the rect, so the converted point's
+			// origin is at the center so no need to offset.
+			endPos = endPos * invSize;
+			startPos = startPos * invSize;
 
 			Vector3 end = TrackballVector (endPos);
 			Vector3 start = TrackballVector (startPos);
@@ -120,6 +118,13 @@ namespace ExtraplanetaryLaunchpads {
 
 			float angle = delta.magnitude * invSize * 60;
 
+			//Debug.Log ($"[ELPartPreview] DragRotation");
+			//Debug.Log ($"    s:({startPos.x}, {startPos.y})");
+			//Debug.Log ($"    e:({endPos.x}, {endPos.y})");
+			//Debug.Log ($"    s:({start.x}, {start.y}, {start.z})");
+			//Debug.Log ($"    e:({end.x}, {end.y}, {end.z})");
+			//Debug.Log ($"    a:({axis.x}, {axis.y}, {axis.z})");
+			//Debug.Log ($"    {angle}");
 			return Quaternion.AngleAxis (angle, axis);
 		}
 
@@ -132,6 +137,7 @@ namespace ExtraplanetaryLaunchpads {
 			Quaternion q = DragRotation (eventData);
 			Quaternion rot = partIcon.transform.rotation;
 			partIcon.transform.rotation = q * rot;
+			//Debug.Log ($"    q:({q.x}, {q.y}, {q.z}, {q.w})");
 		}
 
 		public void OnEndDrag (PointerEventData eventData)

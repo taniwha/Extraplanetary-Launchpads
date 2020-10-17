@@ -3,6 +3,7 @@ refurbish
 	Ablator
 	Parachutes
 	... (resources with resource recipes)
+	Part upgrades (can upgrade to a craft file with a similar enough parts list)
 
 somehow mark parts as not being buildable
 	requested by lgg

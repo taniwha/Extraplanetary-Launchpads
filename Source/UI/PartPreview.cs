@@ -52,9 +52,18 @@ namespace ExtraplanetaryLaunchpads {
 			Destroy (partIcon);
 		}
 
+		protected override void OnEnable ()
+		{
+			base.OnEnable ();
+
+			ELPartListLight.Enable ();
+		}
+
 		protected override void OnDisable ()
 		{
 			base.OnDisable ();
+
+			ELPartListLight.Disable ();
 			Destroy (partIcon);
 		}
 

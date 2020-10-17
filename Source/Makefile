@@ -84,6 +84,7 @@ EL_FILES := \
 	UI/PadSurveyView.cs					\
 	UI/PadView.cs						\
 	UI/PartEditor.cs					\
+	UI/PartListLight.cs					\
 	UI/PartPreview.cs					\
 	UI/PartSelector.cs					\
 	UI/RenameDialog.cs					\

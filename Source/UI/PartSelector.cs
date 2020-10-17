@@ -485,7 +485,6 @@ namespace ExtraplanetaryLaunchpads {
 			partList = new ELPartList (partGroup);
 			partList.Content = partListView.Content;
 			partList.onSelected = OnSelected;
-			CreateLight (partListView.transform);
 
 			partInfoView.VerticalScrollbar = info_scrollbar;
 			partInfoView.Viewport.FlexibleLayout (true, true);
@@ -501,6 +500,16 @@ namespace ExtraplanetaryLaunchpads {
 					.FlexibleLayout (true, true)
 					.Finish ()
 				.Finish ();
+		}
+
+		protected override void OnEnable ()
+		{
+			ELPartListLight.Enable ();
+		}
+
+		protected override void OnDisable ()
+		{
+			ELPartListLight.Disable ();
 		}
 
 		public override void Style ()
@@ -525,18 +534,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			onSelectionChanged.AddListener (action);
 			return this;
-		}
-
-		void CreateLight (Transform parent)
-		{
-			var lightObj = new GameObject ("ELPartList light");
-			lightObj.transform.SetParent (parent, false);
-
-			var light = lightObj.AddComponent<Light> ();
-			light.type = LightType.Directional;
-			light.intensity = 0.5f;
-			light.colorTemperature = 6570;
-			light.cullingMask = 0x2000020;
 		}
 
 		void onPartListUpdate (Vector2 pos)

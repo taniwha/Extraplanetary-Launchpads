@@ -65,5 +65,11 @@ namespace ExtraplanetaryLaunchpads {
 		public static string SubAss { get; } = "Sub";
 		public static string Part { get; } = "Part"; // #autoLOC_6100048
 		public static string StockVessels { get; } = "Stock Vessels";
+		public static string New { get; } = "New";
+		public static string Edit { get; } = "Edit";
+		public static string PartEditor { get; } = "Part Editor";
+		public static string Save { get; } = "Save";
+		public static string SaveAndClose { get; } = "Save and Close";
+		public static string Close { get; } = "Close";
 	}
 }

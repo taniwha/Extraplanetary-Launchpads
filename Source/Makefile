@@ -76,12 +76,14 @@ EL_FILES := \
 	UI/CraftTypeSelector.cs				\
 	UI/BuildCraftView.cs				\
 	UI/IResourceLine.cs					\
+	UI/Layout.cs						\
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
 	UI/MiniToggle.cs					\
 	UI/PadLaunchpadView.cs				\
 	UI/PadSurveyView.cs					\
 	UI/PadView.cs						\
+	UI/PartEditor.cs					\
 	UI/PartPreview.cs					\
 	UI/PartSelector.cs					\
 	UI/RenameDialog.cs					\

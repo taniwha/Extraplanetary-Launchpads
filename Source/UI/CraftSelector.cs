@@ -46,9 +46,13 @@ namespace ExtraplanetaryLaunchpads {
 
 		ScrollView craftList;
 		ELCraftThumb craftThumb;
+		Layout partButtons;
 		ScrollView craftInfo;
 		UIText craftDescription;
+
 		UIButton generateThumb;
+		UIButton partNew;
+		UIButton partEdit;
 
 		ELCraftItem.List craftItems;
 		ToggleGroup craftGroup;
@@ -98,6 +102,19 @@ namespace ExtraplanetaryLaunchpads {
 							.Anchor (AnchorPresets.StretchAll)
 							.SizeDelta (0, 0)
 							.Color (new UnityEngine.Color (0,0,0,0))
+							.Finish ()
+						.Finish ()
+					.Add<Layout> (out partButtons)
+						.Horizontal ()
+						.ControlChildSize (true, true)
+						.ChildForceExpand (false,false)
+						.Add<UIButton> (out partNew)
+							.Text (ELLocalization.New)
+							.OnClick (CreatePart)
+							.Finish ()
+						.Add<UIButton> (out partEdit)
+							.Text (ELLocalization.Edit)
+							.OnClick (EditPart)
 							.Finish ()
 						.Finish ()
 					.Add<ScrollView> (out craftInfo)
@@ -165,6 +182,16 @@ namespace ExtraplanetaryLaunchpads {
 								  selectedCraft.fullPath);
 		}
 
+		void CreatePart ()
+		{
+			ELPartEditor.OpenEditor (null);
+		}
+
+		void EditPart ()
+		{
+			ELPartEditor.OpenEditor (selectedCraft);
+		}
+
 		string relativePath;
 
 		void pipelineSucceed (ConfigNode node, ELCraftItem craft)
@@ -209,9 +236,11 @@ namespace ExtraplanetaryLaunchpads {
 			if (selectedCraft != null) {
 				craftThumb.Craft (selectedCraft.thumbPath);
 				craftDescription.Text (selectedCraft.description);
+				partEdit.interactable = true;
 			} else {
 				craftDescription.Text ("");
 				craftThumb.Craft ("");
+				partEdit.interactable = false;
 			}
 		}
 
@@ -224,12 +253,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetCraftType (ELCraftType craftType, bool stock)
 		{
-			if (craftType != ELCraftType.Part) {
-				SetActive (true);
-				SetRelativePath (craftType, stock, "");
-			} else {
-				SetActive (false);
-			}
+			SetActive (true);
+			SetRelativePath (craftType, stock, "");
+			partButtons.SetActive (craftType == ELCraftType.Part);
 		}
 
 		void SetRelativePath (ELCraftType craftType, bool stock, string path)
@@ -262,6 +288,13 @@ namespace ExtraplanetaryLaunchpads {
 						Directory.CreateDirectory (subassPath);
 					}
 					path = $"{subassPath}{path}";
+					break;
+				case ELCraftType.Part:
+					var partsPath = $"{basePath}Parts/";
+					if (!Directory.Exists (partsPath)) {
+						Directory.CreateDirectory (partsPath);
+					}
+					path = $"{partsPath}{path}";
 					break;
 			}
 

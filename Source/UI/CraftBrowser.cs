@@ -47,7 +47,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		ELCraftTypeSelector typeSelector;
 		ELCraftSelector craftSelector;
-		ELPartSelector partSelector;
 		UIButton loadButton;
 
 		public override void CreateUI ()
@@ -60,13 +59,10 @@ namespace ExtraplanetaryLaunchpads {
 				.ChildForceExpand (false,false)
 				.PreferredSizeFitter (true, true)
 				.Anchor (AnchorPresets.MiddleCenter)
-				.Pivot (PivotPresets.MiddleCenter)
+				.Pivot (PivotPresets.TopLeft)
 				.Add <ELCraftTypeSelector> (out typeSelector)
 					.OnSelectionChanged (CraftTypeSelected)
 					.FlexibleLayout (true, true)
-					.Finish ()
-				.Add <ELPartSelector> (out partSelector)
-					.OnSelectionChanged (OnSelectionChanged)
 					.Finish ()
 				.Add <ELCraftSelector> (out craftSelector)
 					.OnSelectionChanged (OnSelectionChanged)
@@ -102,11 +98,7 @@ namespace ExtraplanetaryLaunchpads {
 		void LoadSelection ()
 		{
 			SetActive (false);
-			if (craftType == ELCraftType.Part) {
-				partSelector.LoadPart ();
-			} else {
-				craftSelector.LoadCraft ();
-			}
+			craftSelector.LoadCraft ();
 		}
 
 		void OnSelectionChanged (bool canLoad, bool doLoad)
@@ -123,7 +115,6 @@ namespace ExtraplanetaryLaunchpads {
 			craftType = typeSelector.craftType;
 			var stockCraft = typeSelector.stockCraft;
 			craftSelector.SetCraftType (craftType, stockCraft);
-			partSelector.SetCraftType (craftType, stockCraft);
 		}
 
 		void SetDelegates (SelectFileCallback onFileSelected,
@@ -132,7 +123,6 @@ namespace ExtraplanetaryLaunchpads {
 			OnFileSelected = onFileSelected;
 			OnBrowseCancelled = onCancel;
 			craftSelector.SetDelegates (onFileSelected, onCancel);
-			partSelector.SetDelegates (onFileSelected, onCancel);
 		}
 
 		void SetCraftType (ELCraftType craftType, bool stock)
@@ -140,7 +130,6 @@ namespace ExtraplanetaryLaunchpads {
 			SetActive (true);
 			typeSelector.SetCraftType (craftType, stock);
 			craftSelector.SetCraftType (craftType, stock);
-			partSelector.SetCraftType (craftType, stock);
 		}
 
 		protected override void Awake ()

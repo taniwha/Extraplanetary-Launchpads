@@ -78,7 +78,11 @@ namespace ExtraplanetaryLaunchpads {
 								.Finish ()
 							.Finish ()
 						.Add<UIInputField> ()
+							.LineType (TMP_InputField.LineType.MultiLineNewline)
+							.OnFocusGained (SetControlLock)
+							.OnFocusLost (ClearControlLock)
 							.FlexibleLayout (true, true)
+							.PreferredSize (-1, 128)
 							.Finish ()
 						.Finish ()
 					.Add<VerticalLayout> (out tweakables)
@@ -93,6 +97,16 @@ namespace ExtraplanetaryLaunchpads {
 					.FlexibleLayout (true, false)
 					.Finish ()
 				.Finish ();
+		}
+
+		static void SetControlLock (string str = null)
+		{
+			InputLockManager.SetControlLock ("ELPartEditor_lock");
+		}
+
+		static void ClearControlLock (string str = null)
+		{
+			InputLockManager.RemoveControlLock ("ELPartEditor_lock");
 		}
 
 		void Save ()

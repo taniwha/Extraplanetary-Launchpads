@@ -773,7 +773,8 @@ namespace ExtraplanetaryLaunchpads {
 
 				str = craftConfig.GetValue ("description");
 				if (!string.IsNullOrEmpty (str)) {
-					craftBoM.Add (Localizer.Format(str));
+					str = Localizer.Format(str).Replace ('¨', '\n');
+					craftBoM.Add (str);
 					craftBoM.Add ("");	// blank line
 				}
 				foreach (var part in craftConfig.GetNodes ("PART")) {

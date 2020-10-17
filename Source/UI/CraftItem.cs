@@ -62,6 +62,7 @@ namespace ExtraplanetaryLaunchpads {
 				info.LoadDetailsFromCraftFile (node, craftPath);
 				this.node = node;
 			}
+			info.description = info.description.Replace ('¨', '\n');
 			this.thumbPath = thumbPath;
 			type = craftType;
 		}

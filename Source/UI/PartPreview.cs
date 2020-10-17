@@ -58,9 +58,23 @@ namespace ExtraplanetaryLaunchpads {
 			Destroy (partIcon);
 		}
 
+		protected override void OnRectTransformDimensionsChange ()
+		{
+			if (partIcon) {
+				var rect = rectTransform.rect;
+				float size = Mathf.Min (rect.width, rect.height) / 2;
+				partIcon.transform.localPosition = new Vector3 (0, 0, -size);
+				partIcon.transform.localScale = Vector3.one * size;
+			}
+		}
+
 		public ELPartPreview AvailablePart (AvailablePart availablePart)
 		{
 			Destroy (partIcon);
+
+			if (availablePart == null) {
+				return this;
+			}
 
 			var rect = rectTransform.rect;
 			float size = Mathf.Min (rect.width, rect.height) / 2;

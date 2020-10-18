@@ -35,6 +35,9 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		ELPartPreview partPreview;
 		VerticalLayout tweakables;
+		UIInputField descriptionInput;
+
+		Part part;
 
 		public override void CreateUI ()
 		{
@@ -77,7 +80,7 @@ namespace ExtraplanetaryLaunchpads {
 								.PreferredSize (256, 256)
 								.Finish ()
 							.Finish ()
-						.Add<UIInputField> ()
+						.Add<UIInputField> (out descriptionInput)
 							.LineType (TMP_InputField.LineType.MultiLineNewline)
 							.OnFocusGained (SetControlLock)
 							.OnFocusLost (ClearControlLock)
@@ -127,6 +130,26 @@ namespace ExtraplanetaryLaunchpads {
 		void EditPart (ELCraftItem editPart)
 		{
 			SetActive (true);
+			descriptionInput.text = "EL constructed part";
+			if (part) {
+				Destroy (part.gameObject);
+			}
+			part = null;
+			partPreview.AvailablePart (null);
+			if (editPart != null) {
+				var node = editPart.node;
+				if (node.HasValue ("description")) {
+					string description = node.GetValue ("description");
+					descriptionInput.text = description.Replace ('¨', '\n');
+				}
+				var partNode = node.GetNode ("PART");
+				string partName = partNode.GetValue ("part").Split ('_')[0];
+
+				var partInfo = PartLoader.getPartInfoByName (partName);
+				if (partInfo != null) {
+					partPreview.AvailablePart (partInfo);
+				}
+			}
 		}
 
 		static ELPartEditor partEditor;

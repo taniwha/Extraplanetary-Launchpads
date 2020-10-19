@@ -31,7 +31,7 @@ using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELPartEditor : Window
+	public class ELPartEditorWindow : Window
 	{
 		ELPartPreview partPreview;
 		VerticalLayout tweakables;
@@ -152,13 +152,13 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		static ELPartEditor partEditor;
+		static ELPartEditorWindow partEditorWindow;
 		public static void OpenEditor (ELCraftItem editPart)
 		{
-			if (!partEditor) {
-				partEditor = UIKit.CreateUI<ELPartEditor> (ELWindowManager.appCanvasRect, "ELPartEditor");
+			if (!partEditorWindow) {
+				partEditorWindow = UIKit.CreateUI<ELPartEditorWindow> (ELWindowManager.appCanvasRect, "ELPartEditorWindow");
 			}
-			partEditor.EditPart (editPart);
+			partEditorWindow.EditPart (editPart);
 		}
 	}
 }

@@ -184,12 +184,12 @@ namespace ExtraplanetaryLaunchpads {
 
 		void CreatePart ()
 		{
-			ELPartEditor.OpenEditor (null);
+			ELPartEditorWindow.OpenEditor (null);
 		}
 
 		void EditPart ()
 		{
-			ELPartEditor.OpenEditor (selectedCraft);
+			ELPartEditorWindow.OpenEditor (selectedCraft);
 		}
 
 		string relativePath;

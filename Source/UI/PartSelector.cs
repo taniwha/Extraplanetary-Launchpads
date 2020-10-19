@@ -290,22 +290,6 @@ namespace ExtraplanetaryLaunchpads {
 				return this;
 			}
 
-			static Material []CollectMaterials (GameObject obj)
-			{
-				var materials = new List<Material> ();
-				var renderers = obj.GetComponentsInChildren<Renderer> ();
-				for (int i = renderers.Length; i-- > 0; ) {
-					var mats = renderers[i].materials;
-					for (int j = mats.Length; j-- > 0; ) {
-						if (!mats[j].HasProperty (PropertyIDs._MinX)) {
-							continue;
-						}
-						materials.Add (mats[j]);
-					}
-				}
-				return materials.ToArray ();
-			}
-
 			public ELPartItemView AvailablePart (AvailablePart availablePart)
 			{
 				if (partIcon) {
@@ -322,7 +306,15 @@ namespace ExtraplanetaryLaunchpads {
 				partIcon.SetActive(true);
 				int layer = LayerMask.NameToLayer ("UIAdditional");
 				EL_Utils.SetLayer (partIcon, layer, true);
-				materials = CollectMaterials (partIcon);
+
+				materials = EL_Utils.CollectMaterials (partIcon);
+
+				if (availablePart.Variants != null
+					&& availablePart.Variants.Count > 0) {
+					var variant = availablePart.partPrefab.baseVariant;
+					ModulePartVariants.ApplyVariant (null, partIcon.transform,
+													 variant, materials, true);
+				}
 				return this;
 			}
 		}

@@ -34,6 +34,7 @@ namespace ExtraplanetaryLaunchpads {
 								 IEndDragHandler
 	{
 		GameObject partIcon;
+		Material []materials;
 
 		public override void CreateUI ()
 		{
@@ -97,6 +98,15 @@ namespace ExtraplanetaryLaunchpads {
 			partIcon.SetActive(true);
 			int layer = LayerMask.NameToLayer ("UIAdditional");
 			EL_Utils.SetLayer (partIcon, layer, true);
+
+			materials = EL_Utils.CollectMaterials (partIcon);
+
+			if (availablePart.Variants != null
+				&& availablePart.Variants.Count > 0) {
+				var variant = availablePart.partPrefab.baseVariant;
+				ModulePartVariants.ApplyVariant (null, partIcon.transform,
+												 variant, materials, true);
+			}
 			return this;
 		}
 

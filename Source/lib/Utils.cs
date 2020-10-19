@@ -248,5 +248,21 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 		}
+
+		public static Material []CollectMaterials (GameObject obj)
+		{
+			var materials = new List<Material> ();
+			var renderers = obj.GetComponentsInChildren<Renderer> ();
+			for (int i = renderers.Length; i-- > 0; ) {
+				var mats = renderers[i].materials;
+				for (int j = mats.Length; j-- > 0; ) {
+					if (!mats[j].HasProperty (PropertyIDs._MinX)) {
+						continue;
+					}
+					materials.Add (mats[j]);
+				}
+			}
+			return materials.ToArray ();
+		}
 	}
 }

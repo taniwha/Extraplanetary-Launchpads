@@ -23,8 +23,10 @@ namespace ExtraplanetaryLaunchpads {
 		public static string BuildManager { get; } = "Build Manager";
 		public static string ResourceManager { get; } = "Resource Manager";
 		public static string Productivity { get; } = "Productivity:";
+		public static string Select { get; } = "Select";
 		public static string SelectCraft { get; } = "Select Craft";
 		public static string SelectedCraft { get; } = "Selected Craft";
+		public static string SelectPart { get; } = "Select Part";
 		public static string Reload { get; } = "Reload";
 		public static string Clear { get; } = "Clear";
 		public static string Pad { get; } = "pad";

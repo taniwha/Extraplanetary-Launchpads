@@ -33,6 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 								 IDragHandler,
 								 IEndDragHandler
 	{
+		bool noDestroy;
 		GameObject partIcon;
 		Material []materials;
 
@@ -56,7 +57,7 @@ namespace ExtraplanetaryLaunchpads {
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
-
+			Debug.Log ($"[ELPartPreview] OnEnable {noDestroy}");
 			ELPartListLight.Enable ();
 		}
 
@@ -64,8 +65,11 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			base.OnDisable ();
 
+			Debug.Log ($"[ELPartPreview] OnDisable {noDestroy}");
 			ELPartListLight.Disable ();
-			Destroy (partIcon);
+			if (!noDestroy) {
+				Destroy (partIcon);
+			}
 		}
 
 		protected override void OnRectTransformDimensionsChange ()
@@ -78,17 +82,13 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public ELPartPreview AvailablePart (AvailablePart availablePart)
+		void PartIcon (GameObject partIcon)
 		{
-			Destroy (partIcon);
-
-			if (availablePart == null) {
-				return this;
-			}
+			this.partIcon = partIcon;
 
 			var rect = rectTransform.rect;
 			float size = Mathf.Min (rect.width, rect.height) / 2;
-			partIcon = GameObject.Instantiate (availablePart.iconPrefab);
+
 			partIcon.transform.SetParent (rectTransform, false);
 			partIcon.transform.localPosition = new Vector3 (0, 0, -size);
 			partIcon.transform.localScale = Vector3.one * size;
@@ -100,6 +100,19 @@ namespace ExtraplanetaryLaunchpads {
 			EL_Utils.SetLayer (partIcon, layer, true);
 
 			materials = EL_Utils.CollectMaterials (partIcon);
+		}
+
+		public ELPartPreview AvailablePart (AvailablePart availablePart)
+		{
+			Destroy (partIcon);
+
+			if (availablePart == null) {
+				return this;
+			}
+
+			noDestroy = false;
+
+			PartIcon (GameObject.Instantiate (availablePart.iconPrefab));
 
 			if (availablePart.Variants != null
 				&& availablePart.Variants.Count > 0) {
@@ -107,6 +120,28 @@ namespace ExtraplanetaryLaunchpads {
 				ModulePartVariants.ApplyVariant (null, partIcon.transform,
 												 variant, materials, true);
 			}
+			return this;
+		}
+
+		public ELPartPreview Part (Part part)
+		{
+			Destroy (partIcon);
+
+			if (part == null) {
+				return this;
+			}
+
+			noDestroy = true;
+
+			// the icon prefab is a wrapper of the part model, and the part
+			// model is the only child
+			var pi = part.partInfo.iconPrefab.transform.GetChild (0);
+			var go = new GameObject();
+			part.transform.SetParent (go.transform, false);
+			part.transform.localScale = pi.localScale;
+			part.transform.localPosition = pi.localPosition;
+
+			PartIcon (go);
 			return this;
 		}
 
@@ -167,6 +202,9 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void OnDrag (PointerEventData eventData)
 		{
+			if (!partIcon) {
+				return;
+			}
 			Quaternion q = DragRotation (eventData);
 			Quaternion rot = partIcon.transform.rotation;
 			partIcon.transform.rotation = q * rot;

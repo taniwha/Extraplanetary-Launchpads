@@ -36,6 +36,8 @@ namespace ExtraplanetaryLaunchpads {
 
 	using TTC = KSP.UI.Screens.Editor.PartListTooltipController;
 
+	public delegate void SelectPartCallback (AvailablePart availablePart);
+
 	public class ELPartSelector : Layout
 	{
 		static PartCategories []categoryOrder = {
@@ -130,13 +132,16 @@ namespace ExtraplanetaryLaunchpads {
 					this.group = group;
 				}
 
-				public void Select (int index)
+				public void Select (PartCategories category)
 				{
-					if (index >= 0 && index < Count) {
-						group.SetAllTogglesOff (false);
-						var child = Content.rectTransform.GetChild (index);
+					group.SetAllTogglesOff (false);
+					for (int i = Content.rectTransform.childCount; i-- > 0; ) {
+						var child = Content.rectTransform.GetChild (i);
 						var view = child.GetComponent<ELPartCategoryView> ();
-						view.Select ();
+						if (view.category.category == category) {
+							view.SelectCategory ();
+							break;
+						}
 					}
 				}
 			}
@@ -151,7 +156,7 @@ namespace ExtraplanetaryLaunchpads {
 			Image image;
 			UIImage icon;
 
-			ELPartCategory category;
+			public ELPartCategory category { get; private set; }
 
 			public override void CreateUI ()
 			{
@@ -191,6 +196,11 @@ namespace ExtraplanetaryLaunchpads {
 			public void Select ()
 			{
 				category.Select ();
+			}
+
+			public void SelectCategory ()
+			{
+				toggle.isOn = true;
 			}
 
 			public ELPartCategoryView Group (ToggleGroup group)
@@ -363,11 +373,8 @@ namespace ExtraplanetaryLaunchpads {
 		}
 #endregion
 
-		class PartSelectionEvent : UnityEvent<bool, bool> { }
-		PartSelectionEvent onSelectionChanged;
-
-		SelectFileCallback OnFileSelected;
-		CancelledCallback OnBrowseCancelled;
+		SelectPartCallback OnPartSelected;
+		CancelledCallback OnPartCancelled;
 
 		ScrollView categoryView;
 		ScrollView partListView;
@@ -386,8 +393,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void CreateUI ()
 		{
-			onSelectionChanged = new PartSelectionEvent ();
-
 			base.CreateUI ();
 
 			UIScrollbar part_scrollbar;
@@ -435,6 +440,16 @@ namespace ExtraplanetaryLaunchpads {
 						.Add<UIScrollbar> (out info_scrollbar, "Scrollbar")
 							.Direction(Scrollbar.Direction.BottomToTop)
 							.PreferredWidth (15)
+							.Finish ()
+						.Finish ()
+					.Add<HorizontalLayout> ()
+						.Add<UIButton> ()
+							.Text (ELLocalization.Select)
+							.OnClick (SelectPart)
+							.Finish ()
+						.Add<UIButton> ()
+							.Text (ELLocalization.Cancel)
+							.OnClick (CancelPart)
 							.Finish ()
 						.Finish ()
 					.Finish ()
@@ -508,24 +523,35 @@ namespace ExtraplanetaryLaunchpads {
 		{
 		}
 
+		void UpdateSelectedPart (AvailablePart availablePart)
+		{
+			selectedPart = availablePart;
+			partPreview.AvailablePart (availablePart);
+			partInfo.Text (availablePart.title);
+		}
+
 		void OnSelected (AvailablePart availablePart)
 		{
 			if (availablePart != null) {
-				selectedPart = availablePart;
-				partPreview.AvailablePart (availablePart);
-				partInfo.Text (availablePart.title);
-				onSelectionChanged.Invoke (true, Mouse.Left.GetDoubleClick (true));
+				bool selected = Mouse.Left.GetDoubleClick (true);
+				UpdateSelectedPart (availablePart);
+				if (selected) {
+					OnPartSelected (selectedPart);
+				}
 			} else {
 				partPreview.AvailablePart (null);
 				partInfo.Text ("");
-				onSelectionChanged.Invoke (false, false);
 			}
 		}
 
-		public ELPartSelector OnSelectionChanged (UnityAction<bool, bool> action)
+		void SelectPart ()
 		{
-			onSelectionChanged.AddListener (action);
-			return this;
+			OnPartSelected (selectedPart);
+		}
+
+		void CancelPart ()
+		{
+			OnPartCancelled ();
 		}
 
 		void onPartListUpdate (Vector2 pos)
@@ -552,6 +578,19 @@ namespace ExtraplanetaryLaunchpads {
 			UIKit.UpdateListContent (partList);
 		}
 
+		PartCategories GetCategory (AvailablePart ap)
+		{
+			var cat = ap.category;
+			if (cat == PartCategories.Propulsion) {
+				if (ap.moduleInfos.Exists (p => p.moduleName == "Engine")) {
+					cat = PartCategories.Engine;
+				} else {
+					cat = PartCategories.FuelTank;
+				}
+			}
+			return cat;
+		}
+
 		void BuildCategories ()
 		{
 			partCategories = new CategoryDict ();
@@ -560,19 +599,13 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			for (int i = PartLoader.LoadedPartsList.Count; i-- > 0; ) {
 				var ap = PartLoader.LoadedPartsList[i];
-				var cat = ap.category;
+				var cat = GetCategory (ap);
 				if (cat == PartCategories.none) {
 					if (ap.TechHidden || ap.TechRequired == "Unresearcheable") {
 						continue;
 					}
 					if (ap.name.StartsWith ("kerbalEVA") || ap.name == "flag") {
 						continue;
-					}
-				} else if (cat == PartCategories.Propulsion) {
-					if (ap.moduleInfos.Exists (p => p.moduleName == "Engine")) {
-						cat = PartCategories.Engine;
-					} else {
-						cat = PartCategories.FuelTank;
 					}
 				}
 				partCategories[cat].Add (ap);
@@ -582,16 +615,17 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void SetDelegates (SelectFileCallback onFileSelected,
-								  CancelledCallback onCancel)
+		public ELPartSelector SetDelegates (SelectPartCallback onPartSelected,
+											CancelledCallback onPartCancel)
 		{
-			OnFileSelected = onFileSelected;
-			OnBrowseCancelled = onCancel;
+			OnPartSelected = onPartSelected;
+			OnPartCancelled = onPartCancel;
+			return this;
 		}
 
-		public void SetCraftType (ELCraftType craftType, bool stock)
+		public void SetVisible (bool visible)
 		{
-			if (craftType == ELCraftType.Part) {
+			if (visible) {
 				SetActive (true);
 				if (partCategories == null) {
 					BuildCategories ();
@@ -612,6 +646,13 @@ namespace ExtraplanetaryLaunchpads {
 				partList.Clear ();
 				UIKit.UpdateListContent (partList);
 			}
+		}
+
+		public void SetSelectedPart (AvailablePart availablePart)
+		{
+			var cat = GetCategory (availablePart);
+			categoryList.Select (cat);
+			UpdateSelectedPart (availablePart);
 		}
 
 		static ConfigNode CreateShip(AvailablePart availablePart)
@@ -641,27 +682,6 @@ namespace ExtraplanetaryLaunchpads {
 			partNode.AddValue("attRot0", Quaternion.identity);
 
 			return node;
-		}
-
-		public void LoadPart ()
-		{
-			string basePath = KSPUtil.ApplicationRootPath;
-			string profile = HighLogic.SaveFolder;
-			string saveDir = "Parts/";
-			string craft = "autopart.craft";
-			string dir = $"{basePath}saves/{profile}/{saveDir}";
-
-			string fullPath = $"{dir}{craft}";
-
-			ConfigNode node = CreateShip (selectedPart);
-
-			Debug.Log ($"[ELPartSelector] LoadPart {selectedPart.title} {fullPath}\n{node}");
-			if (!Directory.Exists (dir)) {
-				Directory.CreateDirectory (dir);
-			}
-			node.Save (fullPath);
-
-			OnFileSelected (fullPath, ELCraftType.Part);
 		}
 	}
 }

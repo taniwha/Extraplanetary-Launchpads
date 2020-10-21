@@ -33,11 +33,8 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELPartEditorWindow : Window
 	{
-		ELPartPreview partPreview;
-		VerticalLayout tweakables;
-		UIInputField descriptionInput;
-
-		Part part;
+		ELPartEditorView partEditor;
+		ELPartSelector partSelector;
 
 		public override void CreateUI ()
 		{
@@ -50,48 +47,11 @@ namespace ExtraplanetaryLaunchpads {
 				.PreferredSizeFitter (true, true)
 				.Anchor (AnchorPresets.MiddleCenter)
 				.Pivot (PivotPresets.MiddleCenter)
-				.Add<HorizontalLayout> ()
-					.Add<VerticalLayout> ()
-						.Add<HorizontalLayout> ()
-							.Add<VerticalLayout> ()
-								.Add<UIButton> ()
-									.Text (ELLocalization.Save)
-									.OnClick (Save)
-									.FlexibleLayout (true, false)
-									.Finish ()
-								.Add<UIEmpty> ()
-									.FlexibleLayout (true, true)
-									.Finish ()
-								.Add<UIButton> ()
-									.Text (ELLocalization.SaveAndClose)
-									.OnClick (SaveAndClose)
-									.FlexibleLayout (true, false)
-									.Finish ()
-								.Add<UIEmpty> ()
-									.FlexibleLayout (true, true)
-									.Finish ()
-								.Add<UIButton> ()
-									.Text (ELLocalization.Close)
-									.OnClick (Close)
-									.FlexibleLayout (true, false)
-									.Finish ()
-								.Finish ()
-							.Add<ELPartPreview> (out partPreview)
-								.PreferredSize (256, 256)
-								.Finish ()
-							.Finish ()
-						.Add<UIInputField> (out descriptionInput)
-							.LineType (TMP_InputField.LineType.MultiLineNewline)
-							.OnFocusGained (SetControlLock)
-							.OnFocusLost (ClearControlLock)
-							.FlexibleLayout (true, true)
-							.PreferredSize (-1, 128)
-							.Finish ()
-						.Finish ()
-					.Add<VerticalLayout> (out tweakables)
-						.FlexibleLayout (true, true)
-						.PreferredSize (256, -1)
-						.Finish ()
+				.Add<ELPartEditorView> (out partEditor)
+					.SetDelegates (onSelectPart, onEditorClose)
+					.Finish ()
+				.Add<ELPartSelector> (out partSelector)
+					.SetDelegates (onPartSelected, onPartSelectCancelled)
 					.Finish ()
 				.Add<UIText> ()
 					.Text (ELVersionReport.GetVersion ())
@@ -102,27 +62,14 @@ namespace ExtraplanetaryLaunchpads {
 				.Finish ();
 		}
 
-		static void SetControlLock (string str = null)
+		void onSelectPart (AvailablePart availablePart)
 		{
-			InputLockManager.SetControlLock ("ELPartEditor_lock");
+			partSelector.SetVisible (true);
+			partEditor.SetActive (false);
+			partSelector.SetSelectedPart (availablePart);
 		}
 
-		static void ClearControlLock (string str = null)
-		{
-			InputLockManager.RemoveControlLock ("ELPartEditor_lock");
-		}
-
-		void Save ()
-		{
-		}
-
-		void SaveAndClose ()
-		{
-			Save ();
-			Close ();
-		}
-
-		void Close ()
+		void onEditorClose ()
 		{
 			SetActive (false);
 		}
@@ -130,26 +77,25 @@ namespace ExtraplanetaryLaunchpads {
 		void EditPart (ELCraftItem editPart)
 		{
 			SetActive (true);
-			descriptionInput.text = "EL constructed part";
-			if (part) {
-				Destroy (part.gameObject);
+			if (editPart == null) {
+				partSelector.SetVisible (true);
+				partEditor.SetActive (false);
+			} else {
+				partSelector.SetVisible (false);
+				partEditor.EditPart (editPart);
 			}
-			part = null;
-			partPreview.AvailablePart (null);
-			if (editPart != null) {
-				var node = editPart.node;
-				if (node.HasValue ("description")) {
-					string description = node.GetValue ("description");
-					descriptionInput.text = description.Replace ('¨', '\n');
-				}
-				var partNode = node.GetNode ("PART");
-				string partName = partNode.GetValue ("part").Split ('_')[0];
+		}
 
-				var partInfo = PartLoader.getPartInfoByName (partName);
-				if (partInfo != null) {
-					partPreview.AvailablePart (partInfo);
-				}
-			}
+		void onPartSelected (AvailablePart availablePart)
+		{
+			partSelector.SetVisible (false);
+			partEditor.EditPart (availablePart);
+		}
+
+		void onPartSelectCancelled ()
+		{
+			partSelector.SetVisible (false);
+			partEditor.EditPart ((AvailablePart) null);
 		}
 
 		static ELPartEditorWindow partEditorWindow;

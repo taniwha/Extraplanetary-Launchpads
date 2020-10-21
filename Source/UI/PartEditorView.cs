@@ -15,17 +15,9 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-
-using KSP.IO;
-using KSP.UI;
-using KSP.UI.Screens;
 
 using KodeUI;
 
@@ -141,6 +133,36 @@ namespace ExtraplanetaryLaunchpads {
 			return this;
 		}
 
+		void BuildTweakers ()
+		{
+			Debug.Log ($"[ELPartEditorView] BuildTweakers");
+			for (int i = 0; i < part.Fields.Count; i++) {
+				var f = part.Fields[i];
+				if (!f.guiActiveEditor) {
+					continue;
+				}
+				Debug.Log ($"        {f.guiName} {f.guiActiveEditor} ucf:{f.uiControlFlight} uce:{f.uiControlEditor}");
+			}
+			for (int i = 0; i < part.Modules.Count; i++) {
+				var m = part.Modules[i];
+				Debug.Log ($"    {m.ClassName}");
+				for (int j = 0; j < m.Fields.Count; j++) {
+					var f = m.Fields[j];
+					if (!f.guiActiveEditor) {
+						continue;
+					}
+					Debug.Log ($"        {f.guiName} {f.guiActiveEditor} ucf:{f.uiControlFlight} uce:{f.uiControlEditor}");
+				}
+			}
+		}
+
+		IEnumerator WaitAndBuildTweakers ()
+		{
+			yield return null;
+
+			BuildTweakers ();
+		}
+
 		public void EditPart (AvailablePart availablePart)
 		{
 			SetActive (true);
@@ -151,6 +173,7 @@ namespace ExtraplanetaryLaunchpads {
 				EL_Utils.RemoveColliders (part.gameObject);
 				part.gameObject.SetActive (true);
 				partPreview.Part (part);
+				StartCoroutine (WaitAndBuildTweakers ());
 			} else {
 				if (!part) {
 					Close ();

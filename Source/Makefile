@@ -83,8 +83,12 @@ EL_FILES := \
 	UI/PadLaunchpadView.cs				\
 	UI/PadSurveyView.cs					\
 	UI/PadView.cs						\
+	UI/PartCategory.cs					\
+	UI/PartCategoryView.cs				\
 	UI/PartEditorView.cs				\
 	UI/PartEditorWindow.cs				\
+	UI/PartItemView.cs					\
+	UI/PartList.cs						\
 	UI/PartListLight.cs					\
 	UI/PartPreview.cs					\
 	UI/PartSelector.cs					\

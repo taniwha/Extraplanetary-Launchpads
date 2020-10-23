@@ -331,34 +331,5 @@ namespace ExtraplanetaryLaunchpads {
 			categoryList.Select (cat);
 			UpdateSelectedPart (availablePart);
 		}
-
-		static ConfigNode CreateShip(AvailablePart availablePart)
-		{
-			var part = GameObject.Instantiate (availablePart.partPrefab) as Part;
-			ConfigNode node = new ConfigNode();
-
-			node.AddValue("ship", availablePart.title);
-			node.AddValue("version", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision);
-			node.AddValue("description", "EL constructed part");
-			node.AddValue("type", "VAB");
-			node.AddValue("persistentId", 0);
-			node.AddValue("rot", Quaternion.identity);
-			node.AddValue("vesselType", part.vesselType);
-
-			part.onBackup();
-			ConfigNode partNode = node.AddNode("PART");
-
-			partNode.AddValue("part", part.partInfo.name + "_" + part.craftID);
-			partNode.AddValue("partName", part.partName);
-			partNode.AddValue("persistentId", part.persistentId);
-			partNode.AddValue("pos", Vector3.zero);
-			partNode.AddValue("attPos", Vector3.zero);
-			partNode.AddValue("attPos0", Vector3.zero);
-			partNode.AddValue("rot", Quaternion.identity);
-			partNode.AddValue("attRot", Quaternion.identity);
-			partNode.AddValue("attRot0", Quaternion.identity);
-
-			return node;
-		}
 	}
 }

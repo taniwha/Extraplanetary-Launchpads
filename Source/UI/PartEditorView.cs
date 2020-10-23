@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
+using System;
+using System.IO;
 using System.Collections;
 using UnityEngine;
 using TMPro;
@@ -27,6 +29,7 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		ELPartPreview partPreview;
 		VerticalLayout tweakables;
+		UIInputField nameInput;
 		UIInputField descriptionInput;
 
 		Part part;
@@ -78,6 +81,11 @@ namespace ExtraplanetaryLaunchpads {
 							.PreferredSize (256, 256)
 							.Finish ()
 						.Finish ()
+					.Add<UIInputField> (out nameInput)
+						.OnFocusGained (SetControlLock)
+						.OnFocusLost (ClearControlLock)
+						.FlexibleLayout (true, false)
+						.Finish ()
 					.Add<UIInputField> (out descriptionInput)
 						.LineType (TMP_InputField.LineType.MultiLineNewline)
 						.OnFocusGained (SetControlLock)
@@ -110,6 +118,26 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Save ()
 		{
+			string name = nameInput.text;
+			string description = descriptionInput.text;
+			var ship = new ShipConstruct (name, description, part);
+			ConfigNode node = ship.SaveShip ();
+			//Debug.Log ($"[ELPartEditorView] Save {node}");
+
+			string basePath = KSPUtil.ApplicationRootPath;
+			string profile = HighLogic.SaveFolder;
+			string saveDir = "Parts/";
+			string craft = "autopart.craft";
+			if (!String.IsNullOrEmpty (name)) {
+				craft = $"{name}.craft";
+			}
+			string dir = $"{basePath}saves/{profile}/{saveDir}";
+			string fullPath = $"{dir}{craft}";
+			//Debug.Log ($"[ELPartSelector] LoadPart {part.partInfo.title} {fullPath}");
+			if (!Directory.Exists (dir)) {
+				Directory.CreateDirectory (dir);
+			}
+			node.Save (fullPath);
 		}
 
 		void SaveAndClose ()
@@ -183,6 +211,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void EditPart (ELCraftItem editPart)
 		{
+			nameInput.text = "Unnamed part";
 			descriptionInput.text = "EL constructed part";
 			if (part) {
 				Destroy (part.gameObject);
@@ -191,6 +220,7 @@ namespace ExtraplanetaryLaunchpads {
 			partPreview.AvailablePart (null);
 			if (editPart != null) {
 				var node = editPart.node;
+				nameInput.text = editPart.name;
 				if (node.HasValue ("description")) {
 					string description = node.GetValue ("description");
 					descriptionInput.text = description.Replace ('¨', '\n');

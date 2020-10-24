@@ -48,6 +48,7 @@ namespace ExtraplanetaryLaunchpads {
 				.PreferredSizeFitter (true, true)
 				.Anchor (AnchorPresets.MiddleCenter)
 				.Pivot (PivotPresets.TopLeft)
+				.SetSkin ("EL.Default")
 				.Add <ELCraftTypeSelector> (out typeSelector)
 					.OnSelectionChanged (CraftTypeSelected)
 					.FlexibleLayout (true, true)

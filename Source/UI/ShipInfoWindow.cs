@@ -49,6 +49,7 @@ namespace ExtraplanetaryLaunchpads {
 				.Anchor(AnchorPresets.MiddleCenter)
 				.Pivot(PivotPresets.TopLeft)
 				.PreferredWidth(350)
+				.SetSkin ("EL.Default")
 
 				.Add<ELTextInfoLine> (out dryMass)
 					.Label (ELLocalization.DryMass)

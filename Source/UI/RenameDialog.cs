@@ -47,6 +47,7 @@ namespace ExtraplanetaryLaunchpads {
 				.Anchor (AnchorPresets.MiddleCenter)
 				.Pivot (PivotPresets.TopLeft)
 				.PreferredWidth (500)
+				.SetSkin ("EL.Default")
 
 				.Add<Layout> ()
 					.Horizontal ()

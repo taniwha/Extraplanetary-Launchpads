@@ -37,6 +37,7 @@ namespace ExtraplanetaryLaunchpads {
 				.PreferredSizeFitter (true, true)
 				.Anchor (AnchorPresets.MiddleCenter)
 				.Pivot (PivotPresets.MiddleCenter)
+				.SetSkin ("EL.Default")
 				.Add<ELPartEditorView> (out partEditor)
 					.SetDelegates (onSelectPart, onEditorClose)
 					.Finish ()

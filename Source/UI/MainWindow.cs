@@ -39,6 +39,7 @@ namespace ExtraplanetaryLaunchpads {
 				.Anchor(AnchorPresets.MiddleCenter)
 				.Pivot(PivotPresets.TopLeft)
 				.PreferredWidth(695)
+				.SetSkin ("EL.Default")
 
 				.Add<TabController> (out tabController)
 					.Horizontal ()

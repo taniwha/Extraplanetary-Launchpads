@@ -136,8 +136,6 @@ namespace ExtraplanetaryLaunchpads {
 				.ChildForceExpand(false,false)
 
 				.Add<LayoutPanel>()
-					.Background("KodeUI/Default/background")
-					.BackgroundColor(UnityEngine.Color.white)
 					.Vertical()
 					.Padding(8)
 					.ControlChildSize(true, true)

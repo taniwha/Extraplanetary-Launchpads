@@ -118,7 +118,6 @@ namespace ExtraplanetaryLaunchpads {
 					.ChildForceExpand (false, false)
 					.Anchor (leftMin, leftMax)
 					.SizeDelta (0, 0)
-					.Sprite(SpriteLoader.GetSprite("KodeUI/Default/background"))
 					.Add<UIDropdown> (out padSelector, "PadSelector")
 						.OnValueChanged (SelectPad)
 						.FlexibleLayout (true, true)

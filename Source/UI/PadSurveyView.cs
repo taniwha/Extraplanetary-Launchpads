@@ -47,7 +47,6 @@ namespace ExtraplanetaryLaunchpads {
 				.ChildForceExpand (false, false)
 				.Anchor (AnchorPresets.StretchAll)
 				.SizeDelta (0, 0)
-				.Sprite(SpriteLoader.GetSprite("KodeUI/Default/background"))
 				.Add<Layout> (out siteControl)
 					.Horizontal ()
 					.ControlChildSize (true, true)

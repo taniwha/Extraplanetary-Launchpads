@@ -40,9 +40,8 @@ namespace ExtraplanetaryLaunchpads {
 				.ChildForceExpand (false, false)
 				.Anchor (AnchorPresets.StretchAll)
 				.SizeDelta (0, 0)
-				.Sprite(SpriteLoader.GetSprite("KodeUI/Default/background"))
 				.Add<UIButton> (out leftButton)//, "RotateLeft") FIXME
-					.Text ("<-")
+					.Image (SpriteLoader.GetSprite ("EL.Default.leftturn"))
 					.OnClick (RotateLeft)
 					.FlexibleLayout (false, true)
 					.SizeDelta (0, 0)
@@ -53,7 +52,7 @@ namespace ExtraplanetaryLaunchpads {
 					.FlexibleLayout (true, true)
 					.Finish ()
 				.Add<UIButton> (out rightButton)//, "RotateRight") FIXME
-					.Text ("->")
+					.Image (SpriteLoader.GetSprite ("EL.Default.rightturn"))
 					.OnClick (RotateRight)
 					.FlexibleLayout (false, true)
 					.SizeDelta (0, 0)

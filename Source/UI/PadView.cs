@@ -58,7 +58,7 @@ namespace ExtraplanetaryLaunchpads {
 		List<ELBuildControl> padControls;
 
 		UIDropdown padSelector;
-		UIToggle highlightPad;
+		MiniToggle highlightPad;
 
 		ELPadLaunchpadView launchpadView;
 		ELPadSurveyView surveyView;
@@ -122,7 +122,7 @@ namespace ExtraplanetaryLaunchpads {
 						.OnValueChanged (SelectPad)
 						.FlexibleLayout (true, true)
 						.Finish ()
-					.Add<UIToggle> (out highlightPad, "HighlightPad")
+					.Add<MiniToggle> (out highlightPad, "HighlightPad")
 						.FlexibleLayout (false, true)
 						.PreferredSize (25, 25)
 						.Finish ()

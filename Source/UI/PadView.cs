@@ -123,6 +123,7 @@ namespace ExtraplanetaryLaunchpads {
 						.FlexibleLayout (true, true)
 						.Finish ()
 					.Add<MiniToggle> (out highlightPad, "HighlightPad")
+						.OnValueChanged (HighlightPad)
 						.FlexibleLayout (false, true)
 						.PreferredSize (25, 25)
 						.Finish ()
@@ -149,9 +150,29 @@ namespace ExtraplanetaryLaunchpads {
 
 		void SelectPad (int index)
 		{
+			HighlightPad (false);
 			control = padControls[index];
 			worknet.selectedPad = control.builder.ID;
+			HighlightPad (highlightPad.isOn);
 			UpdateMenus (gameObject.activeInHierarchy);
+		}
+
+		void HighlightPad (bool on)
+		{
+			if (control != null) {
+				control.builder.Highlight (on);
+			}
+		}
+
+		void Update ()
+		{
+			// KSP's part highlighter forces highlighting off when the mouse
+			// is no longer hovering over the part, so need to turn it on each
+			// frame
+			// FIXME there might be a better way
+			if (control != null && highlightPad.isOn) {
+				control.builder.Highlight (true);
+			}
 		}
 
 		void UpdateMenus (bool visible)
@@ -267,6 +288,7 @@ namespace ExtraplanetaryLaunchpads {
 		protected override void OnDisable ()
 		{
 			base.OnDisable ();
+			HighlightPad (false);
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			UpdateMenus (false);
 		}

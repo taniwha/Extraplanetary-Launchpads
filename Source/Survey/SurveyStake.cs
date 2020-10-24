@@ -223,7 +223,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void CreateBackground (RectTransform parent)
 		{
-			GameObject go = new GameObject ("Survey Plaque Bacground",
+			GameObject go = new GameObject ("Survey Plaque Background",
 											typeof (RectTransform));
 			plaqueBackgroundRenderer = go.AddComponent<CanvasRenderer> ();
 			plaqueBackgroundRenderer.SetAlpha (PlaqueAlpha);

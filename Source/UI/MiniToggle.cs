@@ -27,6 +27,12 @@ namespace ExtraplanetaryLaunchpads {
 	{
 		UIToggle toggle;
 
+		public bool isOn
+		{
+			get { return toggle.isOn; }
+			set { toggle.isOn = value; }
+		}
+
 		public bool interactable
 		{
 			get { return toggle.interactable; }

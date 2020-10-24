@@ -29,6 +29,7 @@ namespace ExtraplanetaryLaunchpads {
 	public class ELCraftItem
 	{
 		CraftProfileInfo info;
+		public List<string> MissingParts { get; private set; }
 		public string fullPath { get; private set; }
 		public string name { get { return info.shipName; } }
 		public string description { get { return info.description; } }
@@ -38,6 +39,19 @@ namespace ExtraplanetaryLaunchpads {
 		public string message { get; private set; }
 		public string thumbPath { get; private set; }
 		public ELCraftType type { get; private set; }
+		public bool isStock { get; private set; }
+		public bool canLoad
+		{
+			get {
+				if (info.compatibility != VersionCompareResult.COMPATIBLE) {
+					return false;
+				}
+				// EL might one day allow building from "stolen plans", so
+				// only actually missing parts blocks loading (tech and
+				// missions are irrelevant).
+				return MissingParts.Count == 0;
+			}
+		}
 		ConfigNode _node;
 		public ConfigNode node
 		{
@@ -50,7 +64,7 @@ namespace ExtraplanetaryLaunchpads {
 			set { _node = value; }
 		}
 
-		public ELCraftItem (string craftPath, string metaPath, string thumbPath, ELCraftType craftType)
+		public ELCraftItem (string craftPath, string metaPath, string thumbPath, ELCraftType craftType, bool isStock)
 		{
 			fullPath = craftPath;
 			info = new CraftProfileInfo ();
@@ -62,9 +76,20 @@ namespace ExtraplanetaryLaunchpads {
 				info.LoadDetailsFromCraftFile (node, craftPath);
 				this.node = node;
 			}
+			// Find the parts that are actually missing and not just blocked
+			// by tech or missions.
+			MissingParts = new List<string> ();
+			for (int i = 0; i < info.UnavailableShipParts.Count; i++) {
+				string partName = info.UnavailableShipParts[i];
+				if (PartLoader.getPartInfoByName (partName) == null) {
+					// UnavailableShipParts is already uniqued
+					MissingParts.Add (partName);
+				}
+			}
 			info.description = info.description.Replace ('¨', '\n');
 			this.thumbPath = thumbPath;
 			type = craftType;
+			this.isStock = isStock;
 		}
 
 		public class Dict : Dictionary<string, ELCraftItem> { }

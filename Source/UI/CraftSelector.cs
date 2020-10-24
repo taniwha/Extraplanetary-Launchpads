@@ -87,10 +87,11 @@ namespace ExtraplanetaryLaunchpads {
 					.ChildForceExpand (false,false)
 					.Add<ELCraftThumb> (out craftThumb)
 						.Add<UIButton> (out generateThumb)
-							.Text ("Generate")
+							.Image (SpriteLoader.GetSprite ("EL.Default.leftturn"))
 							.OnClick (GenerateThumb)
-							.Anchor (AnchorPresets.StretchAll)
-							.SizeDelta (0, 0)
+							.Anchor (AnchorPresets.TopLeft)
+							.Pivot (PivotPresets.TopLeft)
+							.SizeDelta (24, 24)
 							.Color (new UnityEngine.Color (0,0,0,0))
 							.Finish ()
 						.Finish ()
@@ -154,6 +155,7 @@ namespace ExtraplanetaryLaunchpads {
 
 			relativePath = "";
 			craftThumb.Craft ("");
+			generateThumb.SetActive (false);
 
 			craftItems = new ELCraftItem.List (craftGroup);
 			craftItems.Content = craftList.Content;
@@ -225,11 +227,13 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (selectedCraft != null) {
 				craftThumb.Craft (selectedCraft.thumbPath);
+				generateThumb.SetActive (!selectedCraft.isStock && selectedCraft.canLoad);
 				craftDescription.Text (selectedCraft.description);
 				partEdit.interactable = true;
 			} else {
 				craftDescription.Text ("");
 				craftThumb.Craft ("");
+				generateThumb.SetActive (false);
 				partEdit.interactable = false;
 			}
 		}
@@ -301,7 +305,7 @@ namespace ExtraplanetaryLaunchpads {
 				} else {
 					tp = ELCraftThumb.UserPath (type, fp);
 				}
-				craftItems.Add (new ELCraftItem (fp, mp, tp, type));
+				craftItems.Add (new ELCraftItem (fp, mp, tp, type, stock));
 			}
 
 			UIKit.UpdateListContent (craftItems);

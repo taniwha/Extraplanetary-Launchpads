@@ -73,5 +73,6 @@ namespace ExtraplanetaryLaunchpads {
 		public static string Save { get; } = "Save";
 		public static string SaveAndClose { get; } = "Save and Close";
 		public static string Close { get; } = "Close";
+		public static string MissingParts { get; } = "Missing Parts:";
 	}
 }

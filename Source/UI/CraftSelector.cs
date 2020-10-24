@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
+using System;
 using System.IO;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -228,7 +229,11 @@ namespace ExtraplanetaryLaunchpads {
 			if (selectedCraft != null) {
 				craftThumb.Craft (selectedCraft.thumbPath);
 				generateThumb.SetActive (!selectedCraft.isStock && selectedCraft.canLoad);
-				craftDescription.Text (selectedCraft.description);
+				if (selectedCraft.canLoad) {
+					craftDescription.Text (selectedCraft.description);
+				} else {
+					craftDescription.Text (ELLocalization.MissingParts + "\n" + String.Join ("\n", selectedCraft.MissingParts));
+				}
 				partEdit.interactable = true;
 			} else {
 				craftDescription.Text ("");

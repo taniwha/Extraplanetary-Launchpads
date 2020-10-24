@@ -29,7 +29,22 @@ MISC := \
 	kairyuu_scaled.png	\
 	plaque.png
 
-all: ${ICONS} ${FLAGS} ${MISC}
+UI_IMAGES := \
+	ui_background.png	\
+	ui_button.png		\
+	ui_checkmark.png	\
+	ui_dropdown.png		\
+	ui_leftturn.png		\
+	ui_rightturn.png	\
+	ui_toggle_off.png	\
+	ui_toggle_on.png	\
+	$e
+
+UI_CFG := \
+	DefaultSkin.cfg		\
+	$e
+
+all: ${ICONS} ${FLAGS} ${MISC} ${UI_IMAGES}
 
 info:
 	@echo "Extraplanetary Launchpads Build Information"
@@ -41,7 +56,7 @@ info:
 	@echo "    zip:        ${ZIP}"
 	@echo "    KSP Data:   ${KSPDIR}"
 
-GUI_ICONS = \
+GUI_ICONS := \
 	gui_background.png	\
 	gui_flat.png		\
 	gui_raised.png		\
@@ -75,8 +90,32 @@ icon_filter_s.png: EL_filter.svg
 ELGenericCraftThumb.png: EL_UntitledSpacecraft.svg
 	inkscape --export-width=256 --export-height=256 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
 
+ui_background.png: ui_background.svg
+	inkscape --export-width=32 --export-height=32 --export-type=png -o $@ $^
+
+ui_button.png: ui_button.svg
+	inkscape --export-width=16 --export-height=16 --export-type=png -o $@ $^
+
+ui_checkmark.png: ui_checkmark.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_dropdown.png: ui_dropdown.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_leftturn.png: ui_leftturn.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_rightturn.png: ui_rightturn.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_toggle_off.png: ui_toggle_off.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_toggle_on.png: ui_toggle_on.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
 clean:
-	rm -f ${ICONS} ${FLAGS} ${MISC} ${GUI_ICONS}
+	rm -f ${ICONS} ${FLAGS} ${MISC} ${GUI_ICONS} ${UI_IMAGES}
 
 install: all
 	mkdir -p ${MODGAMEDATA}/Agencies ${MODGAMEDATA}/Flags
@@ -84,6 +123,7 @@ install: all
 	cp nightheron.png ${MODGAMEDATA}/Flags
 	mkdir -p ${MODGAMEDATA}/Textures
 	cp ELGenericCraftThumb.png icon_button.png icon_filter*.png plaque.png ${MODGAMEDATA}/Textures
-	#cp ${GUI_ICONS} ${MODGAMEDATA}/Textures
+	mkdir -p ${MODGAMEDATA}/UI
+	cp ${UI_CFG} ${UI_IMAGES} ${MODGAMEDATA}/UI
 
 .PHONY: all clean install

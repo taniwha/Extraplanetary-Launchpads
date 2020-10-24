@@ -36,6 +36,9 @@ UI_IMAGES := \
 	ui_dropdown.png		\
 	ui_leftturn.png		\
 	ui_rightturn.png	\
+	ui_tabdesel.png		\
+	ui_tabempty.png		\
+	ui_tabsel.png		\
 	ui_toggle_off.png	\
 	ui_toggle_on.png	\
 	$e
@@ -106,6 +109,15 @@ ui_leftturn.png: ui_leftturn.svg
 	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
 
 ui_rightturn.png: ui_rightturn.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_tabdesel.png: ui_tabdesel.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_tabempty.png: ui_tabempty.svg
+	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
+
+ui_tabsel.png: ui_tabsel.svg
 	inkscape --export-width=24 --export-height=24 --export-type=png -o $@ $^
 
 ui_toggle_off.png: ui_toggle_off.svg

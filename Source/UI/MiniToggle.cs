@@ -18,12 +18,13 @@ along with Extraplanetary Launchpads.  If not, see
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class MiniToggle : Layout
+	public class MiniToggle : Layout, IPointerClickHandler
 	{
 		UIToggle toggle;
 
@@ -78,6 +79,11 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			toggle.SetIsOnWithoutNotify (on);
 			return this;
+		}
+
+		public void OnPointerClick(PointerEventData eventData)
+		{
+			toggle.OnPointerClick (eventData);
 		}
 	}
 }

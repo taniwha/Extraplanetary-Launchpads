@@ -78,6 +78,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void Style ()
 		{
+			base.Style ();
 		}
 
 		public void SetControl (ELBuildControl control)

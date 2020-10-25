@@ -90,6 +90,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public override void Style ()
 		{
+			base.Style ();
 		}
 
 		void ShowWanring ()

@@ -36,6 +36,9 @@ namespace ExtraplanetaryLaunchpads {
 		ELCraftTypeSelector typeSelector;
 		ELCraftSelector craftSelector;
 		UIButton loadButton;
+		Layout partButtons;
+		UIButton partNew;
+		UIButton partEdit;
 
 		public override void CreateUI ()
 		{
@@ -47,7 +50,7 @@ namespace ExtraplanetaryLaunchpads {
 				.ChildForceExpand (false,false)
 				.PreferredSizeFitter (true, true)
 				.Anchor (AnchorPresets.MiddleCenter)
-				.Pivot (PivotPresets.TopLeft)
+				.Pivot (PivotPresets.MiddleCenter)
 				.SetSkin ("EL.Default")
 				.Add <ELCraftTypeSelector> (out typeSelector)
 					.OnSelectionChanged (CraftTypeSelected)
@@ -67,6 +70,22 @@ namespace ExtraplanetaryLaunchpads {
 					.Add <UIButton> (out loadButton)
 						.Text (ELLocalization.Load)
 						.OnClick (LoadSelection)
+						.Finish ()
+					.Add<UIEmpty> ()
+						.FlexibleLayout (true, true)
+						.Finish ()
+					.Add<Layout> (out partButtons)
+						.Horizontal ()
+						.ControlChildSize (true, true)
+						.ChildForceExpand (false,false)
+						.Add<UIButton> (out partNew)
+							.Text (ELLocalization.New)
+							.OnClick (CreatePart)
+							.Finish ()
+						.Add<UIButton> (out partEdit)
+							.Text (ELLocalization.Edit)
+							.OnClick (EditPart)
+							.Finish ()
 						.Finish ()
 					.Finish ()
 				.Add<UIText> ()
@@ -97,6 +116,7 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				loadButton.interactable = canLoad;
 			}
+			partEdit.interactable = canLoad;
 		}
 
 		void CraftTypeSelected ()
@@ -104,6 +124,17 @@ namespace ExtraplanetaryLaunchpads {
 			craftType = typeSelector.craftType;
 			var stockCraft = typeSelector.stockCraft;
 			craftSelector.SetCraftType (craftType, stockCraft);
+			partButtons.SetActive (craftType == ELCraftType.Part);
+		}
+
+		void CreatePart ()
+		{
+			ELPartEditorWindow.OpenEditor (null);
+		}
+
+		void EditPart ()
+		{
+			ELPartEditorWindow.OpenEditor (craftSelector.selectedCraft);
 		}
 
 		void SetDelegates (SelectFileCallback onFileSelected,

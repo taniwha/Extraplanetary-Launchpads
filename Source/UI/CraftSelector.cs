@@ -37,21 +37,18 @@ namespace ExtraplanetaryLaunchpads {
 
 		ScrollView craftList;
 		ELCraftThumb craftThumb;
-		Layout partButtons;
 		ScrollView craftInfo;
 		UIText craftDescription;
 
 		UIButton generateThumb;
-		UIButton partNew;
-		UIButton partEdit;
 
 		ELCraftItem.List craftItems;
 		ToggleGroup craftGroup;
 		ELCraftItem _selectedCraft;
-		ELCraftItem selectedCraft
+		public ELCraftItem selectedCraft
 		{
 			get { return _selectedCraft; }
-			set {
+			private set {
 				_selectedCraft = value;
 				UpdateCraftInfo ();
 			}
@@ -94,19 +91,6 @@ namespace ExtraplanetaryLaunchpads {
 							.Pivot (PivotPresets.TopLeft)
 							.SizeDelta (24, 24)
 							.Color (new UnityEngine.Color (0,0,0,0))
-							.Finish ()
-						.Finish ()
-					.Add<Layout> (out partButtons)
-						.Horizontal ()
-						.ControlChildSize (true, true)
-						.ChildForceExpand (false,false)
-						.Add<UIButton> (out partNew)
-							.Text (ELLocalization.New)
-							.OnClick (CreatePart)
-							.Finish ()
-						.Add<UIButton> (out partEdit)
-							.Text (ELLocalization.Edit)
-							.OnClick (EditPart)
 							.Finish ()
 						.Finish ()
 					.Add<ScrollView> (out craftInfo)
@@ -175,16 +159,6 @@ namespace ExtraplanetaryLaunchpads {
 								  selectedCraft.fullPath);
 		}
 
-		void CreatePart ()
-		{
-			ELPartEditorWindow.OpenEditor (null);
-		}
-
-		void EditPart ()
-		{
-			ELPartEditorWindow.OpenEditor (selectedCraft);
-		}
-
 		string relativePath;
 
 		void pipelineSucceed (ConfigNode node, ELCraftItem craft)
@@ -234,12 +208,10 @@ namespace ExtraplanetaryLaunchpads {
 				} else {
 					craftDescription.Text (ELLocalization.MissingParts + "\n" + String.Join ("\n", selectedCraft.MissingParts));
 				}
-				partEdit.interactable = true;
 			} else {
 				craftDescription.Text ("");
 				craftThumb.Craft ("");
 				generateThumb.SetActive (false);
-				partEdit.interactable = false;
 			}
 		}
 
@@ -254,7 +226,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			SetActive (true);
 			SetRelativePath (craftType, stock, "");
-			partButtons.SetActive (craftType == ELCraftType.Part);
 		}
 
 		void SetRelativePath (ELCraftType craftType, bool stock, string path)

@@ -137,7 +137,6 @@ namespace ExtraplanetaryLaunchpads {
 					.Add<UIButton> (out selectFlagButton)
 						.Image (flagTexture)
 						.OnClick (SelectFlag)
-						.PreferredSize (48, 30)
 						.Finish ()
 					.Add<UIButton> (out reloadButton)
 						.Text (ELLocalization.Reload)
@@ -231,7 +230,8 @@ namespace ExtraplanetaryLaunchpads {
 			craftBoM.tmpText.overflowMode = TextOverflowModes.Linked;
 			craftBoM.tmpText.linkedTextComponent = overflowText.tmpText;
 
-			selectFlagButton.ChildImage.AspectRatioSizeFitter (AspectRatioFitter.AspectMode.FitInParent, 1.6f);
+			selectFlagButton.Content.ChildAlignment (TextAnchor.MiddleCenter);
+			selectFlagButton.ChildImage.PreferredSize (48, 30);
 		}
 
 		void BuildCraft ()

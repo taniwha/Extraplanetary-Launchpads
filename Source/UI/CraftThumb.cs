@@ -119,38 +119,36 @@ namespace ExtraplanetaryLaunchpads {
 			return tex;
 		}
 
-		static IEnumerator capture (ShipConstruct ship, string thumbPath, bool savedHL)
+		static IEnumerator capture (ShipConstruct ship, string thumbPath)
 		{
 			yield return null;
+			yield return null;
+			yield return null;
+			yield return null;
+			yield return null;
 
-			if (!thumbRig) {
-				// it died
-				yield break;
+			if (thumbRig) {
+				var tex = takeSnapshot (ship);
+				var png = tex.EncodeToPNG ();
+
+				string dir = KSPUtil.ApplicationRootPath;
+				string path = dir + thumbPath;
+
+				if (!ELCraftThumbManager.UpdateThumbCache (thumbPath, tex)) {
+					GameObject.Destroy (tex);
+				}
+
+				if (!Directory.Exists (dir)) {
+					Directory.CreateDirectory (dir);
+				}
+				File.WriteAllBytes (path, png);
+
+				//Debug.Log ($"[ELCraftThumb] capture {path}");
+				thumbRig.SetActive (false);
 			}
 
-			var tex = takeSnapshot (ship);
-			var png = tex.EncodeToPNG ();
+			ELEditor.ClearShip ();
 
-			string dir = KSPUtil.ApplicationRootPath;
-			string path = dir + thumbPath;
-
-			if (!ELCraftThumbManager.UpdateThumbCache (thumbPath, tex)) {
-				GameObject.Destroy (tex);
-			}
-
-			if (!Directory.Exists (dir)) {
-				Directory.CreateDirectory (dir);
-			}
-			File.WriteAllBytes (path, png);
-
-			//Debug.Log ($"[ELCraftThumb] capture {path}");
-
-			for (int i = ship.parts.Count; i-- > 0; ) {
-				GameObject.Destroy (ship.parts[i].gameObject);
-			}
-
-			HighLogic.LoadedSceneIsEditor = savedHL;
-			thumbRig.SetActive (false);
 		}
 
 		public static void Capture (ConfigNode craft, ELCraftType craftType, string craftFile)
@@ -158,29 +156,24 @@ namespace ExtraplanetaryLaunchpads {
 			var ship = new ShipConstruct ();
 			ship.LoadShip (craft);
 
-			// Need to keep the parts around for a few frames, but
-			// various modules throw if things are not set up properly (which
-			// they won't be), but tricking the parts and their modules into
-			// thinking they're being placed in the editor fixes things
-			bool savedHL = HighLogic.LoadedSceneIsEditor;
-			HighLogic.LoadedSceneIsEditor = true;
-
 			if (ship.vesselDeltaV != null) {
 				// The delta-v module is not needed. It has its own gameObject
 				// for ShipConstruct.
 				GameObject.Destroy (ship.vesselDeltaV.gameObject);
 				ship.vesselDeltaV = null;
 			}
+			// Need to keep the parts around for a few frames, but
+			// various modules throw if things are not set up properly (which
+			// they won't be), but tricking the parts and their modules into
+			// thinking they're being placed in the editor fixes things
+			ELEditor.EditShip (ship);
 			for (int i = ship.parts.Count; i-- > 0; ) {
-				// See comment for HighLogic
-				ship.parts[i].ResumeState = PartStates.PLACEMENT;
-				ship.parts[i].State = PartStates.PLACEMENT;
-
 				// Make sure the part and main scene won't interact physcally
 				// or graphically (thumbLayer is chosen to be a layer that is
 				// not rendered by the scene cameras), and removing the
 				// colliders ensures that the parts can't collide with anything
-				EL_Utils.RemoveColliders (ship.parts[i].gameObject);
+				//
+				// ELEditor removes the colliders
 
 				EL_Utils.SetLightMasks (ship.parts[i].gameObject, thumbMask);
 				EL_Utils.SetLayer (ship.parts[i].gameObject, thumbLayer, true);
@@ -200,7 +193,7 @@ namespace ExtraplanetaryLaunchpads {
 			// Need to wait a frame for the parts to be renderable
 			// (don't know why, but my guess is to give the various renderers
 			// a chance to set themselves up)
-			HighLogic.fetch.StartCoroutine (capture (ship, thumbPath, savedHL));
+			HighLogic.fetch.StartCoroutine (capture (ship, thumbPath));
 		}
 
 		public static string UserThumbName (ELCraftType craftType, string craftFile)

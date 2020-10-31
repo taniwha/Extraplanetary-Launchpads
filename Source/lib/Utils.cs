@@ -214,6 +214,14 @@ namespace ExtraplanetaryLaunchpads {
 								  type, border);
 		}
 
+		public static void DisableColliders (GameObject obj)
+		{
+			var colliders = obj.GetComponentsInChildren<Collider> ();
+			for (int i = colliders.Length; i-- > 0; ) {
+				colliders[i].enabled = false;
+			}
+		}
+
 		public static void RemoveColliders (GameObject obj)
 		{
 			var colliders = obj.GetComponentsInChildren<Collider> ();

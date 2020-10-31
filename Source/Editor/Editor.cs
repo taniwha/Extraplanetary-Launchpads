@@ -357,7 +357,7 @@ namespace ExtraplanetaryLaunchpads {
 				Part p = ship.parts[i];
 				p.enabled = false;
 				EL_Utils.DisableModules (p.gameObject);
-				EL_Utils.RemoveColliders (p.gameObject);
+				EL_Utils.DisableColliders (p.gameObject);
 			}
 			if (!editor) {
 				var go = new GameObject ("EL Editor");

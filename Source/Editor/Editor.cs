@@ -52,6 +52,8 @@ namespace ExtraplanetaryLaunchpads {
 		// For any other modules
 		List<UpdateDelegate> Starters;
 
+		bool ready;
+
 		void Awake ()
 		{
 			Updaters = new List<UpdateDelegate> ();
@@ -78,6 +80,8 @@ namespace ExtraplanetaryLaunchpads {
 			LateUpdaters.Clear ();
 			CRStarters.Clear ();
 			Starters.Clear ();
+
+			ready = false;
 
 			// Remove the fake EditorLogic so it doesn't cause problems the
 			// next time the player goes to the VAB or SPH
@@ -189,6 +193,14 @@ namespace ExtraplanetaryLaunchpads {
 			Debug.Log ($"[ELEditor] RunStarters: end coroutine Start");
 
 			RestoreScene ();
+
+			ready = true;
+		}
+
+		IEnumerator WaitAndRunStarters ()
+		{
+			yield return null;
+			RunStarters ();
 		}
 
 		void SetupEditor (ShipConstruct ship)
@@ -229,7 +241,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 
-			RunStarters ();
+			StartCoroutine (WaitAndRunStarters ());
 		}
 
 		bool lsie;
@@ -276,17 +288,23 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Update ()
 		{
-			RunUpdateDelegates ("Update", Updaters);
+			if (ready) {
+				RunUpdateDelegates ("Update", Updaters);
+			}
 		}
 
 		void FixedUpdate ()
 		{
-			RunUpdateDelegates ("FixedUpdate", FixedUpdaters);
+			if (ready) {
+				RunUpdateDelegates ("FixedUpdate", FixedUpdaters);
+			}
 		}
 
 		void LateUpdate ()
 		{
-			RunUpdateDelegates ("LateUpdate", LateUpdaters);
+			if (ready) {
+				RunUpdateDelegates ("LateUpdate", LateUpdaters);
+			}
 		}
 
 		void SetActive (bool active)
@@ -314,8 +332,8 @@ namespace ExtraplanetaryLaunchpads {
 				var go = new GameObject ("EL Editor");
 				editor = go.AddComponent<ELEditor> ();
 			}
-			editor.SetupEditor (ship);
 			editor.SetActive (true);
+			editor.SetupEditor (ship);
 		}
 
 		/** Disable the editor and destroy the ship and its parts

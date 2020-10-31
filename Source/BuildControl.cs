@@ -955,6 +955,7 @@ namespace ExtraplanetaryLaunchpads {
 		internal void OnStart ()
 		{
 			workNet = builder.vessel.FindVesselModuleImplementing<ELVesselWorkNet> ();
+			GameEvents.onPartUnpack.Add (onPartUnpack);
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 			GameEvents.onPartDie.Add (onPartDie);
 			if (vesselInfo != null) {
@@ -999,9 +1000,27 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void OnDestroy ()
 		{
+			GameEvents.onPartUnpack.Remove (onPartUnpack);
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
 			DestroyCraftHull ();
+		}
+
+		IEnumerator WaitAndStopCoroutines (MonoBehaviour behavior)
+		{
+			yield return null;
+			behavior.StopAllCoroutines ();
+		}
+
+		void onPartUnpack (Part p)
+		{
+			if (p != builder.part) {
+				return;
+			}
+			if (groundPartModule != null) {
+				var b = builder as PartModule;
+				b.StartCoroutine (WaitAndStopCoroutines (groundPartModule));
+			}
 		}
 
 		public void OnRename (string oldName)

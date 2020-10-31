@@ -146,6 +146,22 @@ namespace ExtraplanetaryLaunchpads {
 			updaters.Add (del);
 		}
 
+		void RemoveUpdaters (object target, List<UpdateDelegate> updaters)
+		{
+			for (int i = updaters.Count; i-- > 0; ) {
+				if (updaters[i].Target == target) {
+					updaters.RemoveAt (i);
+				}
+			}
+		}
+
+		void RemoveUpdaters (object target)
+		{
+			RemoveUpdaters (target, Updaters);
+			RemoveUpdaters (target, FixedUpdaters);
+			RemoveUpdaters (target, LateUpdaters);
+		}
+
 		/** Run all the collected Start methods.
 		 *
 		 * Both Starters and CRStarters will be empty on completion.
@@ -156,13 +172,20 @@ namespace ExtraplanetaryLaunchpads {
 
 			// run through all the simple starters first
 			for (int i = Starters.Count; i-- > 0; ) {
+				var mod = Starters[i].Target as MonoBehaviour;
+				mod.enabled = true;
 				try {
 					Starters[i] ();
 				} catch (Exception e) {
-					Debug.LogError ($"[ELEditor] caught Start exception: {e.Message}");
-					Debug.LogError ($"{e.StackTrace}");
+					Debug.LogError ($"[ELEditor] caught Start exception: {e.Message}\n{e.StackTrace}");
 					Debug.LogError ($"        on {Starters[i].Target}");
 				}
+				if (!mod.enabled) {
+					// the module (probably PartModule, but...) disabled itself
+					//Debug.Log ($"[ELEditor] {Starters[i].Target} disabled itself");
+					RemoveUpdaters (Starters[i].Target);
+				}
+				mod.enabled = false;
 				// These are one-shot methods, so remove as we go
 				Starters.RemoveAt (i);
 			}
@@ -173,22 +196,50 @@ namespace ExtraplanetaryLaunchpads {
 			for (int i = 0; i < CRStarters.Count; i++) {
 				starters.Add (CRStarters[i] ());
 			}
+			for (int i = ship.parts.Count; i-- > 0; ) {
+				Part p = ship.parts[i];
+				for (int j = p.Modules.Count; j-- > 0; ) {
+					p.Modules[j].enabled = true;
+				}
+			}
 			while (CRStarters.Count > 0) {
 				for (int i = CRStarters.Count; i-- > 0; ) {
 					bool remove = false;
+					var mod = CRStarters[i].Target as MonoBehaviour;
+					mod.enabled = true;
 					try {
 						remove = !starters[i].MoveNext ();
 					} catch (Exception e) {
-						Debug.LogError ($"[ELEditor] caught Start exception: {e.Message}");
-						Debug.LogError ($"{e.StackTrace}");
-						Debug.LogError ($"        on {Starters[i].Target}");
+						Debug.LogError ($"[ELEditor] caught Start exception: {e.Message}\n{e.StackTrace}");
+						Debug.LogError ($"        on {CRStarters[i].Target}");
 						Debug.LogError ($"        Disabling {starters[i]} ({CRStarters[i]})");
 						remove = true;
 					}
+					if (!mod.enabled) {
+						// the module (probably PartModule, but...) disabled
+						// itself
+						//Debug.Log ($"[ELEditor] {CRStarters[i].Target} disabled itself");
+						RemoveUpdaters (CRStarters[i].Target);
+						remove = true;
+					}
+					mod.enabled = false;
 					if (remove) {
 						starters.RemoveAt (i);
 						CRStarters.RemoveAt (i);
 					}
+				}
+			}
+			for (int i = ship.parts.Count; i-- > 0; ) {
+				Part p = ship.parts[i];
+				for (int j = p.Modules.Count; j-- > 0; ) {
+					PartModule m = p.Modules[j];
+
+					if (!m.enabled) {
+						//Debug.Log ($"[ELEditor] {m} disabled itself");
+						RemoveUpdaters (m);
+					}
+
+					m.enabled = false;
 				}
 			}
 			Debug.Log ($"[ELEditor] RunStarters: end coroutine Start");

@@ -278,6 +278,8 @@ namespace ExtraplanetaryLaunchpads {
 					updaters[i] ();
 				} catch (Exception e) {
 					Debug.LogError ($"[ELEditor] caught {updateType} exception: {e.Message}");
+					Debug.LogError ($"{e.StackTrace}");
+					Debug.LogError ($"        on {updaters[i].Target}");
 					Debug.LogError ($"        Disabling {updaters[i]}");
 					updaters.RemoveAt (i);
 				}

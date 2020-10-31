@@ -125,6 +125,7 @@ EL_FILES := \
 	AirstreamShield.cs					\
 	BuildControl.cs						\
 	ControlInterface.cs					\
+	GroundPart.cs						\
 	Settings.cs							\
 	$e
 

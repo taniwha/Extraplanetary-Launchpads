@@ -115,6 +115,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public DockedVesselInfo vesselInfo { get; private set; }
 		public Part craftRoot { get; private set; }
+		ModuleGroundPart groundPartModule;
 		public string craftName
 		{
 			get {
@@ -493,6 +494,17 @@ namespace ExtraplanetaryLaunchpads {
 		public delegate void PostCaptureDelegate ();
 		public PostCaptureDelegate PostCapture = () => { };
 
+		void HookGroundPartPickup ()
+		{
+			groundPartModule = craftRoot.FindModuleImplementing<ModuleGroundPart> ();
+			if (groundPartModule != null) {
+				// craft with ModuleGroundPart should have only the one part as
+				// properly configured deployable parts do not allow attachment
+				// in the editor and KIS refuses to touch them
+				ELGroundPart.HookPickup (groundPartModule, this);
+			}
+		}
+
 		private IEnumerator CaptureCraft (Vessel craftVessel)
 		{
 			FlightGlobals.overrideOrbit = true;
@@ -521,6 +533,7 @@ namespace ExtraplanetaryLaunchpads {
 			builder.SetCraftMass (0);
 
 			CoupleWithCraft (craftVessel);
+			HookGroundPartPickup ();
 			state = State.Transfer;
 			PostCapture ();
 		}
@@ -948,6 +961,8 @@ namespace ExtraplanetaryLaunchpads {
 				craftRoot = builder.vessel[vesselInfo.rootPartUId];
 				if (craftRoot == null) {
 					CleanupAfterRelease ();
+				} else {
+					HookGroundPartPickup ();
 				}
 			}
 			PlaceCraftHull ();
@@ -997,6 +1012,7 @@ namespace ExtraplanetaryLaunchpads {
 		void CleanupAfterRelease ()
 		{
 			craftRoot = null;
+			groundPartModule = null;
 			vesselInfo = null;
 			builtStuff = null;	// ensure pad mass gets reset
 			SetPadMass ();
@@ -1004,13 +1020,15 @@ namespace ExtraplanetaryLaunchpads {
 			DestroyCraftHull ();
 		}
 
-		public void ReleaseVessel ()
+		public void ReleaseVessel (bool switchVessel = true)
 		{
 			TransferResources ();
 			craftRoot.Undock (vesselInfo);
 			var vesselCount = FlightGlobals.Vessels.Count;
-			Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
-			FlightGlobals.ForceSetActiveVessel (vsl);
+			if (switchVessel) {
+				Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
+				FlightGlobals.ForceSetActiveVessel (vsl);
+			}
 			//builder.part.StartCoroutine (FixAirstreamShielding (vsl));
 
 			CleanupAfterRelease ();

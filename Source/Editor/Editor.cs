@@ -198,10 +198,23 @@ namespace ExtraplanetaryLaunchpads {
 			ready = true;
 		}
 
+		void DisableCoroutines ()
+		{
+			for (int i = ship.parts.Count; i-- > 0; ) {
+				Part p = ship.parts[i];
+				p.StopAllCoroutines ();
+				for (int j = p.Modules.Count; j-- > 0; ) {
+					PartModule m = p.Modules[j];
+					m.StopAllCoroutines ();
+				}
+			}
+		}
+
 		IEnumerator WaitAndRunStarters ()
 		{
 			yield return null;
 			RunStarters ();
+			DisableCoroutines ();
 		}
 
 		void SetupEditor (ShipConstruct ship)

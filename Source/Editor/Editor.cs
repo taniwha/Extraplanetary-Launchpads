@@ -35,6 +35,7 @@ namespace ExtraplanetaryLaunchpads {
 		delegate IEnumerator StartDelegate ();
 
 		static ELEditor editor;
+		static FieldInfo rootPart;
 
 		ShipConstruct ship;
 
@@ -59,6 +60,7 @@ namespace ExtraplanetaryLaunchpads {
 			CRStarters = new List<StartDelegate> ();
 			Starters = new List<UpdateDelegate> ();
 
+			rootPart = typeof(EditorLogic).GetField ("rootPart", bindFlags);
 			editor = this;
 		}
 
@@ -205,6 +207,8 @@ namespace ExtraplanetaryLaunchpads {
 			fakeEditor.enabled = false;
 
 			fakeEditor.ship = ship;
+			Part root = ship.parts[0].localRoot;
+			rootPart.SetValue (fakeEditor, ship.parts[0].localRoot);
 
 			var fnf = new GameObject ("FakeNameField", typeof (TMP_InputField));
 			fnf.SetActive (false);

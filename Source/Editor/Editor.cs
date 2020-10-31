@@ -153,12 +153,14 @@ namespace ExtraplanetaryLaunchpads {
 					Starters[i] ();
 				} catch (Exception e) {
 					Debug.LogError ($"[ELEditor] caught Start exception: {e.Message}");
+					Debug.LogError ($"{e.StackTrace}");
+					Debug.LogError ($"        on {Starters[i].Target}");
 				}
 				// These are one-shot methods, so remove as we go
 				Starters.RemoveAt (i);
 			}
 
-			Debug.LogError ($"[ELEditor] RunStarters: running coroutine Start");
+			Debug.Log ($"[ELEditor] RunStarters: running coroutine Start");
 			// run through all the coroutine starters
 			var starters = new List<IEnumerator> ();
 			for (int i = 0; i < CRStarters.Count; i++) {
@@ -171,6 +173,8 @@ namespace ExtraplanetaryLaunchpads {
 						remove = !starters[i].MoveNext ();
 					} catch (Exception e) {
 						Debug.LogError ($"[ELEditor] caught Start exception: {e.Message}");
+						Debug.LogError ($"{e.StackTrace}");
+						Debug.LogError ($"        on {Starters[i].Target}");
 						Debug.LogError ($"        Disabling {starters[i]} ({CRStarters[i]})");
 						remove = true;
 					}
@@ -180,7 +184,7 @@ namespace ExtraplanetaryLaunchpads {
 					}
 				}
 			}
-			Debug.LogError ($"[ELEditor] RunStarters: end coroutine Start");
+			Debug.Log ($"[ELEditor] RunStarters: end coroutine Start");
 
 			RestoreScene ();
 		}

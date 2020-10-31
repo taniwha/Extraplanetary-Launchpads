@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 namespace ExtraplanetaryLaunchpads {
@@ -222,9 +223,37 @@ namespace ExtraplanetaryLaunchpads {
 			Part root = ship.parts[0].localRoot;
 			rootPart.SetValue (fakeEditor, ship.parts[0].localRoot);
 
-			var fnf = new GameObject ("FakeNameField", typeof (TMP_InputField));
-			fnf.SetActive (false);
-			fakeEditor.shipNameField = fnf.GetComponent<TMP_InputField> ();
+			var nfo = new GameObject ("FakeNameField", typeof (TMP_InputField));
+			nfo.transform.SetParent (go.transform, false);
+			nfo.SetActive (false);
+			var fnf = nfo.GetComponent<TMP_InputField> ();
+			fakeEditor.shipNameField = fnf;
+			fakeEditor.shipDescriptionField = fnf;
+
+			var bo = new GameObject ("FakeButton",
+									 typeof (Button),
+									 typeof (FlagBrowserButton),
+									 typeof (KSP.UI.UIOnClick));
+			bo.transform.SetParent (go.transform, false);
+			bo.SetActive (false);
+			var fb = bo.GetComponent<Button> ();
+			var foc = bo.GetComponent<KSP.UI.UIOnClick> ();
+			var fbb = bo.GetComponent<FlagBrowserButton> ();
+			fakeEditor.loadBtn = fb;
+			fakeEditor.saveBtn = fb;
+			fakeEditor.steamBtn = fb;
+			fakeEditor.newBtn = fb;
+			fakeEditor.launchBtn = fb;
+			fakeEditor.exitBtn = fb;
+			fakeEditor.symmetryButton = foc;
+			fakeEditor.angleSnapButton = foc;
+			fakeEditor.actionPanelBtn = fb;
+			fakeEditor.partPanelBtn = fb;
+			fakeEditor.crewPanelBtn = fb;
+			fakeEditor.switchEditorBtn = fb;
+
+			fakeEditor.flagBrowserButton = fbb;
+			fakeEditor.flagBrowserButton.button = fb;
 
 			for (int i = 0; i < ship.parts.Count; i++) {
 				Part p = ship.parts[i];

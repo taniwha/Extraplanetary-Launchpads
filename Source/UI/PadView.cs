@@ -230,9 +230,8 @@ namespace ExtraplanetaryLaunchpads {
 			var pads = vessel.FindPartModulesImplementing<ELBuildControl.IBuilder> ();
 			int control_index = -1;
 
-			if (pads.Count < 1) {
-				padSelector.interactable = false;
-			} else {
+			padSelector.interactable = pads.Count > 0;
+			if (pads.Count > 0) {
 				worknet = FindWorkNet (vessel);
 				if (worknet != null && control == null) {
 					control = FindControl (vessel, worknet.selectedPad);

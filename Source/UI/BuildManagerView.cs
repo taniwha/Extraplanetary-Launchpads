@@ -71,6 +71,16 @@ namespace ExtraplanetaryLaunchpads {
 			statusBar.SetVessel (control.builder.vessel);
 			padView.SetControl (control);
 		}
+
+		protected override void OnEnable ()
+		{
+			GameEvents.onVesselChange.Add (SetVessel);
+		}
+
+		protected override void OnDisable ()
+		{
+			GameEvents.onVesselChange.Remove (SetVessel);
+		}
 #region TabController.ITabItem
 		public string TabName { get { return ELLocalization.BuildManager; } }
 		public bool TabEnabled { get { return padView.control != null; } }

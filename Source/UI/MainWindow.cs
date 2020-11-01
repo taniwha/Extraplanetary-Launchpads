@@ -76,6 +76,7 @@ namespace ExtraplanetaryLaunchpads {
 		public void SetControl (ELBuildControl control)
 		{
 			buildManager.SetControl (control);
+			resourceManager.SetVessel (control?.builder.vessel);
 			tabController.UpdateTabStates ();
 		}
 

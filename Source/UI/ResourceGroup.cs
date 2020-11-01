@@ -49,6 +49,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void BuildModules (RMResourceManager manager)
 		{
+			resource = manager.masterSet.resources[resourceName];
+
 			var liveSets = new HashSet<string> ();
 			for (int i = 0; i < manager.resourceSets.Count; i++) {
 				var set = manager.resourceSets[i];
@@ -82,7 +84,6 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			isOpen = false;
 			this.resourceName = resourceName;
-			resource = manager.masterSet.resources[resourceName];
 			modules = new ResourceModule.List ();
 			moduleDict = new ResourceModule.Dict ();
 

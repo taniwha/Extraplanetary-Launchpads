@@ -172,11 +172,6 @@ namespace ExtraplanetaryLaunchpads {
 			SetVessel (vessel);
 		}
 
-		protected override void OnDisable ()
-		{
-			transferring = false;
-		}
-
 		public void SetVessel (Vessel vessel)
 		{
 			var parts = vessel.parts;
@@ -187,6 +182,17 @@ namespace ExtraplanetaryLaunchpads {
 			transferring = false;
 			onTransferableChanged ();
 			RebuildResources (manager);
+		}
+
+		protected override void OnEnable ()
+		{
+			GameEvents.onVesselChange.Add (SetVessel);
+		}
+
+		protected override void OnDisable ()
+		{
+			transferring = false;
+			GameEvents.onVesselChange.Remove (SetVessel);
 		}
 #region TabController.ITabItem
 		public string TabName { get { return ELLocalization.ResourceManager; } }

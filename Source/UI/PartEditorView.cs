@@ -121,7 +121,10 @@ namespace ExtraplanetaryLaunchpads {
 			string name = nameInput.text;
 			string description = descriptionInput.text;
 			var ship = new ShipConstruct (name, description, part);
+			Quaternion rotation = ship.parts[0].transform.rotation;
+			ship.parts[0].transform.rotation = Quaternion.identity;
 			ConfigNode node = ship.SaveShip ();
+			ship.parts[0].transform.rotation = rotation;
 			//Debug.Log ($"[ELPartEditorView] Save {node}");
 
 			string basePath = KSPUtil.ApplicationRootPath;

@@ -96,6 +96,7 @@ namespace ExtraplanetaryLaunchpads {
 				partEditorWindow = UIKit.CreateUI<ELPartEditorWindow> (ELWindowManager.appCanvasRect, "ELPartEditorWindow");
 			}
 			partEditorWindow.EditPart (editPart);
+			partEditorWindow.rectTransform.SetAsLastSibling ();
 		}
 	}
 }

@@ -113,6 +113,7 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				mainWindow.SetVessel (FlightGlobals.ActiveVessel);
 			}
+			mainWindow.rectTransform.SetAsLastSibling ();
 		}
 
 		public static void ToggleBuildWindow ()
@@ -140,6 +141,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			shipInfoInfo.visible = true;
 			shipInfo.SetVisible (true);
+			shipInfo.rectTransform.SetAsLastSibling ();
 		}
 
 		public static void ToggleShipInfo ()

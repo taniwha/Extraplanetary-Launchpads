@@ -179,6 +179,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			craftBrowser.SetDelegates (onFileSelected, onCancel);
 			craftBrowser.SetCraftType (craftType, false);
+			craftBrowser.rectTransform.SetAsLastSibling ();
 		}
 	}
 }

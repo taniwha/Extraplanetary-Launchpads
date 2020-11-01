@@ -78,6 +78,7 @@ namespace ExtraplanetaryLaunchpads {
 			buildManager.SetControl (control);
 			resourceManager.SetVessel (control?.builder.vessel);
 			tabController.UpdateTabStates ();
+			tabController.SelectTab (0);
 		}
 
 		public void SetVisible (bool visible)

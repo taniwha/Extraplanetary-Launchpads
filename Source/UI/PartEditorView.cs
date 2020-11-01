@@ -203,6 +203,8 @@ namespace ExtraplanetaryLaunchpads {
 				EL_Utils.DisableModules (part.gameObject);
 				EL_Utils.RemoveColliders (part.gameObject);
 				part.gameObject.SetActive (true);
+				nameInput.text = availablePart.title;
+				descriptionInput.text = "EL constructed part";
 				partPreview.Part (part);
 				StartCoroutine (WaitAndBuildTweakers ());
 			} else {
@@ -223,16 +225,17 @@ namespace ExtraplanetaryLaunchpads {
 			partPreview.AvailablePart (null);
 			if (editPart != null) {
 				var node = editPart.node;
-				nameInput.text = editPart.name;
-				if (node.HasValue ("description")) {
-					string description = node.GetValue ("description");
-					descriptionInput.text = description.Replace ('¨', '\n');
-				}
 				var partNode = node.GetNode ("PART");
 				string partName = partNode.GetValue ("part").Split ('_')[0];
 
 				var partInfo = PartLoader.getPartInfoByName (partName);
 				EditPart (partInfo);
+
+				nameInput.text = editPart.name;
+				if (node.HasValue ("description")) {
+					string description = node.GetValue ("description");
+					descriptionInput.text = description.Replace ('¨', '\n');
+				}
 			}
 		}
 	}

@@ -246,6 +246,9 @@ namespace ExtraplanetaryLaunchpads {
 			var pos = Vector3.zero;
 			if (n != null) {
 				Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
+				if (n.id == "KISMount") {
+					nodeAxis = -nodeAxis;
+				}
 				Vector3 forward = rootXform.forward;
 				float fwdDot = Vector3.Dot (forward, nodeAxis);
 				Debug.Log ($"[EL] nodeAxis: {nodeAxis}");

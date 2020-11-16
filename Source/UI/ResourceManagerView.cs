@@ -126,6 +126,16 @@ namespace ExtraplanetaryLaunchpads {
 			transferring = !transferring;
 		}
 
+		bool CanTransfer (string resource)
+		{
+			var resdef = PartResourceLibrary.Instance.GetDefinition (resource);
+			if (resdef == null || !resdef.isVisible
+				|| resdef.resourceTransferMode == ResourceTransferMode.NONE) {
+				return false;
+			}
+			return true;
+		}
+
 		void RebuildResources (RMResourceManager resourceManager)
 		{
 			var set = new HashSet<string> ();
@@ -136,6 +146,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			foreach (var res in set) {
+				if (!CanTransfer (res)) {
+					continue;
+				}
 				if (resourceGroupDict.ContainsKey (res)) {
 					Debug.Log ($"[ELResourceManagerView] RebuildResources updating {res}");
 					resourceGroupDict[res].BuildModules (resourceManager);

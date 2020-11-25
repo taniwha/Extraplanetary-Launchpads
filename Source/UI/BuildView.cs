@@ -304,6 +304,10 @@ namespace ExtraplanetaryLaunchpads {
 		void RebuildResources ()
 		{
 			progressResources.Clear ();
+			if (control == null || control.builtStuff == null
+				|| control.buildCost == null) {
+				return;
+			}
 			foreach (var res in control.builtStuff.required) {
 				var req = FindResource (control.buildCost.required, res.name);
 				var available = control.padResources[res.name];

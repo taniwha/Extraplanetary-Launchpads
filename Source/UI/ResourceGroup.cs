@@ -51,30 +51,29 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			resource = manager.masterSet.resources[resourceName];
 
-			var liveSets = new HashSet<string> ();
+			var liveSets = new HashSet<uint> ();
 			for (int i = 0; i < manager.resourceSets.Count; i++) {
 				var set = manager.resourceSets[i];
 				if (!set.resources.ContainsKey (resourceName)) {
 					continue;
 				}
-				string moduleName = set.name;
-				liveSets.Add (moduleName);
-				if (moduleDict.ContainsKey (moduleName)) {
-					Debug.Log ($"[ResourceGroup] BuildModules updating {moduleName}");
-					var mod = moduleDict[moduleName];
+				liveSets.Add (set.id);
+				if (moduleDict.ContainsKey (set.id)) {
+					Debug.Log ($"[ResourceGroup] BuildModules updating {set.name} {set.id}");
+					var mod = moduleDict[set.id];
 					mod.set = set;
 				} else {
-					Debug.Log ($"[ResourceGroup] BuildModules adding {moduleName}");
+					Debug.Log ($"[ResourceGroup] BuildModules adding {set.name} {set.id}");
 					var mod = new ResourceModule (set, resourceName, manager);
-					moduleDict[moduleName] = mod;
+					moduleDict[set.id] = mod;
 					modules.Add (mod);
 				}
 			}
 
 			for (int i = modules.Count; i-- > 0; ) {
-				if (!liveSets.Contains(modules[i].name)) {
-					Debug.Log ($"[ResourceGroup] BuildModules removing {modules[i].name}");
-					moduleDict.Remove (modules[i].name);
+				if (!liveSets.Contains(modules[i].id)) {
+					Debug.Log ($"[ResourceGroup] BuildModules removing {modules[i].name} {modules[i].id}");
+					moduleDict.Remove (modules[i].id);
 					modules.RemoveAt (i);
 				}
 			}

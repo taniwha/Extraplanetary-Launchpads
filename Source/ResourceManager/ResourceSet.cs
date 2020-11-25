@@ -33,6 +33,7 @@ namespace ExtraplanetaryLaunchpads {
 		public List<RMResourceSet> sets;
 		public bool balanced;
 		public string name;
+		public uint id;	// from part definining the module if relevant
 
 		public RMResourceInfo this[string res]
 		{

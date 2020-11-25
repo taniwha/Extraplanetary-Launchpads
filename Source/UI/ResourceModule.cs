@@ -51,6 +51,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 #endregion
 		public string name { get { return set.name; } }
+		public uint id { get { return set.id; } }
 		public RMResourceSet set { get; set; }
 		RMResourceManager manager;
 		XferState _xferState;
@@ -107,7 +108,7 @@ namespace ExtraplanetaryLaunchpads {
 			HighlightSet (set, resourceName, on);
 		}
 
-		public class Dict : Dictionary<string, ResourceModule> { }
+		public class Dict : Dictionary<uint, ResourceModule> { }
 		public class List : List<ResourceModule>, UIKit.IListObject
 		{
 			public Layout Content { get; set; }

@@ -178,20 +178,28 @@ namespace ExtraplanetaryLaunchpads {
 			return false;
 		}
 
-		static string applicationRoot;
+		static string _applicationRoot;
+		static string applicationRoot
+		{
+			get {
+				if (_applicationRoot == null) {
+					_applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+				}
+				return _applicationRoot;
+			}
+		}
 		public static bool KSPFileExists (string filename)
 		{
-			if (applicationRoot == null) {
-				applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
-			}
 			return File.Exists (applicationRoot + filename);
+		}
+
+		public static DateTime KSPFileTimestamp (string filename)
+		{
+			return File.GetLastWriteTime (applicationRoot + filename);
 		}
 
 		public static bool LoadImage (ref Texture2D tex, string filename)
 		{
-			if (applicationRoot == null) {
-				applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
-			}
 			bool ret = false;
 			string path = $"{applicationRoot}{filename}";
 			if (File.Exists (path)) {

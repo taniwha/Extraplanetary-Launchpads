@@ -24,7 +24,7 @@ using KodeUI;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELCraftThumbManager : UIImage
+	public class ELCraftThumbManager
 	{
 		public class ThumbSprite
 		{
@@ -38,13 +38,16 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 
+			public DateTime timestamp { get; set; }
+
 			public class ThumbEvent : UnityEvent<ThumbSprite> { }
 			public ThumbEvent onUpdate { get; private set; }
 
-			public ThumbSprite (Sprite sprite)
+			public ThumbSprite (Sprite sprite, DateTime timestamp)
 			{
 				_sprite = sprite;
 				onUpdate = new ThumbEvent ();
+				this.timestamp = timestamp;
 			}
 		}
 
@@ -66,7 +69,13 @@ namespace ExtraplanetaryLaunchpads {
 			}
 
 			ThumbSprite thumb;
-			if (thumbnailCache.TryGetValue (thumbPath, out thumb) && thumb.sprite ) {
+			var timestamp = new DateTime (0);
+			if (!String.IsNullOrEmpty (thumbPath)
+				&& EL_Utils.KSPFileExists (thumbPath)) {
+				timestamp = EL_Utils.KSPFileTimestamp (thumbPath);
+			}
+			if (thumbnailCache.TryGetValue (thumbPath, out thumb)
+				&& thumb.sprite && thumb.timestamp == timestamp) {
 				return thumb;
 			}
 
@@ -77,7 +86,7 @@ namespace ExtraplanetaryLaunchpads {
 			var sprite = EL_Utils.MakeSprite (thumbTex);
 
 			if (thumb == null) {
-				thumb = new ThumbSprite (sprite);
+				thumb = new ThumbSprite (sprite, timestamp);
 			} else {
 				thumb.sprite = sprite;
 			}
@@ -94,6 +103,7 @@ namespace ExtraplanetaryLaunchpads {
 				GameObject.Destroy (thumb.sprite.texture);
 				GameObject.Destroy (thumb.sprite);
 				thumb.sprite = EL_Utils.MakeSprite (tex);
+				thumb.timestamp = EL_Utils.KSPFileTimestamp (thumbPath);
 				return true;
 			}
 			return false;

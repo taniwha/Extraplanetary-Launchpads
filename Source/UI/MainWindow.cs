@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
+using UnityEngine;
 
 using KodeUI;
 
@@ -59,6 +60,20 @@ namespace ExtraplanetaryLaunchpads {
 				resourceManager,
 			};
 			tabController.Items (tabItems);
+
+			titlebar
+				.Add<UIButton> ()
+					.OnClick (CloseWindow)
+					.Anchor (AnchorPresets.TopRight)
+					.Pivot (new Vector2 (1.25f, 1.25f))
+					.SizeDelta (16, 16)
+					.Finish();
+				;
+		}
+
+		void CloseWindow ()
+		{
+			ELWindowManager.HideBuildWindow ();
 		}
 
 		public override void Style ()

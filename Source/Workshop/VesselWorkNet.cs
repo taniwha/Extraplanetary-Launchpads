@@ -54,14 +54,19 @@ public class ELVesselWorkNet : VesselModule
 	{
 		Productivity = 0;
 		if (vessel.loaded) {
-			sources = vessel.FindPartModulesImplementing<ELWorkSource> ();
-			sinks = vessel.FindPartModulesImplementing<ELWorkSink> ();
+			var nodes = vessel.FindPartModulesImplementing<ELWorkNode> ();
+			sources.Clear();
+			sinks.Clear();
 
-			foreach (var source in sources) {
-				source.workNet = this;
-			}
-			foreach (var sink in sinks) {
-				sink.workNet = this;
+			for (int i = nodes.Count; i-- > 0; ) {
+				var node = nodes[i];
+				node.workNet = this;
+				if (node is ELWorkSink sink) {
+					sinks.Add (sink);
+				}
+				if (node is ELWorkSource source) {
+					sources.Add (source);
+				}
 			}
 
 			UpdateProductivity (true);
@@ -86,7 +91,7 @@ public class ELVesselWorkNet : VesselModule
 			double.TryParse (s, out p);
 			Productivity = p;
 		}
-		sinks = new List<ELWorkSink> ();
+		sinks.Clear ();
 		protoSinks = new List<ELProtoWorkSink> ();
 		for (int i = 0; i < node.nodes.Count; i++) {
 			ConfigNode n = node.nodes[i];
@@ -129,6 +134,8 @@ public class ELVesselWorkNet : VesselModule
 	protected override void OnAwake ()
 	{
 		GameEvents.onVesselWasModified.Add (onVesselWasModified);
+		sources = new List<ELWorkSource> ();
+		sinks = new List<ELWorkSink> ();
 	}
 
 	void OnDestroy ()
@@ -281,7 +288,7 @@ public class ELVesselWorkNet : VesselModule
 				num_sinks++;
 			}
 		}
-		//Debug.LogFormat ("[EL Workshop] num_sinks: {0}", num_sinks);
+		//Debug.LogFormat ("[ELVesselWorkNet] num_sinks: {0}", num_sinks);
 		if (num_sinks > 0) {
 			double work = hours / num_sinks;
 			for (int i = 0; i < sinks.Count; i++) {
@@ -291,7 +298,7 @@ public class ELVesselWorkNet : VesselModule
 				}
 			}
 		} else {
-			//Debug.LogFormat ("[EL Workshop] loaded: {0}", vessel.loaded);
+			//Debug.LogFormat ("[ELVesselWorkNet] loaded: {0}", vessel.loaded);
 			if (!vessel.loaded) {
 				// run out of work to do, so shut down until the vessel is next
 				// loaded

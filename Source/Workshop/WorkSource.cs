@@ -18,12 +18,11 @@ along with Extraplanetary Launchpads.  If not, see
 
 namespace ExtraplanetaryLaunchpads {
 
-public interface ELWorkSource
+public interface ELWorkSource : ELWorkNode
 {
 	void UpdateProductivity ();
 	double Productivity { get; }
 	bool isActive { get; }
-	ELVesselWorkNet workNet { set; }
 }
 
 }

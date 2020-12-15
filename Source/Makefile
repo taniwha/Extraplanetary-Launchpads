@@ -77,6 +77,7 @@ EL_FILES := \
 	Workshop/ConstructionSkill.cs		\
 	Workshop/ProtoWorkSink.cs			\
 	Workshop/VesselWorkNet.cs			\
+	Workshop/WorkNode.cs				\
 	Workshop/WorkSink.cs				\
 	Workshop/WorkSource.cs				\
 	Workshop/Workshop.cs				\

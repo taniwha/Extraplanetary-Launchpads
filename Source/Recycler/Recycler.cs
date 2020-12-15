@@ -25,7 +25,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlInterface
+public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlInterface, ELWorkNode
 {
 	[KSPField] public float RecycleRate = 1.0f;
 	[KSPField] public string RecycleField_name = "RecycleField";
@@ -191,6 +191,8 @@ public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlI
 	{
 		return ModifierChangeWhen.CONSTANTLY;
 	}
+
+	public ELVesselWorkNet workNet { get; set; }
 }
 
 }

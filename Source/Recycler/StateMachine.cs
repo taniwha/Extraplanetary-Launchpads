@@ -61,7 +61,7 @@ namespace ExtraplanetaryLaunchpads {
 		Collider RecycleField;
 		RMResourceSet recycler_resources;
 		Part active_part;
-		ELVesselWorkNet workNet;
+		ELVesselWorkNet workNet => recycler.workNet;
 		HashSet<uint> recycle_parts;
 		List<BuildResource> part_resources;
 		int res_index;
@@ -252,7 +252,6 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Start (Collider field)
 		{
-			workNet = recycler.vessel.FindVesselModuleImplementing<ELVesselWorkNet> ();
 			RecycleField = field;
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 			recycler_resources = new RMResourceSet (recycler.vessel, recycle_parts);

@@ -18,11 +18,9 @@ along with Extraplanetary Launchpads.  If not, see
 
 namespace ExtraplanetaryLaunchpads {
 
-public interface ELWorkSink : ELWorkNode
+public interface ELWorkNode
 {
-	void DoWork (double kerbalHours);
-	bool isActive { get; }
-	double CalculateWork ();
+	ELVesselWorkNet workNet { set; }
 }
 
 }

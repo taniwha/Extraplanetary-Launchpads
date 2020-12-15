@@ -401,8 +401,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			double prod = 0;
 			if (workNet != null) {
-				prod = ELWorkshop.HyperCurve (workNet.Productivity);
+				prod = workNet.Productivity;
 			}
+			prod = ELWorkshop.HyperCurve (prod);
 			Part p;
 			do {
 				var ar = recycle_parts.ToArray ();

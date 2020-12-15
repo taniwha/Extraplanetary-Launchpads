@@ -7714,9 +7714,15 @@ Resource Rates
 \begin_layout Standard
 The amount of work required to prepare resources may be configured using
  an 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 EL_ResourceRates
-\noun default
+\end_layout
+
+\end_inset
+
  node.
  This node is very simple in that it is just a list of 
 \begin_inset Flex Code
@@ -7837,24 +7843,47 @@ ELBuildControl.IBuilder
 \end_layout
 
 \begin_layout Standard
+\begin_inset Flex Code
+status open
 
-\noun on
+\begin_layout Plain Layout
 ELBuildControl
-\noun default
+\end_layout
+
+\end_inset
+
  is the actual workhorse for building vessels, the various pad modules all
  use 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 ELBuildControl
-\noun default
+\end_layout
+
+\end_inset
+
  for the common functionality.
  The 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 IBuilder
-\noun default
+\end_layout
+
+\end_inset
+
  interface is the methods and properties that 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 ELBuildControl
-\noun default
+\end_layout
+
+\end_inset
+
  requires of the pad modules.
  There are several methods and properties, but main property of interest
  is 
@@ -7862,9 +7891,15 @@ ELBuildControl
 control
 \noun default
  which provides access to the 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 ELBuildControl
-\noun default
+\end_layout
+
+\end_inset
+
  object attached to the pad.
 \end_layout
 
@@ -7945,6 +7980,65 @@ ELSurveyStation
 \end_layout
 
 \begin_layout Subsubsection
+ELWorkNode
+\end_layout
+
+\begin_layout Standard
+Base interface for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELWorkSink
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELWorkSource
+\end_layout
+
+\end_inset
+
+.
+ Any module implementing 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELWorkNode
+\end_layout
+
+\end_inset
+
+ will have its 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+workNet
+\end_layout
+
+\end_inset
+
+ property set by 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+ELVesselWorkNet
+\end_layout
+
+\end_inset
+
+ when the network is updated.
+\end_layout
+
+\begin_layout Subsubsection
 ELWorkSink 
 \end_layout
 
@@ -7966,9 +8060,15 @@ IResourceProvider
 
 \begin_layout Standard
 Interface used by 
-\noun on
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
 ELExtractor
-\noun default
+\end_layout
+
+\end_inset
+
  for querying environmental resource availability and extracting a resource
  from the environment.
 \end_layout

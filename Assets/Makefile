@@ -79,19 +79,19 @@ nightheron.png: nightheron.svg
 	inkscape --export-width=256 --export-height=160 --export-type=png -o $@ $^
 
 kairyuu_scaled.png: kairyuu.svg
-	inkscape --export-width=64 --export-height=40 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
+	inkscape --export-width=64 --export-height=40 --export-type=png -o $@ $^
 
 icon_button.png: EL_app.svg
-	inkscape --export-width=38 --export-height=38 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
+	inkscape --export-width=38 --export-height=38 --export-type=png -o $@ $^
 
 icon_filter_n.png: EL_filter.svg
-	sed -e 's/\#[[:xdigit:]]\{6\}/#000000/g' -e 's/\#[[:xdigit:]]\{3\}/#000/g' $^ | inkscape --export-width=32 --export-height=32 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ /dev/stdin
+	sed -e 's/\#[[:xdigit:]]\{6\}/#000000/g' -e 's/\#[[:xdigit:]]\{3\}/#000/g' $^ | inkscape --export-width=32 --export-height=32 --export-type=png -o $@ /dev/stdin
 
 icon_filter_s.png: EL_filter.svg
-	sed -e 's/\#[[:xdigit:]]\{6\}/#ffffff/g' -e 's/\#[[:xdigit:]]\{3\}/#fff/g' $^ | inkscape --export-width=32 --export-height=32 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ /dev/stdin
+	sed -e 's/\#[[:xdigit:]]\{6\}/#ffffff/g' -e 's/\#[[:xdigit:]]\{3\}/#fff/g' $^ | inkscape --export-width=32 --export-height=32 --export-type=png -o $@ /dev/stdin
 
 ELGenericCraftThumb.png: EL_UntitledSpacecraft.svg
-	inkscape --export-width=256 --export-height=256 --export-background='#000000' --export-background-opacity=0 --export-type=png -o $@ $^
+	inkscape --export-width=256 --export-height=256 --export-type=png -o $@ $^
 
 ui_background.png: ui_background.svg
 	inkscape --export-width=32 --export-height=32 --export-type=png -o $@ $^

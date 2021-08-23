@@ -16,6 +16,7 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections;
@@ -23,7 +24,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-using KSP.IO;
 using Experience;
 
 namespace ExtraplanetaryLaunchpads {
@@ -176,6 +176,109 @@ namespace ExtraplanetaryLaunchpads {
 				return true;
 			}
 			return false;
+		}
+
+		static string _applicationRoot;
+		static string applicationRoot
+		{
+			get {
+				if (_applicationRoot == null) {
+					_applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+				}
+				return _applicationRoot;
+			}
+		}
+		public static bool KSPFileExists (string filename)
+		{
+			return File.Exists (applicationRoot + filename);
+		}
+
+		public static DateTime KSPFileTimestamp (string filename)
+		{
+			return File.GetLastWriteTime (applicationRoot + filename);
+		}
+
+		public static bool LoadImage (ref Texture2D tex, string filename)
+		{
+			bool ret = false;
+			string path = $"{applicationRoot}{filename}";
+			if (File.Exists (path)) {
+				ImageConversion.LoadImage (tex, File.ReadAllBytes (path));
+				ret = true;
+			}
+			return ret;
+		}
+
+		public static Sprite MakeSprite (Texture2D tex)
+		{
+			var rect = new Rect (0, 0, tex.width, tex.height);
+			var pivot = new Vector2 (0.5f, 0.5f);
+			float pixelsPerUnity = 100;
+			uint extrude = 0;
+			var type = SpriteMeshType.Tight;
+			var border = Vector4.zero;
+
+			return Sprite.Create (tex, rect, pivot, pixelsPerUnity, extrude,
+								  type, border);
+		}
+
+		public static void DisableColliders (GameObject obj)
+		{
+			var colliders = obj.GetComponentsInChildren<Collider> ();
+			for (int i = colliders.Length; i-- > 0; ) {
+				colliders[i].enabled = false;
+			}
+		}
+
+		public static void RemoveColliders (GameObject obj)
+		{
+			var colliders = obj.GetComponentsInChildren<Collider> ();
+			for (int i = colliders.Length; i-- > 0; ) {
+				UnityEngine.Object.Destroy (colliders[i]);
+			}
+		}
+
+		public static void DisableModules (GameObject obj)
+		{
+			var modules = obj.GetComponentsInChildren<PartModule> ();
+			for (int i = modules.Length; i-- > 0; ) {
+				modules[i].enabled = false;
+			}
+		}
+
+		public static void SetLightMasks (GameObject obj, int mask)
+		{
+			var lights = obj.GetComponentsInChildren<Light> ();
+			for (int i = lights.Length; i-- > 0; ) {
+				lights[i].cullingMask = mask;
+			}
+		}
+
+		public static void SetLayer (GameObject obj, int layer, bool recursive)
+		{
+			obj.layer = layer;
+			if (recursive) {
+				for (int i = obj.transform.childCount; i-- > 0; ) {
+					var child = obj.transform.GetChild (i).gameObject;
+					SetLayer (child, layer, true);
+				}
+			}
+		}
+
+		public static Material []CollectMaterials (GameObject obj)
+		{
+			var materials = new List<Material> ();
+			var renderers = obj.GetComponentsInChildren<Renderer> ();
+			for (int i = renderers.Length; i-- > 0; ) {
+				var mats = renderers[i].materials;
+				for (int j = mats.Length; j-- > 0; ) {
+					if (!mats[j].HasProperty (PropertyIDs._MinX)) {
+						continue;
+					}
+					materials.Add (mats[j]);
+				}
+			}
+			return materials.ToArray ();
 		}
 	}
 }

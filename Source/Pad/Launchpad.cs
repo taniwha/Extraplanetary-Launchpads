@@ -24,7 +24,7 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELLaunchpad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
+	public class ELLaunchpad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameDialog.IRenamable
 	{
 		[KSPField (isPersistant = false)]
 		public float SpawnHeightOffset = 0.0f;
@@ -32,6 +32,7 @@ namespace ExtraplanetaryLaunchpads {
 		public string SpawnTransform;
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string PadName = "";
+		string oldName = "";
 
 		[KSPField] public float EVARange = 0;
 
@@ -42,7 +43,7 @@ namespace ExtraplanetaryLaunchpads {
 		Transform launchTransform;
 		double craft_mass;
 
-		int rotationIndex;
+		public int rotationIndex { get; private set; }
 
 		static Quaternion []rotations = {
 			new Quaternion(0, 0, 0, 1),
@@ -50,8 +51,6 @@ namespace ExtraplanetaryLaunchpads {
 			new Quaternion(0, 1, 0, 0),
 			new Quaternion(0, 0.707106781f, 0, 0.707106781f),
 		};
-
-		static string []rotationLabels = {"12:00", "09:00", "06:00", "03:00"};
 
 		public override string GetInfo ()
 		{
@@ -122,39 +121,22 @@ namespace ExtraplanetaryLaunchpads {
 
 		public uint ID { get { return part.flightID; } }
 
-		public void PadSelection_start ()
+		public int RotateLeft ()
 		{
+			if (++rotationIndex > 3) {
+				rotationIndex = 0;
+			}
+			control.PlaceCraftHull ();
+			return rotationIndex;
 		}
 
-		public void PadSelection ()
+		public int RotateRight ()
 		{
-			bool rotated = false;
-
-			GUILayout.BeginHorizontal ();
-			if (GUILayout.Button ("->", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
-				if (--rotationIndex < 0) {
-					rotationIndex = 3;
-				}
-				rotated = true;
+			if (--rotationIndex < 0) {
+				rotationIndex = 3;
 			}
-			if (GUILayout.Button ("<-", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
-				if (++rotationIndex > 3) {
-					rotationIndex = 0;
-				}
-				rotated = true;
-			}
-			GUILayout.Label (rotationLabels[rotationIndex], ELStyles.normal);
-			GUILayout.EndHorizontal ();
-
-			if (rotated) {
-				control.PlaceCraftHull ();
-			}
-		}
-
-		public void PadSelection_end ()
-		{
+			control.PlaceCraftHull ();
+			return rotationIndex;
 		}
 
 		public void Highlight (bool on)
@@ -270,6 +252,7 @@ namespace ExtraplanetaryLaunchpads {
 				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);
 			}
 			control.OnStart ();
+			UpdateMenus (false);
 		}
 
 		void OnDestroy ()
@@ -282,21 +265,21 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
-			ELBuildWindow.HideGUI ();
+			ELWindowManager.HideBuildWindow ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
-			ELBuildWindow.ShowGUI ();
-			ELBuildWindow.SelectPad (control);
+			ELWindowManager.ShowBuildWindow (control);
 		}
 
 		[KSPEvent (guiActive = true, guiActiveEditor = true,
 				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
-			ELRenameWindow.ShowGUI (this);
+			oldName = PadName;
+			ELRenameDialog.OpenDialog (ELLocalization.RenameLaunchpad, this);
 		}
 
 		public void UpdateMenus (bool visible)
@@ -334,7 +317,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void OnRename ()
 		{
-			ELBuildWindow.updateCurrentPads ();
+			control.OnRename (oldName);
 		}
 
 		void OnCollisionStay (Collision collision)

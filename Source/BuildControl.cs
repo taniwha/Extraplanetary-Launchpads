@@ -29,6 +29,9 @@ namespace ExtraplanetaryLaunchpads {
 
 	public class ELBuildControl : ELWorkSink
 	{
+		public static readonly EventData<ELBuildControl> onBuildStateChanged = new EventData<ELBuildControl> ("onBuildStateChanged");
+		public static readonly EventData<ELBuildControl, string, string> onPadRenamed = new EventData<ELBuildControl, string, string> ("onPadRenamed");
+
 		public interface IBuilder
 		{
 			void Highlight (bool on);
@@ -38,9 +41,6 @@ namespace ExtraplanetaryLaunchpads {
 			Transform PlaceShip (Transform shipTransform, Box vessel_bounds);
 			void RepositionShip (Vessel ship);
 			void PostBuild (Vessel craftVessel);
-			void PadSelection_start ();
-			void PadSelection ();
-			void PadSelection_end ();
 
 			bool canBuild { get; }
 			bool capture { get; }
@@ -90,7 +90,14 @@ namespace ExtraplanetaryLaunchpads {
 		public bool craftBoMdirty { get; private set; }
 		public CostReport buildCost { get; private set; }
 		public CostReport builtStuff { get; private set; }
-		public State state { get; private set; }
+		State _state;
+		public State state {
+			get { return _state; }
+			private set {
+				_state = value;
+				onBuildStateChanged.Fire (this);
+			}
+		}
 		public bool paused { get; private set; }
 		public string KACalarmID = "";
 
@@ -108,6 +115,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public DockedVesselInfo vesselInfo { get; private set; }
 		public Part craftRoot { get; private set; }
+		ModuleGroundPart groundPartModule;
 		public string craftName
 		{
 			get {
@@ -157,13 +165,19 @@ namespace ExtraplanetaryLaunchpads {
 		public void PauseBuild ()
 		{
 			if (state == State.Building || state == State.Canceling) {
-				paused = true;
+				if (!paused) {
+					paused = true;
+					onBuildStateChanged.Fire (this);
+				}
 			}
 		}
 
 		public void ResumeBuild ()
 		{
-			paused = false;
+			if (paused) {
+				paused = false;
+				onBuildStateChanged.Fire (this);
+			}
 		}
 
 		public bool isActive
@@ -172,6 +186,11 @@ namespace ExtraplanetaryLaunchpads {
 				return ((state == State.Building || state == State.Canceling)
 						&& !paused);
 			}
+		}
+
+		static BuildResource FindResource (List<BuildResource> reslist, string name)
+		{
+			return reslist.Where(r => r.name == name).FirstOrDefault ();
 		}
 
 		public double CalculateWork ()
@@ -190,7 +209,7 @@ namespace ExtraplanetaryLaunchpads {
 			} else if (state == State.Canceling) {
 				for (int i = built.Count; i-- > 0; ) {
 					var res = built[i];
-					var cres = ELBuildWindow.FindResource (cost, res.name);
+					var cres = FindResource (cost, res.name);
 					hours += res.kerbalHours * (cres.amount - res.amount);
 				}
 			}
@@ -228,7 +247,7 @@ namespace ExtraplanetaryLaunchpads {
 				var cost = buildCost.required;
 
 				foreach (var bres in built) {
-					var cres = ELBuildWindow.FindResource (cost, bres.name);
+					var cres = FindResource (cost, bres.name);
 					mass += (cres.amount - bres.amount) * bres.density;
 				}
 			}
@@ -316,7 +335,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			int count = 0;
 			foreach (var bres in built) {
-				var cres = ELBuildWindow.FindResource (cost, bres.name);
+				var cres = FindResource (cost, bres.name);
 				if (cres.amount - bres.amount > 0) {
 					count++;
 				}
@@ -346,7 +365,7 @@ namespace ExtraplanetaryLaunchpads {
 
 				did_work = false;
 				foreach (var bres in built) {
-					var cres = ELBuildWindow.FindResource (cost, bres.name);
+					var cres = FindResource (cost, bres.name);
 					double remaining = cres.amount - bres.amount;
 					if (remaining <= 0) {
 						continue;
@@ -409,7 +428,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			Part rootPart = vsl.parts[0].localRoot;
 			craftResourceManager = new RMResourceManager (vsl.parts, rootPart,
-														  false, true);
+														  false);
 			foreach (var br in buildCost.optional) {
 				var amount = craftResources.ResourceAmount (br.name);
 				craftResources.TransferResource (br.name, -amount);
@@ -475,6 +494,17 @@ namespace ExtraplanetaryLaunchpads {
 		public delegate void PostCaptureDelegate ();
 		public PostCaptureDelegate PostCapture = () => { };
 
+		void HookGroundPartPickup ()
+		{
+			groundPartModule = craftRoot.FindModuleImplementing<ModuleGroundPart> ();
+			if (groundPartModule != null) {
+				// craft with ModuleGroundPart should have only the one part as
+				// properly configured deployable parts do not allow attachment
+				// in the editor and KIS refuses to touch them
+				ELGroundPart.HookPickup (groundPartModule, this);
+			}
+		}
+
 		private IEnumerator CaptureCraft (Vessel craftVessel)
 		{
 			FlightGlobals.overrideOrbit = true;
@@ -503,6 +533,7 @@ namespace ExtraplanetaryLaunchpads {
 			builder.SetCraftMass (0);
 
 			CoupleWithCraft (craftVessel);
+			HookGroundPartPickup ();
 			state = State.Transfer;
 			PostCapture ();
 		}
@@ -603,7 +634,7 @@ namespace ExtraplanetaryLaunchpads {
 					elc[j].RotateTower ();
 				}
 				if (elc.Count < 1) {
-					if (p.Modules["ModuleRestockLaunchClamp"] != null) {
+					if (p.Modules.GetModule("ModuleRestockLaunchClamp") != null) {
 						p.SendMessage("RotateTower", SendMessageOptions.DontRequireReceiver);
 					}
 				}
@@ -624,7 +655,7 @@ namespace ExtraplanetaryLaunchpads {
 					// ReplaceLaunchClamps will not do any replacement because
 					// the module uses a different name. Thus this will pick up
 					// the ReStock module.
-					var lc = p.Modules["ModuleRestockLaunchClamp"];
+					var lc = p.Modules.GetModule("ModuleRestockLaunchClamp");
 					if (lc != null) {
 						(lc as LaunchClamp).EnableExtension ();
 					}
@@ -755,7 +786,8 @@ namespace ExtraplanetaryLaunchpads {
 
 				str = craftConfig.GetValue ("description");
 				if (!string.IsNullOrEmpty (str)) {
-					craftBoM.Add (Localizer.Format(str));
+					str = Localizer.Format(str).Replace ('¨', '\n');
+					craftBoM.Add (str);
 					craftBoM.Add ("");	// blank line
 				}
 				foreach (var part in craftConfig.GetNodes ("PART")) {
@@ -837,12 +869,13 @@ namespace ExtraplanetaryLaunchpads {
 			//Debug.Log ($"[ELBuildControl] FindVesselResources pad {pad_parts.Count} craft {craft_parts.Count}");
 
 			string vesselName = builder.vessel.vesselName;
-			Part root = builder.part.localRoot;
+			Part vesselRoot = builder.part.localRoot;
 			//Debug.Log ($"[ELBuildControl] FindVesselResources pad");
 			padResourceManager = new RMResourceManager (vesselName,
-														pad_parts, root,
+														pad_parts,
+														vesselRoot,
 														craft_parts,
-														false, true);
+														false);
 
 			if (craft_parts.Count > 0) {
 				//Debug.Log ($"[ELBuildControl] FindVesselResources craft");
@@ -850,7 +883,7 @@ namespace ExtraplanetaryLaunchpads {
 															  craft_parts,
 															  craftRoot,
 															  null,
-															  false, true);
+															  false);
 			}
 		}
 
@@ -889,11 +922,12 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (node.HasValue ("state")) {
 				var s = node.GetValue ("state");
-				state = (State) Enum.Parse (typeof (State), s);
-				if (state == State.Dewarping) {
+				_state = (State) Enum.Parse (typeof (State), s);
+				if (_state == State.Dewarping) {
 					// The game got saved while the Dewarping state was still
 					// active. Rather than restarting the dewarp coroutine,
 					// Just jump straight to the Complete state.
+					// DO want to fire the state for switch to Complete
 					state = State.Complete;
 				}
 			}
@@ -921,12 +955,15 @@ namespace ExtraplanetaryLaunchpads {
 		internal void OnStart ()
 		{
 			workNet = builder.vessel.FindVesselModuleImplementing<ELVesselWorkNet> ();
+			GameEvents.onPartUnpack.Add (onPartUnpack);
 			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 			GameEvents.onPartDie.Add (onPartDie);
 			if (vesselInfo != null) {
 				craftRoot = builder.vessel[vesselInfo.rootPartUId];
 				if (craftRoot == null) {
 					CleanupAfterRelease ();
+				} else {
+					HookGroundPartPickup ();
 				}
 			}
 			PlaceCraftHull ();
@@ -963,14 +1000,38 @@ namespace ExtraplanetaryLaunchpads {
 
 		internal void OnDestroy ()
 		{
+			GameEvents.onPartUnpack.Remove (onPartUnpack);
 			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 			GameEvents.onPartDie.Remove (onPartDie);
 			DestroyCraftHull ();
 		}
 
+		IEnumerator WaitAndStopCoroutines (MonoBehaviour behavior)
+		{
+			yield return null;
+			behavior.StopAllCoroutines ();
+		}
+
+		void onPartUnpack (Part p)
+		{
+			if (p != builder.part) {
+				return;
+			}
+			if (groundPartModule != null) {
+				var b = builder as PartModule;
+				b.StartCoroutine (WaitAndStopCoroutines (groundPartModule));
+			}
+		}
+
+		public void OnRename (string oldName)
+		{
+			onPadRenamed.Fire (this, oldName, builder.Name);
+		}
+
 		void CleanupAfterRelease ()
 		{
 			craftRoot = null;
+			groundPartModule = null;
 			vesselInfo = null;
 			builtStuff = null;	// ensure pad mass gets reset
 			SetPadMass ();
@@ -978,14 +1039,24 @@ namespace ExtraplanetaryLaunchpads {
 			DestroyCraftHull ();
 		}
 
-		public void ReleaseVessel ()
+		IEnumerator WaitAndSwitchVessel (Vessel vessel)
+		{
+			for (int count = 15; count-- > 0; ) {
+				yield return null;
+			}
+			FlightGlobals.ForceSetActiveVessel (vessel);
+		}
+
+		public void ReleaseVessel (bool switchVessel = true)
 		{
 			TransferResources ();
 			craftRoot.Undock (vesselInfo);
 			var vesselCount = FlightGlobals.Vessels.Count;
 			Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
-			FlightGlobals.ForceSetActiveVessel (vsl);
-			//builder.part.StartCoroutine (FixAirstreamShielding (vsl));
+			if (switchVessel) {
+				(builder as PartModule).StartCoroutine (WaitAndSwitchVessel (vsl));
+			}
+			vsl.StartCoroutine (FixAirstreamShielding (vsl));
 
 			CleanupAfterRelease ();
 		}
@@ -1040,6 +1111,35 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		void RemoveFX(Part part)
+		{
+			for (int i = part.fxGroups.Count; i-- > 0; ) {
+				var group = part.fxGroups[i];
+				for (int j = group.fxEmittersNewSystem.Count; j-- > 0; ) {
+					var psys = group.fxEmittersNewSystem[j];
+					if (psys && psys.gameObject) {
+						UnityEngine.Object.Destroy (psys.gameObject);
+					}
+				}
+				group.fxEmittersNewSystem.Clear();
+				for (int j = group.lights.Count; j-- > 0; ) {
+					var light = group.lights[j];
+					if (light && light.gameObject) {
+						UnityEngine.Object.Destroy (light.gameObject);
+					}
+				}
+				group.lights.Clear();
+				if (group.sfx) {
+					UnityEngine.Object.Destroy (group.sfx);
+					group.sfx = null;
+				}
+				if (group.audio) {
+					UnityEngine.Object.Destroy (group.audio);
+					group.audio = null;
+				}
+			}
+		}
+
 		public CostReport getBuildCost (ConfigNode craft, string craftText = null)
 		{
 			lockedParts = false;
@@ -1063,6 +1163,7 @@ namespace ExtraplanetaryLaunchpads {
 			craftVessel.Initialize (true);
 			SetCraftOrbit (craftVessel, OrbitDriver.UpdateMode.IDLE);
 			foreach (Part part in craftVessel.parts) {
+				RemoveFX(part);
 				SanitizePart(part);
 				part.ModulesOnStart();
 			}

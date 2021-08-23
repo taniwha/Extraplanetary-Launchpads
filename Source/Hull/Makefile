@@ -6,7 +6,7 @@ cstest = test
 
 all: $(cstest)
 $(cstest): $(cstest_sources)
-	mcs $(MCSFLAGS) -out:$@ $^
+	csc $(MCSFLAGS) -out:$@ $^
 
 clean:
 	rm -rf $(cstest)

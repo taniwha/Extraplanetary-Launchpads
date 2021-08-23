@@ -30,6 +30,7 @@ namespace ExtraplanetaryLaunchpads {
 		ResourceGroup.Dict resourceGroupDict;
 		ScrollView resourceView;
 		UIButton transferButton;
+		Vessel vessel;
 
 		ResourceXferControl xferControl;
 		bool _transferring;
@@ -187,6 +188,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void SetVessel (Vessel vessel)
 		{
+			this.vessel = vessel;
 			var parts = vessel.parts;
 			Part rootPart = parts[0].localRoot;
 			var manager = new RMResourceManager (parts, rootPart);
@@ -197,15 +199,25 @@ namespace ExtraplanetaryLaunchpads {
 			RebuildResources (manager);
 		}
 
+		void onVesselWasModified (Vessel vessel)
+		{
+			if (vessel != null && vessel == this.vessel) {
+				SetVessel (vessel);
+			}
+		}
+
 		protected override void OnEnable ()
 		{
 			GameEvents.onVesselChange.Add (SetVessel);
+			GameEvents.onVesselWasModified.Add (onVesselWasModified);
 		}
 
 		protected override void OnDisable ()
 		{
 			transferring = false;
+			vessel = null;
 			GameEvents.onVesselChange.Remove (SetVessel);
+			GameEvents.onVesselWasModified.Remove (onVesselWasModified);
 		}
 #region TabController.ITabItem
 		public string TabName { get { return ELLocalization.ResourceManager; } }

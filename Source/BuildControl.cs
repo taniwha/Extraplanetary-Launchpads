@@ -1039,16 +1039,24 @@ namespace ExtraplanetaryLaunchpads {
 			DestroyCraftHull ();
 		}
 
+		IEnumerator WaitAndSwitchVessel (Vessel vessel)
+		{
+			for (int count = 15; count-- > 0; ) {
+				yield return null;
+			}
+			FlightGlobals.ForceSetActiveVessel (vessel);
+		}
+
 		public void ReleaseVessel (bool switchVessel = true)
 		{
 			TransferResources ();
 			craftRoot.Undock (vesselInfo);
 			var vesselCount = FlightGlobals.Vessels.Count;
+			Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
 			if (switchVessel) {
-				Vessel vsl = FlightGlobals.Vessels[vesselCount - 1];
-				FlightGlobals.ForceSetActiveVessel (vsl);
+				(builder as PartModule).StartCoroutine (WaitAndSwitchVessel (vsl));
 			}
-			//builder.part.StartCoroutine (FixAirstreamShielding (vsl));
+			vsl.StartCoroutine (FixAirstreamShielding (vsl));
 
 			CleanupAfterRelease ();
 		}

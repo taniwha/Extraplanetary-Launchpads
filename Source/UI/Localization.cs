@@ -74,5 +74,15 @@ namespace ExtraplanetaryLaunchpads {
 		public static string SaveAndClose { get; } = "Save and Close";
 		public static string Close { get; } = "Close";
 		public static string MissingParts { get; } = "Missing Parts:";
+
+		public static string PreferBlizzy { get; } = "Use Blizzy's toolbar instead of App launcher";
+		public static string CreateKACAlarms { get; } = "Create alarms in Kerbal Alarm Clock";
+		public static string ShowCraftHull { get; } = "Show craft hull during construction";
+		public static string DebugCraftHull { get; } = "[Debug] Write craft hull points file";
+
+		public static string KillWarpMessage { get; } = "Kill Warp+Message";
+		public static string KillWarpOnly { get; } = "Kill Warp only";
+		public static string MessageOnly { get; } = "Message Only";
+		public static string PauseGame { get; } = "Pause Game";
 	}
 }

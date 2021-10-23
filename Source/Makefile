@@ -101,6 +101,7 @@ EL_FILES := \
 	UI/ResourceManagerView.cs			\
 	UI/ResourceModule.cs				\
 	UI/ResourceModuleView.cs			\
+	UI/SettingsWindow.cs				\
 	UI/ShipInfo.cs						\
 	UI/ShipInfoWindow.cs				\
 	UI/StatusBar.cs						\

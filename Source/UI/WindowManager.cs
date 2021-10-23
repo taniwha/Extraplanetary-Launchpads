@@ -86,6 +86,11 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			mainWindowInfo.Save (node.AddNode ("MainWindow"));
 
+			if (settingsWindow) {
+				settingsWindowInfo.position = settingsWindow.transform.localPosition;
+			}
+			settingsWindowInfo.Save (node.AddNode ("SettingsWindow"));
+
 			if (shipInfo) {
 				shipInfoInfo.position = shipInfo.transform.localPosition;
 			}
@@ -98,6 +103,14 @@ namespace ExtraplanetaryLaunchpads {
 				mainWindow.SetVisible (false);
 			}
 			mainWindowInfo.visible = false;
+		}
+
+		public static void HideSettingsWindow ()
+		{
+			if (settingsWindow) {
+				settingsWindow.SetVisible (false);
+			}
+			settingsWindowInfo.visible = false;
 		}
 
 		public static void ShowBuildWindow (ELBuildControl control)
@@ -114,6 +127,26 @@ namespace ExtraplanetaryLaunchpads {
 				mainWindow.SetVessel (FlightGlobals.ActiveVessel);
 			}
 			mainWindow.rectTransform.SetAsLastSibling ();
+		}
+
+		public static void ShowSettingsWindow ()
+		{
+			if (!settingsWindow) {
+				settingsWindow = UIKit.CreateUI<ELSettingsWindow> (appCanvasRect, "ELSettingsWindow");
+				settingsWindow.transform.position = settingsWindowInfo.position;
+			}
+			settingsWindowInfo.visible = true;
+			settingsWindow.SetVisible (true);
+			settingsWindow.rectTransform.SetAsLastSibling ();
+		}
+
+		public static void ToggleSettingsWindow ()
+		{
+			if (!settingsWindow || !settingsWindow.gameObject.activeSelf) {
+				ShowSettingsWindow ();
+			} else {
+				HideSettingsWindow ();
+			}
 		}
 
 		public static void ToggleBuildWindow ()
@@ -156,6 +189,9 @@ namespace ExtraplanetaryLaunchpads {
 		static Canvas appCanvas;
 		public static RectTransform appCanvasRect { get; private set; }
 
+		static WindowInfo settingsWindowInfo = new WindowInfo ();
+		static ELSettingsWindow settingsWindow;
+
 		static WindowInfo mainWindowInfo = new WindowInfo ();
 		static ELMainWindow mainWindow;
 
@@ -180,6 +216,10 @@ namespace ExtraplanetaryLaunchpads {
 				Destroy (mainWindow.gameObject);
 				mainWindow = null;
 			}
+			if (settingsWindow) {
+				Destroy (settingsWindow.gameObject);
+				settingsWindow = null;
+			}
 			if (shipInfo) {
 				Destroy (shipInfo.gameObject);
 				shipInfo = null;
@@ -192,6 +232,9 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			if (mainWindow) {
 				mainWindow.SetVisible (false);
+			}
+			if (settingsWindow) {
+				settingsWindow.SetVisible (false);
 			}
 			if (shipInfo) {
 				shipInfo.SetVisible (false);

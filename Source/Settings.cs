@@ -90,7 +90,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void ParseUseKAC (ConfigNode settings)
+		static void ParseUseKAC (ConfigNode settings)
 		{
 			if (!settings.HasValue ("UseKAC")) {
 				var val = use_KAC;
@@ -103,7 +103,7 @@ namespace ExtraplanetaryLaunchpads {
 			use_KAC = uk;
 		}
 
-		void ParseKACAction (ConfigNode settings)
+		static void ParseKACAction (ConfigNode settings)
 		{
 			if (!settings.HasValue ("KACAction")) {
 				var val = KACAction.ToString();
@@ -130,7 +130,7 @@ namespace ExtraplanetaryLaunchpads {
 			};
 		}
 
-		void UpdateToolbarButton ()
+		static void UpdateToolbarButton ()
 		{
 			ELAppButton.UpdateVisibility ();
 			if (ELToolbar_SettingsWindow.Instance != null) {
@@ -138,7 +138,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void ParsePreferBlizzy (ConfigNode settings)
+		static void ParsePreferBlizzy (ConfigNode settings)
 		{
 			if (!settings.HasValue ("PreferBlizzy")) {
 				var val = PreferBlizzy.ToString();
@@ -153,7 +153,7 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateToolbarButton ();
 		}
 
-		void ParseShowCraftHull (ConfigNode settings)
+		static void ParseShowCraftHull (ConfigNode settings)
 		{
 			if (!settings.HasValue ("ShowCraftHull")) {
 				var val = ShowCraftHull.ToString();
@@ -168,7 +168,7 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateToolbarButton ();
 		}
 
-		void ParseDebugCraftHull (ConfigNode settings)
+		static void ParseDebugCraftHull (ConfigNode settings)
 		{
 			if (!settings.HasValue ("DebugCraftHull")) {
 				var val = DebugCraftHull.ToString();
@@ -183,7 +183,7 @@ namespace ExtraplanetaryLaunchpads {
 			UpdateToolbarButton ();
 		}
 
-		void ParseWindowManager (ConfigNode settings)
+		static void ParseWindowManager (ConfigNode settings)
 		{
 			if (settings.HasNode ("WindowManager")) {
 				var node = settings.GetNode ("WindowManager");
@@ -216,7 +216,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public static string DataPath { get; private set; }
 
-		void LoadGlobalSettings ()
+		public static void Load ()
 		{
 			use_KAC = true;
 			KACAction = KACWrapper.KACAPI.AlarmActionEnum.KillWarp;
@@ -245,7 +245,7 @@ namespace ExtraplanetaryLaunchpads {
 			KIS_Present = KIS.KISWrapper.Initialize ();
 			B9Wings_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("B9_Aerospace_WingStuff", StringComparison.InvariantCultureIgnoreCase));
 			FAR_Present = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
-			LoadGlobalSettings ();
+			Load ();
 
 			enabled = false;
 		}

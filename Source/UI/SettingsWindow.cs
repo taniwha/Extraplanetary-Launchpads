@@ -36,6 +36,7 @@ namespace ExtraplanetaryLaunchpads {
 		ToggleText showCraftHull;
 		ToggleText debugCraftHull;
 		UIDropdown kacAction;
+		UIButton loadButton;
 
 		void SelectKACAction (int index)
 		{
@@ -89,6 +90,10 @@ namespace ExtraplanetaryLaunchpads {
 					.OnValueChanged (SelectKACAction)
 					.FlexibleLayout (true, true)
 					.Finish ()
+				.Add<UIButton> (out loadButton)
+					.Text (ELLocalization.LoadSettings)
+					.OnClick (LoadSettings)
+					.Finish ()
 
 				.Finish ();
 
@@ -107,6 +112,12 @@ namespace ExtraplanetaryLaunchpads {
 			ELWindowManager.HideSettingsWindow ();
 		}
 
+		void LoadSettings ()
+		{
+			ELSettings.Load ();
+			UpdateControls ();
+		}
+
 		public override void Style ()
 		{
 			base.Style ();
@@ -114,36 +125,45 @@ namespace ExtraplanetaryLaunchpads {
 
 		List<OptionData> kacActionNames;
 
+		void UpdateControls ()
+		{
+			if (kacActionNames == null) {
+				kacActionNames = new List<OptionData> ();
+				kacActionNames.Add (new OptionData (ELLocalization.KillWarpMessage));
+				kacActionNames.Add (new OptionData (ELLocalization.KillWarpOnly));
+				kacActionNames.Add (new OptionData (ELLocalization.MessageOnly));
+				kacActionNames.Add (new OptionData (ELLocalization.PauseGame));
+
+				kacAction.Options (kacActionNames);
+			}
+			preferBlizzy.SetIsOnWithoutNotify (ELSettings.PreferBlizzy);
+			createKACAlarms.SetIsOnWithoutNotify (ELSettings.use_KAC);
+			showCraftHull.SetIsOnWithoutNotify (ELSettings.ShowCraftHull);
+			debugCraftHull.SetIsOnWithoutNotify (ELSettings.DebugCraftHull);
+			int actionIndex = 0;
+			switch (ELSettings.KACAction) {
+				case KACWrapper.KACAPI.AlarmActionEnum.KillWarp:
+					actionIndex = 0;
+					break;
+				case KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly:
+					actionIndex = 1;
+					break;
+				case KACWrapper.KACAPI.AlarmActionEnum.MessageOnly:
+					actionIndex = 2;
+					break;
+				case KACWrapper.KACAPI.AlarmActionEnum.PauseGame:
+					actionIndex = 3;
+					break;
+			}
+			kacAction.SetValueWithoutNotify (actionIndex);
+		}
+
 		public void SetVisible (bool visible)
 		{
 			if (!visible) {
 				ELSettings.Save ();
 			} else {
-				if (kacActionNames == null) {
-					kacActionNames = new List<OptionData> ();
-					kacActionNames.Add (new OptionData (ELLocalization.KillWarpMessage));
-					kacActionNames.Add (new OptionData (ELLocalization.KillWarpOnly));
-					kacActionNames.Add (new OptionData (ELLocalization.MessageOnly));
-					kacActionNames.Add (new OptionData (ELLocalization.PauseGame));
-
-					kacAction.Options (kacActionNames);
-				}
-				int actionIndex = 0;
-				switch (ELSettings.KACAction) {
-					case KACWrapper.KACAPI.AlarmActionEnum.KillWarp:
-						actionIndex = 0;
-						break;
-					case KACWrapper.KACAPI.AlarmActionEnum.KillWarpOnly:
-						actionIndex = 1;
-						break;
-					case KACWrapper.KACAPI.AlarmActionEnum.MessageOnly:
-						actionIndex = 2;
-						break;
-					case KACWrapper.KACAPI.AlarmActionEnum.PauseGame:
-						actionIndex = 3;
-						break;
-				}
-				kacAction.SetValueWithoutNotify (actionIndex);
+				UpdateControls ();
 			}
 			gameObject.SetActive (visible);
 		}

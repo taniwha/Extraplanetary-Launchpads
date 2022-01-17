@@ -679,6 +679,9 @@ namespace ExtraplanetaryLaunchpads {
 
 			Box vessel_bounds = GetVesselBox (nship);
 			var rootPart = nship.parts[0].localRoot;
+			var ro = rootPart.gameObject;
+			var od = ro.GetComponent<OrbitDriver> () ?? ro.AddComponent<OrbitDriver> ();
+			od.orbit = new Orbit(builder.vessel.orbit);
 			var shipTransform = rootPart.transform;
 			builder.SetShipTransform (shipTransform, rootPart);
 			builder.PlaceShip (shipTransform, vessel_bounds);
@@ -688,6 +691,7 @@ namespace ExtraplanetaryLaunchpads {
 												flag, game, crew);
 			var craftVessel = nship.parts[0].localRoot.GetComponent<Vessel> ();
 			craftVessel.launchedFrom = builder.LaunchedFrom;
+			od.vessel = craftVessel;
 
 			FlightGlobals.ForceSetActiveVessel (craftVessel);
 			SetCraftOrbit (craftVessel, OrbitDriver.UpdateMode.IDLE);

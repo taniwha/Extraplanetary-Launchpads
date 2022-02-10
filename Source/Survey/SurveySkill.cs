@@ -46,7 +46,7 @@ using KerbalStats;
 			int exp = Parent.CrewMemberExperienceLevel (6);
 			return String.Format ("{0} can use survey sites out to {1}m.",
 								  pronoun,
-								  ELSurveyStation.site_ranges[exp + 2]);
+								  ELSurveyStation.default_site_ranges[exp + 2]);
 		}
 
 		public int GetValue ()

@@ -43,9 +43,12 @@ namespace ExtraplanetaryLaunchpads {
 		double craft_mass;
 		[KSPField (guiName = "Range", guiActive = true)]
 		float range = 20;
-		public static float[] site_ranges = {
+
+		public static float[] default_site_ranges = {
 			20, 50, 100, 200, 400, 800, 1600, 2000
 		};
+		[KSPField] public string SiteRanges;
+		public float[] site_ranges;
 
 		public override string GetInfo ()
 		{
@@ -239,7 +242,7 @@ namespace ExtraplanetaryLaunchpads {
 			xform.transform.rotation = points.GetOrientation ();
 			Debug.Log ($"[EL SurveyStation] launchPos {xform.position} {xform.rotation}");
 
-			Vector3 shift = shipTransform.position;
+			Vector3 shift = shipTransform.position + new Vector3(0, 5, 0);
 			shift += points.ShiftBounds (xform, shift, vessel_bounds);
 
 			relativeRotaion = shipTransform.rotation;
@@ -293,6 +296,9 @@ namespace ExtraplanetaryLaunchpads {
 		public override void OnAwake ()
 		{
 			control = new ELBuildControl (this);
+
+			site_ranges = new float[default_site_ranges.Length];
+			Array.Copy (default_site_ranges, site_ranges, site_ranges.Length);
 		}
 
 		public override void OnStart (PartModule.StartState state)
@@ -301,6 +307,27 @@ namespace ExtraplanetaryLaunchpads {
 				|| state == PartModule.StartState.Editor) {
 				return;
 			}
+
+			if (!String.IsNullOrEmpty (SiteRanges)) {
+				string[] ranges = ParseExtensions.ParseArray (SiteRanges);
+				if (ranges != null) {
+					for (int i = 0; i < ranges.Length && i < site_ranges.Length; i++) {
+						float v;
+						if (!float.TryParse (ranges[i], out v)) {
+							Debug.Log ($"[EL SurveyStation] error parsing site ranges: {ranges[i]}");
+							break;
+						}
+						if (v <= 0) {
+							// treat as default
+							continue;
+						}
+						site_ranges[i] = v;
+					}
+				}
+			}
+			//for (int i = 0; i < site_ranges.Length; i++) {
+			//	Debug.Log ($"[EL SurveyStation] site_ranges[{i}]: {site_ranges[i]}");
+			//}
 			control.OnStart ();
 			if (EVARange > 0) {
 				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);

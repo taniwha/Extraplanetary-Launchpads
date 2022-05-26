@@ -5403,6 +5403,21 @@ ELLaunchpad
 \end_inset
 
 .
+ Also note that the position of the selected attach note will match the
+ position of the transform, so for a flush fit, the transform should be
+ at the same position as the pad's attach node
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Rodger: basically it should replicate the attach node of the spawned craft,
+ pointing towards the mothership, and on the point where the motherships
+ node was
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Paragraph

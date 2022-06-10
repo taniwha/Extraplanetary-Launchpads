@@ -318,8 +318,10 @@ namespace ExtraplanetaryLaunchpads {
 					control.flagname = control.builder.part.flagURL;
 				}
 				var tex = GameDatabase.Instance.GetTexture (control.flagname, false);
-				flagTexture = EL_Utils.MakeSprite (tex);
-				selectFlagButton.Image (flagTexture);
+				if (tex != null) {
+					flagTexture = EL_Utils.MakeSprite (tex);
+					selectFlagButton.Image (flagTexture);
+				}
 			}
 		}
 

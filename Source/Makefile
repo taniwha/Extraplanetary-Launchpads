@@ -170,7 +170,6 @@ UNITY := \
 	-r:UnityEngine.dll \
 	-r:UnityEngine.UI.dll \
 	-r:UnityEngine.UIModule.dll \
-	-r:UnityEngine.IMGUIModule.dll \
 	-r:UnityEngine.TextRenderingModule.dll \
 	-r:UnityEngine.AnimationModule.dll \
 	-r:UnityEngine.CoreModule.dll \

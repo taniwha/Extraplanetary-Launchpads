@@ -194,6 +194,7 @@ namespace ExtraplanetaryLaunchpads {
 			var manager = new RMResourceManager (parts, rootPart);
 			xferControl = manager.CreateXferControl ();
 			xferControl.onTransferableChanged += onTransferableChanged;
+			transferButton.interactable = xferControl.canTransfer;
 			transferring = false;
 			onTransferableChanged ();
 			RebuildResources (manager);

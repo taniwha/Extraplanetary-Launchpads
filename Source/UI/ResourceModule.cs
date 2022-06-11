@@ -53,7 +53,7 @@ namespace ExtraplanetaryLaunchpads {
 		public string name { get { return set.name; } }
 		public uint id { get { return set.id; } }
 		public RMResourceSet set { get; set; }
-		RMResourceManager manager;
+		public RMResourceManager manager;
 		XferState _xferState;
 		public XferState xferState {
 			get { return _xferState; }

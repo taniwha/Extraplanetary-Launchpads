@@ -1165,7 +1165,7 @@ namespace ExtraplanetaryLaunchpads {
 			var od = ro.GetComponent<OrbitDriver> () ?? ro.AddComponent<OrbitDriver> ();
 			od.orbit = new Orbit(builder.vessel.orbit);
 
-			EL_Utils.dumpxform (ro.transform, true);
+			//EL_Utils.dumpxform (ro.transform, true);
 			Vessel craftVessel = ro.AddComponent<Vessel>();
 			craftVessel.vesselName = "EL craftVessel - " + craft.GetValue ("ship");
 			craftVessel.Initialize (true);

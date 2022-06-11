@@ -110,6 +110,11 @@ PART {
 		// 5m^3
 		maxAmount = ${scrap * scale1}
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale1)}
+    }
 }
 
 PART {
@@ -205,6 +210,11 @@ PART {
 		// 5m^3
 		maxAmount = ${scrap * scale2}
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale2)}
+    }
 }
 
 PART {
@@ -298,4 +308,9 @@ PART {
 		// 5m^3
 		maxAmount = ${scrap * scale3}
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale3)}
+    }
 }

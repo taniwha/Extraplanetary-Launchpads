@@ -53,4 +53,9 @@ PART
 		// kg/s: 1 lathe/milling machine
 		Rate = 0.0312
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000)}
+    }
 }

@@ -51,4 +51,9 @@ PART
 	MODULE {
 		name = ELControlReference
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(modelExtVolume * 1000)}
+    }
 }

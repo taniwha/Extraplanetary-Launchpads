@@ -61,4 +61,9 @@ PART
 		equipDir = (-80,0,0)
 		runSpeed = 0.8
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(modelExtVolume * 1000)}
+    }
 }

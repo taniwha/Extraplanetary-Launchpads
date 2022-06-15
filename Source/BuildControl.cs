@@ -256,7 +256,13 @@ namespace ExtraplanetaryLaunchpads {
 
 		private void DoWork_Build (double kerbalHours)
 		{
+			if (builtStuff == null) {
+				Debug.Log ("DoWork_Build: builtStuff null");
+			}
 			var required = builtStuff.required;
+			if (required == null) {
+				Debug.Log ("DoWork_Build: required null");
+			}
 
 			bool did_work;
 			int count;
@@ -270,6 +276,12 @@ namespace ExtraplanetaryLaunchpads {
 				count = 0;
 				for (int i = required.Count; i-- > 0; ) {
 					var res = required[i];
+					if (res == null) {
+						Debug.Log ($"DoWork_Build: res {i} null");
+					}
+					if (padResources == null) {
+						Debug.Log ($"DoWork_Build: padResources null");
+					}
 					if (res.amount > 0
 						&& padResources.ResourceAmount (res.name) > 0) {
 						count++;
@@ -283,6 +295,9 @@ namespace ExtraplanetaryLaunchpads {
 				did_work = false;
 				for (int i = required.Count; i-- > 0; ) {
 					var res = required[i];
+					if (res == null) {
+						Debug.Log ($"DoWork_Build: res {i} null");
+					}
 					if (res.amount == 0) {
 						continue;
 					}

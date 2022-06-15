@@ -74,3 +74,6 @@ PART
 		maxAmount = 1600
 	}
 }
+@PART[ELConstructionDrone_v2]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}

@@ -57,3 +57,6 @@ PART
         packedVolume = ${math.ceil(modelExtVolume * 1000)}
     }
 }
+@PART[ELControlReference]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}

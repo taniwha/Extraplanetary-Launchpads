@@ -376,3 +376,12 @@ PART {
         packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale3)}
     }
 }
+@PART[ELSmelter]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}
+@PART[ELSmallSmelter]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}
+@PART[ELTinySmelter]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}

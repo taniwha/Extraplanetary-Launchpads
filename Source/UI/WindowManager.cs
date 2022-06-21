@@ -207,6 +207,8 @@ namespace ExtraplanetaryLaunchpads {
 
 			GameEvents.onGameSceneSwitchRequested.Add (onGameSceneSwitchRequested);
 			GameEvents.onLevelWasLoadedGUIReady.Add (onLevelWasLoadedGUIReady);
+
+			ELLocalization.LoadStrings ();
 		}
 
 		void OnDestroy ()

@@ -15,75 +15,90 @@ You should have received a copy of the GNU General Public License
 along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
+using UnityEngine;
+using System.Reflection;
+using KSP.Localization;
 
 namespace ExtraplanetaryLaunchpads {
 
 	public static class ELLocalization
 	{
-		public static string BuildManager { get; } = "Build Manager";
-		public static string ResourceManager { get; } = "Resource Manager";
-		public static string Productivity { get; } = "Productivity:";
-		public static string Select { get; } = "Select";
-		public static string SelectCraft { get; } = "Select Craft";
-		public static string SelectedCraft { get; } = "Selected Craft";
-		public static string SelectPart { get; } = "Select Part";
-		public static string Reload { get; } = "Reload";
-		public static string Clear { get; } = "Clear";
-		public static string Pad { get; } = "pad";
-		public static string NotAvailable { get; } = "N/A";
-		public static string Build { get; } = "Build";
-		public static string PauseBuild { get; } = "Pause Build";
-		public static string ResumeBuild { get; } = "Resume Build";
-		public static string PauseTeardown { get; } = "Pause Teardown";
-		public static string ResumeTeardown { get; } = "Resume Teardown";
-		public static string FinalizeBuild { get; } = "Finalize Build";
-		public static string CancelBuild { get; } = "Cancel Build";
-		public static string RestartBuild { get; } = "Restart Build";
-		public static string Paused { get; } = "[paused]";
-		public static string Release { get; } = "Release";
-		public static string DryMass { get; } = "Dry mass";
-		public static string ResourceMass { get; } = "Resource mass";
-		public static string TotalMass { get; } = "Total mass";
-		public static string BuildTime { get; } = "Build time";
-		public static string KerbalHours { get; } = "Kh";
-		public static string Rename { get; } = "Rename";
-		public static string RenameMicropad { get; } = "Rename Micro-pad";
-		public static string RenameLaunchpad { get; } = "Rename Launchpad";
-		public static string RenameSite { get; } = "Rename Site";
-		public static string RenameSurveyStation { get; } = "Rename Survey Station";
-		public static string Name { get; } = "Name";
-		public static string OK { get; } = "OK";
-		public static string Load { get; } = "Load";
-		public static string LoadSettings { get; } = "Load Settings";
-		public static string Cancel { get; } = "Cancel";
-		public static string StartTransfer { get; } = "Start Transfer";
-		public static string StopTransfer { get; } = "Stop Transfer";
-		public static string Hold { get; } = "Hold";
-		public static string In { get; } = "In";
-		public static string Out { get; } = "Out";
-		public static string WarningNoSite { get; } = "No sites found.";
-		public static string WarningNoSite2 { get; } = "No sites found. Explosions likely.";
-		public static string VAB { get; } = "VAB"; // #autoLOC_6002108
-		public static string SPH { get; } = "SPH"; // #autoLOC_6002119
-		public static string SubAss { get; } = "Sub";
-		public static string Part { get; } = "Part"; // #autoLOC_6100048
-		public static string StockVessels { get; } = "Stock Vessels";
-		public static string New { get; } = "New";
-		public static string Edit { get; } = "Edit";
-		public static string PartEditor { get; } = "Part Editor";
-		public static string Save { get; } = "Save";
-		public static string SaveAndClose { get; } = "Save and Close";
-		public static string Close { get; } = "Close";
-		public static string MissingParts { get; } = "Missing Parts:";
+		public static string BuildManager { get; private set; } = "#EL_UI_BuildManager"; // "Build Manager"
+		public static string ResourceManager { get; private set; } = "#EL_UI_ResourceManager"; // "Resource Manager"
+		public static string Productivity { get; private set; } = "#EL_UI_Productivity"; // "Productivity:"
+		public static string Select { get; private set; } = "#EL_UI_Select"; // "Select"
+		public static string SelectCraft { get; private set; } = "#EL_UI_SelectCraft"; // "Select Craft"
+		public static string SelectedCraft { get; private set; } = "#EL_UI_SelectedCraft"; // "Selected Craft"
+		public static string SelectPart { get; private set; } = "#EL_UI_SelectPart"; // "Select Part"
+		public static string Reload { get; private set; } = "#EL_UI_Reload"; // "Reload"
+		public static string Clear { get; private set; } = "#EL_UI_Clear"; // "Clear"
+		public static string Pad { get; private set; } = "#EL_UI_Pad"; // "pad"
+		public static string NotAvailable { get; private set; } = "#EL_UI_NotAvailable"; // "N/A"
+		public static string Build { get; private set; } = "#EL_UI_Build"; // "Build"
+		public static string PauseBuild { get; private set; } = "#EL_UI_PauseBuild"; // "Pause Build"
+		public static string ResumeBuild { get; private set; } = "#EL_UI_ResumeBuild"; // "Resume Build"
+		public static string PauseTeardown { get; private set; } = "#EL_UI_PauseTeardown"; // "Pause Teardown"
+		public static string ResumeTeardown { get; private set; } = "#EL_UI_ResumeTeardown"; // "Resume Teardown"
+		public static string FinalizeBuild { get; private set; } = "#EL_UI_FinalizeBuild"; // "Finalize Build"
+		public static string CancelBuild { get; private set; } = "#EL_UI_CancelBuild"; // "Cancel Build"
+		public static string RestartBuild { get; private set; } = "#EL_UI_RestartBuild"; // "Restart Build"
+		public static string Paused { get; private set; } = "#EL_UI_Paused"; // "[paused]"
+		public static string Release { get; private set; } = "#EL_UI_Release"; // "Release"
+		public static string DryMass { get; private set; } = "#EL_UI_DryMass"; // "Dry mass"
+		public static string ResourceMass { get; private set; } = "#EL_UI_ResourceMass"; // "Resource mass"
+		public static string TotalMass { get; private set; } = "#EL_UI_TotalMass"; // "Total mass"
+		public static string BuildTime { get; private set; } = "#EL_UI_BuildTime"; // "Build time"
+		public static string KerbalHours { get; private set; } = "#EL_UI_KerbalHours"; // "Kh"
+		public static string Rename { get; private set; } = "#EL_UI_Rename"; // "Rename"
+		public static string RenameMicropad { get; private set; } = "#EL_UI_RenameMicropad"; // "Rename Micro-pad"
+		public static string RenameLaunchpad { get; private set; } = "#EL_UI_RenameLaunchpad"; // "Rename Launchpad"
+		public static string RenameSite { get; private set; } = "#EL_UI_RenameSite"; // "Rename Site"
+		public static string RenameSurveyStation { get; private set; } = "#EL_UI_RenameSurveyStation"; // "Rename Survey Station"
+		public static string Name { get; private set; } = "#EL_UI_Name"; // "Name"
+		public static string OK { get; private set; } = "#EL_UI_OK"; // "OK"
+		public static string Load { get; private set; } = "#EL_UI_Load"; // "Load"
+		public static string LoadSettings { get; private set; } = "#EL_UI_LoadSettings"; // "Load Settings"
+		public static string Cancel { get; private set; } = "#EL_UI_Cancel"; // "Cancel"
+		public static string StartTransfer { get; private set; } = "#EL_UI_StartTransfer"; // "Start Transfer"
+		public static string StopTransfer { get; private set; } = "#EL_UI_StopTransfer"; // "Stop Transfer"
+		public static string Hold { get; private set; } = "#EL_UI_Hold"; // "Hold"
+		public static string In { get; private set; } = "#EL_UI_In"; // "In"
+		public static string Out { get; private set; } = "#EL_UI_Out"; // "Out"
+		public static string WarningNoSite { get; private set; } = "#EL_UI_WarningNoSite"; // "No sites found."
+		public static string WarningNoSite2 { get; private set; } = "#EL_UI_WarningNoSite2"; // "No sites found. Explosions likely."
+		public static string VAB { get; private set; } = "#autoLOC_6002108"; // "VAB" (from stock)
+		public static string SPH { get; private set; } = "#autoLOC_6002119"; // "SPH" (from stock)
+		public static string SubAss { get; private set; } = "#EL_UI_SubAss"; // "Sub"
+		public static string Part { get; private set; } = "#autoLOC_6100048"; // "Part" (from stock)
+		public static string StockVessels { get; private set; } = "#EL_UI_StockVessels"; // "Stock Vessels"
+		public static string New { get; private set; } = "#EL_UI_New"; // "New"
+		public static string Edit { get; private set; } = "#EL_UI_Edit"; // "Edit"
+		public static string PartEditor { get; private set; } = "#EL_UI_PartEditor"; // "Part Editor"
+		public static string Save { get; private set; } = "#EL_UI_Save"; // "Save"
+		public static string SaveAndClose { get; private set; } = "#EL_UI_SaveAndClose"; // "Save and Close"
+		public static string Close { get; private set; } = "#EL_UI_Close"; // "Close"
+		public static string MissingParts { get; private set; } = "#EL_UI_MissingParts"; // "Missing Parts:"
 
-		public static string PreferBlizzy { get; } = "Use Blizzy's toolbar instead of App launcher";
-		public static string CreateKACAlarms { get; } = "Create alarms in Kerbal Alarm Clock";
-		public static string ShowCraftHull { get; } = "Show craft hull during construction";
-		public static string DebugCraftHull { get; } = "[Debug] Write craft hull points file";
+		public static string PreferBlizzy { get; private set; } = "#EL_UI_PreferBlizzy"; // "Use Blizzy's toolbar instead of App launcher"
+		public static string CreateKACAlarms { get; private set; } = "#EL_UI_CreateKACAlarms"; // "Create alarms in Kerbal Alarm Clock"
+		public static string ShowCraftHull { get; private set; } = "#EL_UI_ShowCraftHull"; // "Show craft hull during construction"
+		public static string DebugCraftHull { get; private set; } = "#EL_UI_DebugCraftHull"; // "[Debug] Write craft hull points file"
 
-		public static string KillWarpMessage { get; } = "Kill Warp+Message";
-		public static string KillWarpOnly { get; } = "Kill Warp only";
-		public static string MessageOnly { get; } = "Message Only";
-		public static string PauseGame { get; } = "Pause Game";
+		public static string KillWarpMessage { get; private set; } = "#EL_UI_KillWarpMessage"; // "Kill Warp+Message"
+		public static string KillWarpOnly { get; private set; } = "#EL_UI_KillWarpOnly"; // "Kill Warp only"
+		public static string MessageOnly { get; private set; } = "#EL_UI_MessageOnly"; // "Message Only"
+		public static string PauseGame { get; private set; } = "#EL_UI_PauseGame"; // "Pause Game"
+
+		static BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static;
+		internal static void LoadStrings ()
+		{
+			var properties = typeof (ELLocalization).GetProperties (bindingFlags);
+			foreach (var p in properties) {
+				var s = (string) p.GetValue (null, null);
+				var l = Localizer.Format(s);
+				//Debug.Log ($"[ELLocalization] {s} -> {l}");
+				p.SetValue (null, s);
+			}
+		}
 	}
 }

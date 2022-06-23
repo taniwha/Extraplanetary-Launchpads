@@ -23,9 +23,9 @@ PART
 	entryCost = 400
 	cost = ${math.floor((mass * 600 * 25) * 100 + 0.5) / 100}
 	category = Utility
-	title = KS-ML Milling Lathe
+	title = #EL_ELLathe_title // KS-ML Milling Lathe
 	manufacturer = Kairyuu Shipping
-	description = Increase production of scrap metal. Oh, and you might get some rocket parts out of it.
+	description = #EL_ELLathe_desc // Increase production of scrap metal. Oh, and you might get some rocket parts out of it.
 	tags = cck-el
 
 	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision

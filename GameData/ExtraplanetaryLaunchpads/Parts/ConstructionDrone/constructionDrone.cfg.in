@@ -17,9 +17,9 @@ PART
 	entryCost = 12200
 	cost = 227400
 	category = Utility
-	title = Construction Drone
+	title = #EL_ELConstructionDrone_title // Construction Drone
 	manufacturer = Von Keumann Robotics
-	description = The Von Keumann Construction Drone provides the same functionality as the KS-WS-10-5 Construction Workshop. Productivity isn't as great, but you save mass by not having to worry about crew. No more bathroom breaks! No more union disputes!
+	description = #EL_ELConstructionDrone_desc // The Von Keumann Construction Drone provides the same functionality as the KS-WS-10-5 Construction Workshop. Productivity isn't as great, but you save mass by not having to worry about crew. No more bathroom breaks! No more union disputes!
 
 	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
 	attachRules = 1,0,1,0,0

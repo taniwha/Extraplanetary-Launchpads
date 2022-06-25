@@ -97,7 +97,7 @@ namespace ExtraplanetaryLaunchpads {
 				var s = (string) p.GetValue (null, null);
 				var l = Localizer.Format(s);
 				//Debug.Log ($"[ELLocalization] {s} -> {l}");
-				p.SetValue (null, s);
+				p.SetValue (null, l);
 			}
 		}
 	}

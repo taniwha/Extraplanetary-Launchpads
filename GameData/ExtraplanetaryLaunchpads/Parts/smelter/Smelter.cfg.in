@@ -156,6 +156,7 @@ PART {
 	}
 	scale = 1
 	rescaleFactor = ${math.pow(scale2, 1.0/3)}
+    node_attach = 0, 0, 1.51522, 0, 0, -1, 1, 0, 1, 0
 
 	TechRequired = advConstruction
 	entryCost = 0
@@ -258,6 +259,42 @@ PART {
         name = ModuleCargoPart
         packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale2)}
     }
+
+    NODE {
+        name = dorsal
+        transform = node_stack_dorsal
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = ventral
+        transform = node_stack_ventral
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = top
+        transform = node_stack_top
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = bottom
+        transform = node_stack_bottom
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
 }
 
 PART {
@@ -273,6 +310,7 @@ PART {
 	}
 	scale = 1
 	rescaleFactor = ${math.pow(scale3, 1.0/3)}
+    node_attach = 0, 0, 1.51522, 0, 0, -1, 1, 0, 1, 0
 
 	TechRequired = advConstruction
 	entryCost = 0
@@ -374,6 +412,42 @@ PART {
     MODULE {
         name = ModuleCargoPart
         packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale3)}
+    }
+
+    NODE {
+        name = dorsal
+        transform = node_stack_dorsal
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = ventral
+        transform = node_stack_ventral
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = top
+        transform = node_stack_top
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = bottom
+        transform = node_stack_bottom
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
     }
 }
 @PART[ELSmelter]:FOR[Launchpad]:NEEDS[KIS] {

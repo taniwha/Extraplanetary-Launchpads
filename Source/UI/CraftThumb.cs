@@ -196,19 +196,29 @@ namespace ExtraplanetaryLaunchpads {
 			HighLogic.fetch.StartCoroutine (capture (ship, thumbPath));
 		}
 
+		static string CleanSeparators (string path)
+		{
+			return path.Replace ('/', '_');
+		}
+
+		public static string ThumbName (string craftFile)
+		{
+			string thumbName = CleanSeparators (Path.ChangeExtension(craftFile, null));
+			Debug.Log ($"[ELCraftThumb] ThumbName: {craftFile} {thumbName}");
+			return thumbName;
+		}
+
 		public static string UserThumbName (ELCraftType craftType, string craftFile)
 		{
 			string saveDir = HighLogic.SaveFolder;
 			string type = craftType.ToString ();
-			string thumbName = Path.GetFileNameWithoutExtension(craftFile);
-			return $"{saveDir}_{type}_{thumbName}";
+			return $"{saveDir}_{type}_{ThumbName (craftFile)}";
 		}
 
 		public static string StockPath (ELCraftType craftType, string craftFile)
 		{
 			string type = craftType.ToString ();
-			string thumbName = Path.GetFileNameWithoutExtension(craftFile);
-			return $"Ships/@thumbs/{type}/{thumbName}.png";
+			return $"Ships/@thumbs/{type}/{ThumbName (craftFile)}.png";
 		}
 
 		public static string UserPath (ELCraftType craftType, string craftFile)

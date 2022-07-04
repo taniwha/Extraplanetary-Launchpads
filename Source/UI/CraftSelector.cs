@@ -16,7 +16,9 @@ along with Extraplanetary Launchpads.  If not, see
 <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
@@ -67,6 +69,13 @@ namespace ExtraplanetaryLaunchpads {
 				.ControlChildSize (true, true)
 				.ChildForceExpand (false,false)
 
+				.Add <TreeView> (out dirTreeView)
+					.Items (dirTreeItems)
+					.OnClick (OnDirTreeClicked)
+					.OnStateChanged (OnDirTreeStateChanged)
+					.PreferredSize (256, -1)
+					.FlexibleLayout (true, true)
+					.Finish ()
 				.Add <ScrollView> (out craftList)
 					.Horizontal (false)
 					.Vertical (true)
@@ -138,7 +147,6 @@ namespace ExtraplanetaryLaunchpads {
 				.Finish ();
 
 
-			relativePath = "";
 			craftThumb.Craft ("");
 			generateThumb.SetActive (false);
 
@@ -159,7 +167,7 @@ namespace ExtraplanetaryLaunchpads {
 								  selectedCraft.fullPath);
 		}
 
-		string relativePath;
+		string rootPath;
 
 		void pipelineSucceed (ConfigNode node, ELCraftItem craft)
 		{
@@ -225,63 +233,119 @@ namespace ExtraplanetaryLaunchpads {
 		public void SetCraftType (ELCraftType craftType, bool stock)
 		{
 			SetActive (true);
-			SetRelativePath (craftType, stock, "");
-		}
 
-		void SetRelativePath (ELCraftType craftType, bool stock, string path)
-		{
-			this.craftType = craftType;
-			relativePath = path;
-			ScanDirectory (craftType, stock, path);
-		}
-
-		bool ScanDirectory (ELCraftType type, bool stock, string path)
-		{
 			string profile = HighLogic.SaveFolder;
 			string basePath = KSPUtil.ApplicationRootPath;
 
-			craftItems.Clear ();
-			selectedCraft = null;
-
 			if (!stock) {
-				basePath = basePath + $"saves/{profile}/";
+				basePath = basePath + $"saves/{profile}";
 			}
 
-			switch (type) {
+			string path = null;
+			switch (craftType) {
 				case ELCraftType.VAB:
 				case ELCraftType.SPH:
-					path = $"{basePath}Ships/{type.ToString ()}/{path}";
+					path = $"{basePath}/Ships/{craftType.ToString ()}";
 					break;
 				case ELCraftType.SubAss:
-					var subassPath = $"{basePath}Subassemblies/";
+					var subassPath = $"{basePath}/Subassemblies";
 					if (!Directory.Exists (subassPath)) {
 						Directory.CreateDirectory (subassPath);
 					}
-					path = $"{subassPath}{path}";
+					path = $"{subassPath}";
 					break;
 				case ELCraftType.Part:
-					var partsPath = $"{basePath}Parts/";
+					var partsPath = $"{basePath}/Parts";
 					if (!Directory.Exists (partsPath)) {
 						Directory.CreateDirectory (partsPath);
 					}
-					path = $"{partsPath}{path}";
+					path = $"{partsPath}";
 					break;
 			}
+			dirTreeItems.Clear();
+			rootPath = Path.GetFullPath(path);
+			this.craftType = craftType;
+			ScanTree (rootPath, 0, stock, craftType);
+			dirTreeView.Items(dirTreeItems);
+			ScanDirectory (dirTreeItems[0].Object as DirItem);
+			dirTreeView.SelectItem (0);
+		}
 
+		class DirItem {
+			public string name;
+			public string path;
+			public bool hasSubdirs;
+			public bool stock;
+			public ELCraftType type;
+			public DirItem(string name, string path, bool hasSubdirs, bool stock, ELCraftType type)
+			{
+				this.name = name;
+				this.path = path;
+				this.hasSubdirs = false;
+				this.stock = stock;
+				this.type = type;
+			}
+		}
+
+		TreeView dirTreeView;
+		List<TreeView.TreeItem> dirTreeItems = new List<TreeView.TreeItem> ();
+
+		void OnDirTreeClicked (int index)
+		{
+			var dir = dirTreeItems[index].Object as DirItem;
+			ScanDirectory (dir);
+			dirTreeView.SelectItem (index);
+		}
+
+		void OnDirTreeStateChanged (int index, bool open)
+		{
+		}
+
+		void ScanTree (string path, int level, bool stock, ELCraftType type)
+		{
 			var directory = new DirectoryInfo (path);
+			var dirs = directory.GetDirectories ();
+			int rootLen = rootPath.Length;
+			if (level > 0) {
+				rootLen += 1;
+			}
+
+			Debug.Log ($"[ELCraftSelector] ScanTree: {path} {rootLen} {directory.FullName.Length}");
+			var d = new DirItem(directory.Name, directory.FullName.Substring(rootLen), dirs.Length > 0, stock, type);
+			var t = new TreeView.TreeItem (d, d => (d as DirItem).name, d => (d as DirItem).hasSubdirs, level);
+			dirTreeItems.Add (t);
+
+			for (int i = 0; i < dirs.Length; i++) {
+				var dir = dirs[i];
+				ScanTree ($"{path}/{dir.Name}", level + 1, stock, type);
+			}
+		}
+
+		bool ScanDirectory (DirItem dir)
+		{
+			craftItems.Clear ();
+			selectedCraft = null;
+
+			Debug.Log ($"[ELCraftSelector] ScanDirectory: {dir.path}");
+
+			var directory = new DirectoryInfo ($"{rootPath}/{dir.path}");
 			var files = directory.GetFiles ("*.craft");
+
 
 			for (int i = 0; i < files.Length; i++) {
 				var fi = files[i];
 				string fp = fi.FullName;
 				string mp = fi.FullName.Replace (fi.Extension, ".loadmeta");
-				string tp;
-				if (stock) {
-					tp = ELCraftThumb.StockPath (type, fp);
-				} else {
-					tp = ELCraftThumb.UserPath (type, fp);
+				string tp = fi.Name;
+				if (!String.IsNullOrEmpty (dir.path)) {
+					tp = $"{dir.path}/{fi.Name}";
 				}
-				craftItems.Add (new ELCraftItem (fp, mp, tp, type, stock));
+				if (dir.stock) {
+					tp = ELCraftThumb.StockPath (dir.type, tp);
+				} else {
+					tp = ELCraftThumb.UserPath (dir.type, tp);
+				}
+				craftItems.Add (new ELCraftItem (fp, mp, tp, dir.type, dir.stock));
 			}
 
 			UIKit.UpdateListContent (craftItems);

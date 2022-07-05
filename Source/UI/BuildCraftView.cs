@@ -241,11 +241,11 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		void craftSelectComplete (string filename, ELCraftType craftType)
+		void craftSelectComplete (string filename, string thumbPath, ELCraftType craftType)
 		{
 			control.craftType = craftType;
 
-			control.LoadCraft (filename, control.flagname);
+			control.LoadCraft (filename, control.flagname, thumbPath);
 
 			bool enable = control.craftConfig != null;
 			selectCraftButton.interactable = true;
@@ -295,7 +295,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		void Reload ()
 		{
-			control.LoadCraft (control.filename, control.flagname);
+			control.LoadCraft (control.filename, control.flagname, control.thumbPath);
 		}
 
 		void Clear ()
@@ -343,7 +343,7 @@ namespace ExtraplanetaryLaunchpads {
 					} else {
 						craftBoM.Text ("");
 					}
-					craftThumb.Craft (control.craftType, control.filename);
+					craftThumb.Thumb (control.thumbPath);
 				}
 			} else {
 				selectedCraft.gameObject.SetActive (false);

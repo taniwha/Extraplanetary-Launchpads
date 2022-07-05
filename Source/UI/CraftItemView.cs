@@ -132,7 +132,7 @@ namespace ExtraplanetaryLaunchpads {
 										 craft.stageCount));
 			cost.Text (Localizer.Format("#autoLOC_6003099", craft.cost));
 			message.Text (craft.message);
-			thumb.Craft (craft.thumbPath);
+			thumb.Thumb (craft.thumbPath);
 			return this;
 		}
 #region OnPointerEnter/Exit

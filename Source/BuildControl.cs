@@ -62,6 +62,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public string filename { get; private set; }
 		public string flagname { get; set; }
+		public string thumbPath { get; private set; }
 		public bool lockedParts { get; private set; }
 		public ConfigNode craftConfig { get; private set; }
 		public CraftHull craftHull { get; private set; }
@@ -763,10 +764,11 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void LoadCraft (string filename, string flagname)
+		public void LoadCraft (string filename, string flagname, string thumbPath)
 		{
 			this.filename = filename;
 			this.flagname = flagname;
+			this.thumbPath = thumbPath;
 
 			if (!File.Exists (filename)) {
 				Debug.LogWarning ($"File '{filename}' does not exist");
@@ -842,6 +844,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (flagname != null) {
 				node.AddValue ("flagname", flagname);
+			}
+			if (thumbPath != null) {
+				node.AddValue ("thumbPath", thumbPath);
 			}
 			if (craftConfig != null) {
 				craftConfig.name = "CraftConfig";
@@ -921,6 +926,9 @@ namespace ExtraplanetaryLaunchpads {
 			}
 			if (node.HasValue ("flagname")) {
 				flagname = node.GetValue ("flagname");
+			}
+			if (node.HasValue ("thumbPath")) {
+				thumbPath = node.GetValue ("thumbPath");
 			}
 			if (node.HasNode ("CraftConfig")) {
 				craftConfig = node.GetNode ("CraftConfig");

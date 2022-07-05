@@ -29,6 +29,22 @@ using Experience;
 namespace ExtraplanetaryLaunchpads {
 
 	public static class EL_Utils {
+		static string applicationRootPath;
+
+		public static string ApplicationRootPath
+		{
+			get {
+				if (applicationRootPath == null) {
+					applicationRootPath = Path.GetFullPath(KSPUtil.ApplicationRootPath).Replace("\\", "/");
+					int len = applicationRootPath.Length;
+					if (applicationRootPath[len - 1] != '/') {
+						applicationRootPath = applicationRootPath + "/";
+					}
+				}
+				return applicationRootPath;
+			}
+		}
+
 		public static T FindVesselModuleImplementing<T> (this Vessel vessel) where T : class
 		{
 			for (int i = vessel.vesselModules.Count; i-- > 0; ) {
@@ -178,30 +194,20 @@ namespace ExtraplanetaryLaunchpads {
 			return false;
 		}
 
-		static string _applicationRoot;
-		static string applicationRoot
-		{
-			get {
-				if (_applicationRoot == null) {
-					_applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
-				}
-				return _applicationRoot;
-			}
-		}
 		public static bool KSPFileExists (string filename)
 		{
-			return File.Exists (applicationRoot + filename);
+			return File.Exists (ApplicationRootPath + filename);
 		}
 
 		public static DateTime KSPFileTimestamp (string filename)
 		{
-			return File.GetLastWriteTime (applicationRoot + filename);
+			return File.GetLastWriteTime (ApplicationRootPath + filename);
 		}
 
 		public static bool LoadImage (ref Texture2D tex, string filename)
 		{
 			bool ret = false;
-			string path = $"{applicationRoot}{filename}";
+			string path = $"{ApplicationRootPath}{filename}";
 			if (File.Exists (path)) {
 				ImageConversion.LoadImage (tex, File.ReadAllBytes (path));
 				ret = true;

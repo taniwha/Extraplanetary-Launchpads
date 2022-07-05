@@ -147,7 +147,7 @@ namespace ExtraplanetaryLaunchpads {
 				.Finish ();
 
 
-			craftThumb.Craft ("");
+			craftThumb.Thumb ("");
 			generateThumb.SetActive (false);
 
 			craftItems = new ELCraftItem.List (craftGroup);
@@ -168,6 +168,7 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		string rootPath;
+		string basePath;
 
 		void pipelineSucceed (ConfigNode node, ELCraftItem craft)
 		{
@@ -175,7 +176,7 @@ namespace ExtraplanetaryLaunchpads {
 				craft.node.Save (craft.fullPath + ".original");
 				node.Save (craft.fullPath);
 			}
-			OnFileSelected (selectedCraft.fullPath, selectedCraft.type);
+			OnFileSelected (selectedCraft.fullPath, selectedCraft.thumbPath, selectedCraft.type);
 		}
 
 		void pipelineFail (KSPUpgradePipeline.UpgradeFailOption opt, ConfigNode node, ELCraftItem craft)
@@ -209,7 +210,7 @@ namespace ExtraplanetaryLaunchpads {
 		void UpdateCraftInfo ()
 		{
 			if (selectedCraft != null) {
-				craftThumb.Craft (selectedCraft.thumbPath);
+				craftThumb.Thumb (selectedCraft.thumbPath);
 				generateThumb.SetActive (!selectedCraft.isStock && selectedCraft.canLoad);
 				if (selectedCraft.canLoad) {
 					craftDescription.Text (selectedCraft.description);
@@ -218,7 +219,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			} else {
 				craftDescription.Text ("");
-				craftThumb.Craft ("");
+				craftThumb.Thumb ("");
 				generateThumb.SetActive (false);
 			}
 		}
@@ -235,11 +236,7 @@ namespace ExtraplanetaryLaunchpads {
 			SetActive (true);
 
 			string profile = HighLogic.SaveFolder;
-			string basePath = KSPUtil.ApplicationRootPath;
-
-			if (!stock) {
-				basePath = basePath + $"saves/{profile}";
-			}
+			basePath = stock ? "" : $"saves/{profile}";
 
 			string path = null;
 			switch (craftType) {
@@ -263,7 +260,8 @@ namespace ExtraplanetaryLaunchpads {
 					break;
 			}
 			dirTreeItems.Clear();
-			rootPath = Path.GetFullPath(path);
+			rootPath = $"{EL_Utils.ApplicationRootPath}{path}";
+			basePath = path;
 			this.craftType = craftType;
 			ScanTree (rootPath, 0, stock, craftType);
 			dirTreeView.Items(dirTreeItems);
@@ -326,20 +324,22 @@ namespace ExtraplanetaryLaunchpads {
 			craftItems.Clear ();
 			selectedCraft = null;
 
-			Debug.Log ($"[ELCraftSelector] ScanDirectory: {dir.path}");
+			string dir_path = dir.path;
+			if (!String.IsNullOrEmpty(dir_path)) {
+				dir_path = $"{dir_path}/";
+			}
 
-			var directory = new DirectoryInfo ($"{rootPath}/{dir.path}");
+			Debug.Log ($"[ELCraftSelector] ScanDirectory: {dir_path}");
+
+			var directory = new DirectoryInfo ($"{rootPath}/{dir_path}");
 			var files = directory.GetFiles ("*.craft");
 
 
 			for (int i = 0; i < files.Length; i++) {
 				var fi = files[i];
-				string fp = fi.FullName;
-				string mp = fi.FullName.Replace (fi.Extension, ".loadmeta");
-				string tp = fi.Name;
-				if (!String.IsNullOrEmpty (dir.path)) {
-					tp = $"{dir.path}/{fi.Name}";
-				}
+				string fp = $"{basePath}/{dir_path}{fi.Name}";
+				string mp = fp.Replace (fi.Extension, ".loadmeta");
+				string tp = $"{dir_path}{fi.Name}";
 				if (dir.stock) {
 					tp = ELCraftThumb.StockPath (dir.type, tp);
 				} else {

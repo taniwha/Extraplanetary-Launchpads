@@ -201,14 +201,14 @@ namespace ExtraplanetaryLaunchpads {
 			return path.Replace ('/', '_');
 		}
 
-		public static string ThumbName (string craftFile)
+		private static string ThumbName (string craftFile)
 		{
 			string thumbName = CleanSeparators (Path.ChangeExtension(craftFile, null));
 			Debug.Log ($"[ELCraftThumb] ThumbName: {craftFile} {thumbName}");
 			return thumbName;
 		}
 
-		public static string UserThumbName (ELCraftType craftType, string craftFile)
+		private static string UserThumbName (ELCraftType craftType, string craftFile)
 		{
 			string saveDir = HighLogic.SaveFolder;
 			string type = craftType.ToString ();
@@ -226,35 +226,12 @@ namespace ExtraplanetaryLaunchpads {
 			return $"thumbs/{UserThumbName (craftType, craftFile)}.png";
 		}
 
-		static string applicationRoot;
-
-		public ELCraftThumb Craft (ELCraftType craftType, string craftFile)
-		{
-			if (applicationRoot == null) {
-				applicationRoot = KSPUtil.ApplicationRootPath.Replace("\\", "/");
-			}
-			string thumbPath = UserPath (craftType, craftFile);
-
-			if (File.Exists (applicationRoot + thumbPath)) {
-				return Craft (thumbPath);
-			}
-
-			string stockPath = StockPath (craftType, craftFile);
-			if (File.Exists (applicationRoot + stockPath)) {
-				return Craft (stockPath);
-			}
-
-			// assume it's user craft and we can generate the thumb, it will
-			// be updated if the thumb is generated
-			return Craft (thumbPath);
-		}
-
 		void onSpriteUpdate (ELCraftThumbManager.ThumbSprite thumbSprite)
 		{
 			image.sprite = thumbSprite.sprite;
 		}
 
-		public ELCraftThumb Craft (string thumbPath)
+		public ELCraftThumb Thumb (string thumbPath)
 		{
 			if (thumbSprite != null) {
 				thumbSprite.onUpdate.RemoveListener (onSpriteUpdate);

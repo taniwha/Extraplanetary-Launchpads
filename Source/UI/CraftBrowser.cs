@@ -22,7 +22,7 @@ using KodeUI;
 namespace ExtraplanetaryLaunchpads {
 
 	public enum ELCraftType { VAB, SPH, SubAss, Part };
-	public delegate void SelectFileCallback(string fullPath,
+	public delegate void SelectFileCallback(string craftPath, string thumbPath,
 											ELCraftType craftType);
 	public delegate void CancelledCallback();
 

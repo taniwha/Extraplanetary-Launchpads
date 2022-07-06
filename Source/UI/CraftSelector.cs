@@ -164,7 +164,7 @@ namespace ExtraplanetaryLaunchpads {
 		void GenerateThumb ()
 		{
 			ELCraftThumb.Capture (selectedCraft.node, selectedCraft.type,
-								  selectedCraft.fullPath);
+								  selectedCraft.thumbPath);
 		}
 
 		string rootPath;

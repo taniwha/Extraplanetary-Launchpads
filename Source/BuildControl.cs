@@ -142,7 +142,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			get {
 				if (_savesPath == null) {
-					_savesPath = KSPUtil.ApplicationRootPath + "saves/";
+					_savesPath = EL_Utils.ApplicationRootPath + "saves/";
 					_savesPath += HighLogic.SaveFolder;
 				}
 				return _savesPath;

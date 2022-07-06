@@ -127,7 +127,7 @@ namespace ExtraplanetaryLaunchpads {
 			ship.parts[0].transform.rotation = rotation;
 			//Debug.Log ($"[ELPartEditorView] Save {node}");
 
-			string basePath = KSPUtil.ApplicationRootPath;
+			string basePath = EL_Utils.ApplicationRootPath;
 			string profile = HighLogic.SaveFolder;
 			string saveDir = "Parts/";
 			string craft = "autopart.craft";

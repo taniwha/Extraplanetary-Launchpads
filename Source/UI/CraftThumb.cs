@@ -131,7 +131,7 @@ namespace ExtraplanetaryLaunchpads {
 				var tex = takeSnapshot (ship);
 				var png = tex.EncodeToPNG ();
 
-				string dir = KSPUtil.ApplicationRootPath;
+				string dir = EL_Utils.ApplicationRootPath;
 				string path = dir + thumbPath;
 
 				if (!ELCraftThumbManager.UpdateThumbCache (thumbPath, tex)) {
@@ -143,7 +143,7 @@ namespace ExtraplanetaryLaunchpads {
 				}
 				File.WriteAllBytes (path, png);
 
-				//Debug.Log ($"[ELCraftThumb] capture {path}");
+				Debug.Log ($"[ELCraftThumb] capture {path}");
 				thumbRig.SetActive (false);
 			}
 
@@ -151,7 +151,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		}
 
-		public static void Capture (ConfigNode craft, ELCraftType craftType, string craftFile)
+		public static void Capture (ConfigNode craft, ELCraftType craftType, string thumbPath)
 		{
 			var ship = new ShipConstruct ();
 			ship.LoadShip (craft);
@@ -185,7 +185,6 @@ namespace ExtraplanetaryLaunchpads {
 				angles = new Vector2 (45, 45);
 			}
 
-			string thumbPath = UserPath (craftType, craftFile);
 			if (!thumbRig) {
 				CreateRig ();
 			}

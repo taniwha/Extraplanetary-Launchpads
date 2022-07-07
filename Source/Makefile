@@ -48,6 +48,7 @@ EL_FILES := \
 	ResourceManager/ResourceSet.cs				\
 	ResourceManager/ResourceSetContainer.cs		\
 	ResourceManager/ResourceXferControl.cs		\
+	ResourceManager/StockResourceContainer.cs	\
 	Survey/Billboard.cs					\
 	Survey/Points.cs					\
 	Survey/SiteBody.cs					\

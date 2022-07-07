@@ -68,15 +68,16 @@ namespace ExtraplanetaryLaunchpads {
 				}
 			}
 
-			ThumbSprite thumb;
+			ThumbSprite thumb = null;
 			var timestamp = new DateTime (0);
-			if (!String.IsNullOrEmpty (thumbPath)
-				&& EL_Utils.KSPFileExists (thumbPath)) {
-				timestamp = EL_Utils.KSPFileTimestamp (thumbPath);
-			}
-			if (thumbnailCache.TryGetValue (thumbPath, out thumb)
-				&& thumb.sprite && thumb.timestamp == timestamp) {
-				return thumb;
+			if (!String.IsNullOrEmpty (thumbPath)) {
+				if (EL_Utils.KSPFileExists (thumbPath)) {
+					timestamp = EL_Utils.KSPFileTimestamp (thumbPath);
+				}
+				if (thumbnailCache.TryGetValue (thumbPath, out thumb)
+					&& thumb.sprite && thumb.timestamp == timestamp) {
+					return thumb;
+				}
 			}
 
 			var thumbTex = GameObject.Instantiate (genericCraftThumb) as Texture2D;
@@ -90,8 +91,9 @@ namespace ExtraplanetaryLaunchpads {
 			} else {
 				thumb.sprite = sprite;
 			}
-
-			thumbnailCache[thumbPath] = thumb;
+			if (!String.IsNullOrEmpty (thumbPath)) {
+				thumbnailCache[thumbPath] = thumb;
+			}
 			return thumb;
 		}
 

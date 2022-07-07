@@ -279,6 +279,7 @@ public class ELVesselWorkNet : VesselModule
 			} else {
 				updateTimer = 10;
 				UpdateProductivity (forceProductivityUpdate);
+				forceProductivityUpdate = false;
 			}
 			if (protoSinks != null) {
 				if (CatchUpBacklog ()) {

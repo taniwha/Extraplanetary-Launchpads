@@ -241,6 +241,9 @@ public class ELVesselWorkNet : VesselModule
 			for (int i = 0; i < protoSinks.Count; i++) {
 				var ps = protoSinks[i];
 				if (ps.isActive) {
+					if (!sinks[i].ready) {
+						continue;
+					}
 					ps.CatchUpBacklog (sinks[i], work);
 				}
 			}

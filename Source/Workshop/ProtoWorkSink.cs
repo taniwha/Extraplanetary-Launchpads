@@ -56,6 +56,7 @@ public class ELProtoWorkSink : ELWorkSink
 
 	public bool isActive { get; private set; }
 	public ELVesselWorkNet workNet { get; set; }
+	public bool ready { get { return true; } }
 	public double CalculateWork ()
 	{
 		return maxHours;

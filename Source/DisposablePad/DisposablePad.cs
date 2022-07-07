@@ -386,6 +386,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public bool ready { get { return control.ready; } }
+
 		public double CalculateWork ()
 		{
 			return control.CalculateWork();

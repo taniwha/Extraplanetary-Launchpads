@@ -104,6 +104,8 @@ namespace ExtraplanetaryLaunchpads {
 
 		public ELVesselWorkNet workNet { get; set; }
 
+		public bool ready { get { return padResources != null; } }
+
 		public double productivity
 		{
 			get {

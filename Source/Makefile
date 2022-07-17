@@ -78,7 +78,6 @@ EL_FILES := \
 	UI/CraftTypeSelector.cs				\
 	UI/BuildCraftView.cs				\
 	UI/IResourceLine.cs					\
-	UI/Layout.cs						\
 	UI/Localization.cs					\
 	UI/MainWindow.cs					\
 	UI/MiniToggle.cs					\

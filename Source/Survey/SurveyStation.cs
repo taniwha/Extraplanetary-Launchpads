@@ -242,7 +242,7 @@ namespace ExtraplanetaryLaunchpads {
 			xform.transform.rotation = points.GetOrientation ();
 			Debug.Log ($"[EL SurveyStation] launchPos {xform.position} {xform.rotation}");
 
-			Vector3 shift = shipTransform.position + new Vector3(0, 5, 0);
+			Vector3 shift = shipTransform.position;
 			shift += points.ShiftBounds (xform, shift, vessel_bounds);
 
 			relativeRotaion = shipTransform.rotation;

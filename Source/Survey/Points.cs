@@ -45,8 +45,11 @@ namespace ExtraplanetaryLaunchpads {
 
 			center = Vector3d.zero;
 			foreach (var stake in site) {
+				if (stake.stake == null) {
+					continue;
+				}
 				string key = ELSurveyStake.StakeUses[stake.use];
-				var pos = stake.vessel.GetWorldPos3D ();
+				var pos = stake.stake.part.transform.position;
 				center += pos;
 				count++;
 

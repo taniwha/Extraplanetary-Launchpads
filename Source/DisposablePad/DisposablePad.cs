@@ -24,12 +24,13 @@ using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELDisposablePad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
+	public class ELDisposablePad : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameDialog.IRenamable
 	{
 		[KSPField (isPersistant = false)]
 		public string SpawnTransform;
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string PadName = "";
+		string oldName = "";
 
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
@@ -245,6 +246,9 @@ namespace ExtraplanetaryLaunchpads {
 			var pos = Vector3.zero;
 			if (n != null) {
 				Vector3 nodeAxis = rootXform.TransformDirection(n.orientation);
+				if (n.id == "KISMount") {
+					nodeAxis = -nodeAxis;
+				}
 				Vector3 forward = rootXform.forward;
 				float fwdDot = Vector3.Dot (forward, nodeAxis);
 				Debug.Log ($"[EL] nodeAxis: {nodeAxis}");
@@ -324,6 +328,7 @@ namespace ExtraplanetaryLaunchpads {
 				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);
 			}
 			control.OnStart ();
+			UpdateMenus (false);
 		}
 
 		void OnDestroy ()
@@ -336,21 +341,21 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
-			ELBuildWindow.HideGUI ();
+			ELWindowManager.HideBuildWindow ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
-			ELBuildWindow.ShowGUI ();
-			ELBuildWindow.SelectPad (control);
+			ELWindowManager.ShowBuildWindow (control);
 		}
 
 		[KSPEvent (guiActive = true, guiActiveEditor = true,
 				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
-			ELRenameWindow.ShowGUI (this);
+			oldName = PadName;
+			ELRenameDialog.OpenDialog (ELLocalization.RenameMicropad, this);
 		}
 
 		public void UpdateMenus (bool visible)
@@ -381,6 +386,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public bool ready { get { return control.ready; } }
+
 		public double CalculateWork ()
 		{
 			return control.CalculateWork();
@@ -388,7 +395,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void OnRename ()
 		{
-			ELBuildWindow.updateCurrentPads ();
+			control.OnRename (oldName);
 		}
 	}
 }

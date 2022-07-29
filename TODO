@@ -3,6 +3,7 @@ refurbish
 	Ablator
 	Parachutes
 	... (resources with resource recipes)
+	Part upgrades (can upgrade to a craft file with a similar enough parts list)
 
 somehow mark parts as not being buildable
 	requested by lgg
@@ -37,3 +38,60 @@ I once said that if @taniwha decided that Ore -> RubberChickens ->RocketParts wa
 ￼2
 
 12:45Electrocutor: You would place a surveyor tripod on the ground, then use it to bring up an interface where you select the vessel and get the displacement and rotation controls you get like when in the VAB. Once it's where you want, you finish and it auto-places stakes at the bounding box points. This way it removes the manual x,z stuff needed for the current stakes and you know which way and where your thing will be built.
+
+taniwhaToday at 4:34 PM
+@dbandy13 got something: requires KIS (or maybe stock inventory): swap a carried part with the broken part (ie, the placement of the broken part is used to determine the placement of the new part, and the broken part goes into inventory)
+[4:34 PM]
+based a bit on @fatcargo's ideas
+￼
+dbandy13Today at 4:44 PM
+@taniwha that’s cool
+[4:44 PM]
+I had another idea too, give me 5 and I’ll type it out(edited)
+[4:49 PM]
+@taniwha My thought was:
+The kerbal can easily see something is broken but not immediately know how to fix it.
+
+So you go out to your broken parts, click on the kerbal and go “inspect damage” or similar. This goes through nearby breakable parts and if they’re broken adds the thing for fixing it
+
+dbandy13Today at 4:52 PM
+A level 0 makes a few mistakes in the process and wastes some rocket parts
+￼
+taniwhaToday at 4:52 PM
+and level 0 might take infinite parts
+￼
+1
+[4:53 PM]
+but yeah
+￼
+dbandy13Today at 4:53 PM
+
+
+dbandy13Today at 5:04 PM
+Clicking repair in the part adds it to the EL work list somehow and something to the part so that when the work is done it then fixes it
+￼
+taniwhaToday at 5:05 PM
+oooooooooooh
+￼
+dbandy13Today at 5:05 PM
+This would simplify the level thing too
+￼
+taniwhaToday at 5:05 PM
+that would work, but does not need temporary modules
+￼
+1
+￼
+dbandy13Today at 5:05 PM
+Repair takes time and a constant RP/s
+￼
+taniwhaToday at 5:05 PM
+just register the part with the EL repair facility
+￼
+dbandy13Today at 5:05 PM
+Oh true
+￼
+taniwhaToday at 5:06 PM
+works for refurb, too
+[5:06 PM]
+go out, inspect. parts that need repair/refurb get highlighted, can then click on part to decide what to do
+I wasn’t that cruel but yeah ￼

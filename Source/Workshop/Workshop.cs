@@ -61,6 +61,7 @@ public class ELWorkshop : PartModule, IModuleInfo, ELWorkSource
 	}
 	public bool isActive { get; private set; }
 	public ELVesselWorkNet workNet { get; set; }
+	public bool ready { get { return true; } }
 	private bool enableSkilled;
 	private bool enableUnskilled;
 

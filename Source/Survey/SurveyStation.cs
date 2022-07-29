@@ -26,10 +26,11 @@ using ModuleWheels;
 
 namespace ExtraplanetaryLaunchpads {
 
-	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameWindow.IRenamable
+	public class ELSurveyStation : PartModule, IModuleInfo, IPartMassModifier, ELBuildControl.IBuilder, ELControlInterface, ELWorkSink, ELRenameDialog.IRenamable
 	{
 		[KSPField (isPersistant = true, guiActive = true, guiName = "Pad name")]
 		public string StationName = "";
+		string oldName = "";
 
 		[KSPField (isPersistant = true)]
 		public bool Operational = true;
@@ -37,15 +38,17 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPField] public float EVARange = 0;
 
 		EL_VirtualPad virtualPad;
-		DropDownList site_list;
-		List<SurveySite> available_sites;
-		SurveySite site;
+		internal List<SurveySite> available_sites { get; private set; }
+		internal SurveySite site { get; private set; }
 		double craft_mass;
 		[KSPField (guiName = "Range", guiActive = true)]
 		float range = 20;
-		public static float[] site_ranges = {
+
+		public static float[] default_site_ranges = {
 			20, 50, 100, 200, 400, 800, 1600, 2000
 		};
+		[KSPField] public string SiteRanges;
+		public float[] site_ranges;
 
 		public override string GetInfo ()
 		{
@@ -153,17 +156,7 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
-		public void PadSelection_start ()
-		{
-			if (site_list == null) {
-				return;
-			}
-			site_list.styleListItem = ELStyles.listItem;
-			site_list.styleListBox = ELStyles.listBox;
-			site_list.DrawBlockingSelector ();
-		}
-
-		void SetSite (SurveySite selected_site)
+		internal void SetSite (SurveySite selected_site)
 		{
 			if (site == selected_site) {
 				if (site != null && virtualPad != null) {
@@ -187,52 +180,8 @@ namespace ExtraplanetaryLaunchpads {
 					virtualPad.SetSite (site);
 				}
 			}
-			if (site_list != null) {
-				site_list.SelectItem (available_sites.IndexOf (site));
-			}
 			control.PlaceCraftHull ();
 			// The build window will take care of turning on highlighting
-		}
-
-		void RenameSite ()
-		{
-			bool en = GUI.enabled;
-			GUI.enabled = en && (site != null);
-			if (GUILayout.Button ("Rename Site", ELStyles.normal,
-								  GUILayout.ExpandWidth (false))) {
-				if (site != null) {
-					ELRenameWindow.ShowGUI (site);
-				}
-			}
-			GUI.enabled = en;
-		}
-
-		public void PadSelection ()
-		{
-			if (site_list == null) {
-				GUILayout.BeginHorizontal ();
-				if (control.state == ELBuildControl.State.Complete) {
-					GUILayout.Label ("No sites found. Explosions likely.",
-									 ELStyles.red);
-				} else {
-					GUILayout.Label ("No sites found.");
-				}
-				GUILayout.EndHorizontal ();
-			} else {
-				GUILayout.BeginHorizontal ();
-				site_list.DrawButton ();
-				SetSite (available_sites[site_list.SelectedIndex]);
-				RenameSite ();
-				GUILayout.EndHorizontal ();
-			}
-		}
-
-		public void PadSelection_end ()
-		{
-			if (site_list != null) {
-				site_list.DrawDropDown();
-				site_list.CloseOnOutsideClick();
-			}
 		}
 
 		public void Highlight (bool on)
@@ -347,6 +296,9 @@ namespace ExtraplanetaryLaunchpads {
 		public override void OnAwake ()
 		{
 			control = new ELBuildControl (this);
+
+			site_ranges = new float[default_site_ranges.Length];
+			Array.Copy (default_site_ranges, site_ranges, site_ranges.Length);
 		}
 
 		public override void OnStart (PartModule.StartState state)
@@ -355,6 +307,27 @@ namespace ExtraplanetaryLaunchpads {
 				|| state == PartModule.StartState.Editor) {
 				return;
 			}
+
+			if (!String.IsNullOrEmpty (SiteRanges)) {
+				string[] ranges = ParseExtensions.ParseArray (SiteRanges);
+				if (ranges != null) {
+					for (int i = 0; i < ranges.Length && i < site_ranges.Length; i++) {
+						float v;
+						if (!float.TryParse (ranges[i], out v)) {
+							Debug.Log ($"[EL SurveyStation] error parsing site ranges: {ranges[i]}");
+							break;
+						}
+						if (v <= 0) {
+							// treat as default
+							continue;
+						}
+						site_ranges[i] = v;
+					}
+				}
+			}
+			//for (int i = 0; i < site_ranges.Length; i++) {
+			//	Debug.Log ($"[EL SurveyStation] site_ranges[{i}]: {site_ranges[i]}");
+			//}
 			control.OnStart ();
 			if (EVARange > 0) {
 				EL_Utils.SetupEVAEvent (Events["ShowRenameUI"], EVARange);
@@ -366,6 +339,7 @@ namespace ExtraplanetaryLaunchpads {
 			ELSurveyTracker.onSiteRemoved.Add (onSiteRemoved);
 			ELSurveyTracker.onSiteModified.Add (onSiteModified);
 			ELSurveyTracker.onStakeModified.Add (onStakeModified);
+			UpdateMenus (false);
 		}
 
 		void OnDestroy ()
@@ -384,21 +358,21 @@ namespace ExtraplanetaryLaunchpads {
 		[KSPEvent (guiActive = true, guiName = "Hide UI", active = false)]
 		public void HideUI ()
 		{
-			ELBuildWindow.HideGUI ();
+			ELWindowManager.HideBuildWindow ();
 		}
 
 		[KSPEvent (guiActive = true, guiName = "Show UI", active = false)]
 		public void ShowUI ()
 		{
-			ELBuildWindow.ShowGUI ();
-			ELBuildWindow.SelectPad (control);
+			ELWindowManager.ShowBuildWindow (control);
 		}
 
 		[KSPEvent (guiActive = true, guiActiveEditor = true,
 				   guiName = "Rename", active = true)]
 		public void ShowRenameUI ()
 		{
-			ELRenameWindow.ShowGUI (this);
+			oldName = StationName;
+			ELRenameDialog.OpenDialog (ELLocalization.RenameSurveyStation, this);
 		}
 
 		public void UpdateMenus (bool visible)
@@ -412,7 +386,6 @@ namespace ExtraplanetaryLaunchpads {
 			available_sites = ELSurveyTracker.instance.FindSites (vessel, range);
 			if (available_sites == null || available_sites.Count < 1) {
 				Highlight (false);
-				site_list = null;
 				SetSite (null);
 			} else {
 				var slist = new List<string> ();
@@ -423,7 +396,6 @@ namespace ExtraplanetaryLaunchpads {
 					Highlight (false);
 					SetSite (available_sites[0]);
 				}
-				site_list = new DropDownList (slist);
 			}
 		}
 
@@ -544,6 +516,8 @@ namespace ExtraplanetaryLaunchpads {
 			}
 		}
 
+		public bool ready { get { return control.ready; } }
+
 		public double CalculateWork ()
 		{
 			return control.CalculateWork();
@@ -551,7 +525,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void OnRename ()
 		{
-			ELBuildWindow.updateCurrentPads ();
+			control.OnRename (oldName);
 		}
 	}
 }

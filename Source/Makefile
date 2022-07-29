@@ -18,6 +18,7 @@ EL_FILES := \
 	Converter/KethaneResourceProvider.cs\
 	Converter/StockResourceProvider.cs	\
 	DisposablePad/DisposablePad.cs		\
+	Editor/Editor.cs					\
 	Hull/Box.cs							\
 	Hull/Connectivity.cs				\
 	Hull/CraftHull.cs					\
@@ -38,6 +39,7 @@ EL_FILES := \
 	Recipes/RecipeResourceContainer.cs	\
 	Recipes/RecipeDatabase.cs			\
 	Recipes/RecipeLoader.cs				\
+	Recipes/ResourceLink.cs				\
 	ResourceManager/IResourceContainer.cs		\
 	ResourceManager/KISResourceContainer.cs		\
 	ResourceManager/PartResourceContainer.cs	\
@@ -45,6 +47,8 @@ EL_FILES := \
 	ResourceManager/ResourceManager.cs			\
 	ResourceManager/ResourceSet.cs				\
 	ResourceManager/ResourceSetContainer.cs		\
+	ResourceManager/ResourceXferControl.cs		\
+	ResourceManager/StockResourceContainer.cs	\
 	Survey/Billboard.cs					\
 	Survey/Points.cs					\
 	Survey/SiteBody.cs					\
@@ -58,22 +62,53 @@ EL_FILES := \
     assembly/AssemblyInfo.cs			\
 	assembly/Checkers.cs				\
 	assembly/VersionReport.cs			\
-	GUI/BuildWindow.cs					\
-	GUI/CraftBrowser.cs					\
-	GUI/DropDownList.cs					\
-	GUI/EditorToolbar.cs				\
-	GUI/ProgressBar.cs					\
-	GUI/RenameWindow.cs					\
-	GUI/ResourceWindow.cs				\
-	GUI/ScrollView.cs					\
-	GUI/ShipInfo.cs						\
-	GUI/Styles.cs						\
-	GUI/TextField.cs					\
 	LaunchClamp/LaunchClamp.cs			\
 	Pad/Launchpad.cs					\
 	Recycler/Recycler.cs				\
 	Recycler/StateMachine.cs			\
 	Target/Target.cs					\
+	UI/BuildView.cs						\
+	UI/BuildManagerView.cs				\
+	UI/CraftBrowser.cs					\
+	UI/CraftItem.cs						\
+	UI/CraftItemView.cs					\
+	UI/CraftSelector.cs					\
+	UI/CraftThumb.cs					\
+	UI/CraftThumbManager.cs				\
+	UI/CraftTypeSelector.cs				\
+	UI/BuildCraftView.cs				\
+	UI/IResourceLine.cs					\
+	UI/Localization.cs					\
+	UI/MainWindow.cs					\
+	UI/MiniToggle.cs					\
+	UI/PadLaunchpadView.cs				\
+	UI/PadSurveyView.cs					\
+	UI/PadView.cs						\
+	UI/PartCategory.cs					\
+	UI/PartCategoryView.cs				\
+	UI/PartEditorView.cs				\
+	UI/PartEditorWindow.cs				\
+	UI/PartItemView.cs					\
+	UI/PartList.cs						\
+	UI/PartListLight.cs					\
+	UI/PartPreview.cs					\
+	UI/PartSelector.cs					\
+	UI/RenameDialog.cs					\
+	UI/ResourceDisplay.cs				\
+	UI/ResourceGroup.cs					\
+	UI/ResourceGroupView.cs				\
+	UI/ResourceLine.cs					\
+	UI/ResourceManagerView.cs			\
+	UI/ResourceModule.cs				\
+	UI/ResourceModuleView.cs			\
+	UI/SettingsWindow.cs				\
+	UI/ShipInfo.cs						\
+	UI/ShipInfoWindow.cs				\
+	UI/StatusBar.cs						\
+	UI/TextInfoLine.cs					\
+	UI/ToggleText.cs					\
+	UI/TransferView.cs					\
+	UI/WindowManager.cs					\
 	Workshop/ConstructionSkill.cs		\
 	Workshop/ProtoWorkSink.cs			\
 	Workshop/VesselWorkNet.cs			\
@@ -86,13 +121,17 @@ EL_FILES := \
 	lib/KACWrapper.cs					\
 	lib/KerbalStatsWrapper.cs			\
 	lib/Utils.cs						\
+	toolbar/EditorToolbar.cs			\
 	toolbar/Toolbar.cs					\
 	toolbar/ToolbarWrapper.cs			\
 	AirstreamShield.cs					\
 	BuildControl.cs						\
 	ControlInterface.cs					\
+	GroundPart.cs						\
 	Settings.cs							\
 	$e
+
+include KodeUI/KodeUI.inc
 
 RESGEN2		:= resgen2
 CSC			:= csc
@@ -131,21 +170,24 @@ UNITY := \
 	-r:UnityEngine.dll \
 	-r:UnityEngine.UI.dll \
 	-r:UnityEngine.UIModule.dll \
-	-r:UnityEngine.IMGUIModule.dll \
 	-r:UnityEngine.TextRenderingModule.dll \
 	-r:UnityEngine.AnimationModule.dll \
 	-r:UnityEngine.CoreModule.dll \
 	-r:UnityEngine.PhysicsModule.dll \
+	-r:UnityEngine.Physics2DModule.dll \
 	-r:UnityEngine.InputLegacyModule.dll \
+	-r:UnityEngine.ImageConversionModule.dll \
+	-r:UnityEngine.ParticleSystemModule.dll \
+	-r:UnityEngine.AudioModule.dll \
 	$e
 
-bin/Launchpad.dll: ${EL_FILES}
+bin/Launchpad.dll: ${EL_FILES} ${KodeUI}
 	@mkdir -p bin
 	${CSC} ${CSCFLAGS} ${SYSTEM} ${KSP} ${UNITY} -out:$@ $^
 
 clean:
 	rm -f ${TARGETS}* assembly/AssemblyInfo.cs bin/${MODNAME}.version
-	test -d bin && rmdir bin || true
+	rm -rf bin || true
 
 install: all
 	mkdir -p ${PLUGINDIR}

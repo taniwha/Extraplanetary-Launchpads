@@ -7,7 +7,7 @@ all: ${CONSTRUCTIONDRONE}
 install: all
 	#nothing to do as GameData makefile will take care of installation
 
-${CONSTRUCTIONDRONE} : ConstructionDrone.blend
+${CONSTRUCTIONDRONE} : ConstructionDrone.blend constructionDrone.cfg.in
 	blender -noaudio --background ConstructionDrone.blend -P ../../../../tools/mass-export.py
 	mv constructionDrone.cfg part.cfg
 

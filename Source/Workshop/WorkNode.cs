@@ -21,6 +21,7 @@ namespace ExtraplanetaryLaunchpads {
 public interface ELWorkNode
 {
 	ELVesselWorkNet workNet { set; }
+	bool ready { get; }
 }
 
 }

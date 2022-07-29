@@ -13,6 +13,7 @@ install: all
 
 ${SMELTER} : Smelter.blend Smelter.cfg.in
 	blender -noaudio --background Smelter.blend -P ../../../../tools/mass-export.py
+	mv Smelter.cfg part.cfg
 
 clean:
 	rm -f ${SMELTER}

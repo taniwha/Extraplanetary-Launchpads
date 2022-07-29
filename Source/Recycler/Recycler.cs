@@ -193,6 +193,8 @@ public class ELRecycler : PartModule, IModuleInfo, IPartMassModifier, ELControlI
 	}
 
 	public ELVesselWorkNet workNet { get; set; }
+
+	public bool ready { get { return true; } }
 }
 
 }

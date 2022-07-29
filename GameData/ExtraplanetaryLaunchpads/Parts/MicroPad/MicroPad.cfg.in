@@ -25,9 +25,9 @@ PART
 	entryCost = 400
 	cost = ${mass * 600 * 2.5}
 	category = Utility
-	title = KS-MP Disposable Pad
+	title = #EL_ELMicroPad_title // KS-MP Disposable Pad
 	manufacturer = Kairyuu Shipping
-	description = Mark where built modules will be permanently attached to the construting vessel. The build replaces the pad. The built module must have a free stack node on its root part (top or bottom, top takes priority if both are available).
+	description = #EL_ELMicroPad_desc // Mark where built modules will be permanently attached to the construting vessel. The build replaces the pad. The built module must have a free stack node on its root part (top or bottom, top takes priority if both are available).
 	tags = cck-el
 
 	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
@@ -61,4 +61,12 @@ PART
 		equipDir = (-80,0,0)
 		runSpeed = 0.8
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(modelExtVolume * 1000)}
+    }
+}
+@PART[ELMicroPad]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
 }

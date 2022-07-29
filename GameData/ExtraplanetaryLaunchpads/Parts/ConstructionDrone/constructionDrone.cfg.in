@@ -1,0 +1,79 @@
+PART
+{
+	name = ELConstructionDrone_v2
+	module = Part
+	author = Carl Davidson
+
+	MODEL {
+		model = ExtraplanetaryLaunchpads/Parts/ConstructionDrone/constructionDrone
+		position    =   0.0, 0.0, 0.0
+		rotation    =   0.0, 0.0, 0.0
+		scale       =   1.0, 1.0, 1.0
+	}
+	rescaleFactor = 1.0
+	scale = 1.0
+
+	TechRequired = automation
+	entryCost = 12200
+	cost = 227400
+	category = Utility
+	title = #EL_ELConstructionDrone_title // Construction Drone
+	manufacturer = Von Keumann Robotics
+	description = #EL_ELConstructionDrone_desc // The Von Keumann Construction Drone provides the same functionality as the KS-WS-10-5 Construction Workshop. Productivity isn't as great, but you save mass by not having to worry about crew. No more bathroom breaks! No more union disputes!
+
+	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
+	attachRules = 1,0,1,0,0
+    bulkheadProfiles = size2
+
+	mass = 3
+	dragModelType = default
+	maximum_drag = 0.2
+	minimum_drag = 0.15
+	angularDrag = 2
+	crashTolerance = 8
+	breakingForce = 200
+	breakingTorque = 200
+	maxTemp = 3400
+    heatConductivity = 0.12
+    skinInternalConductionMult = 1
+    emissiveConstant = 0.4
+
+	vesselType = Ship
+
+	CrewCapacity = 1
+    tags = cck-el
+	INTERNAL {
+		name = mk1PodCockpit
+	}
+
+	MODULE {
+		name = ELWorkshop
+		ProductivityFactor = 0
+		UnmannedProductivity = 1
+		IgnoreCrewCapacity = True
+	}
+
+	MODULE {
+		name = ELConverter
+		ConverterName = Part Production
+		StartActionName = Start Part Production
+		StopActionName = Stop Part Production
+		ConverterRecipe = MetalWorking
+        // kg/s: 1 lathes/milling machines?
+        Rate = 0.0312
+	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000)}
+    }
+
+	RESOURCE {
+		name = RocketParts
+		amount = 0
+		maxAmount = 1600
+	}
+}
+@PART[ELConstructionDrone_v2]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}

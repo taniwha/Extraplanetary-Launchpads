@@ -28,6 +28,12 @@ namespace ExtraplanetaryLaunchpads {
 
 	using KAS;
 
+	public enum XferState {
+		Hold,
+		In,
+		Out,
+	};
+
 	public class RMResourceManager
 	{
 		class ConnectedPartSet {
@@ -69,6 +75,32 @@ namespace ExtraplanetaryLaunchpads {
 		public RMResourceSet masterSet;
 		bool useFlightID;
 		bool addVessels;
+
+		public ResourceXferControl xferControl { get; private set; }
+
+		public ResourceXferControl CreateXferControl ()
+		{
+			if (xferControl == null) {
+				xferControl = new ResourceXferControl ();
+			}
+			return xferControl;
+		}
+
+		public void MoveSet (XferState from, XferState to, RMResourceSet set,
+							 string resourceName)
+		{
+			if (from == XferState.In) {
+				xferControl.RemoveDestination (set, resourceName);
+			} else if (from == XferState.Out) {
+				xferControl.RemoveSource (set, resourceName);
+			}
+			if (to == XferState.In) {
+				xferControl.AddDestination (set, resourceName);
+			} else if (to == XferState.Out) {
+				xferControl.AddSource (set, resourceName);
+			}
+			xferControl.CheckTransfer ();
+		}
 
 		void ExpandPartMap (IEnumerable<Part> parts)
 		{
@@ -284,10 +316,11 @@ namespace ExtraplanetaryLaunchpads {
 			return connectedParts;
 		}
 
-		RMResourceSet AddModule (string name)
+		RMResourceSet AddModule (string name, uint id)
 		{
 			var set = new RMResourceSet ();
 			set.name = name;
+			set.id = id;
 			moduleSets.Add (set);
 			return set;
 		}
@@ -297,8 +330,8 @@ namespace ExtraplanetaryLaunchpads {
 			var cp = ConnectedParts (part);
 
 			if (part.parent != null && cp.Has (part.parent)) {
-				//Debug.LogFormat("[RMResourceSet] ProcessParts: parent {0}", part.parent);
-				set = AddModule (cp.Name (part.parent));
+				//Debug.LogFormat("[RMResourceManager] ProcessParts: parent {0}", part.parent);
+				set = AddModule (cp.Name (part.parent), GetID (part.parent));
 			}
 
 			set.AddPart(part);
@@ -309,8 +342,8 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				if (cp.Has (child)) {
-					//Debug.LogFormat("[RMResourceSet] ProcessParts: child {0}", child);
-					ProcessParts (child, AddModule (cp.Name (child)));
+					//Debug.LogFormat("[RMResourceManager] ProcessParts: child {0}", child);
+					ProcessParts (child, AddModule (cp.Name (child), GetID (child)));
 				} else {
 					ProcessParts (child, set);
 				}
@@ -335,7 +368,7 @@ namespace ExtraplanetaryLaunchpads {
 					continue;
 				}
 				uint id = GetID (p);
-				//Debug.LogFormat ("{0} {1} {2}", i, p.name, p.symmetryCounterparts.Count);
+				//Debug.LogFormat ("{0} {1} {2}", id, p.name, p.symmetryCounterparts.Count);
 				if (p.Resources.Count < 1) {
 					// no resources, so no point worrying about symmetry
 					continue;
@@ -377,6 +410,7 @@ namespace ExtraplanetaryLaunchpads {
 				if (set == null) {
 					set = new RMResourceSet ();
 					set.name = m.name;
+					set.id = m.id;
 				}
 				foreach (var p in m.parts) {
 					uint id = GetID (p);
@@ -410,7 +444,7 @@ namespace ExtraplanetaryLaunchpads {
 		{
 			ExpandPartMap (parts);
 			FindSymmetrySets (parts);
-			ProcessParts (rootPart, AddModule (vesselName));
+			ProcessParts (rootPart, AddModule (vesselName, GetID (rootPart)));
 			for (int i = 0; i < moduleSets.Count; ) {
 				if (moduleSets[i].parts.Count > 0) {
 					i++;
@@ -426,10 +460,10 @@ namespace ExtraplanetaryLaunchpads {
 				Debug.LogFormat ("[RMResourceManager]  s {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
 			}
 			foreach (var m in moduleSets) {
-				Debug.LogFormat ("[RMResourceManager]  m {0} {1} {2} {3}", m.name, m.parts.Count, m.sets.Count, m.resources.Count);
+				Debug.Log ($"[RMResourceManager]  m {m.name} {m.id} {m.parts.Count} {m.sets.Count} {m.resources.Count}");
 			}
 			foreach (var r in resourceSets) {
-				Debug.LogFormat ("[RMResourceManager]  r {0} {1} {2} {3}", r.name, r.parts.Count, r.sets.Count, r.resources.Count);
+				Debug.Log ($"[RMResourceManager]  r {r.name} {r.id} {r.parts.Count} {r.sets.Count} {r.resources.Count}");
 				foreach (var s in r.sets) {
 					Debug.LogFormat ("[RMResourceManager] rs  {0} {1} {2} {3}", s.name, s.parts.Count, s.sets.Count, s.resources.Count);
 				}
@@ -442,7 +476,8 @@ namespace ExtraplanetaryLaunchpads {
 		public RMResourceManager (string vesselName,
 								  IEnumerable<Part> parts, Part rootPart,
 								  HashSet<Part> excludeParts,
-								  bool addVessels, bool useFlightID)
+								  bool addVessels = true,
+								  bool useFlightID = true)
 		{
 			this.useFlightID = useFlightID;
 			this.addVessels = addVessels;
@@ -458,7 +493,8 @@ namespace ExtraplanetaryLaunchpads {
 		}
 
 		public RMResourceManager (IEnumerable<Part> parts, Part rootPart,
-								  bool addVessels, bool useFlightID)
+								  bool addVessels = true,
+								  bool useFlightID = true)
 		{
 			this.useFlightID = useFlightID;
 			this.addVessels = addVessels;

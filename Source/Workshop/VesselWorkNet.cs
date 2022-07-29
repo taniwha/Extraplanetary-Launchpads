@@ -223,9 +223,18 @@ public class ELVesselWorkNet : VesselModule
 		if (ResourceScenario.Instance == null) {
 			return true;
 		}
+		for (int i = 0; i < protoSinks.Count; i++) {
+			var ps = protoSinks[i];
+			if (ps.isActive) {
+				if (!sinks[i].ready) {
+					return true;
+				}
+			}
+		}
 
 		double currentTime = Planetarium.GetUniversalTime ();
 		double delta = currentTime - lastUpdate;
+		//Debug.Log ($"[ELVesselWorkNet] CatchUpBacklog: {delta}");
 		delta = Math.Min (delta, ResourceUtilities.GetMaxDeltaTime ());
 		lastUpdate += delta;
 
@@ -270,6 +279,7 @@ public class ELVesselWorkNet : VesselModule
 			} else {
 				updateTimer = 10;
 				UpdateProductivity (forceProductivityUpdate);
+				forceProductivityUpdate = false;
 			}
 			if (protoSinks != null) {
 				if (CatchUpBacklog ()) {

@@ -41,9 +41,9 @@ PART {
 	entryCost = 0
 	cost = ${cost * scale1}
 	category = Utility
-	title = KS-S-10 Smelter
+	title = #EL_Smelter_title // KS-S-10 Smelter
 	manufacturer = Kairyuu Shipping
-	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	description = #EL_Smelter_desc // This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
 	tags = cck-el
 	attachRules = 1,1,1,1,0
 
@@ -68,24 +68,50 @@ PART {
 
 	MODULE {
 		name = ELConverter
-		ConverterName = Smelter
+		ConverterName = #EL_ConverterName_Smelter // Smelter
 		EVARange = 3
-		StartActionName = Start Metal Conversion
-		StopActionName = Stop Metal Conversion
+		StartActionName = #EL_EventGUIName_StartMetalConversion // Start Metal Conversion
+		StopActionName = #EL_EventGUIName_StopMetalConversion // Stop Metal Conversion
 		ConverterRecipe = LFOFiredSmelter
 		// kg/s (of LFO) might be fast?
 		Rate = 5
+		efficiency = 273.15, 0
+		efficiency = 1873, 1
+
+		AutoShutdown = false
+		GeneratesHeat = true
 	}
 
 	MODULE {
 		name = ELConverter
-		ConverterName = Scrap Metal Remelter
+		ConverterName = #EL_ConverterName_ScrapMetalRemelter // Scrap Metal Remelter
 		EVARange = 3
-		StartActionName = Start Scrap Metal Remelter
-		StopActionName = Stop Scrap Metal Remelter
+		StartActionName = #EL_EventGUIName_StartScrapMetalRemelter // Start Scrap Metal Remelter
+		StopActionName = #EL_EventGUIName_StopScrapMetalRemelter // Stop Scrap Metal Remelter
 		ConverterRecipe = LFOFiredRemelter
-		// kg/s (of LFO) might be fast?
 		Rate = 5
+		efficiency = 273.15, 0
+		efficiency = 1873, 1
+
+		AutoShutdown = false
+		GeneratesHeat = true
+	}
+
+	MODULE {
+		name = ELCoreHeat
+		CoreTempGoal = 1873
+		CoreToPartRatio = 0.1
+		CoreTempGoalAdjustment = 0
+		CoreEnergyMultiplier = 0.1
+		HeatRadiantMultiplier = 0.05
+		CoolingRadiantMultiplier = 0
+		HeatTransferMultiplier = 0.01
+		CoolantTransferMultiplier = 0.01
+		radiatorCoolingFactor = 1
+		radiatorHeatingFactor = 0.05
+		MaxCalculationWarp = 1000
+		CoreShutdownTemp = 4000
+		MaxCoolant = 0
 	}
 
 	RESOURCE {
@@ -110,6 +136,11 @@ PART {
 		// 5m^3
 		maxAmount = ${scrap * scale1}
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale1)}
+    }
 }
 
 PART {
@@ -125,14 +156,15 @@ PART {
 	}
 	scale = 1
 	rescaleFactor = ${math.pow(scale2, 1.0/3)}
+    node_attach = 0, 0, 1.51522, 0, 0, -1, 1, 0, 1, 0
 
 	TechRequired = advConstruction
 	entryCost = 0
 	cost = ${cost * scale2}
 	category = Utility
-	title = KS-S-05 Smelter
+	title = #EL_SmallSmelter_title // KS-S-05 Smelter
 	manufacturer = Kairyuu Shipping
-	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	description = #EL_SmallSmelter_desc // A smaller version of the smelter, designed to more easily start house fires while building rockets at home.
 	tags = cck-el
 	attachRules = 1,1,1,1,0
 
@@ -154,33 +186,50 @@ PART {
 
 	MODULE {
 		name = ELConverter
-		ConverterName = Smelter
-		EVARange = 2
-		StartActionName = Start Metal Conversion
-		StopActionName = Stop Metal Conversion
+		ConverterName = #EL_ConverterName_Smelter // Smelter
+		EVARange = 3
+		StartActionName = #EL_EventGUIName_StartMetalConversion // Start Metal Conversion
+		StopActionName = #EL_EventGUIName_StopMetalConversion // Stop Metal Conversion
 		ConverterRecipe = LFOFiredSmelter
 		// kg/s might be fast?
-		Rate = 2.5
+		Rate = 3.1498
+		efficiency = 273.15, 0
+		efficiency = 1873, 1
+
+		AutoShutdown = false
+		GeneratesHeat = true
 	}
 
 	MODULE {
 		name = ELConverter
-		ConverterName = Scrap Metal Remelter
-		EVARange = 2
-		StartActionName = Start Scrap Metal Remelter
-		StopActionName = Stop Scrap Metal Remelter
-		INPUT_RESOURCE {
-			ResourceName = ScrapMetal
-			Ratio = 0.01
-		}
-		INPUT_RESOURCE {
-			ResourceName = ElectricCharge
-			Ratio = 5
-		}
-		OUTPUT_RESOURCE {
-			ResourceName = Metal
-			Ratio = 1				// no loss
-		}
+		ConverterName = #EL_ConverterName_ScrapMetalRemelter // Scrap Metal Remelter
+		EVARange = 3
+		StartActionName = #EL_EventGUIName_StartScrapMetalRemelter // Start Scrap Metal Remelter
+		StopActionName = #EL_EventGUIName_StopScrapMetalRemelter // Stop Scrap Metal Remelter
+		ConverterRecipe = LFOFiredRemelter
+		Rate = 3.1498
+		efficiency = 273.15, 0
+		efficiency = 1873, 1
+
+		AutoShutdown = false
+		GeneratesHeat = true
+	}
+
+	MODULE {
+		name = ELCoreHeat
+		CoreTempGoal = 1873
+		CoreToPartRatio = 0.1
+		CoreTempGoalAdjustment = 0
+		CoreEnergyMultiplier = 0.1
+		HeatRadiantMultiplier = 0.05
+		CoolingRadiantMultiplier = 0
+		HeatTransferMultiplier = 0.01
+		CoolantTransferMultiplier = 0.01
+		radiatorCoolingFactor = 1
+		radiatorHeatingFactor = 0.05
+		MaxCalculationWarp = 1000
+		CoreShutdownTemp = 4000
+		MaxCoolant = 0
 	}
 
 	RESOURCE {
@@ -205,6 +254,47 @@ PART {
 		// 5m^3
 		maxAmount = ${scrap * scale2}
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale2)}
+    }
+
+    NODE {
+        name = dorsal
+        transform = node_stack_dorsal
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = ventral
+        transform = node_stack_ventral
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = top
+        transform = node_stack_top
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = bottom
+        transform = node_stack_bottom
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
 }
 
 PART {
@@ -220,14 +310,15 @@ PART {
 	}
 	scale = 1
 	rescaleFactor = ${math.pow(scale3, 1.0/3)}
+    node_attach = 0, 0, 1.51522, 0, 0, -1, 1, 0, 1, 0
 
 	TechRequired = advConstruction
 	entryCost = 0
 	cost = ${cost * scale3}
 	category = Utility
-	title = KS-S-01 Smelter
+	title = #EL_TinySmelter_title // KS-S-01 Smelter
 	manufacturer = Kairyuu Shipping
-	description = This radical technology is a huge step up from the "bonfire" method of getting metal out of ore, providing Bagel the cherished "no longer the most deadly part makers" title.
+	description = #EL_TinySmelter_desc // A tiny version of the smelter, designed to more easily start house fires while building rockets at home.
 	tags = cck-el
 	attachRules = 1,1,1,1,0
 
@@ -249,31 +340,50 @@ PART {
 
 	MODULE {
 		name = ELConverter
-		ConverterName = Smelter
-		StartActionName = Start Metal Conversion
-		StopActionName = Stop Metal Conversion
+		ConverterName = #EL_ConverterName_Smelter // Smelter
+		EVARange = 3
+		StartActionName = #EL_EventGUIName_StartMetalConversion // Start Metal Conversion
+		StopActionName = #EL_EventGUIName_StopMetalConversion // Stop Metal Conversion
 		ConverterRecipe = LFOFiredSmelter
 		// kg/s might be fast?
-		Rate = 0.32
+		Rate = 0.8
+		efficiency = 273.15, 0
+		efficiency = 1873, 1
+
+		AutoShutdown = false
+		GeneratesHeat = true
 	}
 
 	MODULE {
 		name = ELConverter
-		ConverterName = Scrap Metal Remelter
-		StartActionName = Start Scrap Metal Remelter
-		StopActionName = Stop Scrap Metal Remelter
-		INPUT_RESOURCE {
-			ResourceName = ScrapMetal
-			Ratio = 0.00172
-		}
-		INPUT_RESOURCE {
-			ResourceName = ElectricCharge
-			Ratio = 1
-		}
-		OUTPUT_RESOURCE {
-			ResourceName = Metal
-			Ratio = 1				// no loss
-		}
+		ConverterName = #EL_ConverterName_ScrapMetalRemelter // Scrap Metal Remelter
+		EVARange = 3
+		StartActionName = #EL_EventGUIName_StartScrapMetalRemelter // Start Scrap Metal Remelter
+		StopActionName = #EL_EventGUIName_StopScrapMetalRemelter // Stop Scrap Metal Remelter
+		ConverterRecipe = LFOFiredRemelter
+		Rate = 0.8
+		efficiency = 273.15, 0
+		efficiency = 1873, 1
+
+		AutoShutdown = false
+		GeneratesHeat = true
+	}
+
+	MODULE {
+		name = ELCoreHeat
+		CoreTempGoal = 1873
+		CoreToPartRatio = 0.1
+		CoreTempGoalAdjustment = 0
+		CoreEnergyMultiplier = 0.1
+		HeatRadiantMultiplier = 0.05
+		CoolingRadiantMultiplier = 0
+		HeatTransferMultiplier = 0.01
+		CoolantTransferMultiplier = 0.01
+		radiatorCoolingFactor = 1
+		radiatorHeatingFactor = 0.05
+		MaxCalculationWarp = 1000
+		CoreShutdownTemp = 4000
+		MaxCoolant = 0
 	}
 
 	RESOURCE {
@@ -298,4 +408,54 @@ PART {
 		// 5m^3
 		maxAmount = ${scrap * scale3}
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(volumes['packedVolume'][0] * 1000 * scale3)}
+    }
+
+    NODE {
+        name = dorsal
+        transform = node_stack_dorsal
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = ventral
+        transform = node_stack_ventral
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = top
+        transform = node_stack_top
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+
+    NODE {
+        name = bottom
+        transform = node_stack_bottom
+        size = 1
+        method = FIXED_JOINT
+        crossfeed = True
+        rigid = False
+    }
+}
+@PART[ELSmelter]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}
+@PART[ELSmallSmelter]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
+}
+@PART[ELTinySmelter]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
 }

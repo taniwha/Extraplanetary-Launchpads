@@ -89,7 +89,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Awake ()
 		{
-			ELAppButton.Toggle += ELShipInfo.ToggleGUI;
+			ELAppButton.Toggle += ELWindowManager.ToggleShipInfo;
 
 			if (ToolbarManager.Instance == null) {
 				return;
@@ -98,7 +98,7 @@ namespace ExtraplanetaryLaunchpads {
 			ELEditorButton.Visible = ELSettings.PreferBlizzy;
 			ELEditorButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ELEditorButton.ToolTip = "EL Build Resources Display";
-			ELEditorButton.OnClick += (e) => ELShipInfo.ToggleGUI ();
+			ELEditorButton.OnClick += (e) => ELWindowManager.ToggleShipInfo ();
 		}
 
 		void OnDestroy()
@@ -106,7 +106,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (ELEditorButton != null) {
 				ELEditorButton.Destroy ();
 			}
-			ELAppButton.Toggle -= ELShipInfo.ToggleGUI;
+			ELAppButton.Toggle -= ELWindowManager.ToggleShipInfo;
 		}
 	}
 
@@ -117,8 +117,7 @@ namespace ExtraplanetaryLaunchpads {
 
 		public void Awake ()
 		{
-			ELAppButton.Toggle += ELBuildWindow.ToggleGUI;
-			ELAppButton.RightToggle += ELResourceWindow.ToggleGUI;
+			ELAppButton.Toggle += ELWindowManager.ToggleBuildWindow;
 
 			if (ToolbarManager.Instance == null) {
 				return;
@@ -127,7 +126,7 @@ namespace ExtraplanetaryLaunchpads {
 			ELBuildWindowButton.Visible = ELSettings.PreferBlizzy;
 			ELBuildWindowButton.TexturePath = "ExtraplanetaryLaunchpads/Textures/icon_button";
 			ELBuildWindowButton.ToolTip = "EL Build Window";
-			ELBuildWindowButton.OnClick += (e) => ELBuildWindow.ToggleGUI ();
+			ELBuildWindowButton.OnClick += (e) => ELWindowManager.ToggleBuildWindow ();
 		}
 
 		void OnDestroy()
@@ -135,8 +134,7 @@ namespace ExtraplanetaryLaunchpads {
 			if (ELBuildWindowButton != null) {
 				ELBuildWindowButton.Destroy ();
 			}
-			ELAppButton.Toggle -= ELBuildWindow.ToggleGUI;
-			ELAppButton.RightToggle -= ELResourceWindow.ToggleGUI;
+			ELAppButton.Toggle -= ELWindowManager.ToggleBuildWindow;
 		}
 	}
 

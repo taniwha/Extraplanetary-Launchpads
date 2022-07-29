@@ -261,10 +261,10 @@ namespace ExtraplanetaryLaunchpads {
 			if (efficiencyCurve.Length == 0) {
 				return 1;
 			}
-			if (temperature <= efficiencyCurve[0].x) {
+			int max = efficiencyCurve.Length - 1;
+			if (max == 0 || temperature <= efficiencyCurve[0].x) {
 				return efficiencyCurve[0].y;
 			}
-			int max = efficiencyCurve.Length - 1;
 			if (temperature >= efficiencyCurve[max].x) {
 				return efficiencyCurve[max].y;
 			}

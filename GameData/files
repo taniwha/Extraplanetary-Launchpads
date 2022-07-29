@@ -8,6 +8,7 @@ ExtraplanetaryLaunchpads/Internals/Launchpad_cockpit/model.mu
 ExtraplanetaryLaunchpads/License-KS.txt
 ExtraplanetaryLaunchpads/License.txt
 ExtraplanetaryLaunchpads/Localization/en-us.cfg
+ExtraplanetaryLaunchpads/Localization/pt-br.cfg
 ExtraplanetaryLaunchpads/Localization/zh-cn.cfg
 ExtraplanetaryLaunchpads/Parts/Auger/Auger.mu
 ExtraplanetaryLaunchpads/Parts/Auger/model000.mbm
@@ -158,7 +159,6 @@ ExtraplanetaryLaunchpads/Resources/ECSmelter.cfg
 ExtraplanetaryLaunchpads/Resources/ExtraSpaceCenters.cfg
 ExtraplanetaryLaunchpads/Resources/Kerbal.cfg
 ExtraplanetaryLaunchpads/Resources/Recipes.cfg
-ExtraplanetaryLaunchpads/Settings.cfg
 ExtraplanetaryLaunchpads/Ships/SPH/Ore Scanner.craft
 ExtraplanetaryLaunchpads/Ships/VAB/Mun Base.craft
 ExtraplanetaryLaunchpads/Ships/VAB/Orbital Scanner.craft

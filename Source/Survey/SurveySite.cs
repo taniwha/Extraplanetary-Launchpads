@@ -23,7 +23,7 @@ using UnityEngine;
 using KSP.IO;
 
 namespace ExtraplanetaryLaunchpads {
-	internal class SurveySite: ELRenameWindow.IRenamable
+	internal class SurveySite: ELRenameDialog.IRenamable
 	{
 		List<Vessel> stakes;
 

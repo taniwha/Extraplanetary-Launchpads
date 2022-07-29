@@ -25,9 +25,9 @@ PART
 	entryCost = 400
 	cost = ${mass * 600 * 2.5}
 	category = Utility
-	title = KS-CR Control Reference
+	title = #EL_ELControlReference_title // KS-CR Control Reference
 	manufacturer = Kairyuu Shipping
-	description = For those times where you need to switch control references quickly, such as doing a ventral landing. At the flick of an action button, this device will override your avionics and become your new fore and aft, with suitable indicators highlighting when active. At a second flick of the action buttion, the device will remove the override and the previous control reference will be active once again.
+	description = #EL_ELControlReference_desc // For those times where you need to switch control references quickly, such as doing a ventral landing. At the flick of an action button, this device will override your avionics and become your new fore and aft, with suitable indicators highlighting when active. At a second flick of the action buttion, the device will remove the override and the previous control reference will be active once again.
 	tags = cck-el
 
 	// attachment rules: stack, srfAttach, allowStack, allowSrfAttach, allowCollision
@@ -51,4 +51,12 @@ PART
 	MODULE {
 		name = ELControlReference
 	}
+
+    MODULE {
+        name = ModuleCargoPart
+        packedVolume = ${math.ceil(modelExtVolume * 1000)}
+    }
+}
+@PART[ELControlReference]:FOR[Launchpad]:NEEDS[KIS] {
+	-MODULE[ModuleCargoPart] { }
 }
